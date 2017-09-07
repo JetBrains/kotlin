@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package kotlin.internal
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
+package kotlin.internal.jdk8
 
 import java.util.regex.MatchResult
 import java.util.regex.Matcher
+import kotlin.internal.PlatformImplementations
+import kotlin.internal.jdk7.JDK7PlatformImplementations
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-internal open class JRE8PlatformImplementations : JRE7PlatformImplementations() {
+internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() {
 
     override fun getMatchResultNamedGroup(matchResult: MatchResult, name: String): MatchGroup? {
         val matcher = matchResult as? Matcher ?: throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
