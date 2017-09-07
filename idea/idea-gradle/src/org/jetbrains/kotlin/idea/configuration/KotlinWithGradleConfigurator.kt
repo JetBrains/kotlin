@@ -248,7 +248,8 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
 
-        fun getGroovyDependencySnippet(artifactName: String) = "compile \"org.jetbrains.kotlin:$artifactName:\$kotlin_version\""
+        fun getGroovyDependencySnippet(artifactName: String, scope: String = "compile") =
+                "$scope \"org.jetbrains.kotlin:$artifactName:\$kotlin_version\""
 
         fun getGroovyApplyPluginDirective(pluginName: String) = "apply plugin: '$pluginName'"
 

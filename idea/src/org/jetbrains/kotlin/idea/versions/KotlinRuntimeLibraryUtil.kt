@@ -364,4 +364,7 @@ val MAVEN_STDLIB_ID_JRE8 = "kotlin-stdlib-jre8"
 val MAVEN_JS_STDLIB_ID = "kotlin-stdlib-js"
 val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
 val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator
+val MAVEN_TEST_ID = "kotlin-test"
+val MAVEN_TEST_JUNIT_ID = "kotlin-test-junit"
+val MAVEN_COMMON_TEST_ID = "kotlin-test-common"
 val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt")
