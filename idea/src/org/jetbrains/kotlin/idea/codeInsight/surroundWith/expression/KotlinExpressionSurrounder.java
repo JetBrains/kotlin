@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.KtCallExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -44,8 +45,14 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
         if (expression instanceof KtCallExpression && expression.getParent() instanceof KtQualifiedExpression) {
             return false;
         }
-        KotlinType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        BindingContext context = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL);
+        KotlinType type = context.getType(expression);
         if (type == null || (isUnit(type) && !isApplicableToUnit())) {
+            return false;
+        }
+
+        boolean usedAsExpression = Boolean.TRUE.equals(context.get(BindingContext.USED_AS_EXPRESSION, expression));
+        if (!isApplicableToStatements() && !usedAsExpression) {
             return false;
         }
 
@@ -54,6 +61,10 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
 
     protected boolean isApplicableToUnit() {
         return false;
+    }
+
+    protected boolean isApplicableToStatements() {
+        return true;
     }
 
     protected abstract boolean isApplicable(@NotNull KtExpression expression);

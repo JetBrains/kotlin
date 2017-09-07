@@ -29,6 +29,7 @@ abstract class KotlinControlFlowExpressionSurrounderBase : KotlinExpressionSurro
 
     override fun isApplicable(expression: KtExpression) = true
     override fun isApplicableToUnit() = true
+    override fun isApplicableToStatements() = false
 
     override fun surroundExpression(project: Project, editor: Editor, expression: KtExpression): TextRange? {
         val factory = KtPsiFactory(expression)
