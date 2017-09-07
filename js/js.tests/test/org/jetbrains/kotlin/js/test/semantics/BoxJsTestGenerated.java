@@ -2578,6 +2578,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifElseCurlyBraces.kt")
+            public void testIfElseCurlyBraces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/if/ifElseCurlyBraces.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifInsideLambda.kt")
             public void testIfInsideLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/if/ifInsideLambda.kt");
