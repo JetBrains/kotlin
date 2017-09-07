@@ -11806,6 +11806,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inner"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("annotationInInnerClass.kt")
+            public void testAnnotationInInnerClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/annotationInInnerClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classesInClassObjectHeader.kt")
             public void testClassesInClassObjectHeader() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/classesInClassObjectHeader.kt");
@@ -11830,6 +11836,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("enumInInnerClass.kt")
+            public void testEnumInInnerClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/enumInInnerClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionFun.kt")
             public void testExtensionFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/extensionFun.kt");
@@ -11845,6 +11857,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("illegalModifier.kt")
             public void testIllegalModifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/illegalModifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerClassInEnumEntryClass_lv11.kt")
+            public void testInnerClassInEnumEntryClass_lv11() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/innerClassInEnumEntryClass_lv11.kt");
                 doTest(fileName);
             }
 
@@ -11887,6 +11905,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("innerThisSuper.kt")
             public void testInnerThisSuper() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/innerThisSuper.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("interfaceInInnerClass.kt")
+            public void testInterfaceInInnerClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/interfaceInInnerClass.kt");
                 doTest(fileName);
             }
 

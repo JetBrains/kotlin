@@ -930,8 +930,8 @@ public interface Errors {
     DiagnosticFactory2<KtExpression, ClassDescriptor, String> NESTED_CLASS_SHOULD_BE_QUALIFIED = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<KtClass> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
-    DiagnosticFactory0<KtObjectDeclaration> NESTED_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
+    DiagnosticFactory1<KtClassOrObject, String> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
+    DiagnosticFactory1<KtClassOrObject, String> NESTED_CLASS_NOT_ALLOWED_SINCE_1_3 = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
 
     //Inline and inlinable parameters
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_PUBLIC_CALL_FROM_PUBLIC_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);

@@ -423,8 +423,8 @@ public class DefaultErrorMessages {
         MAP.put(NESTED_CLASS_SHOULD_BE_QUALIFIED, "Nested {0} should be qualified as ''{1}''", RENDER_CLASS_OR_OBJECT_NAME, TO_STRING);
 
         MAP.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, "Expression is inaccessible from a nested class ''{0}''", NAME);
-        MAP.put(NESTED_CLASS_NOT_ALLOWED, "Nested class is not allowed here, use 'inner' keyword to make the class inner");
-        MAP.put(NESTED_OBJECT_NOT_ALLOWED, "Objects inside inner classes are prohibited");
+        MAP.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", STRING);
+        MAP.put(NESTED_CLASS_NOT_ALLOWED_SINCE_1_3, "{0} will not be allowed here in Kotlin 1.3 and later, please migrate your code", STRING);
 
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);

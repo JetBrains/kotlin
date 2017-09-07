@@ -40,12 +40,33 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class ModifiersChecker {
-    private static boolean isIllegalNestedClass(@NotNull DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof ClassDescriptor)) return false;
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (!(containingDeclaration instanceof ClassDescriptor)) return false;
-        ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
-        return containingClass.isInner() || DescriptorUtils.isLocal(containingClass);
+    private enum DetailedClassKind {
+        ENUM_CLASS("Enum class"),
+        ENUM_ENTRY("Enum entry"),
+        ANNOTATION_CLASS("Annotation class"),
+        INTERFACE("Interface"),
+        COMPANION_OBJECT("Companion object"),
+        ANONYMOUS_OBJECT("Anonymous object"),
+        OBJECT("Object"),
+        CLASS("Class");
+
+        public final String withCapitalFirstLetter;
+
+        DetailedClassKind(String withCapitalFirstLetter) {
+            this.withCapitalFirstLetter = withCapitalFirstLetter;
+        }
+
+        @NotNull
+        public static DetailedClassKind getClassKind(@NotNull ClassDescriptor descriptor) {
+            if (DescriptorUtils.isEnumEntry(descriptor)) return ENUM_ENTRY;
+            if (DescriptorUtils.isEnumClass(descriptor)) return ENUM_CLASS;
+            if (DescriptorUtils.isAnnotationClass(descriptor)) return ANNOTATION_CLASS;
+            if (DescriptorUtils.isInterface(descriptor)) return INTERFACE;
+            if (DescriptorUtils.isCompanionObject(descriptor)) return COMPANION_OBJECT;
+            if (DescriptorUtils.isAnonymousObject(descriptor)) return ANONYMOUS_OBJECT;
+            if (DescriptorUtils.isObject(descriptor)) return OBJECT;
+            return CLASS;
+        }
     }
 
     @NotNull
@@ -157,18 +178,32 @@ public class ModifiersChecker {
 
         public void checkModifiersForDeclaration(@NotNull KtDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
             checkNestedClassAllowed(modifierListOwner, descriptor);
-            checkObjectInsideInnerClass(modifierListOwner, descriptor);
             checkTypeParametersModifiers(modifierListOwner);
             checkModifierListCommon(modifierListOwner, descriptor);
             checkIllegalHeader(modifierListOwner, descriptor);
         }
 
-        private void checkObjectInsideInnerClass(@NotNull KtDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
-            if (modifierListOwner instanceof KtObjectDeclaration) {
-                KtObjectDeclaration ktObject = (KtObjectDeclaration) modifierListOwner;
-                if (!ktObject.isLocal() && isIllegalNestedClass(descriptor)) {
-                    trace.report(NESTED_OBJECT_NOT_ALLOWED.on(ktObject));
-                }
+        private void checkNestedClassAllowed(@NotNull KtDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+            if (!(declaration instanceof KtClassOrObject)) return;
+            KtClassOrObject ktClassOrObject = (KtClassOrObject) declaration;
+            if (!(descriptor instanceof ClassDescriptor)) return;
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (!(containingDeclaration instanceof ClassDescriptor)) return;
+            ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
+
+            DetailedClassKind kind = DetailedClassKind.getClassKind(classDescriptor);
+
+            if (kind == DetailedClassKind.ANONYMOUS_OBJECT || kind == DetailedClassKind.ENUM_ENTRY) return;
+
+            // Local enums / objects / companion objects are handled in different checks
+            if ((kind == DetailedClassKind.ENUM_CLASS || kind == DetailedClassKind.OBJECT || kind == DetailedClassKind.COMPANION_OBJECT) &&
+                DescriptorUtils.isLocal(classDescriptor)) {
+                return;
+            }
+
+            if (!classDescriptor.isInner() && (containingClass.isInner() || DescriptorUtils.isLocal(containingClass))) {
+                trace.report(NESTED_CLASS_NOT_ALLOWED.on(ktClassOrObject, kind.withCapitalFirstLetter));
             }
         }
 
@@ -203,17 +238,6 @@ public class ModifiersChecker {
             if (keyword != null &&
                 descriptor instanceof ClassDescriptor && descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                 trace.report(WRONG_MODIFIER_TARGET.on(keyword, KtTokens.HEADER_KEYWORD, "nested class"));
-            }
-        }
-
-        private void checkNestedClassAllowed(@NotNull KtModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-            if (modifierListOwner.hasModifier(INNER_KEYWORD)) return;
-            if (modifierListOwner instanceof KtClass && !(modifierListOwner instanceof KtEnumEntry)) {
-                KtClass aClass = (KtClass) modifierListOwner;
-                boolean localEnumError = aClass.isLocal() && aClass.isEnum();
-                if (!localEnumError && isIllegalNestedClass(descriptor)) {
-                    trace.report(NESTED_CLASS_NOT_ALLOWED.on(aClass));
-                }
             }
         }
 
