@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-@file:JvmName("RegexExtensionsJRE8Kt")
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:JvmName("RegexExtensionsJDK8Kt")
+@file:kotlin.jvm.JvmPackageName("kotlin.text.jdk8")
 package kotlin.text
 
 /**
@@ -23,7 +25,7 @@ package kotlin.text
  * @return An instance of [MatchGroup] if the group with the specified [name] was matched or `null` otherwise.
  * @throws [UnsupportedOperationException] if getting named groups isn't supported on the current platform.
  */
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 public operator fun MatchGroupCollection.get(name: String): MatchGroup? {
     val namedGroups = this as? MatchNamedGroupCollection ?:
             throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")

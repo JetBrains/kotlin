@@ -14,7 +14,7 @@ You need to install a recent [Maven](http://maven.apache.org/) distribution and 
     JDK_18="path to JDK 1.8"
 
 The main part of the Kotlin standard library, `kotlin-stdlib`, is compiled against JDK 1.6 and also there are two extensions
-for the standard library, `kotlin-stdlib-jre7` and `kotlin-stdlib-jre8`, which are compiled against JDK 1.7 and 1.8 respectively,
+for the standard library, `kotlin-stdlib-jdk7` and `kotlin-stdlib-jdk8`, which are compiled against JDK 1.7 and 1.8 respectively,
 so you need to have all these JDKs installed.
 
 Be sure to build Kotlin compiler distribution before launching Gradle and Maven: see [root ReadMe.md, section "Building"](../ReadMe.md#installing-plugin).

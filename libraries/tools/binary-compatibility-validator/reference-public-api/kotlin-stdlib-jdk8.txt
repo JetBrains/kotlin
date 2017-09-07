@@ -1,4 +1,4 @@
-public final class kotlin/streams/StreamsKt {
+public final class kotlin/streams/jdk8/StreamsKt {
 	public static final fun asSequence (Ljava/util/stream/DoubleStream;)Lkotlin/sequences/Sequence;
 	public static final fun asSequence (Ljava/util/stream/IntStream;)Lkotlin/sequences/Sequence;
 	public static final fun asSequence (Ljava/util/stream/LongStream;)Lkotlin/sequences/Sequence;
@@ -10,7 +10,7 @@ public final class kotlin/streams/StreamsKt {
 	public static final fun toList (Ljava/util/stream/Stream;)Ljava/util/List;
 }
 
-public final class kotlin/text/RegexExtensionsJRE8Kt {
+public final class kotlin/text/jdk8/RegexExtensionsJDK8Kt {
 	public static final fun get (Lkotlin/text/MatchGroupCollection;Ljava/lang/String;)Lkotlin/text/MatchGroup;
 }
 
