@@ -317,7 +317,6 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             val nullabilityFromSupertypesWithWarning = fromSupertypes
                     .mapNotNull { it.unwrapEnhancement().extractQualifiers().nullability }
                     .toSet()
-                    .takeIf { it != nullabilityFromSupertypes }
 
             val own = extractQualifiersFromAnnotations(isHeadTypeConstructor)
             val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }
@@ -353,10 +352,10 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             val nullability = nullabilityFromSupertypes.select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, ownNullability)
             val mutability = mutabilityFromSupertypes.select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability)
 
-            val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != null
+            val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != nullabilityFromSupertypes
             if (nullability == null && canChange) {
-                val nullabilityWithWarning = (nullabilityFromSupertypesWithWarning ?: nullabilityFromSupertypes)
-                        .select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, ownNullabilityForWarning)
+                val nullabilityWithWarning =
+                        nullabilityFromSupertypesWithWarning.select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, ownNullabilityForWarning)
 
                 return createJavaTypeQualifiers(nullabilityWithWarning, mutability, true)
             }
