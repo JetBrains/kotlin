@@ -1,0 +1,12 @@
+fun foo(s: String) {}
+
+fun bar(s: String?) {
+    if (s == null) {
+        1
+    }
+    else {
+        foo("a")
+        foo("b")
+        2
+    }
+}

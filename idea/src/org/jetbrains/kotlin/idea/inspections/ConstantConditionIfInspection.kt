@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -48,7 +49,8 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
                 val fixes = mutableListOf<LocalQuickFix>()
 
                 if (expression.branch(constantValue) != null) {
-                    fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context))
+                    val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
+                    fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context), keepBraces)
                 }
 
                 if (!constantValue && expression.`else` == null) {
@@ -64,7 +66,8 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
 
     private class SimplifyFix(
             private val conditionValue: Boolean,
-            private val isUsedAsExpression: Boolean
+            private val isUsedAsExpression: Boolean,
+            private val keepBraces: Boolean
     ) : LocalQuickFix {
         override fun getFamilyName() = name
 
@@ -73,9 +76,11 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val ifExpression = descriptor.psiElement.getParentOfType<KtIfExpression>(strict = true) ?: return
 
-            val branch = ifExpression.branch(conditionValue)?.unwrapBlockOrParenthesis() ?: return
+            val branch = ifExpression.branch(conditionValue)?.let {
+                if (keepBraces) it else it.unwrapBlockOrParenthesis()
+            } ?: return
 
-            ifExpression.replaceWithBranch(branch, isUsedAsExpression)
+            ifExpression.replaceWithBranch(branch, isUsedAsExpression, keepBraces)
         }
     }
 
@@ -100,12 +105,17 @@ private fun KtExpression.constantBooleanValue(context: BindingContext): Boolean?
     return constantValue?.value as? Boolean
 }
 
-fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean) {
+fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean, keepBraces: Boolean = false) {
     val lastExpression = when {
         branch !is KtBlockExpression -> replaced(branch)
         isUsedAsExpression -> {
             val factory = KtPsiFactory(this)
             replaced(factory.createExpressionByPattern("run $0", branch.text))
+        }
+        keepBraces -> {
+            parent.addAfter(branch, this)
+            delete()
+            null
         }
         else -> {
             val firstChild = branch.firstChild.nextSibling

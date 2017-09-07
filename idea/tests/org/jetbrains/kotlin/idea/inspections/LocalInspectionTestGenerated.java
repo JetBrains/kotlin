@@ -428,9 +428,27 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("endWithElseIf.kt")
+        public void testEndWithElseIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/endWithElseIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("endWithElseIfNoBraces.kt")
+        public void testEndWithElseIfNoBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/endWithElseIfNoBraces.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("expression.kt")
         public void testExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/expression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionElseIfBlock.kt")
+        public void testExpressionElseIfBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/expressionElseIfBlock.kt");
             doTest(fileName);
         }
 
@@ -461,6 +479,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("statement.kt")
         public void testStatement() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/statement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("statementElseIf.kt")
+        public void testStatementElseIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/constantConditionIf/statementElseIf.kt");
             doTest(fileName);
         }
     }
