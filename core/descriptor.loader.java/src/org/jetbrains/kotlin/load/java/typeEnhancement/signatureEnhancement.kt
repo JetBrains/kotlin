@@ -63,6 +63,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         return when (enumEntryDescriptor.name.asString()) {
             "ALWAYS" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
             "MAYBE", "NEVER" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+            "UNKNOWN" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY)
             else -> null
         }
     }
@@ -346,16 +347,22 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 return effectiveSet.singleOrNull()
             }
 
+            fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?) =
+                    if (own == NullabilityQualifier.FORCE_FLEXIBILITY)
+                        NullabilityQualifier.FORCE_FLEXIBILITY
+                    else
+                        select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own)
+
             val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
             val ownNullabilityForWarning = own.nullability
 
-            val nullability = nullabilityFromSupertypes.select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, ownNullability)
+            val nullability = nullabilityFromSupertypes.select(ownNullability)
             val mutability = mutabilityFromSupertypes.select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability)
 
             val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != nullabilityFromSupertypes
             if (nullability == null && canChange) {
                 val nullabilityWithWarning =
-                        nullabilityFromSupertypesWithWarning.select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, ownNullabilityForWarning)
+                        nullabilityFromSupertypesWithWarning.select(ownNullabilityForWarning)
 
                 return createJavaTypeQualifiers(nullabilityWithWarning, mutability, true)
             }

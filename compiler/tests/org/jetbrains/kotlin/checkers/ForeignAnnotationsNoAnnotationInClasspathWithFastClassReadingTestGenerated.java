@@ -352,6 +352,18 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
                 doTest(fileName);
             }
 
+            @TestMetadata("forceFlexibility.kt")
+            public void testForceFlexibility() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/forceFlexibility.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forceFlexibleOverOverrides.kt")
+            public void testForceFlexibleOverOverrides() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/forceFlexibleOverOverrides.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullabilityFromOverridden.kt")
             public void testNullabilityFromOverridden() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault/nullabilityFromOverridden.kt");
