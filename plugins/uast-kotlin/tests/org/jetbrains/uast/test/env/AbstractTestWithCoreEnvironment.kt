@@ -36,7 +36,8 @@ abstract class AbstractTestWithCoreEnvironment : TestCase() {
     protected val environment: AbstractCoreEnvironment
         get() = myEnvironment!!
 
-    protected lateinit var project: MockProject
+    protected val project: MockProject
+        get() = environment.project
 
     protected val uastContext: UastContext by lazy {
         ServiceManager.getService(project, UastContext::class.java)
@@ -57,7 +58,6 @@ abstract class AbstractTestWithCoreEnvironment : TestCase() {
             error("Environment is already initialized")
         }
         myEnvironment = createEnvironment(source)
-        project = environment.project
 
         CoreApplicationEnvironment.registerExtensionPoint(
                 Extensions.getRootArea(),
