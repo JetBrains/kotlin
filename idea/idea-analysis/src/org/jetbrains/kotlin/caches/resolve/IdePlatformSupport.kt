@@ -21,7 +21,7 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import org.jetbrains.kotlin.analyzer.AnalyzerFacade
-import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -107,10 +107,10 @@ class JsPlatformSupport : IdePlatformSupport() {
 
 class CommonPlatformSupport : IdePlatformSupport() {
     override val platform: TargetPlatform
-        get() = TargetPlatform.Default
+        get() = TargetPlatform.Common
 
     override val analyzerFacade: AnalyzerFacade
-        get() = DefaultAnalyzerFacade
+        get() = CommonAnalyzerFacade
 
     override val libraryKind: PersistentLibraryKind<*>?
         get() = CommonLibraryKind

@@ -39,7 +39,7 @@ abstract class TargetPlatform(val platformName: String) {
 
     abstract val multiTargetPlatform: MultiTargetPlatform
 
-    object Default : TargetPlatform("Default") {
+    object Common : TargetPlatform("Default") {
         private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> {
             includeKotlinComparisons ->
             ArrayList<ImportPath>().apply {

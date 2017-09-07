@@ -59,7 +59,7 @@ fun getLibraryPlatform(library: Library): TargetPlatform {
 
     return when (library.kind) {
         JSLibraryKind -> JsPlatform
-        CommonLibraryKind -> TargetPlatform.Default
+        CommonLibraryKind -> TargetPlatform.Common
         else -> JvmPlatform
     }
 }

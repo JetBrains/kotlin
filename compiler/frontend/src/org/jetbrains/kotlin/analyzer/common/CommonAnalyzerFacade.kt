@@ -46,9 +46,9 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
 
 /**
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
- * See [TargetPlatform.Default]
+ * See [TargetPlatform.Common]
  */
-object DefaultAnalyzerFacade : AnalyzerFacade() {
+object CommonAnalyzerFacade : AnalyzerFacade() {
     private class SourceModuleInfo(
             override val name: Name,
             override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
@@ -77,7 +77,7 @@ object DefaultAnalyzerFacade : AnalyzerFacade() {
         @Suppress("NAME_SHADOWING")
         val resolver = ResolverForProjectImpl   (
                 "sources for metadata serializer",
-                ProjectContext(project), listOf(moduleInfo), { DefaultAnalyzerFacade },
+                ProjectContext(project), listOf(moduleInfo), { CommonAnalyzerFacade },
                 { ModuleContent(files, GlobalSearchScope.allScope(project)) },
                 object : PlatformAnalysisParameters {},
                 languageSettingsProvider = object : LanguageSettingsProvider {
@@ -159,5 +159,5 @@ object DefaultAnalyzerFacade : AnalyzerFacade() {
     }
 
     override val targetPlatform: TargetPlatform
-        get() = TargetPlatform.Default
+        get() = TargetPlatform.Common
 }

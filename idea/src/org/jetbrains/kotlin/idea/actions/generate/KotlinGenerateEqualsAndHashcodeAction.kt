@@ -144,7 +144,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when (targetClass.platform) {
             is JsPlatform -> "other == null || this::class.js != $paramName::class.js"
-            is TargetPlatform.Default -> "other == null || this::class != $paramName::class"
+            is TargetPlatform.Common -> "other == null || this::class != $paramName::class"
             else -> defaultExpression
         }
     }
@@ -154,7 +154,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when (targetClass.platform) {
             is JsPlatform -> "this::class.js"
-            is TargetPlatform.Default -> "this::class"
+            is TargetPlatform.Common -> "this::class"
             else -> defaultExpression
         }
     }

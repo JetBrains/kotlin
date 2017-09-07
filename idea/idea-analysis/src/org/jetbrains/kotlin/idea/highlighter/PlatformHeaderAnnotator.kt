@@ -58,7 +58,7 @@ class PlatformHeaderAnnotator : Annotator {
         val declaration = element as? KtDeclaration ?: return
         if (!isHeaderDeclaration(declaration)) return
 
-        if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Default) return
+        if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Common) return
 
         val implementingModules = declaration.findModuleDescriptor().allImplementingCompatibleModules
         if (implementingModules.isEmpty()) return

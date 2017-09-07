@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.*
@@ -293,7 +293,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val platform = moduleDescriptor.getMultiTargetPlatform()
         if (platform == MultiTargetPlatform.Common) {
-            return DefaultAnalyzerFacade.analyzeFiles(
+            return CommonAnalyzerFacade.analyzeFiles(
                     files, moduleDescriptor.name, true, languageVersionSettings,
                     mapOf(
                             MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,
