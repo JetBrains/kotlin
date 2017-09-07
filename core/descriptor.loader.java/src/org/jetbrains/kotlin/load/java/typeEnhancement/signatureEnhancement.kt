@@ -302,14 +302,14 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index) }
 
                 // Only the head type constructor is safely co-variant
-                qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor, isHeadTypeConstructor)
+                qualifiers.computeQualifiersForOverride(verticalSlice, isHeadTypeConstructor)
             }
 
             return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
         }
 
         private fun KotlinType.computeQualifiersForOverride(
-                fromSupertypes: Collection<KotlinType>, isCovariant: Boolean,
+                fromSupertypes: Collection<KotlinType>,
                 isHeadTypeConstructor: Boolean
         ): JavaTypeQualifiers {
             val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
@@ -320,55 +320,34 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     .toSet()
 
             val own = extractQualifiersFromAnnotations(isHeadTypeConstructor)
-            val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }
-
-            fun createJavaTypeQualifiers(
-                    nullability: NullabilityQualifier?,
-                    mutability: MutabilityQualifier?,
-                    forWarning: Boolean
-            ): JavaTypeQualifiers {
-                if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
-                    return JavaTypeQualifiers(nullability, mutability, false, forWarning)
-                }
-                return JavaTypeQualifiers(nullability, mutability, true, forWarning)
-            }
-
-            fun <T : Any> Set<T>.select(low: T, high: T, own: T?): T? {
-                if (isCovariant) {
-                    val supertypeQualifier = if (low in this) low else if (high in this) high else null
-                    return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
-                }
-
-                // isInvariant
-                val effectiveSet = own?.let { (this + own).toSet() } ?: this
-                // if this set contains exactly one element, it is the qualifier everybody agrees upon,
-                // otherwise (no qualifiers, or multiple qualifiers), there's no single such qualifier
-                // and all qualifiers are discarded
-                return effectiveSet.singleOrNull()
-            }
-
-            fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?) =
-                    if (own == NullabilityQualifier.FORCE_FLEXIBILITY)
-                        NullabilityQualifier.FORCE_FLEXIBILITY
-                    else
-                        select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own)
-
             val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
             val ownNullabilityForWarning = own.nullability
 
-            val nullability = nullabilityFromSupertypes.select(ownNullability)
-            val mutability = mutabilityFromSupertypes.select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability)
+            val isCovariantPosition = isCovariant && isHeadTypeConstructor
+            val nullability = nullabilityFromSupertypes.select(ownNullability, isCovariantPosition)
+            val mutability =
+                    mutabilityFromSupertypes
+                            .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability, isCovariantPosition)
 
             val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != nullabilityFromSupertypes
+            val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }
             if (nullability == null && canChange) {
                 val nullabilityWithWarning =
-                        nullabilityFromSupertypesWithWarning.select(ownNullabilityForWarning)
+                        nullabilityFromSupertypesWithWarning.select(ownNullabilityForWarning, isCovariantPosition)
 
-                return createJavaTypeQualifiers(nullabilityWithWarning, mutability, true)
+                return createJavaTypeQualifiers(
+                        nullabilityWithWarning, mutability,
+                        forWarning = true, isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
+                )
             }
 
-            return createJavaTypeQualifiers(nullability, mutability,nullability == null)
+            return createJavaTypeQualifiers(
+                    nullability, mutability,
+                    forWarning = nullability == null,
+                    isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
+            )
         }
+
     }
 
     private data class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
@@ -391,3 +370,35 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     }
 
 }
+
+private fun createJavaTypeQualifiers(
+        nullability: NullabilityQualifier?,
+        mutability: MutabilityQualifier?,
+        forWarning: Boolean,
+        isAnyNonNullTypeParameter: Boolean
+): JavaTypeQualifiers {
+    if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
+        return JavaTypeQualifiers(nullability, mutability, false, forWarning)
+    }
+    return JavaTypeQualifiers(nullability, mutability, true, forWarning)
+}
+
+private fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
+    if (isCovariant) {
+        val supertypeQualifier = if (low in this) low else if (high in this) high else null
+        return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
+    }
+
+    // isInvariant
+    val effectiveSet = own?.let { (this + own).toSet() } ?: this
+    // if this set contains exactly one element, it is the qualifier everybody agrees upon,
+    // otherwise (no qualifiers, or multiple qualifiers), there's no single such qualifier
+    // and all qualifiers are discarded
+    return effectiveSet.singleOrNull()
+}
+
+private fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
+        if (own == NullabilityQualifier.FORCE_FLEXIBILITY)
+            NullabilityQualifier.FORCE_FLEXIBILITY
+        else
+            select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own, isCovariant)
