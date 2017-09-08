@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.Jsr305State
 import java.io.File
 
-val FOREIGN_ANNOTATIONS_SOURCES_PATH = "compiler/testData/foreignAnnotations/annotations"
+val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/annotations"
 val TEST_ANNOTATIONS_SOURCE_PATH = "compiler/testData/foreignAnnotations/testAnnotations"
 
 abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
