@@ -1,0 +1,7 @@
+// "Add data modifier to Foo" "true"
+data class Foo(val bar: String, val baz: Int)
+
+fun test2() {
+    val foo = Foo("A", 1)
+    var (bar, baz) = foo<caret>
+}

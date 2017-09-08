@@ -1,0 +1,9 @@
+// "Add data modifier to Foo" "true"
+// WITH_RUNTIME
+data class Foo(val bar: String, val baz: Int)
+
+fun test3() {
+    val list = listOf(Foo("A", 1))
+    list.forEach { (foo<caret>, bar) ->
+    }
+}
