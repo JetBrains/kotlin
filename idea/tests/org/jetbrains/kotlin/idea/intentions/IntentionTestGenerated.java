@@ -853,6 +853,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("header.kt")
+            public void testHeader() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/header.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lateinit.kt")
             public void testLateinit() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/lateinit.kt");
