@@ -41,6 +41,7 @@
       <root url="file://$PROJECT_DIR$/../out/production/idea-core" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-jps-common" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-js" />
+      <root url="file://$PROJECT_DIR$/../out/production/idea-jvm" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-live-templates" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-repl" />
       <root url="file://$PROJECT_DIR$/../out/production/instrumentation" />
@@ -104,6 +105,7 @@
       <root url="file://$PROJECT_DIR$/../idea/idea-completion/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-core/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-jps-common/src" />
+      <root url="file://$PROJECT_DIR$/../idea/idea-jvm/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-live-templates/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-test-framework/src" />
       <root url="file://$PROJECT_DIR$/../idea/formatter/src" />
