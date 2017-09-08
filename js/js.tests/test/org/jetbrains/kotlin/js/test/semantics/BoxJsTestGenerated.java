@@ -2319,6 +2319,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/for/labeledForWithWhile.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("rangeOptimization.kt")
+            public void testRangeOptimization() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/for/rangeOptimization.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("js/js.translator/testData/box/expression/function")
