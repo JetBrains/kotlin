@@ -16,6 +16,14 @@
 
 package org.jetbrains.kotlin.konan.target
 
+enum class Platform {
+    OSX,
+    LINUX,
+    WINDOWS,
+    ANDROID,
+    WASM
+}
+
 enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var enabled: Boolean = false) {
     ANDROID_ARM32("android_arm32", "so"),
     ANDROID_ARM64("android_arm64", "so"),
@@ -28,6 +36,17 @@ enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var 
     WASM32("wasm32", "wasm");
 
     val userName get() = name.toLowerCase()
+    val platform get() = when (this) {
+        ANDROID_ARM32 -> Platform.ANDROID
+        ANDROID_ARM64 -> Platform.ANDROID
+        IPHONE        -> Platform.OSX
+        IPHONE_SIM    -> Platform.OSX
+        MACBOOK       -> Platform.OSX
+        RASPBERRYPI   -> Platform.LINUX
+        LINUX         -> Platform.LINUX
+        MINGW         -> Platform.WINDOWS
+        WASM32        -> Platform.WASM
+    }
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =

@@ -1,0 +1,31 @@
+apply plugin: 'konan'
+
+buildscript {
+    dependencies {
+        classpath files(project.file('../tools/kotlin-native-gradle-plugin/build/libs').listFiles().findAll {
+            it.name.endsWith('.jar')
+        }.collect().first().absolutePath)
+    }
+}
+
+def taskName = "${gradle.startParameter.projectProperties['name']}"
+
+konanInterop {
+    "$taskName" {
+        defFile gradle.startParameter.projectProperties.defFile
+        pkg gradle.startParameter.projectProperties.name
+        target gradle.startParameter.projectProperties.target
+    }
+}
+
+def suffix = gradle.startParameter.projectProperties['suffix']
+def klibProgram = suffix?"${gradle.startParameter.projectProperties['konan.home']}/bin/klib.$suffix" : "${gradle.startParameter.projectProperties['konan.home']}/bin/klib"
+
+task klibInstall(type:Exec) {
+    dependsOn compileKonan
+    commandLine klibProgram,
+            'install',
+            project.file("build/konan/interopCompiledStubs/${taskName}InteropStubs/${taskName}InteropStubs.klib"),
+            '-repository',
+            gradle.startParameter.projectProperties['konan.home']
+}

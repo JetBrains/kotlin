@@ -264,6 +264,51 @@ targetList.each { target ->
             }
         }
     }
+
+    targetDefFiles(target).forEach{
+        defFile ->
+            def taskName = defFileToTaskName(target, defFile)
+            def suffix = null
+            if (new PlatformInfo().isWindows())
+                suffix = 'bat'
+            task(taskName, type:GradleBuild) {
+                dependsOn ':tools:kotlin-native-gradle-plugin:jar'
+                tasks = ['clean', 'compileKonan', 'klibInstall']
+                buildFile project('klib').file('platform.gradle')
+                dir project(':klib').projectDir
+                startParameter.projectProperties = [
+                        'kotlin_version' : kotlin_version,
+                        'name'           : defToLibName(defFile),
+                        'defFile'        : defFile.absolutePath,
+                        'konan.home'     : project.file('dist'),
+                        'target'         : target,
+                        'suffix'         : suffix
+                ]
+            }
+    }
+}
+
+private ArrayList<File> targetDefFiles(String target) {
+    def platform = targetToPlatform(target)
+    project(':klib').file("src/platform/$platform").listFiles().findAll { it.name.endsWith(".def") }
+}
+
+private String targetToPlatform(String target) {
+    new TargetManager(target).target.platform.name().toLowerCase()
+}
+
+private String defFileToTaskName(String target, File defFile) {
+    def libname = defToLibName(defFile)
+    return "$target-$libname".toString()
+}
+
+private String defToLibName(File defFile) {
+    defFile.name.split('\\.').dropRight(1).join('.')
+}
+
+task distPlatformLibs {
+    def target = TargetManager.host.name().toLowerCase()
+    dependsOn  targetDefFiles(target).collect {defFileToTaskName(target, it)}
 }
 
 task dist {
