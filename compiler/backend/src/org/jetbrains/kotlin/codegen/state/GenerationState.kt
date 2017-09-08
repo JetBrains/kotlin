@@ -126,6 +126,8 @@ class GenerationState @JvmOverloads constructor(
         extraJvmDiagnosticsTrace.bindingContext.diagnostics
     }
 
+    val languageVersionSettings = configuration.languageVersionSettings
+
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val isJvm8Target: Boolean = target == JvmTarget.JVM_1_8
     val isJvm8TargetWithDefaults: Boolean =  isJvm8Target && configuration.getBoolean(JVMConfigurationKeys.JVM8_TARGET_WITH_DEFAULTS)
@@ -140,7 +142,7 @@ class GenerationState @JvmOverloads constructor(
             this.bindingContext, classBuilderMode, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
             this.moduleName, isJvm8Target, isJvm8TargetWithDefaults
     )
-    val intrinsics: IntrinsicMethods = IntrinsicMethods(target)
+    val intrinsics: IntrinsicMethods = IntrinsicMethods(target, languageVersionSettings.supportsFeature(LanguageFeature.ConsistentExplicitEqualsForPrimitiveWrappers))
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
@@ -157,8 +159,6 @@ class GenerationState @JvmOverloads constructor(
         val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
         var hasResult: Boolean = false
     }
-
-    val languageVersionSettings = configuration.languageVersionSettings
 
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
     val isReceiverAssertionsDisabled: Boolean =

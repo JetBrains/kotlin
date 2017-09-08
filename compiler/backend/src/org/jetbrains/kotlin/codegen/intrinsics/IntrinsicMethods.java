@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -46,7 +48,6 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod RANGE_TO = new RangeTo();
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
-    private final IntrinsicMethod HASH_CODE;
 
     private static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     private static final Equals EQUALS = new Equals();
@@ -61,7 +62,10 @@ public class IntrinsicMethods {
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
     public IntrinsicMethods(JvmTarget jvmTarget) {
-        HASH_CODE = new HashCode(jvmTarget);
+        this(jvmTarget, true);
+    }
+
+    public IntrinsicMethods(JvmTarget jvmTarget, boolean useConsistentEqualsForPrimitiveWrappers) {
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, JavaClassProperty.INSTANCE);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
         intrinsicsMap.registerIntrinsic(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe(), null, "name", -1, new KCallableNameProperty());
@@ -94,10 +98,20 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeFqName, "dec", 0, DEC);
         }
 
+        IntrinsicMethod hashCode = new HashCode(jvmTarget);
         for (PrimitiveType type : PrimitiveType.values()) {
             FqName typeFqName = type.getTypeFqName();
-            declareIntrinsicFunction(typeFqName, "equals", 1, EQUALS);
-            declareIntrinsicFunction(typeFqName, "hashCode", 0, HASH_CODE);
+            IntrinsicMethod equalsMethod;
+            if (useConsistentEqualsForPrimitiveWrappers) {
+                Type wrapperType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(JvmPrimitiveType.get(type).getWrapperFqName());
+                equalsMethod = new ConsistentEquals(wrapperType);
+            }
+            else {
+                equalsMethod = EQUALS;
+            }
+
+            declareIntrinsicFunction(typeFqName, "equals", 1, equalsMethod);
+            declareIntrinsicFunction(typeFqName, "hashCode", 0, hashCode);
             declareIntrinsicFunction(typeFqName, "toString", 0, TO_STRING);
 
             intrinsicsMap.registerIntrinsic(

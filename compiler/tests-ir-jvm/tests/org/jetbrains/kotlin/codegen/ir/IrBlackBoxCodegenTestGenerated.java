@@ -12388,6 +12388,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("equalsNull_lv11.kt")
+            public void testEqualsNull_lv11() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/equalsNull_lv11.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equalsNull_lv12.kt")
+            public void testEqualsNull_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/equalsNull_lv12.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("hashCode.kt")
             public void testHashCode() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/hashCode.kt");
