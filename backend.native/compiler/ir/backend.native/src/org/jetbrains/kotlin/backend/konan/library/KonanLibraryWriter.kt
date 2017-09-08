@@ -21,6 +21,7 @@ import llvm.LLVMModuleRef
 interface KonanLibraryWriter {
     fun addLinkData(linkData: LinkData)
     fun addNativeBitcode(library: String)
+    fun addIncludedBinary(library: String)
     fun addKotlinBitcode(llvmModule: LLVMModuleRef)
     fun addManifestAddend(path: String)
     fun addEscapeAnalysis(escapeAnalysis: ByteArray)

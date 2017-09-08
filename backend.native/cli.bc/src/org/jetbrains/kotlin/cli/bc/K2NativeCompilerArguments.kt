@@ -30,6 +30,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code")
     var enableAssertions: Boolean = false
 
+    @Argument(value = "-includeBinary", shortName = "-ib", valueDescription = "<path>", description = "Pack external binary within the klib")
+    var includeBinaries: Array<String>? = null
+
     @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the library")
     var libraries: Array<String>? = null
 
@@ -39,7 +42,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
     var manifestFile: String? = null
 
-    @Argument(value = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native library")
+    @Argument(value = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native bitcode library")
     var nativeLibraries: Array<String>? = null
 
     @Argument(value = "-nomain", description = "Assume 'main' entry point to be provided by external libraries")

@@ -37,6 +37,8 @@ interface KonanLibraryLayout {
         get() = File(targetDir, "kotlin")
     val nativeDir 
         get() = File(targetDir, "native")
+    val includedDir 
+        get() = File(targetDir, "included")
     val linkdataDir 
         get() = File(libDir, "linkdata")
     val moduleHeaderFile 

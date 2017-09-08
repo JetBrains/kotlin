@@ -56,6 +56,7 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
         targetDir.mkdirs()
         kotlinDir.mkdirs()
         nativeDir.mkdirs()
+        includedDir.mkdirs()
         resourcesDir.mkdirs()
         manifestProperties.setProperty("abi_version", "$currentAbiVersion")
     }
@@ -74,6 +75,11 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
     override fun addNativeBitcode(library: String) {
         val basename = File(library).name
         File(library).copyTo(File(nativeDir, basename)) 
+    }
+
+    override fun addIncludedBinary(library: String) {
+        val basename = File(library).name
+        File(library).copyTo(File(includedDir, basename)) 
     }
 
     override fun addManifestAddend(path: String) {
@@ -97,6 +103,7 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
 
 internal fun buildLibrary(
     natives: List<String>, 
+    included: List<String>, 
     linkData: LinkData, 
     abiVersion: Int, 
     target: KonanTarget, 
@@ -112,6 +119,9 @@ internal fun buildLibrary(
     library.addLinkData(linkData)
     natives.forEach {
         library.addNativeBitcode(it)
+    }
+    included.forEach {
+        library.addIncludedBinary(it)
     }
     manifest ?.let { library.addManifestAddend(it) }
     escapeAnalysis?.let { library.addEscapeAnalysis(it) }

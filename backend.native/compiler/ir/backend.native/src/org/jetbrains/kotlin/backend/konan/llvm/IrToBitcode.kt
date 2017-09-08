@@ -121,6 +121,7 @@ internal fun produceOutput(context: Context) {
 
             val library = buildLibrary(
                 context.config.nativeLibraries, 
+                context.config.includeBinaries, 
                 context.serializedLinkData!!, 
                 abiVersion,
                 target,

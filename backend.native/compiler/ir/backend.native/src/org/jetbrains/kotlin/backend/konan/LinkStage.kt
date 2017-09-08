@@ -292,7 +292,7 @@ internal class LinkStage(val context: Context) {
     private val entryPointSelector: List<String>
         get() = if (nomain) emptyList() else platform.entrySelector
 
-    private fun link(objectFiles: List<ObjectFile>, libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
+    private fun link(objectFiles: List<ObjectFile>, includedBinaries: List<String>, libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
         val executable = context.config.outputFile
 
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug) +
@@ -313,7 +313,23 @@ internal class LinkStage(val context: Context) {
                 runTool(*platform.dsymutilDryRunVerboseCommand(executable).toTypedArray())
             runTool(*platform.dsymutilCommand(executable).toTypedArray())
         }
+        if (platform is WasmPlatform) {
+            JavaScriptLinker(includedBinaries.filter{it.isJavaScript}, executable)
+        }
         return executable
+    }
+
+    private val String.isJavaScript 
+        get() = this.endsWith(".js")
+
+    private fun JavaScriptLinker(jsFiles: List<String>, executable: String): String {
+        val linkedJavaScript = File("$executable.js")
+        linkedJavaScript.writeBytes(ByteArray(0));
+
+        jsFiles.forEach {
+            linkedJavaScript.appendBytes(File(it).readBytes())
+        }
+        return linkedJavaScript.name
     }
 
     private fun executeCommand(vararg command: String): Int {
@@ -362,6 +378,9 @@ internal class LinkStage(val context: Context) {
         val bitcodeFiles = listOf(emitted) +
             libraries.map{it -> it.bitcodePaths}.flatten()
 
+        val includedBinaries = 
+            libraries.map{it -> it.includedPaths}.flatten()
+
         val libraryProvidedLinkerFlags = 
             libraries.map{it -> it.linkerOpts}.flatten()
 
@@ -377,7 +396,7 @@ internal class LinkStage(val context: Context) {
             )
         }
         phaser.phase(KonanPhase.LINKER) {
-            link(objectFiles, libraryProvidedLinkerFlags)
+            link(objectFiles, includedBinaries, libraryProvidedLinkerFlags)
         }
     }
 }

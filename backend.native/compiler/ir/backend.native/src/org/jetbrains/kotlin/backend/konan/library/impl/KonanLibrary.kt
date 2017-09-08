@@ -63,6 +63,10 @@ class FileExtractor(zippedLibrary: KonanLibrary): KonanLibrary by zippedLibrary 
         extractDir(super.resourcesDir)
     }
 
+    override val includedDir: File by lazy {
+        extractDir(super.includedDir)
+    }
+
     override val kotlinDir: File by lazy {
         extractDir(super.kotlinDir)
     }
