@@ -16,21 +16,24 @@
 
 package org.jetbrains.kotlin.idea.run
 
+import com.intellij.execution.configurations.JavaRunConfigurationModule
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleOrderEntry
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderEnumerationHandler
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.task.ExecuteRunConfigurationTask
-import com.intellij.task.ModuleBuildTask
-import com.intellij.task.ProjectTask
+import com.intellij.task.*
+import com.intellij.task.impl.ModuleBuildTaskImpl
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner
 import org.jetbrains.plugins.gradle.model.ExternalSourceDirectorySet
@@ -61,6 +64,43 @@ class MultiplatformGradleProjectTaskRunner : GradleProjectTaskRunner() {
 
 
                 else -> false
+            }
+
+    override fun run(
+        project: Project,
+        context: ProjectTaskContext,
+        callback: ProjectTaskNotification?,
+        tasks: Collection<ProjectTask>
+    ) {
+        val configuration = context.runConfiguration
+        if (configuration is ModuleBasedConfiguration<*> &&
+            (configuration.configurationModule is JavaRunConfigurationModule || configuration is JetRunConfiguration)) {
+
+            val module = configuration.configurationModule.module
+            if (module?.targetPlatform == TargetPlatformKind.Common) {
+                val implModule = module.findJvmImplementationModule()
+                if (implModule != null) {
+                    val replacedTasks = tasks.map { it.replaceModule(module, implModule) }
+                    super.run(project, context, callback, replacedTasks)
+                    return
+                }
+            }
+        }
+
+        super.run(project, context, callback, tasks)
+    }
+
+    private fun ProjectTask.replaceModule(origin: Module, replacement: Module): ProjectTask =
+            when (this) {
+                is ModuleFilesBuildTask -> this
+
+                is ModuleBuildTask ->
+                        if (module == origin)
+                            ModuleBuildTaskImpl(replacement, isIncrementalBuild, isIncludeDependentModules, isIncludeRuntimeDependencies)
+                        else
+                            this
+
+                else -> this
             }
 }
 
