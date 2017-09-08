@@ -40,8 +40,9 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 
-private val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
-internal val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
+val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
+val ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME = FqName("android.os.Parcelable.Creator")
+val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
 class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     private companion object {
@@ -130,6 +131,13 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             val reportElement = (declaration as? KtClass)?.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
             return
+        }
+
+        for (companion in declaration.companionObjects) {
+            if (companion.name == "CREATOR") {
+                val reportElement = companion.nameIdentifier ?: companion
+                diagnosticHolder.reportFromPlugin(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED.on(reportElement), DefaultErrorMessagesAndroid)
+            }
         }
 
         val sealedOrAbstract = declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) ?: it.getModifier(KtTokens.SEALED_KEYWORD) }
