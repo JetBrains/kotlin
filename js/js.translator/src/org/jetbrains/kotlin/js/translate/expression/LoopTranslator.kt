@@ -29,14 +29,12 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
-import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtWhileExpressionBase
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.condition ?:
@@ -78,18 +76,47 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
     return result.source(expression)
 }
 
+private val rangeToFunctionName = FqName("kotlin.Int.rangeTo")
+private val untilFunctionName = FqName("kotlin.ranges.until")
+private val downToFunctionName = FqName("kotlin.ranges.downTo")
+private val stepFunctionName = FqName("kotlin.ranges.step")
+private val intRangeName = FqName("kotlin.ranges.IntRange")
+private val intProgressionName = FqName("kotlin.ranges.IntProgression")
+
 fun translateForExpression(expression: KtForExpression, context: TranslationContext): JsStatement {
-    val loopRange = getLoopRange(expression)
+    val loopRange = KtPsiUtil.deparenthesize(getLoopRange(expression))!!
     val rangeType = getTypeForExpression(context.bindingContext(), loopRange)
 
     fun isForOverRange(): Boolean {
         //TODO: long range?
         val fqn = rangeType.constructor.declarationDescriptor?.fqNameSafe ?: return false
-        return fqn.asString() == "kotlin.ranges.IntRange"
+        return fqn == intRangeName
     }
 
-    fun isForOverRangeLiteral(): Boolean =
-            loopRange is KtBinaryExpression && loopRange.operationToken == KtTokens.RANGE && isForOverRange()
+    fun extractForOverRangeLiteral(): RangeLiteral? {
+        val fqn = rangeType.constructor.declarationDescriptor?.fqNameSafe
+        if (fqn != intRangeName && fqn != intProgressionName) return null
+
+        var resolvedCall = loopRange.getResolvedCall(context.bindingContext()) ?: return null
+        var step: KtExpression? = null
+        if (resolvedCall.resultingDescriptor.fqNameSafe == stepFunctionName) {
+            step = resolvedCall.call.valueArguments[0].getArgumentExpression() ?: return null
+            resolvedCall = (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression?.getResolvedCall(context.bindingContext()) ?:
+                           return null
+        }
+
+        val first = ((resolvedCall.extensionReceiver ?: resolvedCall.dispatchReceiver) as? ExpressionReceiver)?.expression ?: return null
+        val second = resolvedCall.valueArgumentsByIndex?.firstOrNull()?.arguments?.firstOrNull()?.getArgumentExpression() ?: return null
+
+        val type = when (resolvedCall.resultingDescriptor.fqNameSafe) {
+            rangeToFunctionName -> RangeType.RANGE_TO
+            untilFunctionName -> RangeType.UNTIL
+            downToFunctionName -> RangeType.DOWN_TO
+            else -> return null
+        }
+
+        return RangeLiteral(type, first, second, step)
+    }
 
     fun isForOverArray(): Boolean {
         return KotlinBuiltIns.isArray(rangeType) || KotlinBuiltIns.isPrimitiveArray(rangeType)
@@ -133,22 +160,45 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         }
     }
 
-    // TODO: implement reverse semantics
-    fun translateForOverLiteralRange(): JsStatement {
-        if (loopRange !is KtBinaryExpression) throw IllegalStateException("expected JetBinaryExpression, but ${loopRange.text}")
-
+    fun translateForOverLiteralRange(literal: RangeLiteral): JsStatement {
         val startBlock = JsBlock()
-        val leftExpression = TranslationUtils.translateLeftExpression(context, loopRange, startBlock)
+        val leftExpression = Translation.translateAsExpression(literal.first, context, startBlock)
         val endBlock = JsBlock()
-        val rightExpression = TranslationUtils.translateRightExpression(context, loopRange, endBlock)
-        val rangeStart = context.cacheExpressionIfNeeded(leftExpression)
+        val rightExpression = Translation.translateAsExpression(literal.second, context, endBlock)
+        val stepBlock = JsBlock()
+        val stepExpression = literal.step?.let { Translation.translateAsExpression(it, context, stepBlock) }
+
         context.addStatementsToCurrentBlockFrom(startBlock)
+        val rangeStart = context.cacheExpressionIfNeeded(leftExpression)
         context.addStatementsToCurrentBlockFrom(endBlock)
         val rangeEnd = context.defineTemporary(rightExpression)
+        context.addStatementsToCurrentBlockFrom(stepBlock)
+        val step = stepExpression?.let { context.defineTemporary(it) }
 
         val body = translateBody(null)
-        val conditionExpression = lessThanEq(parameterName.makeRef(), rangeEnd).source(expression)
-        val incrementExpression = JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef()).source(expression)
+        val conditionExpression = when (literal.type) {
+            RangeType.RANGE_TO -> lessThanEq(parameterName.makeRef(), rangeEnd)
+            RangeType.UNTIL -> lessThan(parameterName.makeRef(), rangeEnd)
+            RangeType.DOWN_TO -> greaterThanEq(parameterName.makeRef(), rangeEnd)
+        }.source(expression)
+
+        val incrementExpression = if (step == null) {
+            val incrementOperator = when (literal.type) {
+                RangeType.RANGE_TO,
+                RangeType.UNTIL -> JsUnaryOperator.INC
+                RangeType.DOWN_TO -> JsUnaryOperator.DEC
+            }
+            JsPostfixOperation(incrementOperator, parameterName.makeRef()).source(expression)
+        }
+        else {
+            val incrementOperator = when (literal.type) {
+                RangeType.RANGE_TO,
+                RangeType.UNTIL -> JsBinaryOperator.ASG_ADD
+                RangeType.DOWN_TO -> JsBinaryOperator.ASG_SUB
+            }
+            JsBinaryOperation(incrementOperator, parameterName.makeRef(), step).source(expression)
+        }
+
         val initVars = newVar(parameterName, rangeStart).apply { source = expression }
 
         return JsFor(initVars, conditionExpression, incrementExpression, body)
@@ -228,9 +278,11 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         return JsWhile(exitCondition, bodyStatements.singleOrNull() ?: JsBlock(bodyStatements))
     }
 
+    val rangeLiteral = extractForOverRangeLiteral()
+
     val result = when {
-        isForOverRangeLiteral() ->
-            translateForOverLiteralRange()
+        rangeLiteral != null ->
+            translateForOverLiteralRange(rangeLiteral)
 
         isForOverRange() ->
             translateForOverRange()
@@ -244,3 +296,11 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
     return result.apply { source = expression }
 }
+
+private enum class RangeType {
+    RANGE_TO,
+    UNTIL,
+    DOWN_TO
+}
+
+private class RangeLiteral(val type: RangeType, val first: KtExpression, val second: KtExpression, var step: KtExpression?)
