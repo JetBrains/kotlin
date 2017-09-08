@@ -252,8 +252,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (import.aliasName != null && import.aliasName != declaration.name) {
                     return false
                 }
-                // check if we import member(s) from object or enum and search for their usages
-                if (declaration is KtObjectDeclaration || (declaration is KtClass && declaration.isEnum())) {
+                // check if we import member(s) from object / nested object / enum and search for their usages
+                if (declaration is KtClassOrObject) {
                     if (import.isAllUnder) {
                         val importedFrom = import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve()
                                                    as? KtClassOrObject ?: return true
@@ -264,7 +264,11 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                             val importedDeclaration =
                                     import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration
                                     ?: return true
-                            return declaration !in importedDeclaration.parentsWithSelf && !hasNonTrivialUsages(importedDeclaration)
+                            if (declaration is KtObjectDeclaration ||
+                                (declaration is KtClass && declaration.isEnum()) ||
+                                importedDeclaration.containingClassOrObject is KtObjectDeclaration) {
+                                return declaration !in importedDeclaration.parentsWithSelf && !hasNonTrivialUsages(importedDeclaration)
+                            }
                         }
                     }
                 }
