@@ -153,4 +153,11 @@ class X {
 }
 """)
     }
+
+    fun `test annotation`() {
+        check("""
+annotation class ManyArgs(val name: String, val surname: String)
+@ManyArgs(<hint text="name:"/>"Ilya", <hint text="surname:"/>"Sergey") class AnnotatedMuch
+""")
+    }
 }
