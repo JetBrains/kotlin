@@ -66,7 +66,7 @@ public class A {
     }
 
     @NullableApi
-    public String foobar(String x, @Nonnull CharSequence y) {
+    public String foobar(String x, @NonNullApi CharSequence y) {
         return "";
     }
 
@@ -88,7 +88,7 @@ public class A {
         }
 
         @NonNullApi
-        public String foobar(String x, @Nullable CharSequence y) {
+        public String foobar(String x, @NullableApi CharSequence y) {
             return "";
         }
 

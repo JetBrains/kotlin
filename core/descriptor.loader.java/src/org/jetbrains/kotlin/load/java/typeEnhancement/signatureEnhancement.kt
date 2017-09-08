@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -120,13 +117,11 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val receiverTypeEnhancement =
                 if (extensionReceiverParameter != null)
-                    parts(
-                            typeContainer =
+                    partsForValueParameter(
+                            parameterDescriptor =
                                 annotationOwnerForMember.safeAs<FunctionDescriptor>()
                                     ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
-                            isCovariant = false,
-                            containerContext = memberContext,
-                            containerApplicabilityType = AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER
+                            methodContext = memberContext
                     ) { it.extensionReceiverParameter!!.type }.enhance()
                 else null
 
@@ -145,12 +140,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
         val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map {
             p ->
-            parts(
-                    typeContainer = p, isCovariant = false,
-                    containerContext = memberContext,
-                    containerApplicabilityType = AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER
-            ) { it.valueParameters[p.index].type }
-                    .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
+                partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
+                        .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
         }
 
         val returnTypeEnhancement =
@@ -369,7 +360,19 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
     private data class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
 
-    private fun <D : CallableMemberDescriptor> D.parts(
+    private fun CallableMemberDescriptor.partsForValueParameter(
+            // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
+            parameterDescriptor: ValueParameterDescriptor?,
+            methodContext: LazyJavaResolverContext,
+            collector: (CallableMemberDescriptor) -> KotlinType
+    ) = parts(
+            parameterDescriptor, false,
+            parameterDescriptor?.let { methodContext.copyWithNewDefaultTypeQualifiers(it.annotations) } ?: methodContext,
+            AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER,
+            collector
+    )
+
+    private fun CallableMemberDescriptor.parts(
             typeContainer: Annotated?,
             isCovariant: Boolean,
             containerContext: LazyJavaResolverContext,

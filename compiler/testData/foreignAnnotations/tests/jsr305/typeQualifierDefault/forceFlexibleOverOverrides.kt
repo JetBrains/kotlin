@@ -89,8 +89,7 @@ fun main(a: A, b: B) {
     b.foobar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     a.foo(null)
-    // TODO: defaults on parameters do not work properly
-    a.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.bar(null)
     a.baz(null)
     a.foobar(null)
 }

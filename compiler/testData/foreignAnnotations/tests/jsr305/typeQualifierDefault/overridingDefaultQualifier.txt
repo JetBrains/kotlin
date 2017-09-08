@@ -9,7 +9,7 @@ public fun main(/*0*/ a: A, /*1*/ b: A.B, /*2*/ c: A.C): kotlin.Unit
     @javax.annotation.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun foo(/*0*/ x: kotlin.String, /*1*/ @javax.annotation.CheckForNull y: kotlin.CharSequence?): kotlin.String
-    @NullableApi public open fun foobar(/*0*/ x: kotlin.String?, /*1*/ @javax.annotation.Nonnull y: kotlin.CharSequence): kotlin.String?
+    @NullableApi public open fun foobar(/*0*/ x: kotlin.String?, /*1*/ @NonNullApi y: kotlin.CharSequence): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
@@ -20,7 +20,7 @@ public fun main(/*0*/ a: A, /*1*/ b: A.B, /*2*/ c: A.C): kotlin.Unit
         @javax.annotation.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open fun foo(/*0*/ x: kotlin.String?, /*1*/ @javax.annotation.Nonnull y: kotlin.CharSequence): kotlin.String?
-        @NonNullApi public open fun foobar(/*0*/ x: kotlin.String, /*1*/ @javax.annotation.Nullable y: kotlin.CharSequence?): kotlin.String
+        @NonNullApi public open fun foobar(/*0*/ x: kotlin.String, /*1*/ @NullableApi y: kotlin.CharSequence?): kotlin.String
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

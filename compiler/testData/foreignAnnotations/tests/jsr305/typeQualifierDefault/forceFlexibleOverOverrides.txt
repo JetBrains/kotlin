@@ -4,7 +4,7 @@ public fun main(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
 
 @spr.NonNullApi public open class A : B {
     public constructor A()
-    public open override /*1*/ fun bar(/*0*/ @spr.ForceFlexibility x: kotlin.String): kotlin.Unit
+    public open override /*1*/ fun bar(/*0*/ @spr.ForceFlexibility x: kotlin.String!): kotlin.Unit
     public open override /*1*/ fun baz(/*0*/ @spr.UnknownNullability x: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @spr.ForceFlexibility public open override /*1*/ fun foo(/*0*/ x: kotlin.String!): kotlin.Unit
