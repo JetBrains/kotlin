@@ -424,7 +424,7 @@ public class DefaultErrorMessages {
 
         MAP.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, "Expression is inaccessible from a nested class ''{0}''", NAME);
         MAP.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", STRING);
-        MAP.put(NESTED_CLASS_NOT_ALLOWED_SINCE_1_3, "{0} will not be allowed here in Kotlin 1.3 and later, please migrate your code", STRING);
+        MAP.put(NESTED_CLASS_DEPRECATED, "{0} is deprecated here", STRING);
 
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);

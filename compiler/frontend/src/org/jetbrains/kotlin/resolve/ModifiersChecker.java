@@ -209,7 +209,7 @@ public class ModifiersChecker {
                 DiagnosticFactory1<KtClassOrObject, String> diagnostic =
                         languageVersionSettings.supportsFeature(LanguageFeature.NestedClassesInEnumEntryShouldBeInner)
                         ? NESTED_CLASS_NOT_ALLOWED
-                        : NESTED_CLASS_NOT_ALLOWED_SINCE_1_3;
+                        : NESTED_CLASS_DEPRECATED;
                 trace.report(diagnostic.on(ktClassOrObject, kind.withCapitalFirstLetter));
                 return;
             }
