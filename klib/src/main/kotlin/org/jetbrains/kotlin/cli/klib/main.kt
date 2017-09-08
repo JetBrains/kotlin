@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.cli.klib
 
 import kotlin.system.exitProcess
-import java.util.Properties
 // TODO: Extract these as a shared jar?
 import org.jetbrains.kotlin.backend.konan.library.impl.*
-import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.TargetManager
@@ -96,7 +94,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
     }
 
     fun install() {
-        remove(true) 
+        Library(File(name).name.removeSuffix(".klib"), requestedRepository, target).remove(true)
 
         val library = ZippedKonanLibrary(libraryInCurrentDir(name))
         val newLocation = File(repository, "klib")
