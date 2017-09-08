@@ -274,7 +274,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
-        if (declaration is KtCallableDeclaration) {
+        if (declaration is KtCallableDeclaration && !declaration.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 return lightMethods.any { method ->
