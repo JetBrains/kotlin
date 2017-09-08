@@ -17,9 +17,6 @@
         <extensionPoint name="jsSyntheticTranslateExtension"
                         interface="org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension"
                         area="IDEA_PROJECT"/>
-        <extensionPoint name="findUsagesHandlerDecorator"
-                        interface="org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator"
-                        area="IDEA_PROJECT"/>
         <extensionPoint name="simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
                         area="IDEA_PROJECT"/>
