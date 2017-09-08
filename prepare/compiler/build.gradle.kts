@@ -24,7 +24,7 @@ plugins {
 // Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build
 val shrink = true
 val compilerManifestClassPath =
-        "kotlin-runtime.jar kotlin-reflect.jar kotlin-script-runtime.jar"
+        "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
 val fatJarContents by configurations.creating
 val fatSourcesJarContents by configurations.creating
