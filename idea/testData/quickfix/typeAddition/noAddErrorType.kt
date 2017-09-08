@@ -1,4 +1,5 @@
 // "Specify type explicitly" "false"
+// ACTION: Add getter
 // ACTION: Convert property to function
 // ACTION: Introduce backing property
 // ACTION: Move to companion object
