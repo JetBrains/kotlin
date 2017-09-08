@@ -43,15 +43,16 @@ val compilerModules: Array<String> by rootProject.extra
 
 val packagesToRelocate =
         listOf("com.intellij",
-                "com.google",
-                "com.sampullara",
-                "org.apache",
-                "org.jdom",
-                "org.picocontainer",
-                "jline",
-                "gnu",
-                "javax.inject",
-                "org.fusesource")
+               "com.google",
+               "com.sampullara",
+               "org.apache",
+               "org.jdom",
+               "org.picocontainer",
+               "org.jline",
+               "gnu",
+               "javax.inject",
+               "org.fusesource",
+               "kotlinx.coroutines")
 
 val ideaCoreSdkJars: Array<String> by rootProject.extra
 val coreSdkJarsSimple = ideaCoreSdkJars.filterNot { it == "jdom" || it == "log4j" }.toTypedArray()
@@ -81,6 +82,7 @@ dependencies {
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
     fatJarContents(preloadedDeps("json-org"))
+    fatJarContents(preloadedDeps("kotlinx-coroutines-core"))
 
     proguardLibraryJars(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar"),
             firstFromJavaHomeThatExists("lib/jsse.jar", "../Classes/jsse.jar"),
@@ -88,7 +90,6 @@ dependencies {
     proguardLibraryJars(projectDist(":kotlin-stdlib"))
     proguardLibraryJars(projectDist(":kotlin-script-runtime"))
     proguardLibraryJars(projectDist(":kotlin-reflect"))
-    proguardLibraryJars(preloadedDeps("kotlinx-coroutines-core"))
 }
 
 val packCompiler by task<ShadowJar> {
@@ -99,9 +100,9 @@ val packCompiler by task<ShadowJar> {
 
     setupPublicJar("before-proguard", "")
     from(fatJarContents)
-    ideaSdkDeps("jps-model.jar", subdir = "jps").forEach { from(it) { exclude("META-INF/services/**") } }
-    ideaSdkDeps("oromatcher").forEach { from(it) { exclude("META-INF/jb/** META-INF/LICENSE") } }
-    ideaSdkCoreDeps("jdom", "log4j").forEach { from(it) { exclude("META-INF/jb/** META-INF/LICENSE") } }
+    ideaSdkDeps("jps-model.jar", subdir = "jps").forEach { from(zipTree(it)) { exclude("META-INF/services/**") } }
+    ideaSdkDeps("oromatcher").forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }
+    ideaSdkCoreDeps("jdom", "log4j").forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }
 
     manifest.attributes.put("Class-Path", compilerManifestClassPath)
     manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
