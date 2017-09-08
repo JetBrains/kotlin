@@ -56,9 +56,21 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("defaultAnnotationAppliedToType.kt")
+        public void testDefaultAnnotationAppliedToType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/defaultAnnotationAppliedToType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("springNullableWithTypeUse.kt")
         public void testSpringNullableWithTypeUse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/springNullableWithTypeUse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/typeArguments.kt");
             doTest(fileName);
         }
     }

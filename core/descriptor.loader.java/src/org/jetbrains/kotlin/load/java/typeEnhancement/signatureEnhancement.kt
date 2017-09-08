@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.computeNewDefaultTypeQualifiers
+import org.jetbrains.kotlin.load.java.lazy.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
@@ -109,7 +109,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         // Fake overrides with one overridden has been enhanced before
         if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE && original.overriddenDescriptors.size == 1) return this
 
-        val outerScopeQualifiers = c.computeNewDefaultTypeQualifiers(annotations)
+        val memberContext = c.copyWithNewDefaultTypeQualifiers(annotations)
 
         // When loading method as an override for a property, all annotations are stick to its getter
         val annotationOwnerForMember =
@@ -125,9 +125,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                                 annotationOwnerForMember.safeAs<FunctionDescriptor>()
                                     ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
                             isCovariant = false,
-                            defaultTopLevelQualifiers =
-                                outerScopeQualifiers
-                                        ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER)
+                            containerContext = memberContext,
+                            containerApplicabilityType = AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER
                     ) { it.extensionReceiverParameter!!.type }.enhance()
                 else null
 
@@ -148,9 +147,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             p ->
             parts(
                     typeContainer = p, isCovariant = false,
-                    defaultTopLevelQualifiers =
-                            outerScopeQualifiers
-                                    ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER)
+                    containerContext = memberContext,
+                    containerApplicabilityType = AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER
             ) { it.valueParameters[p.index].type }
                     .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
         }
@@ -158,15 +156,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         val returnTypeEnhancement =
                 parts(
                         typeContainer = annotationOwnerForMember, isCovariant = true,
-                        defaultTopLevelQualifiers =
-                            outerScopeQualifiers?.get(
-                                    if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
-                                        AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
-                                    else
-                                        AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
-                            )
-
-
+                        containerContext = memberContext,
+                        containerApplicabilityType =
+                            if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
+                                AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
+                            else
+                                AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
                 ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
         if ((receiverTypeEnhancement?.wereChanges ?: false)
@@ -183,7 +178,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             private val fromOverride: KotlinType,
             private val fromOverridden: Collection<KotlinType>,
             private val isCovariant: Boolean,
-            private val defaultTopLevelQualifiers: JavaTypeQualifiers?
+            private val containerContext: LazyJavaResolverContext,
+            private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
     ) {
         fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
             val qualifiers = computeIndexedQualifiersForOverride()
@@ -222,7 +218,10 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     isNotNullTypeParameter = unwrap() is NotNullTypeParameter)
         }
 
-        private fun KotlinType.extractQualifiersFromAnnotations(isHeadTypeConstructor: Boolean): JavaTypeQualifiers {
+        private fun KotlinType.extractQualifiersFromAnnotations(
+                isHeadTypeConstructor: Boolean,
+                defaultQualifiersForType: JavaTypeQualifiers?
+        ): JavaTypeQualifiers {
             val composedAnnotation =
                     if (isHeadTypeConstructor && typeContainer != null)
                         composeAnnotations(typeContainer.annotations, annotations)
@@ -234,7 +233,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
             fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
-            val defaultTypeQualifier = defaultTopLevelQualifiers?.takeIf { isHeadTypeConstructor }
+            val defaultTypeQualifier =
+                    if (isHeadTypeConstructor)
+                        containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
+                    else
+                        defaultQualifiersForType
+
             val nullabilityInfo =
                     composedAnnotation.extractNullability()
                     ?: defaultTypeQualifier?.nullability?.let {
@@ -263,24 +267,6 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 this.firstNotNullResult(this@SignatureEnhancement::extractNullability)
 
         private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
-            fun KotlinType.toIndexed(): List<KotlinType> {
-                val list = ArrayList<KotlinType>(1)
-
-                fun add(type: KotlinType) {
-                    list.add(type)
-                    for (arg in type.arguments) {
-                        if (arg.isStarProjection) {
-                            list.add(arg.type)
-                        }
-                        else {
-                            add(arg.type)
-                        }
-                    }
-                }
-
-                add(this)
-                return list
-            }
 
             val indexedFromSupertypes = fromOverridden.map { it.toIndexed() }
             val indexedThisType = fromOverride.toIndexed()
@@ -298,18 +284,49 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 val isHeadTypeConstructor = index == 0
                 assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
 
-                val qualifiers = indexedThisType[index]
-                val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index) }
+                val (qualifiers, defaultQualifiers) = indexedThisType[index]
+                val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
 
                 // Only the head type constructor is safely co-variant
-                qualifiers.computeQualifiersForOverride(verticalSlice, isHeadTypeConstructor)
+                qualifiers.computeQualifiersForOverride(verticalSlice, defaultQualifiers, isHeadTypeConstructor)
             }
 
             return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
         }
 
+
+        private fun KotlinType.toIndexed(): List<TypeAndDefaultQualifiers> {
+            val list = ArrayList<TypeAndDefaultQualifiers>(1)
+
+            fun add(type: KotlinType, ownerContext: LazyJavaResolverContext) {
+                val c = ownerContext.copyWithNewDefaultTypeQualifiers(type.annotations)
+
+                list.add(
+                        TypeAndDefaultQualifiers(
+                                type,
+                                c.defaultTypeQualifiers
+                                        ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE)
+                        )
+                )
+
+                for (arg in type.arguments) {
+                    if (arg.isStarProjection) {
+                        // TODO: sort out how to handle wildcards
+                        list.add(TypeAndDefaultQualifiers(arg.type, null))
+                    }
+                    else {
+                        add(arg.type, c)
+                    }
+                }
+            }
+
+            add(this, containerContext)
+            return list
+        }
+
         private fun KotlinType.computeQualifiersForOverride(
                 fromSupertypes: Collection<KotlinType>,
+                defaultQualifiersForType: JavaTypeQualifiers?,
                 isHeadTypeConstructor: Boolean
         ): JavaTypeQualifiers {
             val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
@@ -319,7 +336,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     .mapNotNull { it.unwrapEnhancement().extractQualifiers().nullability }
                     .toSet()
 
-            val own = extractQualifiersFromAnnotations(isHeadTypeConstructor)
+            val own = extractQualifiersFromAnnotations(isHeadTypeConstructor, defaultQualifiersForType)
             val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
             val ownNullabilityForWarning = own.nullability
 
@@ -355,7 +372,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     private fun <D : CallableMemberDescriptor> D.parts(
             typeContainer: Annotated?,
             isCovariant: Boolean,
-            defaultTopLevelQualifiers: JavaTypeQualifiers?,
+            containerContext: LazyJavaResolverContext,
+            containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
             collector: (CallableMemberDescriptor) -> KotlinType
     ): SignatureParts {
         return SignatureParts(
@@ -365,7 +383,9 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     collector(it)
                 },
                 isCovariant,
-                defaultTopLevelQualifiers
+                // recompute default type qualifiers using type annotations
+                containerContext.copyWithNewDefaultTypeQualifiers(collector(this).annotations),
+                containerApplicabilityType
         )
     }
 
@@ -402,3 +422,8 @@ private fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovar
             NullabilityQualifier.FORCE_FLEXIBILITY
         else
             select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own, isCovariant)
+
+private data class TypeAndDefaultQualifiers(
+        val type: KotlinType,
+        val defaultQualifiers: JavaTypeQualifiers?
+)

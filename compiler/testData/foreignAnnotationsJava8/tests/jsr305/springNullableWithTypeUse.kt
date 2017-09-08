@@ -78,5 +78,5 @@ fun main(a: A) {
 
     a.baz()<!UNSAFE_CALL!>.<!>get(0)
     a.baz()!!.get(0).get(0)
-    a.baz()!!.get(0)?.get(0)
+    a.baz()!!.get(0)<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)
 }
