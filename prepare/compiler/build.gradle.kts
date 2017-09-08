@@ -18,7 +18,7 @@ buildscript {
 }
 
 plugins {
-    `java-base`
+    `java`
 }
 
 // Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build
@@ -32,6 +32,7 @@ val proguardLibraryJars by configurations.creating
 val fatJar by configurations.creating
 val compilerJar by configurations.creating
 val archives by configurations
+val compile by configurations
 
 val compilerBaseName = name
 
@@ -90,6 +91,10 @@ dependencies {
     proguardLibraryJars(projectDist(":kotlin-stdlib"))
     proguardLibraryJars(projectDist(":kotlin-script-runtime"))
     proguardLibraryJars(projectDist(":kotlin-reflect"))
+
+    compile(project(":kotlin-stdlib"))
+    compile(project(":kotlin-script-runtime"))
+    compile(project(":kotlin-reflect"))
 }
 
 val packCompiler by task<ShadowJar> {

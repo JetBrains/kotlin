@@ -13,6 +13,10 @@ buildscript {
     }
 }
 
+plugins {
+    `java`
+}
+
 val compilerJar by configurations.creating
 
 val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
@@ -30,7 +34,13 @@ val packagesToRelocate =
                "org.fusesource")
 
 dependencies {
+    val compile by configurations
+
     compilerJar(projectDist(":kotlin-compiler"))
+
+    compile(project(":kotlin-stdlib"))
+    compile(project(":kotlin-script-runtime"))
+    compile(project(":kotlin-reflect"))
 }
 
 runtimeJar(task<ShadowJar>("embeddable")) {
