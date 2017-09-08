@@ -2534,6 +2534,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return generateThisOrOuter(calleeContainingClass, isSuper, false);
     }
 
+    private boolean isInInnerClassConstructorContext(@NotNull ClassDescriptor calleeContainingClass) {
+        if (!(context instanceof ConstructorContext)) return false;
+
+        CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
+        assert contextDescriptor instanceof ConstructorDescriptor :
+                "Constructor descriptor expected: " + contextDescriptor;
+        ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) contextDescriptor;
+
+        ClassDescriptor classDescriptor = constructorDescriptor.getConstructedClass();
+        if (!classDescriptor.isInner()) return false;
+
+        while (classDescriptor != null && classDescriptor.isInner()) {
+            classDescriptor = DescriptorUtils.getContainingClass(classDescriptor);
+        }
+        return classDescriptor == calleeContainingClass;
+    }
+
     @NotNull
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
@@ -2543,7 +2560,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else if (isEnumEntry(calleeContainingClass)) {
-                return StackValue.enumEntry(calleeContainingClass, typeMapper);
+                if (!isInInnerClassConstructorContext(calleeContainingClass)) {
+                    return StackValue.enumEntry(calleeContainingClass, typeMapper);
+                }
+                // else fall-through
             }
             else {
                 return StackValue.singleton(calleeContainingClass, typeMapper);
