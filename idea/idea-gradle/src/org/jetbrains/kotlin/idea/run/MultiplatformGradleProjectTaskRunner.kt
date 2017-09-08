@@ -108,22 +108,23 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
     override fun addCustomModuleRoots(type: OrderRootType, rootModel: ModuleRootModel, result: MutableCollection<String>, includeProduction: Boolean, includeTests: Boolean): Boolean {
         if (type != OrderRootType.CLASSES) return false
         if (!ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, rootModel.module)) return false
-        if (GradleSystemRunningSettings.getInstance().isUseGradleAwareMake) return false
 
-        val gradleProjectPath = ExternalSystemModulePropertyManager.getInstance(rootModel.module).getRootProjectPath() ?: return false
-        val externalProjectDataCache = ExternalProjectDataCache.getInstance(rootModel.module.project)!!
-        val externalRootProject = externalProjectDataCache.getRootExternalProject(GradleConstants.SYSTEM_ID,
-                                                                                  File(gradleProjectPath)) ?: return false
+        if (!GradleSystemRunningSettings.getInstance().isUseGradleAwareMake) {
+            val gradleProjectPath = ExternalSystemModulePropertyManager.getInstance(rootModel.module).getRootProjectPath() ?: return false
+            val externalProjectDataCache = ExternalProjectDataCache.getInstance(rootModel.module.project)!!
+            val externalRootProject = externalProjectDataCache.getRootExternalProject(GradleConstants.SYSTEM_ID,
+                                                                                      File(gradleProjectPath)) ?: return false
 
-        val externalSourceSets = externalProjectDataCache.findExternalProject(externalRootProject, rootModel.module)
-        if (externalSourceSets.isEmpty()) return false
+            val externalSourceSets = externalProjectDataCache.findExternalProject(externalRootProject, rootModel.module)
+            if (externalSourceSets.isEmpty()) return false
 
-        for (sourceSet in externalSourceSets.values) {
-            if (includeTests) {
-                addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.TEST], result)
-            }
-            if (includeProduction) {
-                addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.SOURCE], result)
+            for (sourceSet in externalSourceSets.values) {
+                if (includeTests) {
+                    addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.TEST], result)
+                }
+                if (includeProduction) {
+                    addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.SOURCE], result)
+                }
             }
         }
 
