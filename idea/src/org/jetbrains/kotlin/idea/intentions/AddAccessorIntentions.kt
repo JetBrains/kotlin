@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtProperty
@@ -32,10 +34,12 @@ abstract class AbstractAddAccessorsIntention(
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (element.isLocal || element.isAbstract() || element.hasDelegate() ||
             element.hasModifier(KtTokens.LATEINIT_KEYWORD) ||
-            element.hasModifier(KtTokens.HEADER_KEYWORD) ||
             element.hasModifier(KtTokens.CONST_KEYWORD)) {
             return null
         }
+        val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return null
+        if (descriptor.isHeader) return null
+
         if (addSetter && (!element.isVar || element.setter != null)) return null
         if (addGetter && element.getter != null) return null
         return element.nameIdentifier?.textRange
