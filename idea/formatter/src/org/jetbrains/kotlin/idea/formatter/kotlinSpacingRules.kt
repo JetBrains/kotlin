@@ -319,6 +319,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(IDENTIFIER, PROPERTY_DELEGATE, PROPERTY).spaces(1)
 
             before(INDICES).spaces(0)
+            before(WHERE_KEYWORD).spaces(1)
         }
         custom {
 
