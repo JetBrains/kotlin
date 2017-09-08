@@ -107,3 +107,8 @@ projectTest {
 testsJar {}
 
 classesDirsArtifact()
+
+
+task("uploadArchives") {
+    // hides rule-based task with the same name, which appears to be broken in this project
+}

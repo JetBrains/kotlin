@@ -18,7 +18,7 @@ import java.io.File
 fun Project.classesDirsArtifact(): FileCollection {
     val classesDirsCfg = configurations.getOrCreate("classes-dirs")
 
-    val classesDirs =  the<JavaPluginConvention>().sourceSets["main"].output.classesDirs
+    val classesDirs = the<JavaPluginConvention>().sourceSets["main"].output.classesDirs
 
     val classesTask = tasks["classes"]
 

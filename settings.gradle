@@ -105,7 +105,6 @@ include ":kotlin-build-common",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
         ":kotlin-compiler-client-embeddable",
-        ":kotlin-daemon-client",
         ":kotlin-reflect",
         ":kotlin-ant",
         ":compiler:tests-java8",
@@ -154,7 +153,6 @@ project(':kotlin-reflect').projectDir = "$rootDir/libraries/tools/kotlin-reflect
 project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
-project(':kotlin-daemon-client').projectDir = "$rootDir/prepare/daemon-client" as File
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File

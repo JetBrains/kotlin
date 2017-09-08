@@ -28,3 +28,4 @@ sourcesJar()
 
 dist()
 
+publish()
