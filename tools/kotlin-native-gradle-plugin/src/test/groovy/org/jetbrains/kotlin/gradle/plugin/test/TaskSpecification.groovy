@@ -1,10 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import spock.lang.Specification
-
 
 class TaskSpecification extends BaseKonanSpecification {
 
@@ -90,5 +87,36 @@ class TaskSpecification extends BaseKonanSpecification {
         result.output.findAll(~/FRONTEND:\s+\d+\s+msec/).size() == 1
         result.output.findAll(~/BACKEND:\s+\d+\s+msec/).size() == 1
         result.output.findAll(~/LINK_STAGE:\s+\d+\s+msec/).size() == 1
+    }
+
+    BuildResult failOnPropertyAccess(String property) {
+        def project = KonanInteropProject.createEmpty(projectDirectory)
+         project.buildFile.append("""
+            task testTask(type: DefaultTask) {
+                doLast {
+                    println(${project.defaultInteropConfig()}.$property)
+                }
+            }
+        """.stripIndent())
+        return project.createRunner().withArguments("testTask").buildAndFail()
+    }
+
+    BuildResult failOnTaskAccess(String task) {
+        def project = KonanInteropProject.createEmpty(projectDirectory)
+        project.buildFile.append("""
+            task testTask(type: DefaultTask) {
+                dependsOn $task
+            }
+        """.stripIndent())
+        return project.createRunner().withArguments("testTask").buildAndFail()
+    }
+
+    def 'Deprecated properties/tasks should generate exceptions'() {
+        expect:
+        failOnPropertyAccess("generateStubsTask")
+        failOnPropertyAccess("compileStubsTask")
+        failOnPropertyAccess("compileStubsConfig")
+        failOnTaskAccess("gen${KonanInteropProject.DEFAULT_INTEROP_NAME.capitalize()}InteropStubs")
+        failOnTaskAccess("compile${KonanInteropProject.DEFAULT_INTEROP_NAME.capitalize()}InteropStubs")
     }
 }

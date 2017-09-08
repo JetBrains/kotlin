@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -110,13 +111,37 @@ open class KonanInteropConfig(
 
     // Child tasks ------------------------------------------------------------
 
+    // TODO: Remove dummy tasks and properties in 0.5
+    val generateStubsTask: KonanInteropTask
+        get() = throw NotImplementedError("This property is not supported now. Use interopProcessingTask instead.")
+    val compileStubsTask: KonanCompileTask
+        get() = throw NotImplementedError("This property is not supported now. Use interopProcessingTask instead.")
+    val compileStubsConfig: KonanCompileConfig
+        get() = throw NotImplementedError("This property is not supported now.")
+
+    open class DummyTask: DefaultTask() {
+        var replacementName: String = ""
+
+        @TaskAction
+        fun doAction(): Unit = throw NotImplementedError("This task is not supported now. Use $replacementName instead.")
+    }
+
     // Task to process the library and generate stubs
     val interopProcessingTask: KonanInteropTask = project.tasks.create(
             "process${name.capitalize()}Interop",
             KonanInteropTask::class.java) {
         it.init(name)
         it.group = BasePlugin.BUILD_GROUP
-        it.description = "Generates stubs for the Kotlin/Native interop '$name'"
+        it.description = "Generates a klib for the Kotlin/Native interop '$name'"
+    }
+
+    init {
+        val dummyGenerateStubsTask = project.tasks.create(
+                "gen${name.capitalize()}InteropStubs",
+                DummyTask::class.java) { it.replacementName = interopProcessingTask.name }
+        val dummyCompileStubsTask = project.tasks.create(
+                "compile${name.capitalize()}InteropStubs",
+                DummyTask::class.java) { it.replacementName = interopProcessingTask.name }
     }
 
     // DSL methods ------------------------------------------------------------

@@ -193,6 +193,14 @@ class KonanProject {
         return ":compileKonan${artifactName.capitalize()}"
     }
 
+    String defaultArtifactConfig() {
+        return artifactConfig(DEFAULT_ARTIFACT_NAME)
+    }
+
+    String artifactConfig(String artifactName) {
+        return "konanArtifacts['$artifactName']"
+    }
+
     /** Creates a project with default build and source files. */
     static KonanProject create(File projectDir) {
         return createEmpty(projectDir) {
@@ -273,7 +281,7 @@ class KonanInteropProject extends KonanProject {
             }
             """.stripIndent()
         )
-        interopTasks = [defaultStubGenerationTask()]
+        interopTasks = [defaultInteropProcessingTask()]
         compilationTasks = [defaultCompilationTask(), ":compileKonan", ":build"]
         return result
     }
@@ -308,12 +316,20 @@ class KonanInteropProject extends KonanProject {
         addSetting("konanInterop", interopName, parameter, value)
     }
 
-    String defaultStubGenerationTask() {
-        return stubGenerationTask(DEFAULT_INTEROP_NAME)
+    String defaultInteropProcessingTask() {
+        return interopProcessingTask(DEFAULT_INTEROP_NAME)
     }
 
-    String stubGenerationTask(String interopName) {
+    String interopProcessingTask(String interopName) {
         return ":process${interopName.capitalize()}Interop"
+    }
+
+    String defaultInteropConfig() {
+        return interopConfig(DEFAULT_INTEROP_NAME)
+    }
+
+    String interopConfig(String interopName) {
+        return "konanInterop[$interopName]"
     }
 
     /** Creates a project with default build, source and def files. */

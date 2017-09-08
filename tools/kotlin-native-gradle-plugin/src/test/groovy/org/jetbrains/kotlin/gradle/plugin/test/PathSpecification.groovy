@@ -1,10 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import spock.lang.Specification
-
 
 class PathSpecification extends BaseKonanSpecification {
 
@@ -39,7 +35,7 @@ class PathSpecification extends BaseKonanSpecification {
         def result = project.createRunner().withArguments('build').buildAndFail()
 
         then:
-        result.task(project.defaultStubGenerationTask()).outcome == TaskOutcome.FAILED
+        result.task(project.defaultInteropProcessingTask()).outcome == TaskOutcome.FAILED
     }
 
 }
