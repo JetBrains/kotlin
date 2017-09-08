@@ -27,3 +27,4 @@ dist()
 
 ideaPlugin()
 
+publish()
