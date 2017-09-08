@@ -318,8 +318,9 @@ task performance(type: GradleBuild) {
     tasks = ['build', 'bench']
 
     doFirst {
-        startParameter.projectProperties['konanPluginClasspath'] =
-                project(':tools:kotlin-native-gradle-plugin').tasks.getByName('jar').archivePath.canonicalPath
+        startParameter.projectProperties = [
+                'konanPluginClasspath' : project(':tools:kotlin-native-gradle-plugin').tasks.getByName('jar').archivePath.canonicalPath,
+                'exe_suffix': TargetManager.host.getProgramSuffix()]
     }
 }
 
