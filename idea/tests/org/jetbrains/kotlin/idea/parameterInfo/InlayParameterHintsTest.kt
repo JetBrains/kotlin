@@ -160,4 +160,16 @@ annotation class ManyArgs(val name: String, val surname: String)
 @ManyArgs(<hint text="name:"/>"Ilya", <hint text="surname:"/>"Sergey") class AnnotatedMuch
 """)
     }
+
+    fun `test functional type`() {
+        check("""
+            fun <T> T.test(block: (T) -> Unit) = block(this)
+        """)
+    }
+
+    fun `test functional type with parameter name`() {
+        check("""
+            fun <T> T.test(block: (receiver: T, Int) -> Unit) = block(<hint text="receiver:"/>this, 0)
+        """)
+    }
 }
