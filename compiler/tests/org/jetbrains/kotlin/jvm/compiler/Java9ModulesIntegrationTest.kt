@@ -38,6 +38,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
         val kotlinOptions = mutableListOf(
                 "-jdk-home", jdk9Home.path,
+                "-jvm-target", "1.8",
                 "-Xmodule-path=$paths"
         )
         if (addModules.isNotEmpty()) {
@@ -251,5 +252,9 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         module("unnamed")
         module("namedWithExplicitDependency")
         module("namedWithoutExplicitDependency")
+    }
+
+    fun testDependencyOnStdlibJdk78() {
+        module("usage", listOf(File("dist/kotlinc/lib/kotlin-stdlib-jdk7.jar"), File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar")))
     }
 }
