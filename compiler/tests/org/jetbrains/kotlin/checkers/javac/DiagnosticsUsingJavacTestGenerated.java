@@ -11872,6 +11872,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("innerClassInEnumEntryClass_lv13.kt")
+            public void testInnerClassInEnumEntryClass_lv13() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/innerClassInEnumEntryClass_lv13.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InnerClassNameClash.kt")
             public void testInnerClassNameClash() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/InnerClassNameClash.kt");

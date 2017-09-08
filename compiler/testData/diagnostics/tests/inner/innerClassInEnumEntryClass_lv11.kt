@@ -1,16 +1,16 @@
-// !LANGUAGE: -InnerClassInEnumEntryClass
+// !LANGUAGE: -InnerClassInEnumEntryClass -NestedClassesInEnumEntryShouldBeInner
 
 enum class Enum {
     ENTRY_WITH_CLASS {
         <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class TestInner
 
-        class TestNested
+        <!NESTED_CLASS_NOT_ALLOWED_SINCE_1_3!>class TestNested<!>
 
-        interface TestInterface
+        <!NESTED_CLASS_NOT_ALLOWED_SINCE_1_3!>interface TestInterface<!>
 
-        object TestObject
+        <!NESTED_CLASS_NOT_ALLOWED_SINCE_1_3!>object TestObject<!>
 
-        enum class TestEnumClass {
+        <!NESTED_CLASS_NOT_ALLOWED_SINCE_1_3!>enum class TestEnumClass<!> {
             OTHER_ENTRY
         }
 

@@ -63,6 +63,7 @@ enum class LanguageFeature(
     CallableReferencesToClassMembersWithEmptyLHS(KOTLIN_1_2),
 
     RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3),
+    NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3),
 
     // Experimental features
 

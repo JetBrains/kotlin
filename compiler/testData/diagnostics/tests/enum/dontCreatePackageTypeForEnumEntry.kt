@@ -1,7 +1,7 @@
 enum class E {
     FIRST,
     SECOND {
-        class A
+        <!NESTED_CLASS_NOT_ALLOWED_SINCE_1_3!>class A<!>
     };
 }
 

@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
@@ -199,6 +200,17 @@ public class ModifiersChecker {
             // Local enums / objects / companion objects are handled in different checks
             if ((kind == DetailedClassKind.ENUM_CLASS || kind == DetailedClassKind.OBJECT || kind == DetailedClassKind.COMPANION_OBJECT) &&
                 DescriptorUtils.isLocal(classDescriptor)) {
+                return;
+            }
+
+            // Since 1.3, enum entries can contain inner classes only.
+            // Companion objects are reported in ModifierCheckerCore.
+            if (DescriptorUtils.isEnumEntry(containingClass) && !classDescriptor.isInner() && kind != DetailedClassKind.COMPANION_OBJECT) {
+                DiagnosticFactory1<KtClassOrObject, String> diagnostic =
+                        languageVersionSettings.supportsFeature(LanguageFeature.NestedClassesInEnumEntryShouldBeInner)
+                        ? NESTED_CLASS_NOT_ALLOWED
+                        : NESTED_CLASS_NOT_ALLOWED_SINCE_1_3;
+                trace.report(diagnostic.on(ktClassOrObject, kind.withCapitalFirstLetter));
                 return;
             }
 
