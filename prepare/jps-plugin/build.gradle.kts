@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:2.0.1")
+        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     }
 }
 

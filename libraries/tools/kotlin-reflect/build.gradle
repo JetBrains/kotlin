@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.sf.proguard:proguard-gradle:5.2.1'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath "com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}"
     }
 }
 
