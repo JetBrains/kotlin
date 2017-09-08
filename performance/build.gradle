@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.konan.target.KonanTarget
-
-//evaluationDependsOn(":tools:kotlin-native-gradle-plugin")
-
 buildscript {
     def rootProperties = new Properties()
     rootProperties.load(new FileReader(project.file('../gradle.properties')))
