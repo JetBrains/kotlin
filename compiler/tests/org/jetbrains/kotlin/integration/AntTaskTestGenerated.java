@@ -132,6 +132,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("stdlibJre78AndStdlibJdk78")
+    public void testStdlibJre78AndStdlibJdk78() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/stdlibJre78AndStdlibJdk78/");
+        doTest(fileName);
+    }
+
     @TestMetadata("suppressWarnings")
     public void testSuppressWarnings() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/suppressWarnings/");

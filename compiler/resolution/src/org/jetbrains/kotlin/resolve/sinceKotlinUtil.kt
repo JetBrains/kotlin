@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 
-internal val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")
+val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")
 
 /**
  * @return true if the descriptor is accessible according to [languageVersionSettings], or false otherwise. The [actionIfInaccessible]
  * callback is called with the version specified in the [SinceKotlin] annotation if the descriptor is inaccessible.
  */
-internal fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(
+fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(
         languageVersionSettings: LanguageVersionSettings,
         actionIfInaccessible: ((ApiVersion) -> Unit)? = null
 ): Boolean {
