@@ -149,6 +149,8 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, "Inline lambda parameters of suspend function type are not fully supported. Add 'noinline' modifier.");
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
+        MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE,
+                "Use of this annotation with target ''type'' and use site target ''@{0}'' is deprecated", TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
         MAP.put(NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION, "The lambda expression here is an inlined argument so this annotation cannot be stored anywhere");
 

@@ -1688,6 +1688,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("wrongParamAnnotationsOnTypesError.kt")
+                public void testWrongParamAnnotationsOnTypesError() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypesError.kt");
+                    doTest(fileName);
+                }
             }
         }
 

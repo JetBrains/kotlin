@@ -64,6 +64,7 @@ enum class LanguageFeature(
 
     RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3),
     NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3),
+    RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3),
 
     // Experimental features
 
