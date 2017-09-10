@@ -69,6 +69,7 @@ include ":kotlin-build-common",
         ":j2k",
         ":plugins:lint",
         ":android-extensions-compiler",
+        ":kotlin-android-extensions-runtime",
         ":plugins:android-extensions-ide",
         ":plugins:android-extensions-jps",
         ":kotlin-allopen-compiler-plugin",
@@ -166,6 +167,7 @@ project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as 
 project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
 project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
 project(':android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
+project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
 project(':android-lint').projectDir = "$rootDir/prepare/android-lint" as File

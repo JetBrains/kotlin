@@ -41,3 +41,8 @@ def originalSrc = "$kotlin_root/plugins/sam-with-receiver/sam-with-receiver-cli/
 jar {
     from(originalSrc) { include("META-INF/**") }
 }
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

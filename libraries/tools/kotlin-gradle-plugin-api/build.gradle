@@ -15,3 +15,8 @@ dependencies {
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
     compileOnly 'com.android.tools.build:gradle:0.4.2'
 }
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

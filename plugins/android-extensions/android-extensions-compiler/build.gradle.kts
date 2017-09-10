@@ -3,6 +3,8 @@ description = "Kotlin Android Extensions Compiler"
 
 apply { plugin("kotlin") }
 
+val packIntoJar by configurations.creating
+
 dependencies {
     compile(ideaSdkCoreDeps("intellij-core"))
     compile(project(":compiler:util"))
@@ -10,21 +12,19 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:backend"))
-    compile(ideaPluginDeps("layoutlib", plugin = "android"))
+    compileOnly(project(":kotlin-android-extensions-runtime"))
+    packIntoJar(projectClasses(":kotlin-android-extensions-runtime"))
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-        java.srcDir("../android-extensions-runtime/src")
-    }
+    "main" { projectDefault() }
     "test" {}
 }
 
-runtimeJar ()
+runtimeJar {
+    from(packIntoJar)
+}
 
 dist()
 
 ideaPlugin()
-
-publish()

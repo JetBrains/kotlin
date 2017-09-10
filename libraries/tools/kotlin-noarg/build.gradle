@@ -42,6 +42,11 @@ jar {
     from(originalSrc) { include("META-INF/**") }
 }
 
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 pluginBundle {
     plugins {
         kotlinNoargPlugin {

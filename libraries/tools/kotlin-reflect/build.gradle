@@ -19,7 +19,7 @@ configureJvm6Project(project)
 configurePublishing(project)
 
 
-def core = "${rootDir}//core"
+def core = "${rootDir}/core"
 def annotationsSrc = "${buildDir}/annotations"
 def relocatedCoreSrc = "${buildDir}/core-relocated"
 

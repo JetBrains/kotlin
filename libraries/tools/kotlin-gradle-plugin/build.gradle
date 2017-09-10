@@ -84,6 +84,11 @@ jar {
     from sourceSets.agp25.output.classesDir
 }
 
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 test.executable = "${JDK_18}/bin/java"
 
 dokka {
