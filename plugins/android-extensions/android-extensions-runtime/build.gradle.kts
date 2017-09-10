@@ -31,6 +31,4 @@ sourceSets {
 
 runtimeJar ()
 
-classesDirsArtifact()
-
 publish()

@@ -15,6 +15,8 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 
+// can be used now only for the non-published projects, due to conflicts in the "archives" config
+// TODO: fix the problem above
 fun Project.classesDirsArtifact(): FileCollection {
     val classesDirsCfg = configurations.getOrCreate("classes-dirs")
 

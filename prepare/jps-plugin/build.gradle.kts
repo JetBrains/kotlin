@@ -20,7 +20,7 @@ plugins {
 val projectsToShadow = listOf(
         ":kotlin-build-common",
         ":compiler:cli-common",
-        ":compiler:compiler-runner",
+        ":kotlin-compiler-runner",
         ":kotlin-daemon-client",
         ":compiler:daemon-common",
         ":core",

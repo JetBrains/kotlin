@@ -16,3 +16,4 @@ sourceSets {
     "test" {}
 }
 
+classesDirsArtifact()

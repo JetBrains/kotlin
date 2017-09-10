@@ -5,7 +5,7 @@ val compilerModules: Array<String> by rootProject.extra
 dependencies {
     compile(project(":kotlin-build-common"))
     compile(project(":core"))
-    compile(project(":compiler:compiler-runner"))
+    compile(project(":kotlin-compiler-runner"))
     compile(project(":compiler:daemon-common"))
     compile(projectDist(":kotlin-daemon-client"))
     compile(project(":compiler:frontend.java"))

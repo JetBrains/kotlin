@@ -33,7 +33,7 @@ dependencies {
     compile project(':android-extensions-compiler')
 //    compile project(path: ':compiler', configuration: 'embeddableCompilerJar')
     compile project(':kotlin-build-common')
-    compile project(':compiler:compiler-runner')
+    compile project(':kotlin-compiler-runner')
     compile project(":compiler:incremental-compilation-impl")
     compile project(":compiler:daemon")
     compile project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
