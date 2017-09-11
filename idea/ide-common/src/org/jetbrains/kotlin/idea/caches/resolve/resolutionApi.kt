@@ -34,18 +34,15 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-fun KtElement.getResolutionFacade(): ResolutionFacade {
-    return KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this))
-}
+fun KtElement.getResolutionFacade(): ResolutionFacade =
+        KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this))
 
-fun KtDeclaration.resolveToDescriptor(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): DeclarationDescriptor {
-    return getResolutionFacade().resolveToDescriptor(this, bodyResolveMode)
-}
+fun KtDeclaration.resolveToDescriptor(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): DeclarationDescriptor =
+        getResolutionFacade().resolveToDescriptor(this, bodyResolveMode)
 
 //TODO: BodyResolveMode.PARTIAL is not quite safe!
-fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? {
-    return analyze(bodyResolveMode).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
-}
+fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? =
+        analyze(bodyResolveMode).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 
 fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()
@@ -60,31 +57,25 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
 // Element body analysis, if any, is not guaranteed
 // For compiler-compatible analysis, analyzeFully is recommended
 // See ResolveSessionForBodies, ResolveElementCache
-@JvmOverloads fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
-    return getResolutionFacade().analyze(this, bodyResolveMode)
-}
+@JvmOverloads fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext =
+        getResolutionFacade().analyze(this, bodyResolveMode)
 
 fun KtElement.analyzeAndGetResult(): AnalysisResult {
     val resolutionFacade = getResolutionFacade()
     return AnalysisResult.success(resolutionFacade.analyze(this), resolutionFacade.moduleDescriptor)
 }
 
-fun KtElement.findModuleDescriptor(): ModuleDescriptor {
-    return getResolutionFacade().moduleDescriptor
-}
+fun KtElement.findModuleDescriptor(): ModuleDescriptor = getResolutionFacade().moduleDescriptor
 
 // This and next function are expected to produce the same result as compiler
 // for the given element and its children (including diagnostics, trace slices, descriptors, etc.)
 // Not recommended to call both of them without real need
 // See also KotlinResolveCache, KotlinResolveDataProvider
 // In the future should be unified with 'analyze`
-fun KtElement.analyzeFully(): BindingContext {
-    return analyzeFullyAndGetResult().bindingContext
-}
+fun KtElement.analyzeFully(): BindingContext = analyzeFullyAndGetResult().bindingContext
 
-fun KtElement.analyzeFullyAndGetResult(vararg extraFiles: KtFile): AnalysisResult {
-    return KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
-}
+fun KtElement.analyzeFullyAndGetResult(vararg extraFiles: KtFile): AnalysisResult =
+        KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
 
 // this method don't check visibility and collect all descriptors with given fqName
 fun ResolutionFacade.resolveImportReference(
