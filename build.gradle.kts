@@ -142,11 +142,20 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
 val ideaPluginDir: File by rootProject.extra
 val ideaUltimatePluginDir: File by rootProject.extra
 
-task<Copy>("idea-ultimate-plugin") {
+task<Copy>("ideaUltimatePlugin") {
     dependsOnTaskIfExistsRec("idea-plugin", rootProject)
     into(ideaUltimatePluginDir)
     from(ideaPluginDir) { exclude("lib/kotlin-plugin.jar") }
     from(jar, { into("lib") })
+}
+
+task("idea-ultimate-plugin") {
+    dependsOn("ideaUltimatePlugin")
+    doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
+}
+
+task("ideaUltimatePluginTest") {
+    dependsOn("check")
 }
 
 projectTest {
