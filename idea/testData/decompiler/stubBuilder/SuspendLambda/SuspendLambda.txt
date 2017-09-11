@@ -8,6 +8,117 @@ PsiJetFileStubImpl[package=test]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspend, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspend]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[suspend]
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=P]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Unit]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithAnnotation, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithAnnotation]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[suspend]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=A]
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=P]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Unit]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableParameter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableParameter]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[suspend]
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=test]
+                        REFERENCE_EXPRESSION[referencedName=P]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Unit]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableReceiver]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[suspend]
+            FUNCTION_TYPE
+              FUNCTION_TYPE_RECEIVER
+                TYPE_REFERENCE
+                  NULLABLE_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=RS]
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=P]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Unit]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithReceiver]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[suspend]
+            FUNCTION_TYPE
+              FUNCTION_TYPE_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=RS]
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=P]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=test.SuspendLambda.testCoroutine, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, name=testCoroutine]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
@@ -66,7 +177,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.createCoroutine, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=createCoroutine]
+      FUN[fqName=test.SuspendLambda.createCoroutine1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=createCoroutine1]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
@@ -94,7 +205,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.SuspendLambda.createCoroutine, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=createCoroutine]
+      FUN[fqName=test.SuspendLambda.createCoroutine2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=createCoroutine2]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
