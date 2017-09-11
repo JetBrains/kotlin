@@ -20,7 +20,7 @@ dependencies {
 
     compile project(':kotlin-stdlib')
     compileOnly project(':compiler')
-    compile project(':plugins:sam-with-receiver-cli')
+    compile project(':kotlin-sam-with-receiver-compiler-plugin')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }

@@ -1,30 +1,32 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin AllOpen Compiler Plugin"
 
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
-    compile(ideaSdkCoreDeps("intellij-core"))
-    compile(project(":compiler:plugin-api"))
-    compile(project(":compiler:frontend"))
+    val compileOnly by configurations
+    val runtime by configurations
+    compileOnly(ideaSdkCoreDeps("intellij-core"))
+    compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:frontend"))
+    runtime(project(":kotlin-compiler", configuration = "runtimeJar"))
+    runtime(project(":kotlin-stdlib"))
 }
 
 configureKotlinProjectSourcesDefault()
 configureKotlinProjectNoTests()
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin AllOpen Compiler Plugin")
+val jar = runtimeJar {
     from(fileTree("$projectDir/src")) { include("META-INF/**") }
-    archiveName = "allopen-compiler-plugin.jar"
 }
 
 dist {
     from(jar)
+    rename("^kotlin-", "")
 }
 
 ideaPlugin {
     from(jar)
+    rename("^kotlin-", "")
 }
 

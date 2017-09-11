@@ -176,6 +176,10 @@ allprojects {
         kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", project.name)
     }
 
+    tasks.withType<Javadoc> {
+        enabled = false
+    }
+
     task<Jar>("javadocJar") {
         classifier = "javadoc"
     }

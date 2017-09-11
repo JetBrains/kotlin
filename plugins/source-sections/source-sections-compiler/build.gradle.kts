@@ -1,5 +1,5 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin SourceSections Compiler Plugin"
 
 apply { plugin("kotlin") }
 
@@ -9,9 +9,12 @@ dependencies {
     val testCompile by configurations
     val testCompileOnly by configurations
     val testRuntime by configurations
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.script"))
-    compile(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.script"))
+    compileOnly(project(":compiler:plugin-api"))
+    testCompile(project(":compiler:frontend"))
+    testCompile(project(":compiler:frontend.script"))
+    testCompile(project(":compiler:plugin-api"))
     testCompile(project(":compiler.tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
@@ -28,11 +31,11 @@ configureKotlinProjectResources("src") {
 }
 configureKotlinProjectTestsDefault()
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin SourceSections Compiler Plugin")
-    archiveName = "kotlin-source-sections-compiler-plugin.jar"
-}
+val jar = runtimeJar()
+sourcesJar()
+javadocJar()
+
+publish()
 
 dist {
     from(jar)

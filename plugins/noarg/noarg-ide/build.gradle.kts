@@ -5,7 +5,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     val compile by configurations
-    compile(project(":plugins:noarg-cli"))
+    compile(project(":kotlin-noarg-compiler-plugin"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))

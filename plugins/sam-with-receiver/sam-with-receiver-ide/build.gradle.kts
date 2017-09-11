@@ -4,7 +4,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     val compile by configurations
-    compile(project(":plugins:sam-with-receiver-cli"))
+    compile(project(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))

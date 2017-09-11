@@ -4,7 +4,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     val compile by configurations
-    compile(project(":plugins:allopen-cli"))
+    compile(project(":kotlin-allopen-compiler-plugin"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:cli-common"))

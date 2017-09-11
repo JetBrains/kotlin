@@ -1,6 +1,8 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+description = "Kotlin Compiler (embeddable)"
+
 buildscript {
     repositories {
         jcenter()
@@ -11,10 +13,7 @@ buildscript {
     }
 }
 
-val embedCfg = configurations.create("embed")
-val mainCfg = configurations.create("default")
-
-val embeddableCompilerBaseName: String by rootProject.extra
+val compilerJar by configurations.creating
 
 val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
@@ -31,16 +30,14 @@ val packagesToRelocate =
                "org.fusesource")
 
 dependencies {
-    embedCfg(project(":prepare:compiler", configuration = "default"))
+    compilerJar(project(":kotlin-compiler", configuration = "runtimeJar"))
 }
 
-val embeddableTask = task<ShadowJar>("prepare") {
+runtimeJar(task<ShadowJar>("embeddable")) {
     destinationDir = File(buildDir, "libs")
-    baseName = embeddableCompilerBaseName
-    configurations = listOf(mainCfg)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    dependsOn(":build-common:assemble", ":core:script.runtime:assemble")
-    from(embedCfg.files)
+//    dependsOn(":kotlin-compiler:proguard")
+    from(compilerJar)
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
     packagesToRelocate.forEach {
         relocate(it, "$kotlinEmbeddableRootPackage.$it")
@@ -51,9 +48,8 @@ val embeddableTask = task<ShadowJar>("prepare") {
     }
 }
 
-defaultTasks(embeddableTask.name)
+sourcesJar()
+javadocJar()
 
-artifacts.add(mainCfg.name, embeddableTask.outputs.files.singleFile) {
-    builtBy(embeddableTask)
-    classifier = ""
-}
+publish()
+

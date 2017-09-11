@@ -4,6 +4,8 @@ import proguard.gradle.ProGuardTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.file.DuplicatesStrategy
 
+description = "Kotlin Compiler"
+
 buildscript {
     repositories {
         jcenter()
@@ -15,22 +17,21 @@ buildscript {
     }
 }
 
-apply { plugin("maven") }
+plugins {
+    `java-base`
+}
 
 // Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build
 val shrink = true
-val bootstrapBuild = false
-
 val compilerManifestClassPath =
-    if (bootstrapBuild) "kotlin-runtime-internal-bootstrap.jar kotlin-reflect-internal-bootstrap.jar kotlin-script-runtime-internal-bootstrap.jar"
-    else "kotlin-runtime.jar kotlin-reflect.jar kotlin-script-runtime.jar"
+        "kotlin-runtime.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
-val ideaSdkCoreCfg = configurations.create("ideaSdk-core")
-val otherDepsCfg = configurations.create("other-deps")
-val proguardLibraryJarsCfg = configurations.create("library-jars")
-val mainCfg = configurations.create("default_")
-val packedCfg = configurations.create("packed")
-//val withBootstrapRuntimeCfg = configurations.create("withBootstrapRuntime")
+val fatJarContents by configurations.creating
+val fatSourcesJarContents by configurations.creating
+val proguardLibraryJars by configurations.creating
+val fatJar by configurations.creating
+val compilerJar by configurations.creating
+val archives by configurations
 
 val compilerBaseName: String by rootProject.extra
 
@@ -38,81 +39,113 @@ val outputJar = File(buildDir, "libs", "$compilerBaseName.jar")
 
 val javaHome = System.getProperty("java.home")
 
-val compilerProject = project(":compiler")
+val compilerModules: Array<String> by rootProject.extra
 
-dependencies {
-    ideaSdkCoreCfg(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
-    ideaSdkCoreCfg(ideaSdkDeps("jna-platform", "oromatcher"))
-    ideaSdkCoreCfg(ideaSdkDeps("jps-model.jar", subdir = "jps"))
-    otherDepsCfg(commonDep("javax.inject"))
-    otherDepsCfg(commonDep("org.jline", "jline"))
-    otherDepsCfg(protobufFull())
-    otherDepsCfg(commonDep("com.github.spullara.cli-parser", "cli-parser"))
-    otherDepsCfg(commonDep("com.google.code.findbugs", "jsr305"))
-    otherDepsCfg(commonDep("io.javaslang","javaslang"))
-    otherDepsCfg(preloadedDeps("json-org"))
-    buildVersion()
-    proguardLibraryJarsCfg(files("$javaHome/lib/rt.jar".takeIf { File(it).exists() } ?: "$javaHome/../Classes/classes.jar",
-                                 "$javaHome/lib/jsse.jar".takeIf { File(it).exists() } ?: "$javaHome/../Classes/jsse.jar"))
-    proguardLibraryJarsCfg(kotlinDep("stdlib"))
-    proguardLibraryJarsCfg(kotlinDep("script-runtime"))
-    proguardLibraryJarsCfg(kotlinDep("reflect"))
-    proguardLibraryJarsCfg(files("${System.getProperty("java.home")}/../lib/tools.jar"))
-//    proguardLibraryJarsCfg(project(":prepare:runtime", configuration = "default").apply { isTransitive = false })
-//    proguardLibraryJarsCfg(project(":prepare:reflect", configuration = "default").apply { isTransitive = false })
-//    proguardLibraryJarsCfg(project(":core:script.runtime").apply { isTransitive = false })
+val packagesToRelocate =
+        listOf("com.intellij",
+                "com.google",
+                "com.sampullara",
+                "org.apache",
+                "org.jdom",
+                "org.picocontainer",
+                "jline",
+                "gnu",
+                "javax.inject",
+                "org.fusesource")
+
+fun firstFromJavaHomeThatExists(vararg paths: String): File =
+        paths.mapNotNull { File(javaHome, it).takeIf { it.exists() } }.firstOrNull()
+                ?: throw GradleException("Cannot find under '$javaHome' neither of: ${paths.joinToString()}")
+
+compilerModules.forEach { evaluationDependsOn(it) }
+
+val compiledModulesSources = compilerModules.map {
+    project(it).the<JavaPluginConvention>().sourceSets.getByName("main").allSource
 }
 
-val packCompilerTask = task<ShadowJar>("internal.pack-compiler") {
-    configurations = listOf(packedCfg)
+dependencies {
+    compilerModules.forEach {
+        fatJarContents(project(it)) { isTransitive = false }
+    }
+    compiledModulesSources.forEach {
+        fatSourcesJarContents(it)
+    }
+//    buildVersion()
+
+    fatJarContents(project(":core:builtins", configuration = "builtins"))
+    fatJarContents(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
+    fatJarContents(ideaSdkDeps("jna-platform", "oromatcher"))
+    fatJarContents(ideaSdkDeps("jps-model.jar", subdir = "jps"))
+    fatJarContents(commonDep("javax.inject"))
+    fatJarContents(commonDep("org.jline", "jline"))
+    fatJarContents(protobufFull())
+    fatJarContents(commonDep("com.github.spullara.cli-parser", "cli-parser"))
+    fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
+    fatJarContents(commonDep("io.javaslang", "javaslang"))
+    fatJarContents(preloadedDeps("json-org"))
+
+    proguardLibraryJars(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar"),
+            firstFromJavaHomeThatExists("lib/jsse.jar", "../Classes/jsse.jar"),
+            firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")))
+    proguardLibraryJars(project(":kotlin-stdlib", configuration = "mainJar"))
+    proguardLibraryJars(project(":kotlin-script-runtime", configuration = "mainJar"))
+    proguardLibraryJars(project(":kotlin-reflect", configuration = "mainJar"))
+    proguardLibraryJars(preloadedDeps("kotlinx-coroutines-core"))
+
+//    proguardLibraryJars(project(":prepare:runtime", configuration = "default").apply { isTransitive = false })
+//    proguardLibraryJars(project(":prepare:reflect", configuration = "default").apply { isTransitive = false })
+//    proguardLibraryJars(project(":core:script.runtime").apply { isTransitive = false })
+}
+
+val packCompiler by task<ShadowJar> {
+    configurations = listOf(fatJar)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDir = File(buildDir, "libs")
-    baseName = compilerBaseName + "-before-shrink"
+//    baseName = compilerBaseName
     dependsOn(protobufFullTask)
-    setupRuntimeJar("Kotlin Compiler")
-    (rootProject.extra["compilerModules"] as Array<String>).forEach {
-        dependsOn("$it:classes")
-        from(project(it).getCompiledClasses())
-    }
-    from(ideaSdkCoreCfg.files)
-    from(otherDepsCfg.files)
-    from(project(":core:builtins").getResourceFiles()) { include("kotlin/**") }
+
+    setupPublicJar("before-proguard", "")
+    from(fatJarContents)
 
     manifest.attributes.put("Class-Path", compilerManifestClassPath)
     manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 }
 
-val proguardTask = task<ProGuardTask>("internal.proguard-compiler") {
-    dependsOn(packCompilerTask)
+val proguard by task<ProGuardTask> {
+    dependsOn(packCompiler)
     configuration("$rootDir/compiler/compiler.pro")
 
-    inputs.files(packCompilerTask.outputs.files.singleFile)
+    val outputJar = File(buildDir, "libs", "$compilerBaseName-after-proguard.jar")
+
+    inputs.files(packCompiler.outputs.files.singleFile)
     outputs.file(outputJar)
 
     // TODO: remove after dropping compatibility with ant build
     doFirst {
-        System.setProperty("kotlin-compiler-jar-before-shrink", packCompilerTask.outputs.files.singleFile.canonicalPath)
+        System.setProperty("kotlin-compiler-jar-before-shrink", packCompiler.outputs.files.singleFile.canonicalPath)
         System.setProperty("kotlin-compiler-jar", outputJar.canonicalPath)
     }
 
-    proguardLibraryJarsCfg.files.forEach { jar ->
-        libraryjars(jar)
-    }
+    libraryjars(proguardLibraryJars)
     printconfiguration("$buildDir/compiler.pro.dump")
 }
 
 dist {
     if (shrink) {
-        from(proguardTask)
+        from(proguard)
     } else {
-        from(packCompilerTask)
-        rename("-before-shrink", "")
+        from(packCompiler)
     }
+    rename(".*", compilerBaseName + ".jar")
 }
 
-artifacts.add(mainCfg.name, proguardTask.outputs.files.singleFile) {
-    builtBy(proguardTask)
+runtimeJarArtifactBy(proguard, proguard.outputs.files.singleFile) {
+    name = compilerBaseName
     classifier = ""
 }
+sourcesJar {
+    from(fatSourcesJarContents)
+}
+javadocJar()
 
-
+publish()

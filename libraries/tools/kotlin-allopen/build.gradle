@@ -13,8 +13,8 @@ dependencies {
     compile project(':kotlin-gradle-plugin-api')
 
     compile project(':kotlin-stdlib')
-    compileOnly project(path: ':compiler', configuration: 'embeddableCompilerJar')
-    compile project(':plugins:allopen-cli')
+    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    compile project(':kotlin-allopen-compiler-plugin')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
