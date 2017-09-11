@@ -1952,7 +1952,7 @@ task deserialized_members(type: LinkKonanTest) {
 
 task testing_smoke(type: RunKonanTest) {
     source = "testing/smoke.kt"
-    flags = [] // TODO: Add flag to generate test-runner
+    flags = ['-tr'] // TODO: Add flag to generate test-runner
 }
 
 // Just check that the driver is able to produce runnable binaries.

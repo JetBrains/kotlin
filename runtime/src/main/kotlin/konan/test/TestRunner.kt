@@ -1,6 +1,8 @@
 package konan.test
 
-class TestRunner(suites: Collection<TestSuite> = emptyList()) {
+import kotlin.AssertionError
+
+object TestRunner {
 
     object SimpleTestListener: TestListener {
         override fun pass(testCase: TestCase) = println("Pass: $testCase")
@@ -10,7 +12,7 @@ class TestRunner(suites: Collection<TestSuite> = emptyList()) {
 
     }
 
-    private val _suites = mutableListOf<TestSuite>().apply { addAll(suites) }
+    private val _suites = mutableListOf<TestSuite>()
     val suites: Collection<TestSuite>  get() = _suites
 
     fun register(suite: TestSuite) = _suites.add(suite)

@@ -1,5 +1,7 @@
 package konan.test
 
+import kotlin.AssertionError
+
 interface TestListener {
     fun pass(testCase: TestCase)
     fun fail(testCase: TestCase, e: AssertionError)

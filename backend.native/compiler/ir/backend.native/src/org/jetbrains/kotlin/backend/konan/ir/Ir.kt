@@ -21,13 +21,18 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.descriptors.getMemberScope
+import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import kotlin.properties.Delegates
 
 // This is what Context collects about IR.
@@ -164,4 +169,39 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
     val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
 
+    private fun getKonanTestClass(className: String) = symbolTable.referenceClass(
+            builtInsPackage("konan", "test").getContributedClassifier(
+                    Name.identifier(className), NoLookupLocation.FROM_BACKEND
+            ) as ClassDescriptor)
+
+    val abstractTestSuite = getKonanTestClass("AbstractTestSuite")
+    val baseClassSuite    = getKonanTestClass("BaseClassSuite")
+    val baseTopLevelSuite = getKonanTestClass("BaseTopLevelSuite")
+    val testFunctionKind = getKonanTestClass("TestFunctionKind")
+
+    // TODO: Optimize / rename
+    val registerTestCase = symbolTable.referenceFunction(abstractTestSuite.descriptor
+            .unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier("registerTestCase"), NoLookupLocation.FROM_BACKEND)
+            .single {
+                it.valueParameters.size == 2 &&
+                KotlinBuiltIns.isString(it.valueParameters[0].type)
+                /* TODO: Check if it.valueParameters[1] has a function type */
+            })
+
+    val registerFunction = symbolTable.referenceFunction(abstractTestSuite.descriptor
+            .unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier("registerFunction"), NoLookupLocation.FROM_BACKEND)
+            .single {
+                it.valueParameters.size == 2 &&
+                it.valueParameters[0].type == testFunctionKind.descriptor.defaultType
+                /* TODO: Check if it.valueParameters[1] has a function type */
+            })
+
+    private val testFunctionKindCache = mutableMapOf<TestProcessor.FunctionKind, IrEnumEntrySymbol>()
+    fun getTestFunctionKind(kind: TestProcessor.FunctionKind): IrEnumEntrySymbol = testFunctionKindCache.getOrPut(kind) {
+        symbolTable.referenceEnumEntry(testFunctionKind.descriptor.getMemberScope().getContributedClassifier(
+                kind.runtimeKindName, NoLookupLocation.FROM_BACKEND
+        ) as ClassDescriptor)
+    }
 }

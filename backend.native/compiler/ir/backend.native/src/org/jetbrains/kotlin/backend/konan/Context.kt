@@ -353,6 +353,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         return config.configuration.getBoolean(KonanConfigKeys.DEBUG)
     }
 
+    fun shouldGenerateTestRunner(): Boolean = config.configuration.getBoolean(KonanConfigKeys.GENERATE_TEST_RUNNER)
+
     override fun log(message: () -> String) {
         if (phase?.verbose ?: false) {
             println(message())
