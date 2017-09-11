@@ -450,4 +450,17 @@ public abstract class KtUsefulTestCase extends TestCase {
         String name = getName();
         return name != null && name.contains("Performance") || getClass().getName().contains("Performance");
     }
+
+
+    public class TestDisposable implements Disposable {
+        @Override
+        public void dispose() {
+        }
+
+        @Override
+        public String toString() {
+            String testName = getTestName(false);
+            return KtUsefulTestCase.this.getClass() + (StringUtil.isEmpty(testName) ? "" : ".test" + testName);
+        }
+    };
 }
