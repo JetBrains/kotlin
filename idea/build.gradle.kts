@@ -94,11 +94,13 @@ sourceSets {
                      "idea-completion/src",
                      "idea-live-templates/src",
                      "idea-repl/src")
+        resources.srcDir("idea-maven/resources")
     }
     "test" {
-        java.srcDirs("tests",
-                     "idea-maven/test",
-                     "idea-completion/tests")
+        projectDefault()
+        java.srcDirs("idea-maven/test",
+                     "idea-completion/tests",
+                     "idea-live-templates/tests")
     }
 }
 

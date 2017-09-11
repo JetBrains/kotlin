@@ -1,5 +1,6 @@
 
 import java.io.File
+import org.gradle.api.tasks.bundling.Jar
 
 apply { plugin("kotlin") }
 
@@ -9,14 +10,6 @@ val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
 dependencies {
-    compileOnly(project(":compiler:cli"))
-    compileOnly(project(":compiler:daemon-common"))
-    compileOnly(project(":compiler:incremental-compilation-impl"))
-    compileOnly(project(":kotlin-build-common"))
-    compileOnly(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
-    compileOnly(commonDep("org.fusesource.jansi", "jansi"))
-    compileOnly(commonDep("org.jline", "jline"))
-
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
@@ -40,23 +33,43 @@ dependencies {
 }
 
 sourceSets {
-    "main" {
-        java.srcDirs("daemon/src",
-                     "conditional-preprocessor/src")
-        resources.srcDir("../idea/src").apply {
-            include("META-INF/extensions/common.xml",
-                    "META-INF/extensions/kotlin2jvm.xml",
-                    "META-INF/extensions/kotlin2js.xml")
-        }
+    "main" {}
+    "test" {
+        projectDefault()
+        java.srcDir("tests-ir-jvm/tests")
     }
-    "test" { projectDefault() }
+}
+
+val jar: Jar by tasks
+jar.apply {
+    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+    from("../idea/src").apply {
+        include("META-INF/extensions/common.xml",
+                "META-INF/extensions/kotlin2jvm.xml",
+                "META-INF/extensions/kotlin2js.xml")
+    }
 }
 
 testsJar {}
 
+// TODO: it seems incomlete, find and add missing dependencies
+val testDistProjects = listOf(
+       ":prepare:mock-runtime-for-test",
+       ":kotlin-compiler",
+       ":kotlin-runtime",
+       ":kotlin-script-runtime",
+       ":kotlin-stdlib",
+       ":kotlin-stdlib-jre7",
+       ":kotlin-stdlib-jre8",
+       ":kotlin-stdlib-js",
+       ":kotlin-reflect",
+       ":kotlin-test:kotlin-test-jvm",
+       ":kotlin-test:kotlin-test-junit",
+       ":kotlin-test:kotlin-test-js",
+       ":kotlin-daemon-client")
+
 projectTest {
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
-    dependsOn(":prepare:mock-runtime-for-test:dist")
+    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
 }

@@ -35,7 +35,7 @@ dependencies {
     compile project(':kotlin-build-common')
     compile project(':compiler:compiler-runner')
     compile project(":compiler:incremental-compilation-impl")
-    compile project(":compiler")
+    compile project(":compiler:daemon")
     compile project(':kotlin-annotation-processing')
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
