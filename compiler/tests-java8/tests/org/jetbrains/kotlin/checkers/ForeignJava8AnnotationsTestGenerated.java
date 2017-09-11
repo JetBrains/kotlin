@@ -62,6 +62,12 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
             doTest(fileName);
         }
 
+        @TestMetadata("defaultAnnotationAppliedToTypeForCompiledJava.kt")
+        public void testDefaultAnnotationAppliedToTypeForCompiledJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/defaultAnnotationAppliedToTypeForCompiledJava.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("springNullableWithTypeUse.kt")
         public void testSpringNullableWithTypeUse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/springNullableWithTypeUse.kt");

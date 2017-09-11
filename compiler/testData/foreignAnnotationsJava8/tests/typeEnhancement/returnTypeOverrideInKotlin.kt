@@ -1,3 +1,4 @@
+// SKIP_COMPILED_JAVA
 // FILE: Base.java
 public interface Base<T> {}
 // FILE: A.java

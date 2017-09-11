@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.checkers.javac;
+package org.jetbrains.kotlin.checkers;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacForeignJava8AnnotationsTest {
+public class ForeignJava8AnnotationsNoAnnotationInClasspathTestGenerated extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest {
     public void testAllFilesPresentInTests() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -51,7 +51,7 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Jsr305 extends AbstractJavacForeignJava8AnnotationsTest {
+    public static class Jsr305 extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest {
         public void testAllFilesPresentInJsr305() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -84,7 +84,7 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeEnhancement extends AbstractJavacForeignJava8AnnotationsTest {
+    public static class TypeEnhancement extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest {
         public void testAllFilesPresentInTypeEnhancement() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
