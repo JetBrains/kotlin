@@ -66,7 +66,7 @@ class InlineCallableUsagesSearcher(
 
             var isSuccess = true
             val applicationEx = ApplicationManagerEx.getApplicationEx()
-            if (!applicationEx.isUnitTestMode && (!applicationEx.holdsReadLock() || applicationEx.isDispatchThread)) {
+            if (!applicationEx.holdsReadLock() || applicationEx.isDispatchThread) {
                 applicationEx.invokeAndWait(
                         {
                             isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
