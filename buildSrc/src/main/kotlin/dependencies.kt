@@ -38,6 +38,12 @@ fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File
     return files(*matchingFiles.map { it.canonicalPath }.toTypedArray())
 }
 
+fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: String? = null): ConfigurableFileCollection {
+    val ultimateDepsDir = File(rootDir, "ultimate", "dependencies")
+    return if (ultimateDepsDir.isDirectory) preloadedDeps(*artifactBaseNames, baseDir = ultimateDepsDir, subdir = subdir)
+    else files()
+}
+
 fun Project.ideaSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib"): ConfigurableFileCollection =
         preloadedDeps(*artifactBaseNames, baseDir = File(rootDir, "ideaSDK"), subdir = subdir)
 

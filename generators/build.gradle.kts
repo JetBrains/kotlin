@@ -38,7 +38,6 @@ dependencies {
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(commonDep("junit:junit"))
     testCompile(ideaSdkDeps("openapi", "idea"))
-    testCompile(preloadedDeps("uast-tests"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))

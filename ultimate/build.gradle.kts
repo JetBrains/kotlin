@@ -33,6 +33,7 @@ dependencies {
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
 
+    compile(ideaUltimatePreloadedDeps("*.jar", subdir = "nodejs_plugin/NodeJS/lib"))
     compile(ideaUltimateSdkCoreDeps("annotations", "trove4j", "intellij-core"))
     compile(ideaUltimateSdkDeps("openapi", "idea", "util"))
 //    compile(ideaUltimatePluginDeps("gradle-tooling-api", plugin = "gradle"))

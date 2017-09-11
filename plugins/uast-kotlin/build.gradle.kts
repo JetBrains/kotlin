@@ -15,7 +15,6 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":idea:idea-android"))
-    testCompile(preloadedDeps("uast-tests"))
     testRuntime(ideaSdkDeps("*.jar"))
 }
 

@@ -2,7 +2,7 @@ apply { plugin("kotlin") }
 
 dependencies {
 
-    compileOnly(ideaSdkDeps("openapi", "idea"))
+    compileOnly(ideaSdkDeps("openapi", "idea", "external-system-rt"))
     compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
     compileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
 
