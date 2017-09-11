@@ -119,7 +119,7 @@ extra["compilerModules"] = arrayOf(":compiler:util",
                                    ":js:js.translator",
                                    ":js:js.dce",
                                    ":compiler",
-                                   ":build-common",
+                                   ":kotlin-build-common",
                                    ":core:util.runtime",
                                    ":core")
 
@@ -185,6 +185,10 @@ allprojects {
 
     task<Jar>("javadocJar") {
         classifier = "javadoc"
+    }
+
+    tasks.withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
 

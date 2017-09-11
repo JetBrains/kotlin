@@ -4,15 +4,13 @@ description = "Kotlin Ant Tools"
 apply { plugin("kotlin") }
 
 dependencies {
-    val compile by configurations
     compile(commonDep("org.apache.ant", "ant"))
     compile(project(":kotlin-preloader"))
     compile(project(":kotlin-stdlib"))
-    buildVersion()
 }
 
 sourceSets {
-    "main" { default() }
+    "main" { projectDefault() }
     "test" { none() }
 }
 

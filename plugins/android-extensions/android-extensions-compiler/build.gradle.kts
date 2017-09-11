@@ -20,7 +20,7 @@ configureKotlinProjectNoTests()
 
 sourceSets {
     "main" {
-        default()
+        projectDefault()
         java.srcDir("../android-extensions-runtime/src")
     }
     "test" { none() }

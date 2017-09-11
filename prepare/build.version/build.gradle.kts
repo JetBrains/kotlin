@@ -3,18 +3,16 @@ import java.io.File
 
 val buildVersionFilePath = "${rootProject.extra["distDir"]}/build.txt"
 
-val mainCfg = configurations.create("default")
+val buildVersion by configurations.creating
 
-artifacts.add(mainCfg.name, file(buildVersionFilePath))
-
-val mainTask = task("prepare") {
+val prepare = task("prepare") {
     val versionString = rootProject.extra["build.number"].toString()
     val versionFile = File(buildVersionFilePath)
     outputs.file(buildVersionFilePath)
     outputs.upToDateWhen {
-        (versionFile.exists() && versionFile.readText().trim() == versionString).apply {
-            if (!this) {
-                println("!!! not up-to-date $versionFile: ${versionFile.takeIf { it.exists() }?.readText()?.trim()}")
+        (versionFile.exists() && versionFile.readText().trim() == versionString).also {
+            if (!it) {
+                logger.info("$versionFile is not up-to-date: ${versionFile.takeIf { it.exists() }?.readText()?.trim()}")
             }
         }
     }
@@ -24,5 +22,6 @@ val mainTask = task("prepare") {
     }
 }
 
-defaultTasks(mainTask.name)
-
+artifacts.add(buildVersion.name, file(buildVersionFilePath)) {
+    builtBy(prepare)
+}

@@ -16,7 +16,7 @@ val projectsToShadow = listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":compiler:backend",
         ":compiler:backend-common",
-        ":build-common",
+        ":kotlin-build-common",
         ":compiler:cli-common",
         ":compiler:container",
         ":compiler:daemon-common",

@@ -22,7 +22,7 @@ dependencies {
     compile(project(":js:js.frontend"))
     compile(project(":idea:idea-test-framework"))
     compile(project(":kotlin-test:kotlin-test-jvm"))
-    compile(projectTests(":build-common"))
+    compile(projectTests(":kotlin-build-common"))
     compile(projectTests(":compiler"))
     compile(projectTests(":compiler:tests-java8"))
     compile(projectTests(":compiler:container"))

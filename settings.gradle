@@ -12,7 +12,7 @@ pluginManagement {
 
 // modules
 //include ":buildSrc" // this fixes import into idea, so buildsrc is not longer imported with different gradle version
-include ":build-common",
+include ":kotlin-build-common",
         ":compiler",
         ":compiler:util",
         ":compiler:daemon-common",
@@ -46,6 +46,7 @@ include ":build-common",
         ":js:js.dce",
         ":js:js.tests",
         ":jps-plugin",
+        ":kotlin-jps-plugin",
         ":core",
         ":core:builtins",
         ":core:reflection.jvm",
@@ -92,7 +93,7 @@ include ":build-common",
         ":kotlin-stdlib-jre8",
         ":kotlin-stdlib:samples",
         ":prepare:build.version",
-        ":prepare:jps-plugin",
+        ":kotlin-build-common",
         ":prepare:formatter",
         ":prepare:ide-lazy-resolver",
         ":prepare:kotlin-plugin",
@@ -142,6 +143,7 @@ project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-e
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/prepare/daemon-client" as File
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
+project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':compiler:daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
@@ -150,6 +152,7 @@ project(':kotlin-ant').projectDir = "$rootDir/ant" as File
 project(':compiler:ir.tree').projectDir = "$rootDir/compiler/ir/ir.tree" as File
 project(':compiler:ir.psi2ir').projectDir = "$rootDir/compiler/ir/ir.psi2ir" as File
 project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as File
+project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
 project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
 project(':android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':plugins:android-extensions-idea').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File

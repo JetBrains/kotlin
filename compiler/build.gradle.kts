@@ -10,7 +10,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
-    compileOnly(project(":build-common"))
+    compileOnly(project(":kotlin-build-common"))
     compileOnly(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
     compileOnly(commonDep("org.fusesource.jansi", "jansi"))
     compileOnly(commonDep("org.jline", "jline"))

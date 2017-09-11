@@ -8,7 +8,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:cli"))
-    compile(project(":build-common"))
+    compile(project(":kotlin-build-common"))
 }
 
 configureKotlinProjectSourcesDefault()

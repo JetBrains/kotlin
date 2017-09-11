@@ -3,24 +3,24 @@ description = "Kotlin Daemon Client"
 
 apply { plugin("kotlin") }
 
-val nativePlatformUberjar = "$rootDir/dependencies/native-platform-uberjar.jar"
+val nativePlatformUberjar = preloadedDeps("native-platform-uberjar")
 
 dependencies {
-    val compile by configurations
-    compile(project(":compiler:util"))
-    compile(project(":compiler:cli-common"))
-    compile(project(":compiler:daemon-common"))
-    compile(files(nativePlatformUberjar))
-    buildVersion()
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(nativePlatformUberjar)
 }
 
 sourceSets {
-    "main" { default() }
+    "main" { projectDefault() }
     "test" { none() }
 }
 
 runtimeJar {
-    from(zipTree(nativePlatformUberjar))
+    nativePlatformUberjar.forEach {
+        from(zipTree(it))
+    }
 }
 sourcesJar()
 

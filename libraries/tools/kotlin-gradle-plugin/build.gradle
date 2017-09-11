@@ -32,7 +32,7 @@ dependencies {
     compile project(':kotlin-stdlib')
     compile project(':android-extensions-compiler')
 //    compile project(path: ':compiler', configuration: 'embeddableCompilerJar')
-    compile project(':build-common')
+    compile project(':kotlin-build-common')
     compile project(':compiler:compiler-runner')
     compile project(":compiler:incremental-compilation-impl")
     compile project(":compiler")
@@ -46,7 +46,7 @@ dependencies {
     agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     agp25CompileOnly gradleApi()
 
-    testCompile project (path: ':build-common', configuration: 'tests-jar')
+    testCompile project (path: ':kotlin-build-common', configuration: 'tests-jar')
     testCompile project(':kotlin-test::kotlin-test-junit')
     testCompile "junit:junit:4.12"
 }

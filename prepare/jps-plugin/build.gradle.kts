@@ -1,10 +1,24 @@
 
-import org.gradle.jvm.tasks.Jar
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-apply { plugin("java") }
+description = "Kotlin JPS plugin"
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins:shadow:2.0.1")
+    }
+}
+
+plugins {
+    `java-base`
+}
 
 val projectsToShadow = listOf(
-        ":build-common",
+        ":kotlin-build-common",
         ":compiler:cli-common",
         ":compiler:compiler-runner",
         ":kotlin-daemon-client",
@@ -17,31 +31,19 @@ val projectsToShadow = listOf(
         ":core:util.runtime",
         ":plugins:android-extensions-jps")
 
-dependencies {}
+val fatJarContents by configurations.creating
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin JPS plugin")
-    manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.runner.Main")
-    manifest.attributes.put("Class-Path", "kotlin-runtime.jar")
-    archiveName = "kotlin-jps-plugin.jar"
+dependencies {
     projectsToShadow.forEach {
-        dependsOn("$it:classes")
-        project(it).let { p ->
-            p.pluginManager.withPlugin("java") {
-                from(p.the<JavaPluginConvention>().sourceSets.getByName("main").output)
-            }
-        }
+        fatJarContents(project(it)) { isTransitive = false }
     }
-    from(fileTree("$rootDir/jps-plugin/src")) { include("META-INF/**") }
+}
+
+runtimeJar<ShadowJar>(task<ShadowJar>("jar")) {
+    manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.runner.Main")
+    manifest.attributes.put("Class-Path", "kotlin-stdlib.jar")
+    from(fatJarContents)
     from(files("$rootDir/resources/kotlinManifest.properties"))
-    from(zipTree("$rootDir/dependencies/native-platform-uberjar.jar"))
 }
 
-configureKotlinProjectSources() // no sources
-configureKotlinProjectNoTests()
-
-ideaPlugin("lib/jps") {
-    from(jar)
-}
-
+ideaPlugin("lib/jps")

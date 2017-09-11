@@ -10,7 +10,7 @@ dependencies {
 }
 
 sourceSets {
-    "main" { default() }
+    "main" { projectDefault() }
     "test" { none() }
 }
 
