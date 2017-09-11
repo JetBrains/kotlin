@@ -42,7 +42,7 @@ val projectsToShadow = listOf(
         ":js:js.serializer",
         ":compiler:light-classes",
         ":compiler:plugin-api",
-        ":compiler:preloader",
+        ":kotlin-preloader",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",

@@ -6,7 +6,7 @@ apply { plugin("kotlin") }
 dependencies {
     val compile by configurations
     compile(commonDep("org.apache.ant", "ant"))
-    compile(project(":compiler:preloader"))
+    compile(project(":kotlin-preloader"))
     compile(project(":kotlin-stdlib"))
     buildVersion()
 }

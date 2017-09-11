@@ -126,6 +126,7 @@ project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/prepare/daemon-client" as File
+project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
 project(':compiler:cli-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':compiler:daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File

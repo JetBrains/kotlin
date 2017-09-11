@@ -16,7 +16,7 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:serialization"))
-    compile(project(":compiler:preloader"))
+    compile(project(":kotlin-preloader"))
     compile(project(":compiler:daemon-common"))
     compile(project(":compiler:daemon-client"))
     compile(project(":js:js.serializer"))

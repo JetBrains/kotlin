@@ -95,14 +95,17 @@ fun Project.ideaPlugin() = ideaPlugin {
 }
 
 
-fun Project.dist(body: Copy.() -> Unit = {}) {
+fun Project.dist(body: Copy.() -> Unit) {
     task<Copy>("dist") {
-        tasks.findByName("assemble")?.let {
-            dependsOn(it)
-        }
         body()
         rename("-${java.util.regex.Pattern.quote(rootProject.extra["build.number"].toString())}", "")
         into(rootProject.extra["distLibDir"].toString())
+    }
+}
+
+fun Project.dist() = dist {
+    tasks.findByName("jar")?.let {
+        from(it)
     }
 }
 

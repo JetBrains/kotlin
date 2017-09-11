@@ -26,7 +26,7 @@ dependencies {
     testCompile(project(":kotlin-runtime"))
     testCompile(project(":kotlin-reflect"))
     testCompile(projectTests(":compiler"))
-    testRuntime(project(":compiler:preloader"))
+    testRuntime(project(":kotlin-preloader"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
 }

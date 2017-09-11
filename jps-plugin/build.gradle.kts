@@ -18,7 +18,7 @@ dependencies {
     compile(project(":compiler:daemon-common"))
     compile(project(":compiler:daemon-client"))
     compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:preloader"))
+    compile(project(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
     compile(ideaSdkDeps("jps-builders", "jps-builders-6", subdir = "jps"))
     buildVersion()

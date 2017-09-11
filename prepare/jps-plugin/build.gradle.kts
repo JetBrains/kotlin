@@ -12,7 +12,7 @@ val projectsToShadow = listOf(
         ":core",
         ":idea:idea-jps-common",
         ":jps-plugin",
-        ":compiler:preloader",
+        ":kotlin-preloader",
         ":compiler:util",
         ":core:util.runtime",
         ":plugins:android-extensions-jps")

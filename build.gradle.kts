@@ -158,7 +158,7 @@ fun Project.allprojectsRecursive(body: Project.() -> Unit) {
 
 allprojects {
 
-    setBuildDir(File(commonBuildDir, project.name))
+    buildDir = File(commonBuildDir, project.name)
 
     repositories {
         for (repo in (rootProject.extra["repos"] as List<String>)) {

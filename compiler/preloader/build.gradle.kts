@@ -1,5 +1,5 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Preloader"
 
 apply { plugin("kotlin") }
 
@@ -9,17 +9,17 @@ dependencies {
     buildVersion()
 }
 
-configureKotlinProjectSources("src", "instrumentation/src")
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" {
+        java {
+            srcDirs( "src", "instrumentation/src")
+        }
+    }
+    "test" { none() }
+}
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin Preloader")
+runtimeJar {
     manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.preloading.Preloader")
-    archiveName = "kotlin-preloader.jar"
 }
 
-dist {
-    from(jar)
-}
-
+dist()
