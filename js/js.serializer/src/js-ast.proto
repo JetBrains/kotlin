@@ -435,6 +435,10 @@ enum SpecialFunction {
     WRAP_FUNCTION = 2;
     TO_BOXED_CHAR = 3;
     UNBOX_CHAR = 4;
+    SUSPEND_CALL = 5;
+    COROUTINE_RESULT = 6;
+    COROUTINE_CONTROLLER = 7;
+    COROUTINE_RECEIVER = 8;
 }
 
 

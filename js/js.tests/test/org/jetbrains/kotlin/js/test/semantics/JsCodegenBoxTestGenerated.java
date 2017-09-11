@@ -6424,6 +6424,24 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inlineMultiModule.kt")
+            public void testInlineMultiModule() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModule.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineMultiModuleOverride.kt")
+            public void testInlineMultiModuleOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineMultiModuleWithController.kt")
+            public void testInlineMultiModuleWithController() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithController.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/simple.kt");

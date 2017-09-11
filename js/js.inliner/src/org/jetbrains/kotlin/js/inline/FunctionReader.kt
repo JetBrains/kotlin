@@ -49,7 +49,10 @@ private val JS_IDENTIFIER_PART = "$JS_IDENTIFIER_START\\p{Pc}\\p{Mc}\\p{Mn}\\d"
 private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
 private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
-private val WRAP_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($JS_IDENTIFIER)\\.wrapFunction\\s*;").toPattern()
+
+private val specialFunctions = enumValues<SpecialFunction>().joinToString("|") { it.suggestedName }
+private val specialFunctionsByName = enumValues<SpecialFunction>().associateBy { it.suggestedName }
+private val SPECIAL_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($JS_IDENTIFIER)\\.($specialFunctions)\\s*;").toPattern()
 
 class FunctionReader(
         private val reporter: JsConfig.Reporter,
@@ -72,13 +75,15 @@ class FunctionReader(
             val fileContent: String,
             val moduleVariable: String,
             val kotlinVariable: String,
-            val wrapFunctionVariable: String?,
+            val specialFunctions: Map<String, SpecialFunction>,
             offsetToSourceMappingProvider: () -> OffsetToSourceMapping,
             val sourceMap: SourceMap?
     ) {
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
 
-        val wrapFunctionRegex = wrapFunctionVariable?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
+        val wrapFunctionRegex = specialFunctions.entries
+                .singleOrNull { (_, v) -> v == SpecialFunction.WRAP_FUNCTION }?.key
+                ?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
     }
 
     private val moduleNameToInfo by lazy {
@@ -100,8 +105,12 @@ class FunctionReader(
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
 
-                val wrapFunctionVariable = WRAP_FUNCTION_PATTERN.matcher(content).let { matcher ->
-                    if (matcher.find() && matcher.group(2) == kotlinVariable) matcher.group(1) else null
+                val matcher = SPECIAL_FUNCTION_PATTERN.matcher(content)
+                val specialFunctions = mutableMapOf<String, SpecialFunction>()
+                while (matcher.find()) {
+                    if (matcher.group(2) == kotlinVariable) {
+                        specialFunctions[matcher.group(1)] = specialFunctionsByName[matcher.group(3)]!!
+                    }
                 }
 
                 val sourceMap = sourceMapContent?.let {
@@ -120,7 +129,7 @@ class FunctionReader(
                         fileContent = content,
                         moduleVariable = moduleVariable,
                         kotlinVariable = kotlinVariable,
-                        wrapFunctionVariable = wrapFunctionVariable,
+                        specialFunctions = specialFunctions,
                         offsetToSourceMappingProvider = { OffsetToSourceMapping(content) },
                         sourceMap = sourceMap
                 )
@@ -246,9 +255,9 @@ class FunctionReader(
         function.markInlineArguments(descriptor)
         markDefaultParams(function)
 
-        info.wrapFunctionVariable.let { wrapFunction ->
-            for (externalName in (collectReferencedNames(function) - allDefinedNames).filter { it.ident == wrapFunction }) {
-                externalName.specialFunction = SpecialFunction.WRAP_FUNCTION
+        for (externalName in (collectReferencedNames(function) - allDefinedNames)) {
+            info.specialFunctions[externalName.ident]?.let {
+                externalName.specialFunction = it
             }
         }
 

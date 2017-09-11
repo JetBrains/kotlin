@@ -5778,6 +5778,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MultiModule extends AbstractLightAnalysisModeTest {
+            @TestMetadata("inlineMultiModuleOverride.kt")
+            public void ignoreInlineMultiModuleOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleOverride.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
             public void testAllFilesPresentInMultiModule() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/multiModule"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
@@ -5785,6 +5797,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("inlineFunctionWithOptionalParam.kt")
             public void testInlineFunctionWithOptionalParam() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineFunctionWithOptionalParam.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineMultiModule.kt")
+            public void testInlineMultiModule() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModule.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineMultiModuleWithController.kt")
+            public void testInlineMultiModuleWithController() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithController.kt");
                 doTest(fileName);
             }
 

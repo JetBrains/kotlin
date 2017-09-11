@@ -95,7 +95,6 @@ public final class Namer {
 
     public static final JsNameRef IS_ARRAY_FUN_REF = new JsNameRef("isArray", "Array");
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
-    private static final String WRAP_FUNCTION = "wrapFunction";
     public static final String DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "$default";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
@@ -325,29 +324,8 @@ public final class Namer {
     }
 
     @NotNull
-    private static JsNameRef createInlineFunction() {
-        return pureFqn(DEFINE_INLINE_FUNCTION, kotlinObject());
-    }
-
-    @NotNull
-    private static JsNameRef wrapFunction() {
-        return pureFqn(WRAP_FUNCTION, kotlinObject());
-    }
-
-    @NotNull
     public static JsExpression createSpecialFunction(@NotNull SpecialFunction specialFunction) {
-        switch (specialFunction) {
-            case DEFINE_INLINE_FUNCTION:
-                return createInlineFunction();
-            case WRAP_FUNCTION:
-                return wrapFunction();
-            case TO_BOXED_CHAR:
-                return pureFqn("toBoxedChar", kotlinObject());
-            case UNBOX_CHAR:
-                return pureFqn("unboxChar", kotlinObject());
-            default:
-                throw new IllegalArgumentException("Unknown function: " + specialFunction);
-        }
+        return pureFqn(specialFunction.getSuggestedName(), kotlinObject());
     }
 
     @NotNull
