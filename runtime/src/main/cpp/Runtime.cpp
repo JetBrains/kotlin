@@ -45,6 +45,8 @@ void InitOrDeinitGlobalVariables(int initialize) {
   }
 }
 
+THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = nullptr;
+
 }  // namespace
 
 extern "C" {
@@ -67,6 +69,7 @@ RuntimeState* InitRuntime() {
   // Keep global variables in state as well.
   InitOrDeinitGlobalVariables(true);
   konan::consoleInit();
+  runtimeState = result;
   return result;
 }
 
@@ -75,6 +78,18 @@ void DeinitRuntime(RuntimeState* state) {
     InitOrDeinitGlobalVariables(false);
     DeinitMemory(state->memoryState);
     konanDestructInstance(state);
+  }
+}
+
+void Kotlin_initRuntimeIfNeeded() {
+  if (runtimeState == nullptr)
+    runtimeState = InitRuntime();
+}
+
+void Kotlin_deinitRuntimeIfNeeded() {
+  if (runtimeState != nullptr) {
+     DeinitRuntime(runtimeState);
+     runtimeState = nullptr;
   }
 }
 
