@@ -188,7 +188,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
                 v.getstatic(containerAsmType.internalName, companionFieldName, companionAsmType.descriptor)
                 v.load(1, PARCEL_TYPE)
-                v.invokevirtual(companionAsmType.internalName, "create", "(${PARCEL_TYPE.descriptor})Landroid/os/Parcelable;", false)
+                v.invokevirtual(companionAsmType.internalName, "create", "(${PARCEL_TYPE.descriptor})Ljava/lang/Object;", false)
             }
             else {
                 v.anew(containerAsmType)
