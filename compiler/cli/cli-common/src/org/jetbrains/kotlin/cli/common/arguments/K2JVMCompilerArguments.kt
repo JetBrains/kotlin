@@ -198,7 +198,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
         fun parseJsr305UnderMigration(collector: MessageCollector, item: String): ReportLevel? {
             val rawState = item.split(":").takeIf { it.size == 2 }?.get(1)
-            return ReportLevel.findByDescription(rawState)
+            return ReportLevel.findByDescription(rawState) ?: reportUnrecognizedJsr305(collector, item).let { null }
         }
 
         jsr305?.forEach { item ->
@@ -206,11 +206,18 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 item.startsWith("@") -> {
                     val (name, state) = parseJsr305UserDefined(collector, item) ?: return@forEach
                     val current = userDefined[name]
-                    current?.let { return@forEach }
+                    if (current != null) {
+                        reportDuplicateJsr305(collector, "@$name:${current.description}", item)
+                        return@forEach
+                    }
                     userDefined[name] = state
                 }
                 item.startsWith("under-migration") -> {
-                    migration?.let { return@forEach }
+                    if (migration != null) {
+                        reportDuplicateJsr305(collector, "under-migration:${migration?.description}", item)
+                        return@forEach
+                    }
+
                     migration = parseJsr305UnderMigration(collector, item)
                 }
                 item == "enable" -> {
@@ -218,11 +225,15 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                             CompilerMessageSeverity.STRONG_WARNING,
                             "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
                     )
-                    global?.let { return@forEach }
+                    if (global != null) return@forEach
+
                     global = ReportLevel.STRICT
                 }
                 else -> {
-                    global?.let { return@forEach }
+                    if (global != null) {
+                        reportDuplicateJsr305(collector, global!!.description, item)
+                        return@forEach
+                    }
                     global = ReportLevel.findByDescription(item)
                 }
             }
@@ -232,9 +243,25 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         return if (state == Jsr305State.DISABLED) Jsr305State.DISABLED else state
     }
 
+    private fun reportUnrecognizedJsr305(collector: MessageCollector, item: String) {
+        collector.report(CompilerMessageSeverity.ERROR, "Unrecognized -Xjsr305 value: $item")
+    }
+
+    private fun reportDuplicateJsr305(collector: MessageCollector, first: String, second: String) {
+        collector.report(CompilerMessageSeverity.ERROR, "Conflict duplicating -Xjsr305 value: $first, $second")
+    }
+
     private fun parseJsr305UserDefined(collector: MessageCollector, item: String): Pair<String, ReportLevel>? {
-        val (name, rawState) = item.substring(1).split(":").takeIf { it.size == 2 } ?: return null
-        val state = ReportLevel.findByDescription(rawState) ?: return null
+        val (name, rawState) = item.substring(1).split(":").takeIf { it.size == 2 } ?: run {
+            reportUnrecognizedJsr305(collector, item)
+            return null
+        }
+
+        val state = ReportLevel.findByDescription(rawState) ?: run {
+            reportUnrecognizedJsr305(collector, item)
+            return null
+        }
+
         return name to state
     }
 }

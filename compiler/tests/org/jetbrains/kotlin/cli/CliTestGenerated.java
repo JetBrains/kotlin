@@ -475,6 +475,12 @@ public class CliTestGenerated extends AbstractCliTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
             doJvmTest(fileName);
         }
+
+        @TestMetadata("wrongXjsr305.args")
+        public void testWrongXjsr305() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongXjsr305.args");
+            doJvmTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/cli/js")
