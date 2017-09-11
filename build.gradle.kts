@@ -5,29 +5,32 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
-    extra["kotlin_version"] = file("kotlin-bootstrap-version.txt").readText().trim()
-    extra["kotlinVersion"] = extra["kotlin_version"]
+    val repos = listOf(
+            System.getProperty("bootstrap.kotlin.repo"),
+            "https://repo.gradle.org/gradle/repo",
+            "https://plugins.gradle.org/m2",
+            "http://repository.jetbrains.com/utils/").filterNotNull()
+
+    extra["kotlin_version"] = bootstrapKotlinVersion
+    extra["kotlinVersion"] = bootstrapKotlinVersion
     extra["kotlin_language_version"] = "1.1"
-    extra["kotlin_gradle_plugin_version"] = extra["kotlin_version"]
-    extra["repos"] = listOf("https://dl.bintray.com/kotlin/kotlin-dev",
-                            "https://repo.gradle.org/gradle/repo",
-                            "https://plugins.gradle.org/m2",
-                            "http://repository.jetbrains.com/utils/")
+    extra["repos"] = repos
 
     repositories {
-        for (repo in (rootProject.extra["repos"] as List<String>)) {
+        for (repo in repos) {
             maven { setUrl(repo) }
         }
     }
 
     dependencies {
-        classpath(kotlinDep("gradle-plugin"))
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
+        classpath(kotlinDep("gradle-plugin"))
     }
 }
 
 plugins {
-    java // so we can benefit from the `java()` accessor below
+//    java // so we can benefit from the `java()` accessor below
+//    kotlin("jvm")
 }
 
 val buildNumber = "1.1-SNAPSHOT"
@@ -76,8 +79,6 @@ extra["JDK_18"] = jdkPath("1.8")
 
 extra["compilerBaseName"] = "kotlin-compiler"
 extra["embeddableCompilerBaseName"] = "kotlin-compiler-embeddable"
-//extra["compilerJarWithBootstrapRuntime"] = project.file("$distDir/kotlin-compiler-with-bootstrap-runtime.jar")
-//extra["bootstrapCompilerFile"] = bootstrapCfg.files.first().canonicalPath
 
 extra["buildLocalRepoPath"] = File(commonBuildDir, "repo")
 
@@ -204,10 +205,11 @@ task<Copy>("dist-plugin") {
     into("$ideaPluginDir/lib")
 }
 
-val clean by tasks
-clean.apply {
-    doLast {
-        delete("${buildDir}/repo")
+tasks {
+    "clean" {
+        doLast {
+            delete("$buildDir/repo")
+        }
     }
 }
 

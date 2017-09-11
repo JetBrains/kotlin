@@ -1,6 +1,10 @@
 
 apply { plugin("kotlin") }
 
+//plugins {
+//    kotlin("jvm")
+//}
+
 dependencies {
     val compile by configurations
     val testCompile by configurations
