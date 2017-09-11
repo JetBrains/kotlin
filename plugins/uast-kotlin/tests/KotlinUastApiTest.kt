@@ -1,11 +1,14 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiModifier
+import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.KotlinUParameter
+import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.test.env.findElementByText
 import org.junit.Assert
 import org.junit.Test
@@ -102,6 +105,15 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         doTest("ElvisType") { _, file ->
             val elvisExpression = file.findElementByText<UExpression>("text ?: return")
             assertEquals("String", elvisExpression.getExpressionType()!!.presentableText)
+        }
+    }
+
+    @Test fun testParameter() {
+        doTest("WhenIs") { _, file ->
+            val uParameter = file.findElementByText<UParameter>("bar: Any")
+            KtUsefulTestCase.assertInstanceOf(uParameter.psi.toUElement(), UParameter::class.java)
+            val originalElement = (uParameter.psi as KtLightParameter).kotlinOrigin
+            KtUsefulTestCase.assertInstanceOf(originalElement.toUElement(), UParameter::class.java)
         }
     }
 

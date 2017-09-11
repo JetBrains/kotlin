@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toPsiParameters
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -147,6 +148,9 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtLightFieldImpl.KtLightEnumConstant -> el<UEnumConstant>(build(::KotlinUEnumConstant))
                 is KtLightField -> el<UField>(build(::KotlinUField))
                 is KtLightParameter, is UastKotlinPsiParameter -> el<UParameter>(build(::KotlinUParameter))
+                is KtParameter -> original.toPsiParameters().firstOrNull()?.let { lightParameter ->
+                    el<UParameter>(build<KtParameter> { psi, uastParent -> KotlinUParameter(lightParameter, uastParent) })
+                }
                 is UastKotlinPsiVariable -> el<UVariable>(build(::KotlinUVariable))
 
                 is KtClassOrObject -> el<UClass> {
@@ -224,6 +228,14 @@ internal object KotlinConverter {
                 val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
                 KotlinUDeclarationsExpression(parent).apply {
                     declarations = element.parameters.mapIndexed { i, p ->
+                        KotlinUParameter(UastKotlinPsiParameter.create(p, element, parent!!, i), this)
+                    }
+                }
+            }
+            is KtLightParameterList -> el<UDeclarationsExpression> {
+                val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                KotlinUDeclarationsExpression(parent).apply {
+                    declarations = (element.kotlinOrigin as KtParameterList).parameters.mapIndexed { i, p ->
                         KotlinUParameter(UastKotlinPsiParameter.create(p, element, parent!!, i), this)
                     }
                 }
