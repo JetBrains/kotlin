@@ -110,4 +110,8 @@
     <extensions defaultExtensionNs="org.jetbrains.android">
         <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
     </extensions>
+
+    <extensions defaultExtensionNs="com.android.gradle.sync">
+        <postSyncModuleSetupStep implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidModuleSetupStep"/>
+    </extensions>
 </idea-plugin>
