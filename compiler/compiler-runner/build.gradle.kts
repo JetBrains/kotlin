@@ -8,7 +8,7 @@ dependencies {
     compile(project(":kotlin-preloader"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:daemon-common"))
-    compile(project(":compiler:daemon-client"))
+    compile(project(":kotlin-daemon-client"))
     compile(project(":compiler:util"))
 }
 

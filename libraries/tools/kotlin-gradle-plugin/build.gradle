@@ -30,7 +30,7 @@ dependencies {
     compile project(':kotlin-gradle-plugin-api')
 
     compile project(':kotlin-stdlib')
-    compile project(':plugins:android-extensions-compiler')
+    compile project(':android-extensions-compiler')
 //    compile project(path: ':compiler', configuration: 'embeddableCompilerJar')
     compile project(':build-common')
     compile project(':compiler:compiler-runner')

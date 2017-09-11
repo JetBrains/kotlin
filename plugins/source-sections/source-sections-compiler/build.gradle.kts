@@ -22,23 +22,12 @@ dependencies {
     testCompile(project(":compiler:cli-common"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":compiler:daemon-common"))
-    testCompile(project(":compiler:daemon-client"))
+    testCompile(project(":kotlin-daemon-client"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectResources("src") {
-    include("META-INF/**")
-}
-configureKotlinProjectTestsDefault()
-
-val jar = runtimeJar()
-sourcesJar()
-javadocJar()
-
-publish()
-
-dist {
-    from(jar)
+sourceSets {
+    "main" { default() }
+    "test" { default() }
 }
 
 tasks.withType<Test> {
@@ -46,6 +35,14 @@ tasks.withType<Test> {
     workingDir = rootDir
     systemProperty("idea.is.unit.test", "true")
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
+    environment("KOTLIN_HOME", rootProject.extra["distKotlinHomeDir"])
     ignoreFailures = true
 }
 
+runtimeJar()
+sourcesJar()
+javadocJar()
+
+dist()
+
+publish()

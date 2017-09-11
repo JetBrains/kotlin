@@ -7,7 +7,7 @@ val projectsToShadow = listOf(
         ":build-common",
         ":compiler:cli-common",
         ":compiler:compiler-runner",
-        ":compiler:daemon-client",
+        ":kotlin-daemon-client",
         ":compiler:daemon-common",
         ":core",
         ":idea:idea-jps-common",

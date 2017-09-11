@@ -13,8 +13,10 @@ dependencies {
     runtime(project(":kotlin-stdlib"))
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { default() }
+    "test" { none() }
+}
 
 val jar = runtimeJar {
     from(fileTree("$projectDir/src")) { include("META-INF/**") }

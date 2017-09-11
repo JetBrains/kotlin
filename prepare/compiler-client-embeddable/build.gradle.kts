@@ -27,7 +27,7 @@ val archives by configurations
 val projectsToInclude = listOf(
         ":compiler:cli-common",
         ":compiler:daemon-common",
-        ":compiler:daemon-client")
+        ":kotlin-daemon-client")
 
 dependencies {
     val testCompile by configurations

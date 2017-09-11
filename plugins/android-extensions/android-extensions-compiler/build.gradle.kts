@@ -1,5 +1,5 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Android Extensions Compiler"
 
 apply { plugin("kotlin") }
 
@@ -18,16 +18,17 @@ configureKotlinProjectSources("android-extensions-compiler/src", "android-extens
 configureKotlinProjectResourcesDefault(sourcesBaseDir = File(rootDir, "plugins", "android-extensions", "android-extensions-compiler", "src"))
 configureKotlinProjectNoTests()
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin Android Extensions Compiler")
+sourceSets {
+    "main" {
+        default()
+        java.srcDir("../android-extensions-runtime/src")
+    }
+    "test" { none() }
 }
 
-dist {
-    from(jar)
-}
+runtimeJar ()
 
-ideaPlugin {
-    from(jar)
-}
+dist()
+
+ideaPlugin()
 

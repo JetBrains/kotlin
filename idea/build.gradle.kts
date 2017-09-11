@@ -14,7 +14,7 @@ dependencies {
     compile(project(":core"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:cli-common"))
-    compile(project(":compiler:daemon-client"))
+    compile(project(":kotlin-daemon-client"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
@@ -76,7 +76,7 @@ dependencies {
     testRuntime(preloadedDeps("uast-common", "uast-java"))
 
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
-    testCompile(project(":plugins:android-extensions-compiler"))
+    testCompile(project(":android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-idea")) { isTransitive = false }
     testCompile(project(":plugins:allopen-ide")) { isTransitive = false }
     testCompile(project(":kotlin-allopen-compiler-plugin"))

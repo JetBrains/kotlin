@@ -1,5 +1,5 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Runner"
 
 apply { plugin("kotlin") }
 
@@ -9,18 +9,15 @@ dependencies {
     buildVersion()
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { default() }
+    "test" { none() }
+}
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin Runner")
+runtimeJar {
     manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.runner.Main")
     manifest.attributes.put("Class-Path", "kotlin-runtime.jar")
-    archiveName = "kotlin-runner.jar"
 }
 
-dist {
-    from(jar)
-}
+dist()
 

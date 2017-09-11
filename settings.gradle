@@ -6,7 +6,7 @@ include ":build-common",
         ":compiler:daemon-common",
         ":kotlin-daemon-client",
         ":kotlin-preloader",
-        ":compiler:cli-runner",
+        ":kotlin-runner",
         ":compiler:container",
         ":compiler:resolution",
         ":compiler:serialization",
@@ -52,7 +52,7 @@ include ":build-common",
         ":eval4j",
         ":j2k",
         ":plugins:lint",
-        ":plugins:android-extensions-compiler",
+        ":android-extensions-compiler",
         ":plugins:android-extensions-idea",
         ":plugins:android-extensions-jps",
         ":kotlin-allopen-compiler-plugin",
@@ -91,7 +91,7 @@ include ":build-common",
         ":kotlin-compiler-client-embeddable",
         ":kotlin-daemon-client",
         ":kotlin-reflect",
-        ":ant",
+        ":kotlin-ant",
         ":compiler:tests-java8",
         ":generators",
         ":tools:binary-compatibility-validator",
@@ -128,14 +128,15 @@ project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/com
 project(':kotlin-daemon-client').projectDir = "$rootDir/prepare/daemon-client" as File
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
-project(':compiler:cli-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
+project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':compiler:daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
+project(':kotlin-ant').projectDir = "$rootDir/ant" as File
 project(':compiler:ir.tree').projectDir = "$rootDir/compiler/ir/ir.tree" as File
 project(':compiler:ir.psi2ir').projectDir = "$rootDir/compiler/ir/ir.psi2ir" as File
 project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as File
 project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
-project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
+project(':android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':plugins:android-extensions-idea').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File

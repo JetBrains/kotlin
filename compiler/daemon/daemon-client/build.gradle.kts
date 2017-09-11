@@ -1,5 +1,5 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Daemon Client"
 
 apply { plugin("kotlin") }
 
@@ -14,22 +14,15 @@ dependencies {
     buildVersion()
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { default() }
+    "test" { none() }
+}
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin Daemon Client")
+runtimeJar {
     from(zipTree(nativePlatformUberjar))
-    archiveName = "kotlin-daemon-client.jar"
 }
+sourcesJar()
 
-val sourcesJar by task<Jar> {
-    setupSourceJar("Kotlin Daemon Client")
-    archiveName = "kotlin-daemon-client-sources.jar"
-}
-
-dist {
-    from(jar)
-}
+dist()
 

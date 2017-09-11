@@ -16,7 +16,7 @@ dependencies {
 
     testCompile project(path: ':examples:annotation-processor-example')
     testCompile project(':kotlin-stdlib-jre8')
-    testCompile project(':plugins:android-extensions-compiler')
+    testCompile project(':android-extensions-compiler')
     testCompile project(path: ':build-common', configuration: 'tests-jar')
 
     testCompile 'org.jetbrains.kotlin:gradle-api:2.2'

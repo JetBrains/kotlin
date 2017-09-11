@@ -14,18 +14,18 @@ dependencies {
     buildVersion()
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { default() }
+    "test" { none() }
+}
 
-val jar = runtimeJar {
+runtimeJar {
     from(zipTree(nativePlatformUberjar))
 }
 
 sourcesJar()
 javadocJar()
 
-dist {
-    from(jar)
-}
+dist()
 
 publish()

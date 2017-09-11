@@ -11,7 +11,7 @@ dependencies {
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler.tests-common"))
-    testCompile(project(":plugins:android-extensions-compiler"))
+    testCompile(project(":android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-idea"))
     testCompile(project(":plugins:allopen-ide")) { isTransitive = false }
     testCompile(project(":kotlin-allopen-compiler-plugin"))

@@ -1,5 +1,5 @@
 
-import org.gradle.jvm.tasks.Jar
+description = "Kotlin Ant Tools"
 
 apply { plugin("kotlin") }
 
@@ -11,19 +11,15 @@ dependencies {
     buildVersion()
 }
 
-configureKotlinProjectSourcesDefault()
-configureKotlinProjectNoTests()
+sourceSets {
+    "main" { default() }
+    "test" { none() }
+}
 
-val jar: Jar by tasks
-jar.apply {
-    setupRuntimeJar("Kotlin Ant Tools")
-    archiveName = "kotlin-ant.jar"
+runtimeJar {
     from("$projectDir/src") { include("**/*.xml") }
-
     manifest.attributes.put("Class-Path", "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar kotlin-preloader.jar")
 }
 
-dist {
-    from(jar)
-}
+dist()
 

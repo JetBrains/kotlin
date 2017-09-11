@@ -32,8 +32,8 @@ dependencies {
     testCompile(project(":kotlin-script-runtime"))
     testCompile(project(":kotlin-runtime"))
     testCompile(project(":kotlin-reflect"))
-    testCompile(project(":plugins:android-extensions-compiler"))
-    testCompile(project(":ant"))
+    testCompile(project(":android-extensions-compiler"))
+    testCompile(project(":kotlin-ant"))
     otherCompilerModules.forEach {
         testCompile(project(it))
     }
