@@ -776,6 +776,16 @@ public class KtPsiUtil {
         return PsiTreeUtil.getStubOrPsiParent(grandparent) instanceof KtObjectLiteralExpression;
     }
 
+    private static boolean isNonLocalCallable(@Nullable KtDeclaration declaration) {
+        if (declaration instanceof KtProperty) {
+            return !((KtProperty) declaration).isLocal();
+        }
+        else if (declaration instanceof KtFunction) {
+            return !((KtFunction) declaration).isLocal();
+        }
+        return false;
+    }
+
     @Nullable
     public static KtElement getEnclosingElementForLocalDeclaration(@NotNull KtDeclaration declaration, boolean skipParameters) {
         if (declaration instanceof KtTypeParameter && skipParameters) {
@@ -804,6 +814,7 @@ public class KtPsiUtil {
 
         // No appropriate stub-tolerant method in PsiTreeUtil, nor JetStubbedPsiUtil, writing manually
         PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
+        boolean isNonLocalCallable = isNonLocalCallable(declaration);
         while (current != null) {
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
@@ -823,19 +834,7 @@ public class KtPsiUtil {
             }
             if (current instanceof KtValueArgument) {
                 // for members, value argument is never enough, see KT-10546
-                if (declaration instanceof KtProperty) {
-                    if (((KtProperty) declaration).isLocal()) {
-                        return (KtElement) current;
-                    }
-                }
-                else if (declaration instanceof KtFunction) {
-                    if (((KtFunction) declaration).isLocal()) {
-                        return (KtElement) current;
-                    }
-                }
-                else {
-                    return (KtElement) current;
-                }
+                if (!isNonLocalCallable) return (KtElement) current;
             }
             if (current instanceof KtDelegatedSuperTypeEntry) {
                 PsiElement grandParent = current.getParent().getParent();
