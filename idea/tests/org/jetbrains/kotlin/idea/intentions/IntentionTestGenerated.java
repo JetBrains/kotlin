@@ -15086,6 +15086,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forAsExpression.kt")
+        public void testForAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/forAsExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionType.kt")
         public void testFunctionType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/functionType.kt");

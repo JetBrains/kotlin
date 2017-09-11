@@ -803,7 +803,9 @@ public class KtPsiUtil {
             if (((KtParameter) declaration).hasValOrVar() && parent != null && parent.getParent() instanceof KtPrimaryConstructor) {
                 return getEnclosingElementForLocalDeclaration(((KtPrimaryConstructor) parent.getParent()).getContainingClassOrObject(), skipParameters);
             }
-            else if (skipParameters && parent != null && parent.getParent() instanceof KtNamedFunction) {
+            else if (skipParameters && parent != null &&
+                     !(parent instanceof KtForExpression) &&
+                     parent.getParent() instanceof KtNamedFunction) {
                 declaration = (KtNamedFunction) parent.getParent();
             }
         }
