@@ -27,16 +27,17 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
     fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<OverrideMemberChooserObject> {
-        val descriptor = classOrObject.resolveToDescriptor() as? ClassDescriptor ?: return emptySet()
+        val descriptor = classOrObject.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ClassDescriptor ?: return emptySet()
         return collectMembersToGenerate(descriptor, classOrObject.project)
     }
 

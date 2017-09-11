@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
@@ -783,7 +784,7 @@ fun KtExpression.removeTemplateEntryBracesIfPossible(): KtExpression {
 }
 
 fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
-    val callableDescriptor = element.resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableDescriptor ?: return
+    val callableDescriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
     if (callableDescriptor.overriddenDescriptors.isEmpty()) {
         element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }

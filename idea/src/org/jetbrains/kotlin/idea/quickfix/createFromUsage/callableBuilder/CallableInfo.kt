@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -104,7 +104,7 @@ abstract class TypeInfo(val variance: Variance) {
             }
         }
         return when (containingElement) {
-            is KtClassOrObject -> (containingElement.resolveToDescriptor() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
+            is KtClassOrObject -> (containingElement.resolveToDescriptorIfAny() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
             is KtBlockExpression -> (containingElement.statements.firstOrNull() ?: containingElement).getResolutionScope()
             is KtElement -> containingElement.containingKtFile.getResolutionScope()
             else -> null

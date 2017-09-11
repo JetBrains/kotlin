@@ -159,7 +159,7 @@ object SourceNavigationHelper {
         }
 
         for (candidate in candidates) {
-            val candidateDescriptor = candidate.resolveToDescriptor() as CallableDescriptor
+            val candidateDescriptor = candidate.resolveToDescriptorIfAny() as? CallableDescriptor ?: continue
             if (receiversMatch(declaration, candidateDescriptor)
                 && valueParametersTypesMatch(declaration, candidateDescriptor)
                 && typeParametersMatch(declaration as KtTypeParameterListOwner, candidateDescriptor.typeParameters)) {

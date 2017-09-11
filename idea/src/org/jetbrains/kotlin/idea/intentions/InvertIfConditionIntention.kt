@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.unblockDocument
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
@@ -213,7 +212,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
             is KtNamedFunction -> {
                 if (parent.bodyExpression == expression) {
                     if (!parent.hasBlockBody()) return null
-                    val returnType = (parent.resolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor).returnType
+                    val returnType = (parent.resolveToDescriptorIfAny() as? FunctionDescriptor)?.returnType
                     if (returnType == null || !returnType.isUnit()) return null
                     return KtPsiFactory(expression).createExpression("return")
                 }

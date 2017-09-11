@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -619,7 +619,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         private fun postprocessDeclaration(declaration: KtNamedDeclaration) {
             if (callableInfo is PropertyInfo && callableInfo.isLateinitPreferred) {
                 if (declaration.containingClassOrObject == null) return
-                val propertyDescriptor = declaration.resolveToDescriptor() as? PropertyDescriptor ?: return
+                val propertyDescriptor = declaration.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
                 val returnType = propertyDescriptor.returnType ?: return
                 if (TypeUtils.isNullableType(returnType) || KotlinBuiltIns.isPrimitiveType(returnType)) return
                 declaration.addModifier(KtTokens.LATEINIT_KEYWORD)

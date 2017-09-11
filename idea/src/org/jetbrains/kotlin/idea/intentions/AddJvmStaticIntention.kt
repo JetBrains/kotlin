@@ -20,7 +20,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
@@ -37,7 +37,7 @@ class AddJvmStaticIntention : SelfTargetingIntention<KtNamedFunction>(
         if (element.findAnnotation(annotationFqName) != null) return false
         if (element.isTopLevel) return false
         val detector = MainFunctionDetector { function ->
-            function.resolveToDescriptor() as FunctionDescriptor
+            function.resolveToDescriptorIfAny() as? FunctionDescriptor
         }
         return detector.isMain(element, false)
     }

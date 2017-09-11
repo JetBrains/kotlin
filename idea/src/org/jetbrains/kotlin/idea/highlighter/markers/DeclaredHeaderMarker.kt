@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.sourceKind
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -86,7 +86,7 @@ internal fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
 }
 
 internal fun KtDeclaration.liftToHeader(): KtDeclaration? {
-    val descriptor = resolveToDescriptor()
-    val headerDescriptor = descriptor.liftToHeader() ?: return null
+    val descriptor = resolveToDescriptorIfAny()
+    val headerDescriptor = descriptor?.liftToHeader() ?: return null
     return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
 }

@@ -24,7 +24,7 @@ import com.sun.jdi.Location
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -66,9 +66,9 @@ class KotlinBasicStepMethodFilter(
             }
 
             if (declaration is KtClass && method.name() == "<init>") {
-                (declaration.resolveToDescriptor() as? ClassDescriptor)?.unsubstitutedPrimaryConstructor
+                (declaration.resolveToDescriptorIfAny() as? ClassDescriptor)?.unsubstitutedPrimaryConstructor
             } else {
-                declaration?.resolveToDescriptor()
+                declaration?.resolveToDescriptorIfAny()
             }
         } ?: return false // TODO: Check that we can always find a descriptor (libraries with sources, libraries without sources)
 
