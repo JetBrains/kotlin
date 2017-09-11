@@ -1,4 +1,3 @@
-
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
 import org.gradle.api.*
@@ -16,11 +15,6 @@ val bootstrapKotlinVersion: String = System.getProperty("bootstrap.kotlin.versio
 
 fun PluginDependenciesSpec.kotlin(module: String, version: String? = null): PluginDependencySpec =
         id("org.jetbrains.kotlin.$module") version (version ?: bootstrapKotlinVersion)
-
-fun Project.buildVersion(): Dependency {
-    val cfg = configurations.create("build-version")
-    return dependencies.add(cfg.name, dependencies.project(":prepare:build.version", configuration = "default"))
-}
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
@@ -58,6 +52,8 @@ fun DependencyHandler.projectDepIntransitive(name: String): Dependency =
         project(name, configuration = "default").apply { isTransitive = false }
 
 fun DependencyHandler.projectTests(name: String): Dependency = project(name, configuration = "tests-jar").apply { isTransitive = false }
+fun DependencyHandler.projectRuntimeJar(name: String): Dependency = project(name, configuration = "runtimeJar")
+fun DependencyHandler.projectArchives(name: String): Dependency = project(name, configuration = "archives")
 
 val protobufLiteProject = ":custom-dependencies:protobuf-lite"
 fun DependencyHandler.protobufLite(): ProjectDependency =
@@ -67,7 +63,6 @@ val protobufLiteTask = "$protobufLiteProject:prepare"
 fun DependencyHandler.protobufFull(): ProjectDependency =
         project(protobufLiteProject, configuration = "relocated").apply { isTransitive = false }
 val protobufFullTask = "$protobufLiteProject:prepare-relocated-protobuf"
-
 
 private fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 
@@ -89,5 +84,3 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
     return Regex(if (hasJarExtension) escaped else "$escaped(-\\d.*)?\\.jar") // TODO: consider more precise version part of the regex
 }
 
-val propertiesX =
-        java.util.Properties().apply { load(java.io.FileInputStream("gradle.properties")) }

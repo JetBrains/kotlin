@@ -99,7 +99,7 @@ fun SourceSet.none() {
     resources.srcDirs()
 }
 
-fun SourceSet.default() {
+fun SourceSet.projectDefault() {
     when (name) {
         "main" -> {
             java.srcDirs("src")

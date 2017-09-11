@@ -6,6 +6,8 @@ import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
@@ -30,12 +32,23 @@ fun<T> Project.runtimeJarArtifactBy(task: Task, artifactRef: T, body: Configurab
     addArtifact("runtimeJar", task, artifactRef, body)
 }
 
-fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T =
-        task.apply {
-            setupPublicJar()
-            body()
-            project.runtimeJarArtifactBy(this, this)
-        }
+fun Project.buildVersion(): Dependency {
+    val cfg = configurations.create("build-version")
+    return dependencies.add(cfg.name, dependencies.project(":prepare:build.version", configuration = "buildVersion"))
+}
+
+fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
+    val buildVersionCfg = configurations.create("buildVersion")
+    dependencies.add(buildVersionCfg.name, dependencies.project(":prepare:build.version", configuration = "buildVersion"))
+    extra["runtimeJarTask"] = task
+    return task.apply {
+        setupPublicJar()
+        from(buildVersionCfg) { into("META-INF") }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        body()
+        project.runtimeJarArtifactBy(this, this)
+    }
+}
 
 fun Project.runtimeJar(taskName: String = "jar", body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask(taskName, body))
 
@@ -88,10 +101,8 @@ fun Project.ideaPlugin(subdir: String = "lib", body: Copy.() -> Unit) {
     }
 }
 
-fun Project.ideaPlugin() = ideaPlugin {
-    tasks.findByName("jar")?.let {
-        from(it)
-    }
+fun Project.ideaPlugin(subdir: String = "lib") = ideaPlugin(subdir) {
+    fromRuntimeJarIfExists(this)
 }
 
 
@@ -104,8 +115,17 @@ fun Project.dist(body: Copy.() -> Unit) {
 }
 
 fun Project.dist() = dist {
-    tasks.findByName("jar")?.let {
-        from(it)
+    fromRuntimeJarIfExists(this)
+}
+
+private fun<T: AbstractCopyTask> Project.fromRuntimeJarIfExists(task: T) {
+    if (extra.has("runtimeJarTask")) {
+        task.from(extra["runtimeJarTask"] as Task)
+    }
+    else {
+        tasks.findByName("jar")?.let {
+            task.from(it)
+        }
     }
 }
 
@@ -133,6 +153,3 @@ fun<T> Project.addArtifact(configuration: Configuration, task: Task, artifactRef
 
 fun<T> Project.addArtifact(configurationName: String, task: Task, artifactRef: T, body: ConfigurablePublishArtifact.() -> Unit = {}) =
         addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
-
-inline fun<reified T: Task> Project.getOrCreateTask(taskName: String, body: T.() -> Unit): T =
-        (tasks.findByName(taskName)?.let { it as T } ?: task<T>(taskName)).apply{ body() }
