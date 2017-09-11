@@ -1868,6 +1868,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inAnonymousDeeply.kt")
+        public void testInAnonymousDeeply() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousDeeply.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inAnonymousRunWrapped.kt")
+        public void testInAnonymousRunWrapped() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousRunWrapped.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("internal.kt")
         public void testInternal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedSymbol/internal.kt");

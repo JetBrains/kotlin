@@ -829,12 +829,20 @@ public class KtPsiUtil {
                     return (KtElement) parent;
                 }
             }
-            if (current instanceof KtBlockExpression || current instanceof KtParameter) {
+            if (current instanceof KtParameter) {
                 return (KtElement) current;
             }
             if (current instanceof KtValueArgument) {
                 // for members, value argument is never enough, see KT-10546
-                if (!isNonLocalCallable) return (KtElement) current;
+                if (!isNonLocalCallable) {
+                    return (KtElement) current;
+                }
+            }
+            if (current instanceof KtBlockExpression) {
+                // For members also not applicable if has function literal parent
+                if (!isNonLocalCallable || !(current.getParent() instanceof KtFunctionLiteral)) {
+                    return (KtElement) current;
+                }
             }
             if (current instanceof KtDelegatedSuperTypeEntry) {
                 PsiElement grandParent = current.getParent().getParent();
