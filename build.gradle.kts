@@ -137,6 +137,32 @@ extra["compilerModules"] = arrayOf(":compiler:util",
                                    ":core:util.runtime",
                                    ":core")
 
+val coreLibProjects = listOf(
+        ":kotlin-stdlib",
+        ":kotlin-stdlib-common",
+        ":kotlin-stdlib-js",
+        ":kotlin-stdlib-jre7",
+        ":kotlin-stdlib-jre8",
+        ":kotlin-test:kotlin-test-common",
+        ":kotlin-test:kotlin-test-jvm",
+        ":kotlin-test:kotlin-test-junit",
+        ":kotlin-test:kotlin-test-js",
+        ":kotlin-reflect"
+)
+
+val gradlePluginProjects = listOf(
+        ":kotlin-gradle-plugin",
+        ":kotlin-gradle-plugin:plugin-marker",
+        ":kotlin-gradle-plugin-api",
+//        ":kotlin-gradle-plugin-integration-tests",  // TODO: build fails
+        ":kotlin-allopen",
+        ":kotlin-allopen:plugin-marker",
+        ":kotlin-annotation-processing-gradle",
+        ":kotlin-noarg",
+        ":kotlin-noarg:plugin-marker",
+        ":kotlin-sam-with-receiver"
+)
+
 allprojects {
     group = "org.jetbrains.kotlin"
     version = buildNumber
@@ -236,11 +262,16 @@ val compilerCopyTask = task<Copy>("idea-plugin-copy-compiler") {
     from(distDir) { include("kotlinc/**") }
 }
 
-task<Copy>("dist-plugin") {
+task<Copy>("ideaPlugin") {
     dependsOn(compilerCopyTask)
     dependsOnTaskIfExistsRec("idea-plugin")
     shouldRunAfter(":prepare:kotlin-plugin:idea-plugin")
     into("$ideaPluginDir/lib")
+}
+
+task("dist-plugin") {
+    dependsOn("ideaPlugin")
+    doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
 }
 
 tasks {
@@ -251,48 +282,86 @@ tasks {
         }
     }
 
-    "core-libs-tests" {
-        dependsOn(":kotlin-test:kotlin-test-common:test",
-                  ":kotlin-test:kotlin-test-jvm:test",
-                  ":kotlin-test:kotlin-test-junit:test",
-                  ":kotlin-stdlib:test",
-                  ":kotlin-stdlib-jre7:test",
-                  ":kotlin-stdlib-jre8:test",
-                  ":tools:binary-compatibility-validator:test",
-                  ":kotlin-reflect:test")
-    }
-    "core-libs-check" { dependsOn("core-libs-tests") }
 
-    "compiler-tests" {
-        afterEvaluate {
-            dependsOn("dist")
+    "coreLibsTest" {
+        (coreLibProjects + listOf(
+                ":kotlin-stdlib:samples",
+                ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+                ":tools:binary-compatibility-validator"
+        )).forEach {
+            dependsOn(it + ":check")
         }
+    }
+
+    "gradlePluginsTest" {
+        gradlePluginProjects.forEach {
+            dependsOn(it + ":check")
+        }
+    }
+
+    "jvmCompilerTest" {
+        dependsOn("dist")
         dependsOn(":compiler:test",
                   ":compiler:container:test",
                   ":compiler:tests-java8:test")
     }
-    "compiler-check" { dependsOn("compiler-tests") }
+
+    "compiler-tests" {
+        dependsOn("jvmCompilerTest")
+        doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
+    }
+
+    "jsCompilerTest" {
+        dependsOn("dist")
+        dependsOn(":js:js.tests:test")
+    }
 
     "js-tests" {
-        dependsOn("dist")
-        dependsOn(
-                ":kotlin-test:kotlin-test-js:test",
-                ":kotlin-stdlib-js:test",
-                ":js:js.tests:test")
+        dependsOn("jsCompilerTest")
+        doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
     }
-    "js-check" { dependsOn("js-tests") }
+
+    "scriptingTest" {
+        dependsOn("dist")
+        dependsOn(":kotlin-script-util:test")
+    }
+
+    "scripting-tests" {
+        dependsOn("scriptingTest")
+        doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
+    }
+
+    "compilerTest" {
+        dependsOn("jvmCompilerTest")
+        dependsOn("jsCompilerTest")
+
+        dependsOn("scriptingTest")
+        dependsOn(":kotlin-build-common:test")
+    }
+
+    "examplesTest" {
+        dependsOn("dist")
+        (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
+            dependsOn("${p.path}:check")
+        }
+    }
+
+    "distTest" {
+        dependsOn("compilerTest")
+        dependsOn("gradlePluginsTest")
+        dependsOn("examplesTest")
+    }
+
 
     "jps-tests" {
         dependsOn("dist")
         dependsOn(":jps-plugin:test")
     }
-    "check" { dependsOn("test") }
 
     "idea-plugin-main-tests" {
         dependsOn("dist")
         dependsOn(":idea:test")
     }
-    "idea-plugin-main-check" { dependsOn("idea-plugin-main-tests") }
 
     "idea-plugin-additional-tests" {
         dependsOn("dist")
@@ -301,14 +370,12 @@ tasks {
                   ":j2k:test",
                   ":eval4j:test")
     }
-    "idea-plugin-additional-check" { dependsOn("idea-plugin-additional-tests") }
 
     "idea-plugin-tests" {
         dependsOn("dist")
         dependsOn("idea-plugin-main-tests",
                   "idea-plugin-additional-tests")
     }
-    "idea-plugin-check" { dependsOn("idea-plugin-tests") }
 
     "android-tests" {
         dependsOn("dist")
@@ -317,7 +384,6 @@ tasks {
                   ":kotlin-annotation-processing:test",
                   ":compiler:android-tests:test")
     }
-    "android-check" { dependsOn("android-tests") }
 
     "plugins-tests" {
         dependsOn("dist")
@@ -327,22 +393,25 @@ tasks {
                   ":plugins:uast-kotlin:test",
                   ":kotlin-annotation-processing-gradle:test")
     }
-    "plugins-check" { dependsOn("plugins-tests") }
-
-    "scripting-tests" {
-        dependsOn("dist")
-        dependsOn(":kotlin-script-util:test",
-                  ":examples:kotlin-jsr223-local-example:test",
-                  ":examples:kotlin-jsr223-daemon-local-eval-example:test")
-    }
-    "scripting-check" { dependsOn("scripting-tests") }
 
     "other-tests" {
         dependsOn("dist")
         dependsOn(":kotlin-build-common:test",
                   ":generators:test")
+        doFirst { logger.warn("'$name' task is deprecated") }
     }
-    "other-check" { dependsOn("other-tests") }
+
+
+    "ideaPluginTest" {
+        dependsOn(
+                "idea-plugin-tests",
+                "jps-tests",
+                "plugins-tests",
+                "android-tests",
+                ":generators:test"
+        )
+    }
+
 
     "test" {
         doLast {
