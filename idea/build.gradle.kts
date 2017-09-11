@@ -112,12 +112,9 @@ configure<JavaPluginConvention> {
         }
     }
 }
-configureKotlinProjectTests("idea/tests",
-                            "idea/idea-maven/test",
-                            "idea/idea-completion/tests",
-                            "j2k/tests",
-                            "eval4j/test",
-                            sourcesBaseDir = rootDir)
+configureKotlinProjectTests("tests",
+                            "idea-maven/test",
+                            "idea-completion/tests")
 
 tasks.withType<Test> {
     dependsOnTaskIfExistsRec("dist", project = rootProject)
@@ -126,14 +123,6 @@ tasks.withType<Test> {
     workingDir = rootDir
     systemProperty("idea.is.unit.test", "true")
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
-//    forkEvery = 100
-    testLogging {
-//        events = setOf(TestLogEvent.FAILED)
-//        showStackTraces = true
-//        showCauses = true
-//        exceptionFormat = TestExceptionFormat.FULL
-//        showStandardStreams = false
-    }
     ignoreFailures = true
 }
 
