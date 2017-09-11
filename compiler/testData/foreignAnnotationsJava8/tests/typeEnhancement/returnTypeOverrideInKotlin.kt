@@ -1,3 +1,5 @@
+// FILE: Base.java
+public interface Base<T> {}
 // FILE: A.java
 
 import org.checkerframework.checker.nullness.qual.*;
@@ -8,7 +10,6 @@ public class A {
 
 // FILE: a.kt
 
-interface Base<T> {}
 interface Derived<E> : Base<E> {}
 
 fun bar1(): Derived<String> = null!!

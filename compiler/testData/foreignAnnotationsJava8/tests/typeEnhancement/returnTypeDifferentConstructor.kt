@@ -13,26 +13,26 @@ class Outer {
 
     class B extends A {
         @Override
-        Base<String> foo() {}
+        Base<String> foo() { return null; }
     }
 
     class C extends A {
         @Override
-        @NonNull Base<String> foo() {}
+        @NonNull Base<String> foo() { return null; }
     }
 
     class D extends A {
         @Override
-        Derived<String> foo() {}
+        Derived<String> foo() { return null; }
     }
 
     class E extends A {
         @Override
-        @NonNull Derived<String> foo() {}
+        @NonNull Derived<String> foo() { return null; }
     }
 
     class F extends A {
         @Override
-        @NonNull Derived<@NonNull String> foo() {}
+        @NonNull Derived<@NonNull String> foo() { return null; }
     }
 }
