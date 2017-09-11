@@ -144,6 +144,12 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         doTest(fileName);
     }
 
+    @TestMetadata("StubOrderForOverloads.kt")
+    public void testStubOrderForOverloads() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/StubOrderForOverloads.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/VarArgs.kt");
