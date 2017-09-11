@@ -296,7 +296,7 @@ fun parseCompilerArgumentsToFacet(
         arguments: List<String>,
         defaultArguments: List<String>,
         kotlinFacet: KotlinFacet,
-        modelsProvider: IdeModifiableModelsProvider
+        modelsProvider: IdeModifiableModelsProvider?
 ) {
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
