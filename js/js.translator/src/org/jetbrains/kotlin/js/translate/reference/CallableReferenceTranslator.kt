@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
 object CallableReferenceTranslator {
@@ -46,23 +49,30 @@ object CallableReferenceTranslator {
     fun translate(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression {
         val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.callableReference)
 
-        val receiver = expression.receiverExpression?.let { r ->
-            if (context.bindingContext().get(BindingContext.DOUBLE_COLON_LHS, r) is DoubleColonLHS.Expression &&
-                descriptor is CallableMemberDescriptor &&
-                descriptor.dispatchReceiverParameter ?: descriptor.extensionReceiverParameter != null
-            ) {
-                val block = JsBlock()
-                val e = Translation.translateAsExpression(r, context, block)
-                if (!block.isEmpty) {
-                    context.addStatementsToCurrentBlockFrom(block)
+        val receiverExpression = expression.receiverExpression
+        val receiver = when {
+            receiverExpression != null -> {
+                if (context.bindingContext().get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) is DoubleColonLHS.Expression &&
+                    descriptor is CallableMemberDescriptor &&
+                    descriptor.dispatchReceiverParameter ?: descriptor.extensionReceiverParameter != null
+                        ) {
+                    val block = JsBlock()
+                    val e = Translation.translateAsExpression(receiverExpression, context, block)
+                    if (!block.isEmpty) {
+                        context.addStatementsToCurrentBlockFrom(block)
+                    }
+                    e
                 }
-                e
+                else {
+                    null
+                }
             }
-            else {
-                null
+            descriptor is PropertyImportedFromObject -> {
+                ReferenceTranslator.translateAsValueReference(descriptor.containingObject, context)
             }
-        } ?: (descriptor as? PropertyImportedFromObject)?.let {
-            ReferenceTranslator.translateAsValueReference(it.containingObject, context)
+            else -> { // Assume receiver is `this`
+                JsThisRef()
+            }
         }
 
         return when (descriptor) {
@@ -94,11 +104,20 @@ object CallableReferenceTranslator {
             override fun getValueArgumentsByIndex(): List<ResolvedValueArgument> = valueArgumentList
 
             override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> = valueArgumentMap
+
+            override fun getExplicitReceiverKind(): ExplicitReceiverKind {
+                if (receiver != null) {
+                    return if (descriptor.isExtension) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+                }
+                else {
+                    return ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+                }
+            }
         }
 
         val function = JsFunction(context.scope(), JsBlock(), "")
         function.source = expression
-        val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
+        val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null || receiver != null) {
             val paramName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
             function.parameters += JsParameter(paramName)
             paramName.makeRef()
@@ -127,7 +146,18 @@ object CallableReferenceTranslator {
             expression: KtCallableReferenceExpression,
             receiver: JsExpression?
     ): JsExpression {
-        val call = expression.callableReference.getPropertyResolvedCallWithAssert(context.bindingContext())
+        val realCall = expression.callableReference.getPropertyResolvedCallWithAssert(context.bindingContext())
+
+        val call = object : DelegatingResolvedCall<PropertyDescriptor>(realCall) {
+            override fun getExplicitReceiverKind(): ExplicitReceiverKind {
+                if (receiver != null) {
+                    return if (descriptor.isExtension) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+                }
+                else {
+                    return ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+                }
+            }
+        }
 
         val getter = translateForPropertyAccessor(call, expression, descriptor, context, receiver, false) { context, call, _, receiverParam ->
             CallTranslator.translateGet(context, call, receiverParam)

@@ -6,32 +6,34 @@ class A {
     val memberProperty: Int get() = 42.also { result += "A.mp," }
     val aMemberProperty: Int get() = 42.also { result += "A.amp," }
 
-    fun test(): String {
-        (::memberFunction)()
-        (::aExtensionFunction)()
-
-        (::memberProperty)()
-        (::aExtensionProperty)()
-
-        return result
-    }
+//    fun test(): String {
+//        (::memberFunction)()
+//        (::aExtensionFunction)()
+//
+//        (::memberProperty)()
+//        (::aExtensionProperty)()
+//
+//        return result
+//    }
 
     inner class B {
         fun memberFunction() { result += "B.mf," }
         val memberProperty: Int get() = 42.also { result += "B.mp," }
 
         fun test(): String {
+            aMemberFunction()
+
             (::aMemberFunction)()
-            (::aExtensionFunction)()
-
-            (::aMemberProperty)()
-            (::aExtensionProperty)()
-
-            (::memberFunction)()
-            (::memberProperty)()
-
-            (::bExtensionFunction)()
-            (::bExtensionProperty)()
+//            (::aExtensionFunction)()
+//
+//            (::aMemberProperty)()
+//            (::aExtensionProperty)()
+//
+//            (::memberFunction)()
+//            (::memberProperty)()
+//
+//            (::bExtensionFunction)()
+//            (::bExtensionProperty)()
 
             return result
         }
@@ -44,8 +46,9 @@ fun A.B.bExtensionFunction() { result += "B.ef," }
 val A.B.bExtensionProperty: Int get() = 42.also { result += "B.ep," }
 
 fun box(): String {
-    val a = A().test()
-    if (a != "A.mf,A.ef,A.mp,A.ep,") return "Fail $a"
+//    (A()::aExtensionFunction)()
+//    val a = A().test()
+//    if (a != "A.mf,A.ef,A.mp,A.ep,") return "Fail $a"
 
     result = ""
     val b = A().B().test()
