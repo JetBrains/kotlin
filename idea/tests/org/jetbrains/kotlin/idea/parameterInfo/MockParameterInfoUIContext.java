@@ -80,10 +80,6 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
         return myParameterOwner;
     }
 
-    public boolean isSingleOverload() {
-        return false;
-    }
-
     @Override
     public boolean isSingleParameterInfo() {
         return false;
