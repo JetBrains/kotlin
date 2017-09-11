@@ -12,7 +12,15 @@ class DependencyDownloader(
         var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
         var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS
 ) {
-    val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor())
+    val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor(object : ThreadFactory {
+        override fun newThread(r: Runnable?): Thread {
+            val thread = Thread(r)
+            thread.name = "konan-dependency-downloader"
+            thread.isDaemon = true
+
+            return thread
+      }
+    }))
 
     enum class ReplacingMode {
         /** Redownload the file and replace the existing one. */
