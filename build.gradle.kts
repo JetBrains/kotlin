@@ -38,6 +38,13 @@ buildScan {
     setLicenseAgree("yes")
 }
 
+val configuredJdks: List<JdkId> =
+        getConfiguredJdks().also {
+            it.forEach {
+                logger.info("Using ${it.majorVersion} home: ${it.homeDir}")
+            }
+        }
+
 val buildNumber = "1.1-SNAPSHOT"
 extra["build.number"] = buildNumber
 
@@ -288,8 +295,10 @@ tasks {
 }
 
 fun jdkPath(version: String): String {
-    val varName = "JDK_${version.replace(".", "")}"
-    return System.getenv(varName) ?: throw GradleException ("Please set environment variable $varName to point to JDK $version installation")
+    val jdkName = "JDK_${version.replace(".", "")}"
+    val jdkMajorVersion = JdkMajorVersion.valueOf(jdkName)
+    return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath
+        ?: throw GradleException ("Please set environment variable $jdkName to point to JDK $version installation")
 }
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
