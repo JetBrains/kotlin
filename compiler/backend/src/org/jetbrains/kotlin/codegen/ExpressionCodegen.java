@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.config.ApiVersion;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -1741,7 +1740,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
             if (isEnumEntry(classDescriptor)) {
-                return StackValue.enumEntry(classDescriptor, typeMapper);
+                if (isInsideEnumEntry(classDescriptor)) {
+                    return generateThisOrOuterFromContext(classDescriptor, false, false);
+                }
+                else {
+                    return StackValue.enumEntry(classDescriptor, typeMapper);
+                }
             }
             ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
             if (companionObjectDescriptor != null) {
@@ -2534,21 +2538,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return generateThisOrOuter(calleeContainingClass, isSuper, false);
     }
 
-    private boolean isInInnerClassConstructorContext(@NotNull ClassDescriptor calleeContainingClass) {
-        if (!(context instanceof ConstructorContext)) return false;
+    private boolean isInsideEnumEntry(@NotNull ClassDescriptor enumEntryDescriptor) {
+        assert DescriptorUtils.isEnumEntry(enumEntryDescriptor) :
+                "Enum entry reference expected: " + enumEntryDescriptor;
 
-        CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
-        assert contextDescriptor instanceof ConstructorDescriptor :
-                "Constructor descriptor expected: " + contextDescriptor;
-        ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) contextDescriptor;
+        DeclarationDescriptor descriptor = context.getContextDescriptor();
+        while (descriptor != null) {
+            if (descriptor == enumEntryDescriptor) return true;
 
-        ClassDescriptor classDescriptor = constructorDescriptor.getConstructedClass();
-        if (!classDescriptor.isInner()) return false;
+            if (descriptor instanceof ClassDescriptor &&
+                !(((ClassDescriptor) descriptor).isInner() || DescriptorUtils.isAnonymousObject(descriptor))) {
+                return false;
+            }
 
-        while (classDescriptor != null && classDescriptor.isInner()) {
-            classDescriptor = DescriptorUtils.getContainingClass(classDescriptor);
+            descriptor = descriptor.getContainingDeclaration();
         }
-        return classDescriptor == calleeContainingClass;
+
+        return false;
     }
 
     @NotNull
@@ -2560,7 +2566,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else if (isEnumEntry(calleeContainingClass)) {
-                if (!isInInnerClassConstructorContext(calleeContainingClass)) {
+                if (!isInsideEnumEntry(calleeContainingClass)) {
                     return StackValue.enumEntry(calleeContainingClass, typeMapper);
                 }
                 // else fall-through
@@ -2570,6 +2576,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
+        return generateThisOrOuterFromContext(calleeContainingClass, isSuper, forceOuter);
+    }
+
+    private StackValue generateThisOrOuterFromContext(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {
         CodegenContext cur = context;
         Type type = asmType(calleeContainingClass.getDefaultType());
         StackValue result = StackValue.local(0, type);
