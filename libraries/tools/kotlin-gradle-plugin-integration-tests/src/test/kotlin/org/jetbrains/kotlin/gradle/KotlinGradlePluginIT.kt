@@ -266,6 +266,19 @@ class KotlinGradleIT: BaseGradleIT() {
     }
 
     @Test
+    fun testIncrementalCompilationLogLevel() {
+        val infoProject = Project("kotlinProject", GRADLE_VERSION, minLogLevel = LogLevel.INFO)
+        infoProject.build("build") {
+            assertContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
+        }
+
+        val lifecycleProject = Project("kotlinProject", GRADLE_VERSION, minLogLevel = LogLevel.LIFECYCLE)
+        lifecycleProject.build("build") {
+            assertNotContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
+        }
+    }
+
+    @Test
     fun testConvertJavaToKotlin() {
         val project = Project("convertBetweenJavaAndKotlin", GRADLE_VERSION)
         project.setupWorkingDir()
