@@ -89,7 +89,7 @@ include ":kotlin-build-common",
         ":kotlin-test:kotlin-test-jvm",
         ":kotlin-test:kotlin-test-junit",
         ":kotlin-test:kotlin-test-js",
-        ":kotlin-test:kotlin-test-js-it",
+        ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
         ":kotlin-stdlib-common",
         ":kotlin-stdlib",
         ":kotlin-stdlib-js",
@@ -143,7 +143,7 @@ project(':kotlin-test:kotlin-test-common').projectDir = "$rootDir/libraries/kotl
 project(':kotlin-test:kotlin-test-jvm').projectDir = "$rootDir/libraries/kotlin.test/jvm" as File
 project(':kotlin-test:kotlin-test-junit').projectDir = "$rootDir/libraries/kotlin.test/junit" as File
 project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
-project(':kotlin-test:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
+project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
 project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
 project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File
 project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
