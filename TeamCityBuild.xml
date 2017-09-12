@@ -20,6 +20,7 @@
     <property name="compiler.ant.fork.jvmargs" value="-Xmx1024m"/>
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip"/>
+    <property name="pluginArtifactDir" value="Kotlin" />
 
     <macrodef name="echoprop">
         <attribute name="prop"/>
@@ -108,21 +109,21 @@
     <target name="zipArtifacts">
         <macrodef name="zipPlugin">
             <attribute name="filename"/>
+            <attribute name="prefix" />
             <attribute name="dir"/>
 
             <sequential>
                 <zip destfile="@{filename}">
-                    <zipfileset prefix="@{dir}" dir="${artifact.output.path}/@{dir}" excludes="kotlinc/bin/*"/>
-                    <zipfileset prefix="@{dir}/kotlinc/bin" dir="${artifact.output.path}/@{dir}/kotlinc/bin" includes="*.bat"
+                    <zipfileset prefix="@{prefix}" dir="@{dir}" excludes="kotlinc/bin/*"/>
+                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" includes="*.bat"
                                 filemode="644"/>
-                    <zipfileset prefix="@{dir}/kotlinc/bin" dir="${artifact.output.path}/@{dir}/kotlinc/bin" excludes="*.bat"
+                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" excludes="*.bat"
                                 filemode="755"/>
                 </zip>
-                <delete dir="${artifact.output.path}/@{dir}" quiet="true"/>
             </sequential>
         </macrodef>
 
-        <zipPlugin filename="${plugin.zip}" dir="Kotlin"/>
+        <zipPlugin filename="${plugin.zip}" prefix="Kotlin" dir="${artifact.output.path}/${pluginArtifactDir}"/>
     </target>
 
     <macrodef name="print-statistic">
