@@ -22,10 +22,20 @@ import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinTrySur
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTryExpression
 
-abstract class KotlinTryExpressionSurrounderBase : KotlinControlFlowExpressionSurrounderBase() {
+sealed class KotlinTryExpressionSurrounder : KotlinControlFlowExpressionSurrounderBase() {
+    class TryCatch : KotlinTryExpressionSurrounder() {
+        override fun getTemplateDescription() = "try { expr } catch {}"
+        override fun getPattern() = "try { $0 } catch (e: Exception) {}"
+    }
+
+    class TryCatchFinally : KotlinTryExpressionSurrounder() {
+        override fun getTemplateDescription() = "try { expr } catch {} finally {}"
+        override fun getPattern() = "try { $0 } catch (e: Exception) {} finally {}"
+    }
 
     override fun getRange(editor: Editor, replaced: KtExpression): TextRange? {
-        return KotlinTrySurrounderBase.getCatchTypeParameterTextRange(replaced as KtTryExpression)
+        val tryExpression = replaced as KtTryExpression
+        return KotlinTrySurrounderBase.getCatchTypeParameterTextRange(tryExpression)
     }
 }
 

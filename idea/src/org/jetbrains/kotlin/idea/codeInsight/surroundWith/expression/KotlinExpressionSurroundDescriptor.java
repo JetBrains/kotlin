@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
 
 public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
-
     private static final Surrounder[] SURROUNDERS = {
             new KotlinNotSurrounder(),
             new KotlinStringTemplateSurrounder(),
@@ -34,8 +33,8 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
             new KotlinRuntimeTypeCastSurrounder(),
             new KotlinWithIfExpressionSurrounder(/* withElse = */false),
             new KotlinWithIfExpressionSurrounder(/* withElse = */true),
-            new KotlinTryCatchExpressionSurrounder(),
-            new KotlinTryCatchFinallyExpressionSurrounder(),
+            new KotlinTryExpressionSurrounder.TryCatch(),
+            new KotlinTryExpressionSurrounder.TryCatchFinally(),
             new KotlinIfElseExpressionSurrounder(/* withBraces = */false),
             new KotlinIfElseExpressionSurrounder(/* withBraces = */true)
     };
@@ -43,14 +42,10 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
     @Override
     @NotNull
     public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-        KtExpression expression = (KtExpression) CodeInsightUtils.findElement(file,
-                                                                              startOffset,
-                                                                              endOffset,
-                                                                              CodeInsightUtils.ElementKind.EXPRESSION);
-        if (expression == null) {
-            return PsiElement.EMPTY_ARRAY;
-        }
-        return new PsiElement[] {expression};
+        KtExpression expression = (KtExpression) CodeInsightUtils.findElement(
+                file, startOffset, endOffset, CodeInsightUtils.ElementKind.EXPRESSION);
+
+        return expression == null ? PsiElement.EMPTY_ARRAY : new PsiElement[] {expression};
     }
 
     @Override

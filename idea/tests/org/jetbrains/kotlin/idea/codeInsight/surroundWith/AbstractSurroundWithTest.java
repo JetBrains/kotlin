@@ -72,7 +72,7 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
     }
 
     public void doTestWithTryCatchExpressionSurrounder(String path) throws Exception {
-        doTest(path, new KotlinTryCatchExpressionSurrounder());
+        doTest(path, new KotlinTryExpressionSurrounder.TryCatch());
     }
 
     public void doTestWithTryCatchFinallySurrounder(String path) throws Exception {
@@ -80,9 +80,8 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
     }
 
     public void doTestWithTryCatchFinallyExpressionSurrounder(String path) throws Exception {
-        doTest(path, new KotlinTryCatchFinallyExpressionSurrounder());
+        doTest(path, new KotlinTryExpressionSurrounder.TryCatchFinally());
     }
-
 
     public void doTestWithTryFinallySurrounder(String path) throws Exception {
         doTest(path, new KotlinTryFinallySurrounder());
