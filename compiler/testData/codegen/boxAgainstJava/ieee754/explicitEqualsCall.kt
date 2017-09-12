@@ -1,3 +1,4 @@
+// LANGUAGE_VERSION: 1.1
 // FILE: JavaClass.java
 
 public class JavaClass {

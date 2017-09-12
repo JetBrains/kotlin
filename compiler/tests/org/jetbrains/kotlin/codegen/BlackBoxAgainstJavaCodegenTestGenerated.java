@@ -335,6 +335,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             doTest(fileName);
         }
 
+        @TestMetadata("explicitEqualsCall_lv12.kt")
+        public void testExplicitEqualsCall_lv12() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCall_lv12.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/ieee754/float.kt");
