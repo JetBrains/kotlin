@@ -5651,6 +5651,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("errorType.kt")
+        public void testErrorType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/errorType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inapplicableIfExtensionProperty.kt")
         public void testInapplicableIfExtensionProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfExtensionProperty.kt");
