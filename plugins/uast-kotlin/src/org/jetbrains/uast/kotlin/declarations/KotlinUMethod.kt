@@ -42,7 +42,7 @@ open class KotlinUMethod(
 
     private val kotlinOrigin = (psi.originalElement as KtLightElement<*, *>).kotlinOrigin
 
-    override fun getContainingFile(): PsiFile? = kotlinOrigin?.containingFile ?: psi.containingFile
+    override fun getContainingFile(): PsiFile? = unwrapFakeFileForLightClass(psi.containingFile)
 
     override fun getNameIdentifier() = UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
 
@@ -57,7 +57,7 @@ open class KotlinUMethod(
     }
 
     override val uastAnchor: UElement
-        get() = UIdentifier((psi.originalElement as? PsiNameIdentifierOwner)?.nameIdentifier ?: psi.nameIdentifier, this)
+        get() = UIdentifier(nameIdentifier, this)
 
 
     override val uastBody by lz {

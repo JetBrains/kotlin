@@ -20,11 +20,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.uast.kotlin.unwrapFakeFileForLightClass
 
 class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtNamedDeclaration?)
     : KtLightIdentifier(lightOwner, ktDeclaration) {
-
-    override fun getContainingFile(): PsiFile {
-        return origin?.containingFile ?: super.getContainingFile()
-    }
+    override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(super.getContainingFile())
 }
