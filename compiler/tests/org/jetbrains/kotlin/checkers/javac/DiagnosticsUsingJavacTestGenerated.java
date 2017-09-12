@@ -11860,6 +11860,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("illegalModifier_lv12.kt")
+            public void testIllegalModifier_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/illegalModifier_lv12.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("innerClassInEnumEntryClassMemberResolve.kt")
             public void testInnerClassInEnumEntryClassMemberResolve() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/innerClassInEnumEntryClassMemberResolve.kt");
@@ -13153,6 +13159,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("modifierApplicability.kt")
             public void testModifierApplicability() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/lateinit/modifierApplicability.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("modifierApplicability_lv12.kt")
+            public void testModifierApplicability_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/lateinit/modifierApplicability_lv12.kt");
                 doTest(fileName);
             }
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: -InnerClassInEnumEntryClass
+// !LANGUAGE: +InnerClassInEnumEntryClass
 <!WRONG_MODIFIER_TARGET!>inner<!> fun foo() {}
 <!WRONG_MODIFIER_TARGET!>inner<!> val prop = 42
 
@@ -17,10 +17,10 @@ class D {
 
 enum class H {
     I0 {
-        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class II0
+        inner class II0
     },
     <!WRONG_MODIFIER_TARGET!>inner<!> I {
-        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class II
+        inner class II
     };
     
     inner class J
