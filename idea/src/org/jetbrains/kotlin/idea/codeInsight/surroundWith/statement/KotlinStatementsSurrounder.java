@@ -24,11 +24,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 public abstract class KotlinStatementsSurrounder implements Surrounder {
 
@@ -38,13 +35,8 @@ public abstract class KotlinStatementsSurrounder implements Surrounder {
             return false;
         }
 
-        if (elements.length == 1 || !(elements[0] instanceof KtExpression) && !isApplicableWhenUsedAsExpression()) {
-            KtElement expression = (KtElement) elements[0];
-
-            Boolean usedAsExpression = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL)
-                    .get(BindingContext.USED_AS_EXPRESSION, expression);
-
-            if (usedAsExpression != null && usedAsExpression) {
+        if (elements.length == 1 || elements[0] instanceof KtExpression) {
+            if (!isApplicableWhenUsedAsExpression() && KotlinSurrounderUtils.isUsedAsExpression((KtExpression) elements[0])) {
                 return false;
             }
         }
@@ -61,8 +53,7 @@ public abstract class KotlinStatementsSurrounder implements Surrounder {
     public TextRange surroundElements(
             @NotNull Project project,
             @NotNull Editor editor,
-            @NotNull PsiElement[] elements
-    ) throws IncorrectOperationException {
+            @NotNull PsiElement[] elements) throws IncorrectOperationException {
         PsiElement container = elements[0].getParent();
         if (container == null) return null;
         return surroundStatements(project, editor, container, elements);

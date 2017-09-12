@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 abstract class KotlinControlFlowExpressionSurrounderBase : KotlinExpressionSurrounder() {
-
-    override fun isApplicable(expression: KtExpression) = true
     override fun isApplicableToStatements() = false
 
     override fun surroundExpression(project: Project, editor: Editor, expression: KtExpression): TextRange? {

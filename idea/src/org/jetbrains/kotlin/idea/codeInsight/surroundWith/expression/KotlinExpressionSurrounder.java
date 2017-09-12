@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
+import static org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils.isUsedAsStatement;
 
 public abstract class KotlinExpressionSurrounder implements Surrounder {
 
@@ -45,25 +46,27 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
         if (expression instanceof KtCallExpression && expression.getParent() instanceof KtQualifiedExpression) {
             return false;
         }
+
+        return isApplicable(expression);
+    }
+
+    protected boolean isApplicable(@NotNull KtExpression expression) {
         BindingContext context = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL);
         KotlinType type = context.getType(expression);
         if (type == null || (isUnit(type) && isApplicableToStatements())) {
             return false;
         }
 
-        boolean usedAsExpression = Boolean.TRUE.equals(context.get(BindingContext.USED_AS_EXPRESSION, expression));
-        if (!isApplicableToStatements() && !usedAsExpression) {
+        if (!isApplicableToStatements() && isUsedAsStatement(expression)) {
             return false;
         }
 
-        return isApplicable(expression);
+        return true;
     }
 
     protected boolean isApplicableToStatements() {
         return true;
     }
-
-    protected abstract boolean isApplicable(@NotNull KtExpression expression);
 
     @Nullable
     @Override

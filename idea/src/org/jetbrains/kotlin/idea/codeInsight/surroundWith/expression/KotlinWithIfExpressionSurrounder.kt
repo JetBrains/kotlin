@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.sure
 
 class KotlinWithIfExpressionSurrounder(val withElse: Boolean) : KotlinExpressionSurrounder() {
     override fun isApplicable(expression: KtExpression) =
-            expression.analyze(BodyResolveMode.PARTIAL).getType(expression)?.isBoolean() ?: false
+            super.isApplicable(expression) && (expression.analyze(BodyResolveMode.PARTIAL).getType(expression)?.isBoolean() ?: false)
 
     override fun surroundExpression(project: Project, editor: Editor, expression: KtExpression): TextRange? {
         val factory = KtPsiFactory(project)
