@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-class KotlinFileRegistry {
-    private val fileIdsImpl = mutableMapOf<KotlinFileMetadata, Int>()
+import org.jetbrains.kotlin.psi.KtFile
 
-    fun lookup(file: KotlinFileMetadata) = fileIdsImpl.getOrPut(file) { fileIdsImpl.size }
+sealed class KotlinFileMetadata
 
-    val fileIds: Map<KotlinFileMetadata, Int>
-        get() = fileIdsImpl
-}
+data class KotlinPsiFileMetadata(val ktFile: KtFile) : KotlinFileMetadata()
+
+data class KotlinDeserializedFileMetadata(
+        val packageFragment: KotlinJavascriptPackageFragment,
+        val fileId: Int
+) : KotlinFileMetadata()

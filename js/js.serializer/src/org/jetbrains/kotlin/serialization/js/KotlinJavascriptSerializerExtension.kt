@@ -64,11 +64,17 @@ class KotlinJavascriptSerializerExtension(
     private fun getFileId(descriptor: DeclarationDescriptor): Int? {
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || descriptor !is DeclarationDescriptorWithSource) return null
 
-        val file = descriptor.source.containingFile
-        if (file !is PsiSourceFile) return null
+        val fileId = descriptor.extractFileId()
+        if (fileId != null) {
+            (descriptor.containingDeclaration as? KotlinJavascriptPackageFragment)?.let { packageFragment ->
+                return fileRegistry.lookup(KotlinDeserializedFileMetadata(packageFragment, fileId))
+            }
+        }
+
+        val file = descriptor.source.containingFile as? PsiSourceFile ?: return null
 
         val psiFile = file.psiFile
-        return (psiFile as? KtFile)?.let { fileRegistry.lookup(it) }
+        return (psiFile as? KtFile)?.let { fileRegistry.lookup(KotlinPsiFileMetadata(it)) }
     }
 }
 

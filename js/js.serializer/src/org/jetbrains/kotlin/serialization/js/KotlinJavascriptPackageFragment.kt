@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragmentImpl
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
@@ -44,7 +41,7 @@ class KotlinJavascriptPackageFragment(
         header: JsProtoBuf.Header,
         configuration: DeserializationConfiguration
 ) : DeserializedPackageFragmentImpl(fqName, storageManager, module, proto, JsContainerSource(fqName, header, configuration)) {
-    private val fileMap: Map<Int, FileHolder> by storageManager.createLazyValue {
+    val fileMap: Map<Int, FileHolder> by storageManager.createLazyValue {
         this.proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
             (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
         }
@@ -58,17 +55,12 @@ class KotlinJavascriptPackageFragment(
         if (DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java) != this) {
             throw IllegalArgumentException("Provided descriptor $descriptor does not belong to this package $this")
         }
-        val fileId = when (descriptor) {
-            is DeserializedClassDescriptor -> descriptor.classProto.getExtension(JsProtoBuf.classContainingFileId)
-            is DeserializedSimpleFunctionDescriptor -> descriptor.proto.getExtension(JsProtoBuf.functionContainingFileId)
-            is DeserializedPropertyDescriptor -> descriptor.proto.getExtension(JsProtoBuf.propertyContainingFileId)
-            else -> null
-        }
+        val fileId = descriptor.extractFileId()
 
         return fileId?.let { fileMap[it] }?.annotations.orEmpty()
     }
 
-    private inner class FileHolder(val annotationsProto: List<ProtoBuf.Annotation>) {
+    inner class FileHolder(private val annotationsProto: List<ProtoBuf.Annotation>) {
         val annotations: List<AnnotationDescriptor> by storageManager.createLazyValue {
             annotationsProto.map { annotationDeserializer.deserializeAnnotation(it, nameResolver) }
         }

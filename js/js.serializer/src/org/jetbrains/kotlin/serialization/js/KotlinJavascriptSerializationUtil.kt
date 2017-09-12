@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
@@ -130,7 +133,9 @@ object KotlinJavascriptSerializationUtil {
         val builder = ProtoBuf.PackageFragment.newBuilder()
 
         // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
-        val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isExpect) }
+        val skip: (DeclarationDescriptor) -> Boolean = {
+            DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isExpect)
+        }
 
         val fileRegistry = KotlinFileRegistry()
         val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
@@ -183,8 +188,11 @@ object KotlinJavascriptSerializationUtil {
             if (id != filesProto.fileCount) {
                 fileProto.id = id
             }
-            for (annotationPsi in file.annotationEntries) {
-                val annotation = bindingContext[BindingContext.ANNOTATION, annotationPsi]!!
+            val annotations = when (file) {
+                is KotlinPsiFileMetadata -> file.ktFile.annotationEntries.map { bindingContext[BindingContext.ANNOTATION, it]!! }
+                is KotlinDeserializedFileMetadata -> file.packageFragment.fileMap[file.fileId]!!.annotations
+            }
+            for (annotation in annotations) {
                 fileProto.addAnnotation(serializer.serializeAnnotation(annotation))
             }
             filesProto.addFile(fileProto)
@@ -283,3 +291,10 @@ object KotlinJavascriptSerializationUtil {
 }
 
 data class KotlinJavaScriptLibraryParts(val header: JsProtoBuf.Header, val body: List<ProtoBuf.PackageFragment>)
+
+internal fun DeclarationDescriptor.extractFileId(): Int? = when (this) {
+    is DeserializedClassDescriptor -> classProto.getExtension(JsProtoBuf.classContainingFileId)
+    is DeserializedSimpleFunctionDescriptor -> proto.getExtension(JsProtoBuf.functionContainingFileId)
+    is DeserializedPropertyDescriptor -> proto.getExtension(JsProtoBuf.propertyContainingFileId)
+    else -> null
+}
