@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.cli.bc.main as konancMain
-import org.jetbrains.kotlin.native.interop.gen.jvm.main as cinteropMain
+import org.jetbrains.kotlin.native.interop.gen.jvm.interop 
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 
 fun invokeCinterop(args: Array<String>) {
@@ -29,7 +29,8 @@ fun invokeCinterop(args: Array<String>) {
         "-flavor", "native")
 
     val cinteropArgs = (additionalArgs + args.toList()).toTypedArray()
-    cinteropMain(cinteropArgs)
+    val cinteropArgsToCompiler = mutableListOf<String>()
+    interop(cinteropArgs, cinteropArgsToCompiler)
 
     val konancArgs = arrayOf(
         generatedDir.path, 
@@ -38,7 +39,7 @@ fun invokeCinterop(args: Array<String>) {
         "-o", outputFileName,
         "-target", target,
         "-manifest", manifest.path
-     )
+     ) + cinteropArgsToCompiler
     konancMain(konancArgs)
 }
 

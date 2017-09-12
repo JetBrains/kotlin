@@ -23,14 +23,16 @@ import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.reflect.KFunction
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = interop(args, null)
+
+fun interop(args: Array<String>, argsToCompiler: MutableList<String>? = null) {
     val konanHome = File(System.getProperty("konan.home")).absolutePath
 
     val substitutions = mapOf(
             "arch" to (System.getenv("TARGET_ARCH") ?: "x86-64"),
             "os" to (System.getenv("TARGET_OS") ?: host)
     )
-    processLib(konanHome, substitutions, parseArgs(args))
+    processLib(konanHome, substitutions, parseArgs(args), argsToCompiler)
 }
 
 // Options, whose values are space-separated and can be escaped.
@@ -337,10 +339,8 @@ private fun selectNativeLanguage(config: Properties): Language {
             error("Unexpected language '$language'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
 }
 
-private fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<String>) {
+private fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<String>): List<String> {
     val result = mutableListOf<String>()
-    println("libs = $staticLibraries")
-    println("paths = $libraryPaths")
     staticLibraries.forEach { library ->
         libraryPaths.forEach forEachPath@ {   path ->
             val combined = "$path/$library"
@@ -350,12 +350,19 @@ private fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<S
             }
         }
     }
-    println("result = $result")
+    return result
 }
+
+private fun argsToCompiler(staticLibraries: List<String>, libraryPaths: List<String>): List<String> {
+    return resolveLibraries(staticLibraries, libraryPaths)
+        .map { it -> listOf("-includeBinary", it) } .flatten()
+}
+
 
 private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
-                       args: Map<String, List<String>>) {
+                       args: Map<String, List<String>>, 
+                       argsToCompiler: MutableList<String>?) {
 
     val userDir = System.getProperty("user.dir")
     val ktGenRoot = args["-generated"]?.single() ?: userDir
@@ -418,9 +425,9 @@ private fun processLib(konanHome: String,
             config.getSpaceSeparated("linkerOpts").toTypedArray() + defaultOpts + additionalLinkerOpts
     val linker = args["-linker"]?.atMostOne() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
-    val staticLibraries = config.getSpaceSeparated("staticLibraries") + args["staticLibrary"].orEmpty()
-    val libraryPath = args["-libraryPath"]
-    val resolvedStaticLibraries = resolveLibraries(staticLibraries, libraryPath.orEmpty())
+    val staticLibraries = config.getSpaceSeparated("staticLibraries") + args["-staticLibrary"].orEmpty()
+    val libraryPaths = args["-libraryPath"].orEmpty()
+    argsToCompiler ?. let { it.addAll(argsToCompiler(staticLibraries, libraryPaths)) }
 
     val fqParts = (args["-pkg"]?.atMostOne() ?: config.getProperty("package"))?.let {
         it.split('.')
