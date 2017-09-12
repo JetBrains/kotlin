@@ -305,6 +305,7 @@ internal class LinkStage(val context: Context) {
         try {
             runTool(*linkCommand.toTypedArray())
         } catch (e: KonanExternalToolFailure) {
+            context.reportCompilationError("linker invocation reported errors")
             return null
         }
         if (platform is MacOSBasedPlatform && context.shouldContainDebugInfo()) {
