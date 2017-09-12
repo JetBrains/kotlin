@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -41,8 +38,13 @@ fun KtDeclaration.resolveToDescriptor(bodyResolveMode: BodyResolveMode = BodyRes
         getResolutionFacade().resolveToDescriptor(this, bodyResolveMode)
 
 //TODO: BodyResolveMode.PARTIAL is not quite safe!
-fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? =
-        analyze(bodyResolveMode).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? {
+    val context = analyze(bodyResolveMode)
+    if (this is KtParameter && this.hasValOrVar()) {
+        return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    }
+    return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+}
 
 fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()
