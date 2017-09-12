@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.configurations.JavaRunConfigurationModule
 import com.intellij.execution.configurations.ModuleBasedConfiguration
-import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleOrderEntry
@@ -94,10 +94,10 @@ class MultiplatformGradleProjectTaskRunner : GradleProjectTaskRunner() {
                 is ModuleFilesBuildTask -> this
 
                 is ModuleBuildTask ->
-                        if (module == origin)
-                            ModuleBuildTaskImpl(replacement, isIncrementalBuild, isIncludeDependentModules, isIncludeRuntimeDependencies)
-                        else
-                            this
+                    if (module == origin)
+                        ModuleBuildTaskImpl(replacement, isIncrementalBuild, isIncludeDependentModules, isIncludeRuntimeDependencies)
+                    else
+                        this
 
                 else -> this
             }
@@ -109,7 +109,7 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
         if (!ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, rootModel.module)) return false
 
         if (!GradleSystemRunningSettings.getInstance().isUseGradleAwareMake) {
-            val gradleProjectPath = ExternalSystemModulePropertyManager.getInstance(rootModel.module).getRootProjectPath() ?: return false
+            val gradleProjectPath = rootModel.module.getOptionValue(ExternalSystemConstants.ROOT_PROJECT_PATH_KEY);
             val externalProjectDataCache = ExternalProjectDataCache.getInstance(rootModel.module.project)!!
             val externalRootProject = externalProjectDataCache.getRootExternalProject(GradleConstants.SYSTEM_ID,
                                                                                       File(gradleProjectPath)) ?: return false
@@ -139,7 +139,11 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
     }
 
     private fun addOutputModuleRoots(directorySet: ExternalSourceDirectorySet?, result: MutableCollection<String>) {
-        directorySet?.gradleOutputDirs?.mapTo(result) { VfsUtilCore.pathToUrl(it.absolutePath) }
+        if (directorySet == null) return;
+
+        if (directorySet.isCompilerOutputPathInherited) return
+        val path = directorySet.outputDir.absolutePath
+        result.add(VfsUtilCore.pathToUrl(path))
     }
 
     class FactoryImpl : Factory() {
@@ -149,7 +153,7 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
         }
 
         override fun createHandler(module: Module): OrderEnumerationHandler =
-            MultiplatformGradleOrderEnumeratorHandler()
+                MultiplatformGradleOrderEnumeratorHandler()
     }
 }
 
