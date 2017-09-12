@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -49,20 +48,17 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
         val elseClause = if (element.isUsedAsStatement(element.analyze())) null else psiFactory.createExpression("null")
         var ifExpression = element.convertToIfNotNullExpression(receiver, dotQualified, elseClause)
 
-        var isEqualExpression = false
+        var isAssignment = false
         val binaryExpression = (ifExpression.parent as? KtParenthesizedExpression)?.parent as? KtBinaryExpression
-        if (binaryExpression != null) {
-            val eq = (binaryExpression.operationToken as? KtSingleValueToken)?.takeIf { it == KtTokens.EQ }?.value
-            val right = binaryExpression.right?.text
-            if (eq != null && right != null) {
-                val replaced = binaryExpression.replaced(psiFactory.createExpression("${ifExpression.text} $eq $right"))
-                ifExpression = replaced.findDescendantOfType()!!
-                isEqualExpression = true
-            }
+        val right = binaryExpression?.right
+        if (right != null && binaryExpression.operationToken == KtTokens.EQ) {
+            val replaced = binaryExpression.replaced(psiFactory.createExpressionByPattern("$0 = $1", ifExpression.text, right))
+            ifExpression = replaced.findDescendantOfType()!!
+            isAssignment = true
         }
 
         if (!receiverIsStable) {
-            val valueToExtract = if (isEqualExpression)
+            val valueToExtract = if (isAssignment)
                 ((ifExpression.then as? KtBinaryExpression)?.left as? KtDotQualifiedExpression)?.receiverExpression
             else
                 (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression

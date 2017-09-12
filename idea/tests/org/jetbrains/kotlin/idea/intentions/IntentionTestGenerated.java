@@ -2344,6 +2344,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/safeAccessToIfThen"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("assignment.kt")
+            public void testAssignment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/assignment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignment2.kt")
+            public void testAssignment2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/assignment2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignment3.kt")
+            public void testAssignment3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/assignment3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("binaryExpressionLhs.kt")
             public void testBinaryExpressionLhs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/binaryExpressionLhs.kt");
@@ -2368,21 +2386,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("equalExpression.kt")
-            public void testEqualExpression() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equalExpression.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("equalExpression2.kt")
-            public void testEqualExpression2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equalExpression2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("equalExpression3.kt")
-            public void testEqualExpression3() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equalExpression3.kt");
+            @TestMetadata("equality.kt")
+            public void testEquality() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equality.kt");
                 doTest(fileName);
             }
 
