@@ -61,7 +61,6 @@ task originalStdlibJar(type: Jar) {
 
 jar {
     manifestAttributes(manifest, project, 'Main')
-    dependsOn ":core:builtins:serialize"
     from("${rootDir}/dist/builtins")
     from sourceSets.builtins.output
 }
@@ -70,7 +69,6 @@ task distJar(type: Jar) {
     baseName = 'dist-kotlin-stdlib'
     version = null
     manifestAttributes(manifest, project, 'Main')
-    dependsOn ":core:builtins:serialize"
     from("${rootDir}/dist/builtins")
     from sourceSets.annotations.output
     from sourceSets.builtins.output
@@ -79,7 +77,6 @@ task distJar(type: Jar) {
 
 task builtinsJar(type: Jar) {
     baseName = "builtins"
-    dependsOn ":core:builtins:serialize"
     from("${rootDir}/dist/builtins")
     from sourceSets.builtins.output
 }
@@ -113,6 +110,7 @@ dist {
 }
 
 compileBuiltinsKotlin {
+    dependsOn ":core:builtins:serialize"
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",
