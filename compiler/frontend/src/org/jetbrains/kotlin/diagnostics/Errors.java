@@ -394,6 +394,10 @@ public interface Errors {
 
     DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> DATA_CLASS_OVERRIDE_CONFLICT =
             DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> DATA_CLASS_OVERRIDE_DEFAULT_VALUES_WARNING =
+            DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR =
+            DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory1<KtDeclaration, CallableMemberDescriptor> CANNOT_INFER_VISIBILITY =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);

@@ -4828,9 +4828,39 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("dataClassExplicitlyOverridingCopyNoDefaults.kt")
+            public void testDataClassExplicitlyOverridingCopyNoDefaults() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassExplicitlyOverridingCopyNoDefaults.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("dataClassExplicitlyOverridingCopyWithDefaults.kt")
+            public void testDataClassExplicitlyOverridingCopyWithDefaults() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassExplicitlyOverridingCopyWithDefaults.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dataClassNoName.kt")
             public void testDataClassNoName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassNoName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("dataClassNotOverridingCopy.kt")
+            public void testDataClassNotOverridingCopy() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassNotOverridingCopy.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("dataClassOverridingCopy_lv12.kt")
+            public void testDataClassOverridingCopy_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassOverridingCopy_lv12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("dataClassOverridingCopy_lv13.kt")
+            public void testDataClassOverridingCopy_lv13() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassOverridingCopy_lv13.kt");
                 doTest(fileName);
             }
 

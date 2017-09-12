@@ -290,6 +290,8 @@ public class DefaultErrorMessages {
         MAP.put(VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{2}'' and needs ''override'' modifier", NAME, NAME, NAME);
 
         MAP.put(DATA_CLASS_OVERRIDE_CONFLICT, "Function ''{0}'' generated for the data class conflicts with member of supertype ''{1}''", NAME, NAME);
+        MAP.put(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_WARNING, "Function ''{0}'' generated for the data class has default values for parameters, and conflicts with member of supertype ''{1}''", NAME, NAME);
+        MAP.put(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR, "Function ''{0}'' generated for the data class has default values for parameters, and conflicts with member of supertype ''{1}''", NAME, NAME);
 
         MAP.put(CANNOT_OVERRIDE_INVISIBLE_MEMBER, "''{0}'' has no access to ''{1}'', so it cannot override it", FQ_NAMES_IN_TYPES,
                 FQ_NAMES_IN_TYPES);
