@@ -22,6 +22,7 @@ import java.io.InputStreamReader
 import java.net.URI
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.StandardOpenOption
 
 class File constructor(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
@@ -113,6 +114,8 @@ class File constructor(internal val javaPath: Path) {
     }
     fun readBytes() = Files.readAllBytes(javaPath)
     fun writeBytes(bytes: ByteArray) = Files.write(javaPath, bytes)
+    fun appendBytes(bytes: ByteArray)
+        = Files.write(javaPath, bytes, StandardOpenOption.APPEND)
 
     fun forEachLine(action: (String) -> Unit) {
         Files.lines(javaPath).use { lines ->
