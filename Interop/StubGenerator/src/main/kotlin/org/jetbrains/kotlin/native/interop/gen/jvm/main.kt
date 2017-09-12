@@ -342,12 +342,14 @@ private fun selectNativeLanguage(config: Properties): Language {
 private fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<String>): List<String> {
     val result = mutableListOf<String>()
     staticLibraries.forEach { library ->
-        libraryPaths.forEach forEachPath@ {   path ->
-            val combined = "$path/$library"
-            if (File(combined).exists()) {
-                result.add(combined)
-                return@forEachPath
-            }
+        
+        val resolution = libraryPaths.map { "$it/$library" } 
+                .find { File(it).exists() }
+
+        if (resolution != null) {
+            result.add(resolution)
+        } else {
+            error("Could not find '$library' binary in neither of $libraryPaths")
         }
     }
     return result
@@ -426,7 +428,7 @@ private fun processLib(konanHome: String,
     val linker = args["-linker"]?.atMostOne() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
     val staticLibraries = config.getSpaceSeparated("staticLibraries") + args["-staticLibrary"].orEmpty()
-    val libraryPaths = args["-libraryPath"].orEmpty()
+    val libraryPaths = config.getSpaceSeparated("libraryPaths") + args["-libraryPath"].orEmpty()
     argsToCompiler ?. let { it.addAll(argsToCompiler(staticLibraries, libraryPaths)) }
 
     val fqParts = (args["-pkg"]?.atMostOne() ?: config.getProperty("package"))?.let {
