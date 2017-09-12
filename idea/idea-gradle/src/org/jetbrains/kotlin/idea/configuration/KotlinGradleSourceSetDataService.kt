@@ -26,12 +26,12 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.isQualifiedModuleNamesEnabled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
@@ -209,6 +209,8 @@ private fun configureFacetByGradleModule(
 
     return kotlinFacet
 }
+
+private fun isQualifiedModuleNamesEnabled() = Registry.`is`("project.qualified.module.names")
 
 private fun getImplementedModuleName(moduleNode: DataNode<ModuleData>, sourceSetName: String?): String? {
     val baseModuleName = moduleNode.implementedModule?.data?.internalName
