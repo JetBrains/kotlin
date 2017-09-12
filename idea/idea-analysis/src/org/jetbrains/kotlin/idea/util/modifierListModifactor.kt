@@ -72,6 +72,10 @@ fun KtAnnotated.findAnnotation(annotationFqName: FqName): KtAnnotationEntry? {
     if (annotationEntries.isEmpty()) return null
 
     val context = analyze(bodyResolveMode = BodyResolveMode.PARTIAL)
+    val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] ?: return null
+
+    // Make sure all annotations are resolved
+    descriptor.annotations.toList()
 
     return annotationEntries.firstOrNull { entry -> context.get(BindingContext.ANNOTATION, entry)?.fqName == annotationFqName }
 }

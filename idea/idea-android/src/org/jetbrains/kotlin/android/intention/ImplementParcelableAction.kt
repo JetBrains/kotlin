@@ -23,6 +23,7 @@ import org.jetbrains.android.util.AndroidBundle
 import org.jetbrains.kotlin.android.canAddParcelable
 import org.jetbrains.kotlin.android.implementParcelable
 import org.jetbrains.kotlin.android.insideBody
+import org.jetbrains.kotlin.android.isParcelize
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.psi.KtClass
 
@@ -33,6 +34,7 @@ class ImplementParcelableAction :
     override fun isApplicableTo(element: KtClass, caretOffset: Int): Boolean =
             AndroidFacet.getInstance(element) != null &&
             !element.insideBody(caretOffset) &&
+            !element.isParcelize() &&
             element.canAddParcelable()
 
     override fun applyTo(element: KtClass, editor: Editor?) {
