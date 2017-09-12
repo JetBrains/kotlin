@@ -151,7 +151,7 @@ class KotlinCoreEnvironment private constructor(
     private val classpathRootsResolver: ClasspathRootsResolver
     private val initialRoots: List<JavaRoot>
 
-    val configuration: CompilerConfiguration = configuration.copy()
+    val configuration: CompilerConfiguration = configuration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
     init {
         PersistentFSConstants.setMaxIntellisenseFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING)
@@ -176,6 +176,7 @@ class KotlinCoreEnvironment private constructor(
         project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES))
 
         registerProjectServicesForCLI(projectEnvironment)
+
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         registerProjectServices(projectEnvironment, messageCollector)
 
@@ -546,5 +547,32 @@ class KotlinCoreEnvironment private constructor(
              */
 
         }
+
+        private fun CompilerConfiguration.setupJdkClasspathRoots(configFiles: EnvironmentConfigFiles) {
+            if (getBoolean(JVMConfigurationKeys.NO_JDK)) return
+
+            val jvmTarget = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
+            if (!jvmTarget) return
+
+            val jdkHome = get(JVMConfigurationKeys.JDK_HOME)
+            val (javaRoot, classesRoots) = if (jdkHome == null) {
+                val javaHome = PathUtil.getJavaHome()
+                put(JVMConfigurationKeys.JDK_HOME, javaHome)
+
+                javaHome to PathUtil.getJdkClassesRootsFromCurrentJre()
+            }
+            else {
+                jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
+            }
+
+            if (!CoreJrtFileSystem.isModularJdk(javaRoot)) {
+                addJvmClasspathRoots(classesRoots)
+                if (classesRoots.isEmpty()) {
+                    val messageCollector = get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                    messageCollector?.report(ERROR, "No class roots are found in the JDK path: $jdkHome")
+                }
+            }
+        }
+
     }
 }

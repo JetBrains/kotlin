@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<File> JDK_HOME =
             CompilerConfigurationKey.create("jdk home");
+
+    public static final CompilerConfigurationKey<Boolean> NO_JDK =
+            CompilerConfigurationKey.create("no jdk");
 
     public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
             CompilerConfigurationKey.create("script definitions");
