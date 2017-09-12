@@ -40,6 +40,7 @@ import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
+import java.lang.ref.WeakReference
 
 interface KotlinUastBindingContextProviderService {
     fun getBindingContext(element: KtElement): BindingContext
@@ -59,8 +60,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     }
 
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
-        return convertDeclaration(element, parent.toCallback(), requiredType)
-               ?: KotlinConverter.convertPsiElement(element, parent.toCallback(), requiredType)
+        return convertDeclarationOrElement(element, parent.toCallback(), requiredType)
     }
     
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
@@ -78,8 +78,24 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
             else
                 return convertElementWithParent(parentUnwrapped, null)
         }
-        return convertDeclaration(element, parentCallback, requiredType)
-               ?: KotlinConverter.convertPsiElement(element, parentCallback, requiredType)
+        return convertDeclarationOrElement(element, parentCallback, requiredType)
+    }
+
+    private fun convertDeclarationOrElement(element: PsiElement, parentCallback: (() -> UElement?)?, requiredType: Class<out UElement>?): UElement? {
+        if (element is UElement) return element
+
+        if (element.isValid) {
+            element.getUserData(KOTLIN_CACHED_UELEMENT_KEY)?.get()?.let { cachedUElement ->
+                return if (requiredType == null || requiredType.isInstance(cachedUElement)) cachedUElement else null
+            }
+        }
+
+        val uElement = convertDeclaration(element, parentCallback, requiredType)
+                        ?: KotlinConverter.convertPsiElement(element, parentCallback, requiredType)
+        if (uElement != null) {
+            element.putUserData(KOTLIN_CACHED_UELEMENT_KEY, WeakReference(uElement))
+        }
+        return uElement
     }
 
     override fun getMethodCallExpression(
@@ -125,12 +141,6 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     private fun convertDeclaration(element: PsiElement,
                                    parentCallback: (() -> UElement?)?,
                                    requiredType: Class<out UElement>?): UElement? {
-        if (element is UElement) return element
-
-        if (element.isValid) element.getUserData(KOTLIN_CACHED_UELEMENT_KEY)?.let { ref ->
-            ref.get()?.let { return it }
-        }
-
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? {
             return fun(): UElement? {
                 val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
