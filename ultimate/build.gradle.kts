@@ -28,6 +28,7 @@ dependencies {
     compile(project(":compiler:light-classes")) { isTransitive = false }
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
+    compile(project(":js:js.frontend")) { isTransitive = false }
     compile(projectClasses(":idea"))
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
@@ -48,6 +49,7 @@ dependencies {
     compile(ideaUltimatePluginDeps("*.jar", plugin = "gradle"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "Groovy"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "junit"))
+    compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptLanguage"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "uml"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
