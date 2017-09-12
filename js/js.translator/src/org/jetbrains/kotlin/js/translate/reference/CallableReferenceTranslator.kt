@@ -27,44 +27,44 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.finalElement
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFunctionResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.callUtil.getPropertyResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 
 object CallableReferenceTranslator {
 
     fun translate(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression {
-        val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.callableReference)
+        val referencedFunction = expression.callableReference.getResolvedCallWithAssert(context.bindingContext())
+        val descriptor = referencedFunction.getResultingDescriptor()
 
-        val receiver = expression.receiverExpression?.let { r ->
-            if (context.bindingContext().get(BindingContext.DOUBLE_COLON_LHS, r) is DoubleColonLHS.Expression &&
-                descriptor is CallableMemberDescriptor &&
-                descriptor.dispatchReceiverParameter ?: descriptor.extensionReceiverParameter != null
-            ) {
-                val block = JsBlock()
-                val e = Translation.translateAsExpression(r, context, block)
-                if (!block.isEmpty) {
-                    context.addStatementsToCurrentBlockFrom(block)
-                }
-                e
+        val extensionReceiver = referencedFunction.extensionReceiver
+        val dispatchReceiver = referencedFunction.dispatchReceiver
+        assert(dispatchReceiver == null || extensionReceiver == null) { "Cannot generate reference with both receivers: " + descriptor }
+
+        val receiver = (dispatchReceiver ?: extensionReceiver)?.let {
+            when (it) {
+                is TransientReceiver -> null
+                is ImplicitClassReceiver -> context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForReceiver(it))
+                is ExtensionReceiver -> JsThisRef()
+                is ExpressionReceiver -> Translation.translateAsExpression(it.expression, context)
+                else -> throw UnsupportedOperationException("Unsupported receiver value: " + it)
             }
-            else {
-                null
-            }
-        } ?: (descriptor as? PropertyImportedFromObject)?.let {
-            ReferenceTranslator.translateAsValueReference(it.containingObject, context)
         }
 
         return when (descriptor) {
@@ -96,11 +96,22 @@ object CallableReferenceTranslator {
             override fun getValueArgumentsByIndex(): List<ResolvedValueArgument> = valueArgumentList
 
             override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> = valueArgumentMap
+
+            override fun getExplicitReceiverKind(): ExplicitReceiverKind {
+                if (receiver != null) {
+                    return if (descriptor.isExtension) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+                }
+                else {
+                    return super.getExplicitReceiverKind()
+                }
+            }
         }
 
         val function = JsFunction(context.scope(), JsBlock(), "")
         function.source = expression
-        val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
+        val receiverParam = if (descriptor.dispatchReceiverParameter != null ||
+                                descriptor.extensionReceiverParameter != null ||
+                                receiver != null) {
             val paramName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
             function.parameters += JsParameter(paramName)
             paramName.makeRef()
@@ -133,7 +144,18 @@ object CallableReferenceTranslator {
             expression: KtCallableReferenceExpression,
             receiver: JsExpression?
     ): JsExpression {
-        val call = expression.callableReference.getPropertyResolvedCallWithAssert(context.bindingContext())
+        val realCall = expression.callableReference.getPropertyResolvedCallWithAssert(context.bindingContext())
+
+        val call = object : DelegatingResolvedCall<PropertyDescriptor>(realCall) {
+            override fun getExplicitReceiverKind(): ExplicitReceiverKind {
+                if (receiver != null) {
+                    return if (descriptor.isExtension) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+                }
+                else {
+                    return super.getExplicitReceiverKind()
+                }
+            }
+        }
 
         val getter = translateForPropertyAccessor(call, expression, descriptor, context, receiver, false) { context, call, _, receiverParam ->
             CallTranslator.translateGet(context, call, receiverParam)

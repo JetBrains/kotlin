@@ -1,5 +1,4 @@
 // LANGUAGE_VERSION: 1.2
-// IGNORE_BACKEND: JS
 
 enum class X {
     B {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // LANGUAGE_VERSION: 1.2
 
 var result = ""
