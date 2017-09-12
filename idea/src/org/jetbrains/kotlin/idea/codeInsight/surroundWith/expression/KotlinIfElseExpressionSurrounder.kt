@@ -24,13 +24,9 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 
 class KotlinIfElseExpressionSurrounder(private val withBraces: Boolean) : KotlinControlFlowExpressionSurrounderBase() {
-    override fun getPattern(): String {
-        return if (withBraces) "if (a) { \n$0 } else {\n}" else "if (a) $0 else"
-    }
+    override fun getPattern() = if (withBraces) "if (a) { $0 } else {}" else "if (a) $0 else"
 
-    override fun getTemplateDescription(): String {
-        return if (withBraces) "if () { expr } else {}" else "if () expr else"
-    }
+    override fun getTemplateDescription() = if (withBraces) "if () { expr } else {}" else "if () expr else"
 
     override fun getRange(editor: Editor, replaced: KtExpression): TextRange? {
         val expression = when (replaced) {
@@ -40,5 +36,4 @@ class KotlinIfElseExpressionSurrounder(private val withBraces: Boolean) : Kotlin
 
         return expression?.let { KotlinIfSurrounderBase.getRange(editor, it) }
     }
-
 }
