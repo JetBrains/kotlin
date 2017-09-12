@@ -337,6 +337,21 @@ private fun selectNativeLanguage(config: Properties): Language {
             error("Unexpected language '$language'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
 }
 
+private fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<String>) {
+    val result = mutableListOf<String>()
+    println("libs = $staticLibraries")
+    println("paths = $libraryPaths")
+    staticLibraries.forEach { library ->
+        libraryPaths.forEach forEachPath@ {   path ->
+            val combined = "$path/$library"
+            if (File(combined).exists()) {
+                result.add(combined)
+                return@forEachPath
+            }
+        }
+    }
+    println("result = $result")
+}
 
 private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
@@ -403,6 +418,9 @@ private fun processLib(konanHome: String,
             config.getSpaceSeparated("linkerOpts").toTypedArray() + defaultOpts + additionalLinkerOpts
     val linker = args["-linker"]?.atMostOne() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
+    val staticLibraries = config.getSpaceSeparated("staticLibraries") + args["staticLibrary"].orEmpty()
+    val libraryPath = args["-libraryPath"]
+    val resolvedStaticLibraries = resolveLibraries(staticLibraries, libraryPath.orEmpty())
 
     val fqParts = (args["-pkg"]?.atMostOne() ?: config.getProperty("package"))?.let {
         it.split('.')

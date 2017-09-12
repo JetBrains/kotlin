@@ -85,7 +85,6 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
     override fun addManifestAddend(path: String) {
         val properties = File(path).loadProperties()
         manifestProperties.putAll(properties)
-        println("manifest addend: ${properties.stringPropertyNames().joinToString(" ")}")
     }
 
     override fun addEscapeAnalysis(escapeAnalysis: ByteArray) {

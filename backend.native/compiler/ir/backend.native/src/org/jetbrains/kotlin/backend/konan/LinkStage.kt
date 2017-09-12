@@ -54,6 +54,15 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
         = properties.targetString(name)!!
     protected fun propertyTargetList(name: String)
         = properties.targetList(name)
+
+    abstract fun filterStaticLibraries(binaries: List<String>): List<String> 
+
+    open fun linkStaticLibraries(binaries: List<String>): List<String> {
+        val libraries = filterStaticLibraries(binaries)
+        // Let's just pass them as absolute paths
+        return libraries
+    }
+
 }
 
 
@@ -64,6 +73,9 @@ internal open class AndroidPlatform(distribution: Distribution)
     private val clang = "$prefix/clang"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
+
+    override fun filterStaticLibraries(binaries: List<String>) 
+        = binaries.filter { it.isUnixStaticLib }
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
         return mutableListOf(clang).apply{
@@ -92,6 +104,9 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
                 propertyTargetString("osVersionMinFlagLd"),
                 propertyTargetString("osVersionMin") + ".0")
     }
+
+    override fun filterStaticLibraries(binaries: List<String>) 
+        = binaries.filter { it.isUnixStaticLib }
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
         return mutableListOf(linker).apply {
@@ -123,6 +138,9 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
     private val pluginOptimizationFlags = propertyTargetList("pluginOptimizationFlags")
     private val specificLibs
         = propertyTargetList("abiSpecificLibraries").map{it -> "-L${targetSysRoot}/$it"}
+
+    override fun filterStaticLibraries(binaries: List<String>) 
+        = binaries.filter { it.isUnixStaticLib }
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
         // TODO: Can we extract more to the konan.properties?
@@ -157,6 +175,9 @@ internal open class MingwPlatform(distribution: Distribution)
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
+    override fun filterStaticLibraries(binaries: List<String>) 
+        = binaries.filter { it.isWindowsStaticLib || it.isUnixStaticLib }
+
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
         return mutableListOf(linker).apply {
             addAll(listOf("-o", executable))
@@ -175,6 +196,9 @@ internal open class WasmPlatform(distribution: Distribution)
     private val clang = "clang"
 
     override val useCompilerDriverAsLinker: Boolean get() = false
+
+    override fun filterStaticLibraries(binaries: List<String>) 
+        = emptyList<String>()
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
 
@@ -300,6 +324,7 @@ internal class LinkStage(val context: Context) {
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 entryPointSelector +
                 platform.linkCommandSuffix() +
+                platform.linkStaticLibraries(includedBinaries) +
                 libraryProvidedLinkerFlags
 
         try {
@@ -318,9 +343,6 @@ internal class LinkStage(val context: Context) {
         }
         return executable
     }
-
-    private val String.isJavaScript 
-        get() = this.endsWith(".js")
 
     private fun JavaScriptLinker(jsFiles: List<String>, executable: String): String {
         val linkedJavaScript = File("$executable.js")
