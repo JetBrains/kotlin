@@ -29,8 +29,8 @@ import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
 open class KotlinUExpressionList(
         override val psi: PsiElement?,
         override val kind: UastSpecialExpressionKind, // original element
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UExpressionList, KotlinUElementWithType, KotlinEvaluatableUElement {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UExpressionList, KotlinUElementWithType, KotlinEvaluatableUElement {
     override lateinit var expressions: List<UExpression>
         internal set
 

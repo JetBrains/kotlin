@@ -23,7 +23,7 @@ import org.jetbrains.uast.*
 
 class KotlinUNamedExpression private constructor(
         override val name: String?,
-        override val uastParent: UElement?,
+        private val givenParent: UElement?,
         expressionProducer: (UElement) -> UExpression
 ) : UNamedExpression {
     override val expression: UExpression by lz { expressionProducer(this) }
@@ -31,6 +31,8 @@ class KotlinUNamedExpression private constructor(
     override val annotations: List<UAnnotation> = emptyList()
 
     override val psi: PsiElement? = null
+
+    override val uastParent: UElement? by lz { convertParent(givenParent) }
 
     companion object {
         internal fun create(name: String?, valueArgument: ValueArgument, uastParent: UElement?): UNamedExpression {
@@ -45,7 +47,7 @@ class KotlinUNamedExpression private constructor(
                 valueArguments: List<ValueArgument>,
                 uastParent: UElement?): UNamedExpression {
             return KotlinUNamedExpression(name, uastParent) { expressionParent ->
-                object : KotlinAbstractUExpression(), UCallExpression {
+                object : KotlinAbstractUExpression(uastParent), UCallExpression {
                     override val uastParent: UElement? = expressionParent
 
                     override val kind: UastCallKind = UastCallKind.NESTED_ARRAY_INITIALIZER

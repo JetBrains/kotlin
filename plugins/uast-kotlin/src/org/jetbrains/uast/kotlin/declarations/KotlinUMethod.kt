@@ -30,9 +30,11 @@ import org.jetbrains.uast.kotlin.*
 
 open class KotlinUMethod(
         psi: KtLightMethod,
-        override val uastParent: UElement?
+        private val givenParent: UElement?
 ) : UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
+
+    override val uastParent: UElement? by lz { convertParent(givenParent) }
 
     override val uastDefaultValue by lz {
         val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null

@@ -23,8 +23,8 @@ import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
 
 class KotlinUSwitchExpression(
         override val psi: KtWhenExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), USwitchExpression, KotlinUElementWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), USwitchExpression, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
     override val body: UExpressionList by lz {
@@ -48,8 +48,8 @@ class KotlinUSwitchExpression(
 
 class KotlinUSwitchEntry(
         override val psi: KtWhenEntry,
-        override val uastParent: UExpression
-) : KotlinAbstractUExpression(), USwitchClauseExpressionWithBody {
+        givenParent: UExpression
+) : KotlinAbstractUExpression(givenParent), USwitchClauseExpressionWithBody {
     override val caseValues by lz {
         psi.conditions.map { when (it) {
             is KtWhenConditionInRange -> KotlinCustomUBinaryExpression(it, this).apply {

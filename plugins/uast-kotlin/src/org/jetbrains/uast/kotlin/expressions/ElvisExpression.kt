@@ -58,7 +58,7 @@ private fun createElvisExpressions(
         override val uastParent: UElement? = containingElement
         override val condition: UExpression by lz { createNotEqWithNullExpression(tempVariable, this) }
         override val thenExpression: UExpression? by lz { createVariableReferenceExpression(tempVariable, this) }
-        override val elseExpression: UExpression? by lz { KotlinConverter.convertExpression(right, this.toCallback() ) }
+        override val elseExpression: UExpression? by lz { KotlinConverter.convertExpression(right, this ) }
         override val isTernary: Boolean = false
         override val annotations: List<UAnnotation> = emptyList()
         override val ifIdentifier: UIdentifier = UIdentifier(null, this)

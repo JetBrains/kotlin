@@ -29,8 +29,8 @@ import org.jetbrains.uast.*
 
 class KotlinUObjectLiteralExpression(
         override val psi: KtObjectLiteralExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UObjectLiteralExpression, KotlinUElementWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UObjectLiteralExpression, KotlinUElementWithType {
     override val declaration: UClass by lz {
         val lightClass: KtLightClass? = psi.objectDeclaration.toLightClass()
         if (lightClass != null) {
@@ -73,8 +73,8 @@ class KotlinUObjectLiteralExpression(
     
     private class ObjectLiteralClassReference(
             override val psi: KtSuperTypeCallEntry,
-            override val uastParent: UElement?
-    ) : KotlinAbstractUElement(), USimpleNameReferenceExpression {
+            givenParent: UElement?
+    ) : KotlinAbstractUElement(givenParent), USimpleNameReferenceExpression {
         override fun resolve() = (psi.resolveCallToDeclaration(this) as? PsiMethod)?.containingClass
 
         override val annotations: List<UAnnotation>

@@ -24,8 +24,8 @@ import org.jetbrains.uast.*
 
 class KotlinUBinaryExpressionWithType(
         override val psi: KtBinaryExpressionWithTypeRHS,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType,
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UBinaryExpressionWithType,
         KotlinUElementWithType, KotlinEvaluatableUElement {
     
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.left, this) }
@@ -44,8 +44,8 @@ class KotlinUBinaryExpressionWithType(
 
 class KotlinCustomUBinaryExpressionWithType(
         override val psi: PsiElement,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UBinaryExpressionWithType {
     lateinit override var operand: UExpression
         internal set
 

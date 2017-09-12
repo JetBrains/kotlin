@@ -20,8 +20,8 @@ import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 
 class KotlinUDeclarationsExpression(
         override val psi: PsiElement?,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UDeclarationsExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UDeclarationsExpression {
 
     constructor(uastParent: UElement?) : this(null, uastParent)
 

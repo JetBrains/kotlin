@@ -26,8 +26,8 @@ import org.jetbrains.uast.psi.UastPsiParameterNotResolved
 
 class KotlinUForEachExpression(
         override val psi: KtForExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UForEachExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UForEachExpression {
     override val iteratedValue by lz { KotlinConverter.convertOrEmpty(psi.loopRange, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
     
