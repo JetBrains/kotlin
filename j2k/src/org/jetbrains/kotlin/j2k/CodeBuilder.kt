@@ -171,7 +171,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             if (inheritance.commentsInside) {
                 prototype.accept(object : JavaRecursiveElementVisitor() {
                     override fun visitComment(comment: PsiComment) {
-                        if (comment !in notInsideElements && commentsAndSpacesUsed.add(comment)) {
+                        if (comment.parent !is PsiMethod && comment !in notInsideElements && commentsAndSpacesUsed.add(comment)) {
                             appendCommentOrWhiteSpace(comment, true)
                         }
                     }
