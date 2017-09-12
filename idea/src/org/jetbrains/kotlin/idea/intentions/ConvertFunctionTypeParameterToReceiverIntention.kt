@@ -29,7 +29,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.explicateReceiverOf
@@ -320,7 +320,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             val function: KtFunction
     ) {
         val isFirstParameter: Boolean get() = typeParameterIndex == 0
-        val functionDescriptor by lazy { function.resolveToDescriptor() as FunctionDescriptor }
+        val functionDescriptor by lazy { function.unsafeResolveToDescriptor() as FunctionDescriptor }
     }
 
     private fun KtTypeReference.getConversionData(): ConversionData? {

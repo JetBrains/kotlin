@@ -923,7 +923,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                     baseFunction = baseFunction.createPrimaryConstructorIfAbsent()
                 }
                 val resolutionFacade = baseFunction.getResolutionFacade()
-                val baseFunctionDescriptor = baseFunction.resolveToDescriptor() as FunctionDescriptor
+                val baseFunctionDescriptor = baseFunction.unsafeResolveToDescriptor() as FunctionDescriptor
                 val methodDescriptor = KotlinChangeSignatureData(baseFunctionDescriptor, baseFunction, listOf(baseFunctionDescriptor))
 
                 val dummyClass = JavaPsiFacade.getElementFactory(method.project).createClass("Dummy")

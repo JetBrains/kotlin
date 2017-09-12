@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
@@ -57,7 +57,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
             val lambdaReceiverType: KotlinType,
             val function: KtFunction
     ) {
-        val functionDescriptor by lazy { function.resolveToDescriptor() as FunctionDescriptor }
+        val functionDescriptor by lazy { function.unsafeResolveToDescriptor() as FunctionDescriptor }
     }
 
     class FunctionDefinitionInfo(element: KtFunction) : AbstractProcessableUsageInfo<KtFunction, ConversionData>(element) {

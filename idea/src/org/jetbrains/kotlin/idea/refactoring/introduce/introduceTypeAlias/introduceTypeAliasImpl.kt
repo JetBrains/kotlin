@@ -24,7 +24,7 @@ import com.intellij.util.containers.LinkedMultiMap
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -157,7 +157,7 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
 fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
     val aliasName = typeAlias.name?.quoteIfNeeded() ?: return emptyMap()
     val aliasRange = typeAlias.textRange
-    val typeAliasDescriptor = typeAlias.resolveToDescriptor() as TypeAliasDescriptor
+    val typeAliasDescriptor = typeAlias.unsafeResolveToDescriptor() as TypeAliasDescriptor
 
     val unifierParameters = typeAliasDescriptor.declaredTypeParameters.map { UnifierParameter(it, null) }
     val unifier = KotlinPsiUnifier(unifierParameters)

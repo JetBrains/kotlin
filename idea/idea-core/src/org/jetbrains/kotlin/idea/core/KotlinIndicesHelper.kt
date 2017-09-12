@@ -237,7 +237,7 @@ class KotlinIndicesHelper(
     fun getKotlinEnumsByName(name: String): Collection<DeclarationDescriptor> {
         return KotlinClassShortNameIndex.getInstance()[name, project, scope]
                 .filter { it is KtEnumEntry && it in scope }
-                .mapNotNull { it.resolveToDescriptor() }
+                .mapNotNull { it.unsafeResolveToDescriptor() }
                 .filter(descriptorFilter)
                 .toSet()
     }

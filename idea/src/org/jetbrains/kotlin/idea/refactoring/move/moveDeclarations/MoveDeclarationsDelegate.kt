@@ -24,7 +24,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.isToBeShortened
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -92,7 +92,7 @@ sealed class MoveDeclarationsDelegate {
                 is KotlinMoveTargetForCompanion -> true
                 is KotlinMoveTargetForExistingElement -> {
                     val targetClass = moveTarget.targetElement as? KtClassOrObject ?: return false
-                    val targetClassDescriptor = targetClass.resolveToDescriptor() as ClassDescriptor
+                    val targetClassDescriptor = targetClass.unsafeResolveToDescriptor() as ClassDescriptor
                     val companionClassDescriptor = companionDescriptor.containingDeclaration as? ClassDescriptor ?: return false
                     targetClassDescriptor.isSubclassOf(companionClassDescriptor)
                 }
@@ -139,7 +139,7 @@ sealed class MoveDeclarationsDelegate {
                     }
 
                     if (outerInstanceParameterName != null) {
-                        val type = (containingClassOrObject!!.resolveToDescriptor() as ClassDescriptor).defaultType
+                        val type = (containingClassOrObject!!.unsafeResolveToDescriptor() as ClassDescriptor).defaultType
                         val parameter = KtPsiFactory(project)
                                 .createParameter("private val $outerInstanceParameterName: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(type)}")
                         createPrimaryConstructorParameterListIfAbsent().addParameter(parameter).isToBeShortened = true

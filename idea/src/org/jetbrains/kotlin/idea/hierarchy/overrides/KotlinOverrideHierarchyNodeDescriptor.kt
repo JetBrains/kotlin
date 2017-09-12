@@ -29,7 +29,7 @@ import com.intellij.ui.LayeredIcon
 import com.intellij.ui.RowIcon
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -51,7 +51,7 @@ class KotlinOverrideHierarchyNodeDescriptor (
 
     private fun resolveToDescriptor(psiElement: PsiElement): DeclarationDescriptor? {
         return when (psiElement) {
-            is KtNamedDeclaration -> psiElement.resolveToDescriptor()
+            is KtNamedDeclaration -> psiElement.unsafeResolveToDescriptor()
             is PsiMember -> psiElement.getJavaMemberDescriptor()
             else -> null
         }

@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.idea.actions.generate
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
@@ -51,7 +50,7 @@ fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<Kt
     return ArrayList<KtNamedDeclaration>().apply {
         classOrObject.primaryConstructorParameters.filterTo(this) { it.hasValOrVar() }
         classOrObject.declarations.filterIsInstance<KtProperty>().filterTo(this) {
-            val descriptor = it.resolveToDescriptor()
+            val descriptor = it.unsafeResolveToDescriptor()
             when (descriptor) {
                 is ValueParameterDescriptor -> true
                 is PropertyDescriptor -> descriptor.getter?.isDefault ?: true

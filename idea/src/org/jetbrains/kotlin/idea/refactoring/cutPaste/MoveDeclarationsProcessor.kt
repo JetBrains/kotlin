@@ -23,7 +23,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
@@ -73,7 +73,7 @@ class MoveDeclarationsProcessor(
             // check that declarations were cut (not copied)
             val filteredDeclarations = sourceContainer.declarations.filter { it.name in data.declarationNames }
             val stubs = data.stubTexts.toSet()
-            if (filteredDeclarations.any { MoveDeclarationsTransferableData.STUB_RENDERER.render(it.resolveToDescriptor()) in stubs }) return null
+            if (filteredDeclarations.any { MoveDeclarationsTransferableData.STUB_RENDERER.render(it.unsafeResolveToDescriptor()) in stubs }) return null
 
             return MoveDeclarationsProcessor(project, sourceContainer, targetPsiFile, declarations, data.stubTexts)
         }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
@@ -147,7 +147,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         else {
             containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
             if (containingClass is KtEnumEntry) return null
-            receiverType = (containingClass.resolveToDescriptor() as ClassDescriptor).defaultType
+            receiverType = (containingClass.unsafeResolveToDescriptor() as ClassDescriptor).defaultType
         }
 
         if (!receiverType.isAbstract() && TypeUtils.getAllSupertypes(receiverType).all { !it.isAbstract() }) return null

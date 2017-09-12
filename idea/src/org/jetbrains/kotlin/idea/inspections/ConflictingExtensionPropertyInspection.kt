@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -189,7 +189,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val declaration = element ?: return
-            val fqName = declaration.resolveToDescriptor(BodyResolveMode.PARTIAL).importableFqName
+            val fqName = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL).importableFqName
             if (fqName != null) {
                 ProgressManager.getInstance().run(
                         object : Task.Modal(project, "Searching for imports to delete", true) {

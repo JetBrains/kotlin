@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstructio
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -73,7 +73,7 @@ object IntroduceIndexMatcher : TransformationMatcher {
         val incrementInstruction = pseudocode.instructionForElement(incrementExpression)!!
         if (!isAlwaysReachedOrExitedLoop(firstInstruction, incrementInstruction, state.outerLoop, state.innerLoop)) return null
 
-        val variableDescriptor = variable.resolveToDescriptor() as VariableDescriptor
+        val variableDescriptor = variable.unsafeResolveToDescriptor() as VariableDescriptor
         if (isAccessedAfter(variableDescriptor, incrementInstruction, state.innerLoop)) return null // index accessed inside loop after increment
 
         val restStatements = state.statements - incrementExpression // if it is among statements then drop it, otherwise "index++" will be replaced with "index" by generateLambda()

@@ -41,7 +41,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.insertMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType
@@ -181,7 +181,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 }
                 val functionInPlace = insertMember(editor, klass, function)
 
-                val functionDescriptor = functionInPlace.resolveToDescriptor() as FunctionDescriptor
+                val functionDescriptor = functionInPlace.unsafeResolveToDescriptor() as FunctionDescriptor
                 val overriddenDescriptors = functionDescriptor.overriddenDescriptors
                 val bodyText = when (overriddenDescriptors.size) {
                     0 -> generateUnsupportedOrSuperCall(project, functionDescriptor, BodyType.EMPTY)

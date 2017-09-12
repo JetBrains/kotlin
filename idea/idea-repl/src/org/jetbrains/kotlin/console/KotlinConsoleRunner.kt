@@ -268,7 +268,7 @@ class KotlinConsoleRunner(
 
             replState.submitLine(psiFile)
             configureFileDependencies(psiFile)
-            val scriptDescriptor = psiFile.script!!.resolveToDescriptor() as? LazyScriptDescriptor ?: error("Failed to analyze line:\n$text")
+            val scriptDescriptor = psiFile.script!!.unsafeResolveToDescriptor() as? LazyScriptDescriptor ?: error("Failed to analyze line:\n$text")
             ForceResolveUtil.forceResolveAllContents(scriptDescriptor)
             replState.lineSuccess(psiFile, scriptDescriptor)
 

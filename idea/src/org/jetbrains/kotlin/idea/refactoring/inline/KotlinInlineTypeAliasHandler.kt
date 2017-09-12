@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -67,7 +67,7 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
         val aliasBody = typeAlias.getTypeReference() ?: return
         val file = typeAlias.containingKtFile
 
-        val typeAliasDescriptor = typeAlias.resolveToDescriptor() as TypeAliasDescriptor
+        val typeAliasDescriptor = typeAlias.unsafeResolveToDescriptor() as TypeAliasDescriptor
         val typeToInline = typeAliasDescriptor.expandedType
         val typeConstructorsToInline = typeAliasDescriptor.typeConstructor.parameters.map { it.typeConstructor }
 

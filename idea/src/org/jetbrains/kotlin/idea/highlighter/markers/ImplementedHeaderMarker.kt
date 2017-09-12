@@ -20,7 +20,7 @@ import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -85,7 +85,7 @@ private fun DeclarationDescriptor.headerImplementations(): Collection<Declaratio
 }
 
 internal fun KtDeclaration.headerImplementations(): Set<KtDeclaration> {
-    return resolveToDescriptor().headerImplementations().mapNotNullTo(LinkedHashSet()) {
+    return unsafeResolveToDescriptor().headerImplementations().mapNotNullTo(LinkedHashSet()) {
         DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
     }
 }

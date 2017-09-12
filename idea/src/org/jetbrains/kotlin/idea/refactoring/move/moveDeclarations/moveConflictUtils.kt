@@ -332,7 +332,7 @@ class MoveConflictChecker(
             if (!declarationToContainers.getOrPut(referencedElement) { HashSet<PsiElement>() }.add(container)) continue
 
             val referencingDescriptor = when (container) {
-                                            is KtDeclaration -> container.resolveToDescriptor()
+                                            is KtDeclaration -> container.unsafeResolveToDescriptor()
                                             is PsiMember -> container.getJavaMemberDescriptor()
                                             else -> null
                                         } ?: continue
@@ -381,7 +381,7 @@ class MoveConflictChecker(
             if (targetVisibility == Visibilities.PUBLIC) return true
 
             val referrer = ref.element.getStrictParentOfType<KtNamedDeclaration>()
-            val referrerDescriptor = referrer?.resolveToDescriptor() ?: return true
+            val referrerDescriptor = referrer?.unsafeResolveToDescriptor() ?: return true
 
             if (!isVisibleIn(referrerDescriptor)) return true
 
@@ -399,7 +399,7 @@ class MoveConflictChecker(
                             if (isToBeMoved(target)) return@forEach
 
                             val targetDescriptor = when (target) {
-                                                       is KtDeclaration -> target.resolveToDescriptor()
+                                                       is KtDeclaration -> target.unsafeResolveToDescriptor()
                                                        is PsiMember -> target.getJavaMemberDescriptor()
                                                        else -> null
                                                    } as? DeclarationDescriptorWithVisibility ?: return@forEach

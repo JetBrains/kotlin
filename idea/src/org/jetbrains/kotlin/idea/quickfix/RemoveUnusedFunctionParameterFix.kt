@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -36,7 +36,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val parameterDescriptor = element.resolveToDescriptor() as ValueParameterDescriptor
+        val parameterDescriptor = element.unsafeResolveToDescriptor() as ValueParameterDescriptor
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
     }
 

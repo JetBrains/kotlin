@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.excludeKotlinSources
@@ -122,13 +122,13 @@ private fun forEachKotlinOverride(
         scope: SearchScope,
         processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean
 ) {
-    val baseClassDescriptor = runReadAction { ktClass.resolveToDescriptor() as ClassDescriptor }
-    val baseDescriptors = runReadAction { members.mapNotNull { it.resolveToDescriptor() as? CallableMemberDescriptor }.filter { it.isOverridable } }
+    val baseClassDescriptor = runReadAction { ktClass.unsafeResolveToDescriptor() as ClassDescriptor }
+    val baseDescriptors = runReadAction { members.mapNotNull { it.unsafeResolveToDescriptor() as? CallableMemberDescriptor }.filter { it.isOverridable } }
     if (baseDescriptors.isEmpty()) return
 
     HierarchySearchRequest(ktClass, scope.restrictToKotlinSources(), true).searchInheritors().forEach {
         val inheritor = (it as? KtLightClass)?.kotlinOrigin ?: return@forEach
-        val inheritorDescriptor = runReadAction { inheritor.resolveToDescriptor() as ClassDescriptor }
+        val inheritorDescriptor = runReadAction { inheritor.unsafeResolveToDescriptor() as ClassDescriptor }
         val substitutor = getTypeSubstitutor(baseClassDescriptor.defaultType, inheritorDescriptor.defaultType) ?: return@forEach
         baseDescriptors.forEach {
             val superMember = it.source.getPsi()!!

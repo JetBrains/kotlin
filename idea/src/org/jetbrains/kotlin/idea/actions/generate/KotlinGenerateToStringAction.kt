@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
@@ -160,7 +160,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
 
         val superToString = classDescriptor.getSuperClassOrAny().findDeclaredToString(true)!!
 
-        val memberChooserObjects = properties.map { DescriptorMemberChooserObject(it, it.resolveToDescriptor()) }.toTypedArray()
+        val memberChooserObjects = properties.map { DescriptorMemberChooserObject(it, it.unsafeResolveToDescriptor()) }.toTypedArray()
         val headerPanel = ToStringMemberChooserHeaderPanel(!superToString.builtIns.isMemberOfAny(superToString))
         val chooser = MemberChooser<DescriptorMemberChooserObject>(memberChooserObjects, true, true, project, false, headerPanel).apply {
             title = "Generate toString()"

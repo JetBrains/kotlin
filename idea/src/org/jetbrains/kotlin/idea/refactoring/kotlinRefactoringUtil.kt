@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
@@ -579,7 +579,7 @@ fun createJavaField(property: KtNamedDeclaration, targetClass: PsiClass): PsiFie
 }
 
 fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
-    val kind = if (forcePlainClass) ClassKind.CLASS else (klass.resolveToDescriptor() as ClassDescriptor).kind
+    val kind = if (forcePlainClass) ClassKind.CLASS else (klass.unsafeResolveToDescriptor() as ClassDescriptor).kind
 
     val factory = PsiElementFactory.SERVICE.getInstance(klass.project)
     val className = klass.name!!
@@ -886,7 +886,7 @@ fun checkSuperMethods(
     }
 
 
-    val declarationDescriptor = declaration.resolveToDescriptor() as CallableDescriptor
+    val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
 
     if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
 
@@ -974,6 +974,6 @@ internal fun KtDeclaration.withHeaderImplementations(): List<KtDeclaration> {
 }
 
 internal fun KtDeclaration.resolveToHeaderDescriptorIfPossible(): DeclarationDescriptor {
-    val descriptor = resolveToDescriptor()
+    val descriptor = unsafeResolveToDescriptor()
     return descriptor.liftToHeader() ?: descriptor
 }

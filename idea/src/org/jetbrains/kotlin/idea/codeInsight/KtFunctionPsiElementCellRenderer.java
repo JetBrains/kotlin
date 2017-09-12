@@ -29,7 +29,7 @@ public class KtFunctionPsiElementCellRenderer extends DefaultPsiElementCellRende
     public String getElementText(PsiElement element) {
         if (element instanceof KtNamedFunction) {
             KtNamedFunction function = (KtNamedFunction) element;
-            DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(function, BodyResolveMode.PARTIAL);
+            DeclarationDescriptor descriptor = ResolutionUtils.unsafeResolveToDescriptor(function, BodyResolveMode.PARTIAL);
             return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
         }
         return super.getElementText(element);

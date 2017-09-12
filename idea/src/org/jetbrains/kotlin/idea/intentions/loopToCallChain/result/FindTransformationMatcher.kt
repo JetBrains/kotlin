@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.Condition
@@ -249,7 +249,7 @@ object FindTransformationMatcher : TransformationMatcher {
 
         }
         else {
-            val inputVariableCanHoldNull = (inputVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
+            val inputVariableCanHoldNull = (inputVariable.unsafeResolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
 
             fun FindOperationGenerator.useElvisOperatorIfNeeded(): FindOperationGenerator? {
                 if (valueIfNotFound.isNullExpression()) return this

@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
@@ -72,7 +72,7 @@ private fun KtDeclaration.processHierarchyDownward(scope: SearchScope, processor
 
 private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor: KtDeclaration.() -> Unit) {
     processor()
-    val descriptor = resolveToDescriptor() as? CallableMemberDescriptor ?: return
+    val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
     DescriptorUtils
             .getAllOverriddenDescriptors(descriptor)
             .mapNotNull { it.source.getPsi() as? KtDeclaration }
@@ -188,7 +188,7 @@ class InflowSlicer(
         val bindingContext by lazy { analyzeFully() }
 
         if (hasDelegateExpression()) {
-            val getter = (resolveToDescriptor() as VariableDescriptorWithAccessors).getter
+            val getter = (unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
             val delegateGetterResolvedCall = getter?.let { bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it] }
             (delegateGetterResolvedCall?.resultingDescriptor?.source?.getPsi() as? KtDeclarationWithBody)?.passToProcessor()
             return

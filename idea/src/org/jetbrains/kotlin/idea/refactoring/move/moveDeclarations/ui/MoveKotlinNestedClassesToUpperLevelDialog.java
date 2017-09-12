@@ -100,7 +100,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         this.project = project;
         this.innerClass = innerClass;
         this.targetContainer = targetContainer;
-        this.innerClassDescriptor = (ClassDescriptor) ResolutionUtils.resolveToDescriptor(innerClass, BodyResolveMode.FULL);
+        this.innerClassDescriptor = (ClassDescriptor) ResolutionUtils.unsafeResolveToDescriptor(innerClass, BodyResolveMode.FULL);
         setTitle("Move Nested Classes to Upper Level");
         init();
         packageNameLabel.setLabelFor(packageNameField.getChildComponent());

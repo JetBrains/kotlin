@@ -35,7 +35,7 @@ import org.jetbrains.android.util.AndroidUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.psi.KtClass
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 
 internal fun KtClass.findComponentDeclarationInManifest(manifest: Manifest): AndroidAttributeValue<PsiClass>? {
     val application = manifest.application ?: return null
-    val type = (resolveToDescriptor(BodyResolveMode.PARTIAL) as? ClassDescriptor)?.defaultType ?: return null
+    val type = (unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as? ClassDescriptor)?.defaultType ?: return null
 
     return when {
         type.isSubclassOf(AndroidUtils.ACTIVITY_BASE_CLASS_NAME) ->

@@ -25,7 +25,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
@@ -78,7 +78,7 @@ class MoveMemberOutOfCompanionObjectIntention : SelfTargetingRangeIntention<KtNa
             return
         }
 
-        val targetClassDescriptor = runReadAction { targetClass.resolveToDescriptor() as ClassDescriptor }
+        val targetClassDescriptor = runReadAction { targetClass.unsafeResolveToDescriptor() as ClassDescriptor }
 
         val conflicts = MultiMap<PsiElement, String>()
 
@@ -111,7 +111,7 @@ class MoveMemberOutOfCompanionObjectIntention : SelfTargetingRangeIntention<KtNa
         }
 
         runReadAction {
-            val callableDescriptor = element.resolveToDescriptor() as CallableMemberDescriptor
+            val callableDescriptor = element.unsafeResolveToDescriptor() as CallableMemberDescriptor
             targetClassDescriptor.findCallableMemberBySignature(callableDescriptor)?.let {
                 DescriptorToSourceUtilsIde.getAnyDeclaration(project, it)
             }?.let {

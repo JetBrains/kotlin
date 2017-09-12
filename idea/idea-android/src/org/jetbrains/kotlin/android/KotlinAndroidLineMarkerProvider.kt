@@ -35,7 +35,7 @@ import com.intellij.util.Function
 import org.jetbrains.android.dom.manifest.Manifest
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.awt.event.MouseEvent
@@ -128,7 +128,7 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
                 "android.widget.Adapter")
 
         private fun KtClass.isClassWithLayoutXml(): Boolean {
-            val type = (resolveToDescriptor(BodyResolveMode.PARTIAL) as? ClassDescriptor)?.defaultType ?: return false
+            val type = (unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as? ClassDescriptor)?.defaultType ?: return false
             return CLASSES_WITH_LAYOUT_XML.any { type.isSubclassOf(it, true) }
         }
     }

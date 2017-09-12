@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
@@ -74,7 +74,7 @@ abstract class ChangeCallableReturnTypeFix(
         val element = element!!
         val name = element.name
         if (name != null) {
-            val container = element.resolveToDescriptor().containingDeclaration as? ClassDescriptor
+            val container = element.unsafeResolveToDescriptor().containingDeclaration as? ClassDescriptor
             val containerName = container?.name?.takeUnless { it.isSpecial }?.asString()
             val fullName = if (containerName != null) "'$containerName.$name'" else "'$name'"
             if (element is KtParameter) {

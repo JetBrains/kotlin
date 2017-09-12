@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
@@ -71,7 +71,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     private fun getJvmName(element: PsiElement): String? {
-        val descriptor = (element.unwrapped as? KtFunction)?.resolveToDescriptor() as? FunctionDescriptor ?: return null
+        val descriptor = (element.unwrapped as? KtFunction)?.unsafeResolveToDescriptor() as? FunctionDescriptor ?: return null
         return DescriptorUtils.getJvmName(descriptor)
     }
 
@@ -93,7 +93,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     ) {
         if (newName == null) return
         val declaration = element.unwrapped as? KtNamedFunction ?: return
-        val descriptor = declaration.resolveToDescriptor()
+        val descriptor = declaration.unsafeResolveToDescriptor()
         checkConflictsAndReplaceUsageInfos(element, allRenames, result)
         checkRedeclarations(descriptor, newName, result)
     }

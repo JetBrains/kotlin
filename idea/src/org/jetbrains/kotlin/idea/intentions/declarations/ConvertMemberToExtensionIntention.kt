@@ -31,7 +31,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
 import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
@@ -111,7 +111,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             element: KtCallableDeclaration,
             allowHeader: Boolean
     ): Pair<KtCallableDeclaration, KtExpression?> {
-        val descriptor = element.resolveToDescriptor()
+        val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
         val isEffectiveHeader = allowHeader && element.isHeaderOrHeaderClassMember()
@@ -224,7 +224,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         }
 
         if (ktFilesToAddImports.isNotEmpty()) {
-            val newDescriptor = extension.resolveToDescriptor()
+            val newDescriptor = extension.unsafeResolveToDescriptor()
             val importInsertHelper = ImportInsertHelper.getInstance(project)
             for (ktFileToAddImport in ktFilesToAddImports) {
                 importInsertHelper.importDescriptor(ktFileToAddImport, newDescriptor)

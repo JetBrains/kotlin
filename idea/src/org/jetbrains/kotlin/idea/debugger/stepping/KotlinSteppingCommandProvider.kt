@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.GOTO
@@ -132,7 +132,7 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
         }
 
         // Step over calls to lambda arguments in inline function while execution is already in that function
-        val containingFunctionDescriptor = kotlinSourcePosition.function.resolveToDescriptor()
+        val containingFunctionDescriptor = kotlinSourcePosition.function.unsafeResolveToDescriptor()
         if (InlineUtil.isInline(containingFunctionDescriptor)) {
             val inlineArgumentsCallsIfAny = getInlineArgumentsCallsIfAny(sourcePosition, containingFunctionDescriptor)
             if (inlineArgumentsCallsIfAny != null && inlineArgumentsCallsIfAny.isNotEmpty()) {
@@ -183,7 +183,7 @@ private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunc
     val elementAt = file.findElementAt(offset) ?: return emptyList()
     val containingFunction = elementAt.getParentOfType<KtNamedFunction>(false) ?: return emptyList()
 
-    val descriptor = containingFunction.resolveToDescriptor()
+    val descriptor = containingFunction.unsafeResolveToDescriptor()
     if (!InlineUtil.isInline(descriptor)) return emptyList()
 
     return DebuggerUtils.analyzeElementWithInline(containingFunction, false).filterIsInstance<KtNamedFunction>()
