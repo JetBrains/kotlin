@@ -12400,6 +12400,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("equalsNull_withExplicitFlag.kt")
+            public void testEqualsNull_withExplicitFlag() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/equalsNull_withExplicitFlag.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("hashCode.kt")
             public void testHashCode() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/hashCode.kt");

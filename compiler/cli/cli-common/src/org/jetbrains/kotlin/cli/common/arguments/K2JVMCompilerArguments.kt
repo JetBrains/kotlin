@@ -167,6 +167,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var jsr305: String? by FreezableVar(Jsr305State.DEFAULT.description)
 
+    @Argument(
+            value = "-Xno-exception-on-explicit-equals-for-boxed-null",
+            description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
+    )
+    var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
+
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 

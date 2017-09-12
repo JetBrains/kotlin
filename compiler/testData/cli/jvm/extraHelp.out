@@ -14,6 +14,8 @@ where advanced options include:
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
+  -Xno-exception-on-explicit-equals-for-boxed-null
+                             Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types

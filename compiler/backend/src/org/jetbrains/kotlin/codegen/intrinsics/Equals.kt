@@ -37,7 +37,7 @@ class Equals : IntrinsicMethod() {
             }
 }
 
-class ConsistentEquals(private val lhsType: Type) : IntrinsicMethod() {
+class EqualsThrowingNpeForNullReceiver(private val lhsType: Type) : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             createBinaryIntrinsicCallable(
                     method.returnType,

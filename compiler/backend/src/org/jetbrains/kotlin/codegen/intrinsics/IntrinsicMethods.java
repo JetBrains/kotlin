@@ -65,7 +65,7 @@ public class IntrinsicMethods {
         this(jvmTarget, true);
     }
 
-    public IntrinsicMethods(JvmTarget jvmTarget, boolean useConsistentEqualsForPrimitiveWrappers) {
+    public IntrinsicMethods(JvmTarget jvmTarget, boolean shouldThrowNpeOnExplicitEqualsForBoxedNull) {
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, JavaClassProperty.INSTANCE);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
         intrinsicsMap.registerIntrinsic(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe(), null, "name", -1, new KCallableNameProperty());
@@ -102,9 +102,9 @@ public class IntrinsicMethods {
         for (PrimitiveType type : PrimitiveType.values()) {
             FqName typeFqName = type.getTypeFqName();
             IntrinsicMethod equalsMethod;
-            if (useConsistentEqualsForPrimitiveWrappers) {
+            if (shouldThrowNpeOnExplicitEqualsForBoxedNull) {
                 Type wrapperType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(JvmPrimitiveType.get(type).getWrapperFqName());
-                equalsMethod = new ConsistentEquals(wrapperType);
+                equalsMethod = new EqualsThrowingNpeForNullReceiver(wrapperType);
             }
             else {
                 equalsMethod = EQUALS;
