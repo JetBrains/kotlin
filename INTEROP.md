@@ -147,6 +147,24 @@ Note that this part of the `.def` file is treated as part of the header file, so
 functions with body should be declared as `static`.
 The declarations are parsed after including the files from `headers` list.
 
+### Including static library in your klib
+
+Sometimes it is more convenient to ship a static library with your product,
+rather that assuming it is available within the user environment.
+To include a static library into `.klib` use `staticLibrary` and `libraryPaths`
+clauses. For example:
+
+```
+staticLibraries = libfoo.a 
+libraryPath = /opt/local/lib /usr/local/opt/curl/lib
+```
+
+When given the above snippet the `cinterop` tool will search `libfoo.a` in 
+`/opt/local/lib` and `/usr/local/opt/curl/lib`, and if found include the 
+library binary into `klib`. 
+
+When using such `klib` in your program the library is linked automatically.
+
 ## Using bindings ##
 
 ### Basic interop types ###
