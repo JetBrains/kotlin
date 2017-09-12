@@ -136,7 +136,7 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   int depth = 0;
   _Unwind_Backtrace(depthCountCallback, &depth);
   if (depth < kSkipFrames)
-      return AllocArrayInstance(theArrayTypeInfo, 0, OBJ_RESULT)
+      return AllocArrayInstance(theArrayTypeInfo, 0, OBJ_RESULT);
   Backtrace result(depth, kSkipFrames);
   _Unwind_Backtrace(unwindCallback, &result);
   RETURN_OBJ(result.obj());
