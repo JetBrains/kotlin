@@ -135,7 +135,8 @@ OBJ_GETTER0(GetCurrentStackTrace) {
 #if USE_GCC_UNWIND
   int depth = 0;
   _Unwind_Backtrace(depthCountCallback, &depth);
-  if (depth < kSkipFrames) RETURN_OBJ(nullptr);
+  if (depth < kSkipFrames)
+      return AllocArrayInstance(theArrayTypeInfo, 0, OBJ_RESULT)
   Backtrace result(depth, kSkipFrames);
   _Unwind_Backtrace(unwindCallback, &result);
   RETURN_OBJ(result.obj());
@@ -146,7 +147,8 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   int size = backtrace(buffer, maxSize);
   char** symbols = backtrace_symbols(buffer, size);
   RuntimeAssert(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
-  if (size < kSkipFrames) RETURN_OBJ(nullptr);
+  if (size < kSkipFrames)
+      return AllocArrayInstance(theArrayTypeInfo, 0, OBJ_RESULT);
   AutoFree autoFree(symbols);
   ObjHolder resultHolder;
   ObjHeader* result = AllocArrayInstance(
