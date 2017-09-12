@@ -47,9 +47,9 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull KotlinType type) {
+    public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
         List<CallableMemberDescriptor> abstractMembers = new ArrayList<>();
-        for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(type.getMemberScope())) {
+        for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedMemberScope())) {
             if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
                 abstractMembers.add((CallableMemberDescriptor) member);
             }
@@ -154,7 +154,7 @@ public class SingleAbstractMethodUtils {
 
         if (klass.isDefinitelyNotSamInterface()) return null;
 
-        List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass.getDefaultType());
+        List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass);
         if (abstractMembers.size() == 1) {
             CallableMemberDescriptor member = abstractMembers.get(0);
             if (member instanceof SimpleFunctionDescriptor) {

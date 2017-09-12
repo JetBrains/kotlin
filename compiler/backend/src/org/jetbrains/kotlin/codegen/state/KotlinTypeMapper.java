@@ -899,7 +899,7 @@ public class KotlinTypeMapper {
                 if (expression instanceof KtLambdaExpression) {
                     SamType samType = bindingContext.get(SAM_VALUE, (KtExpression) expression);
                     if (samType != null) {
-                        return samType.getAbstractMethod().getName().asString();
+                        return samType.getOriginalAbstractMethod().getName().asString();
                     }
                 }
             }

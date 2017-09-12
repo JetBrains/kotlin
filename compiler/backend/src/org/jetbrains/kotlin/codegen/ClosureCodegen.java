@@ -203,7 +203,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             erasedInterfaceFunction = getErasedInvokeFunction(funDescriptor);
         }
         else {
-            erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
+            erasedInterfaceFunction = samType.getOriginalAbstractMethod();
         }
 
         generateBridge(
