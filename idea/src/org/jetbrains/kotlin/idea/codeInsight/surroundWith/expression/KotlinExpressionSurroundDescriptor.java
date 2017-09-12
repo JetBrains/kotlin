@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,11 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
             new KotlinWhenSurrounder() ,
             new KotlinRuntimeTypeCastSurrounder(),
             new KotlinWithIfExpressionSurrounder(/* withElse = */false),
-            new KotlinWithIfExpressionSurrounder(/* withElse = */true)
+            new KotlinWithIfExpressionSurrounder(/* withElse = */true),
+            new KotlinTryCatchExpressionSurrounder(),
+            new KotlinTryCatchFinallyExpressionSurrounder(),
+            new KotlinIfElseExpressionSurrounder(/* withBraces = */false),
+            new KotlinIfElseExpressionSurrounder(/* withBraces = */true)
     };
 
     @Override

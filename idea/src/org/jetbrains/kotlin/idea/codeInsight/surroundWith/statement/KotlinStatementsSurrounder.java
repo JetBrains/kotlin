@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,36 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 public abstract class KotlinStatementsSurrounder implements Surrounder {
 
     @Override
     public boolean isApplicable(@NotNull PsiElement[] elements) {
-        return elements.length > 0;
+        if (elements.length == 0) {
+            return false;
+        }
+
+        if (elements.length == 1 || !(elements[0] instanceof KtExpression) && !isApplicableWhenUsedAsExpression()) {
+            KtElement expression = (KtElement) elements[0];
+
+            Boolean usedAsExpression = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL)
+                    .get(BindingContext.USED_AS_EXPRESSION, expression);
+
+            if (usedAsExpression != null && usedAsExpression) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean isApplicableWhenUsedAsExpression() {
+        return true;
     }
 
     @Override
