@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -60,12 +62,14 @@ public class ExpectedResolveDataUtil {
         KotlinBuiltIns builtIns = DefaultBuiltIns.getInstance();
 
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<>();
-        nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", project, builtIns.getIntType()));
-        FunctionDescriptor descriptorForGet = standardFunction(builtIns.getArray(), "get", project, builtIns.getIntType());
+        nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", project,  environment, builtIns.getIntType()));
+        FunctionDescriptor descriptorForGet = standardFunction(builtIns.getArray(), "get", project, environment, builtIns.getIntType());
         nameToDescriptor.put("kotlin::Array.get(Int)", descriptorForGet.getOriginal());
-        nameToDescriptor.put("kotlin::Int.compareTo(Double)", standardFunction(builtIns.getInt(), "compareTo", project, builtIns.getDoubleType()));
+        nameToDescriptor.put("kotlin::Int.compareTo(Double)",
+                             standardFunction(builtIns.getInt(), "compareTo", project, environment, builtIns.getDoubleType()));
         @NotNull
-        FunctionDescriptor descriptorForSet = standardFunction(builtIns.getArray(), "set", project, builtIns.getIntType(), builtIns.getIntType());
+        FunctionDescriptor descriptorForSet = standardFunction(builtIns.getArray(), "set", project, environment,
+                                                               builtIns.getIntType(), builtIns.getIntType());
         nameToDescriptor.put("kotlin::Array.set(Int, Int)", descriptorForSet.getOriginal());
 
         return nameToDescriptor;
@@ -135,6 +139,7 @@ public class ExpectedResolveDataUtil {
             ClassDescriptor classDescriptor,
             String name,
             Project project,
+            KotlinCoreEnvironment environment,
             KotlinType... parameterTypes
     ) {
         ModuleDescriptorImpl emptyModule = KotlinTestUtils.createEmptyModule();
@@ -146,9 +151,10 @@ public class ExpectedResolveDataUtil {
                                                              classDescriptor.getThisAsReceiverParameter(),
                                                              LexicalScopeKind.SYNTHETIC);
 
+        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(environment.getConfiguration());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 new BindingTraceContext(), lexicalScope,
-                DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
+                DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings);
 
         KtExpression callElement = KtPsiFactory(project).createExpression(name);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ public class ExpressionTypingServices {
             @NotNull ContextDependency contextDependency
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter
+                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings()
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
@@ -156,7 +156,7 @@ public class ExpressionTypingServices {
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
                 trace,
-                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings()
         ));
     }
 
@@ -224,7 +224,7 @@ public class ExpressionTypingServices {
                                                                                        expressionTypingComponents.overloadChecker);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
+                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings()
         );
         KotlinTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 

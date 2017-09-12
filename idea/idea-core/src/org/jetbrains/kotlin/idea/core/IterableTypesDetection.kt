@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -75,7 +76,8 @@ class IterableTypesDetection(
             if (!canBeIterable(type)) return null
 
             val expression = KtPsiFactory(project).createExpression("fake")
-            val context = ExpressionTypingContext.newContext(BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
+            val context = ExpressionTypingContext.newContext(
+                    BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, expression.languageVersionSettings)
             val expressionReceiver = ExpressionReceiver.create(expression, type.type, context.trace.bindingContext)
             val elementType = forLoopConventionsChecker.checkIterableConvention(expressionReceiver, context)
             return elementType?.let { it.toFuzzyType(type.freeParameters) }

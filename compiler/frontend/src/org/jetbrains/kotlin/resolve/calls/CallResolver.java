@@ -303,7 +303,7 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        isAnnotationContext
+                        isAnnotationContext, languageVersionSettings
                 )
         );
     }
@@ -429,7 +429,8 @@ public class CallResolver {
                 CallMaker.makeCall(null, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                false);
+                false,
+                languageVersionSettings);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 

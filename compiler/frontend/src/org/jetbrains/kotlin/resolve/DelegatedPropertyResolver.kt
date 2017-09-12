@@ -304,7 +304,7 @@ class DelegatedPropertyResolver(
         else
             TypeUtils.NO_EXPECTED_TYPE
 
-        val context = ExpressionTypingContext.newContext(trace, delegateFunctionsScope, dataFlowInfo, expectedType)
+        val context = ExpressionTypingContext.newContext(trace, delegateFunctionsScope, dataFlowInfo, expectedType, languageVersionSettings)
 
         val hasThis = propertyDescriptor.extensionReceiverParameter != null || propertyDescriptor.dispatchReceiverParameter != null
 
@@ -339,7 +339,7 @@ class DelegatedPropertyResolver(
             initializerScope: LexicalScope,
             dataFlowInfo: DataFlowInfo
     ): OverloadResolutionResults<FunctionDescriptor> {
-        val context = ExpressionTypingContext.newContext(trace, initializerScope, dataFlowInfo, NO_EXPECTED_TYPE)
+        val context = ExpressionTypingContext.newContext(trace, initializerScope, dataFlowInfo, NO_EXPECTED_TYPE, languageVersionSettings)
         return getProvideDelegateMethod(propertyDescriptor, delegateExpression, delegateExpressionType, context)
     }
 
@@ -537,7 +537,8 @@ class DelegatedPropertyResolver(
                                                                     traceToResolveConventionMethods, false, delegateExpression, ContextDependency.DEPENDENT)
 
             val contextForProvideDelegate = ExpressionTypingContext.newContext(traceToResolveConventionMethods, scopeForDelegate, delegateType.dataFlowInfo,
-                                                                               NO_EXPECTED_TYPE, ContextDependency.DEPENDENT, StatementFilter.NONE)
+                                                                               NO_EXPECTED_TYPE, ContextDependency.DEPENDENT, StatementFilter.NONE,
+                                                                               languageVersionSettings)
 
             val provideDelegateResults = getProvideDelegateMethod(
                     variableDescriptor, delegateExpression, delegateType.type ?: return null, contextForProvideDelegate
