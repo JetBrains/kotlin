@@ -26,8 +26,8 @@ import org.jetbrains.uast.withMargin
 
 class KotlinULambdaExpression(
         override val psi: KtLambdaExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), ULambdaExpression, KotlinUElementWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), ULambdaExpression, KotlinUElementWithType {
     val functionalInterfaceType: PsiType?
         get() = getFunctionalInterfaceType()
 

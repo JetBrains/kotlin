@@ -24,8 +24,8 @@ import org.jetbrains.uast.USuperExpression
 
 class KotlinUSuperExpression(
         override val psi: KtSuperExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), USuperExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), USuperExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val label: String?
         get() = psi.getLabelName()
 

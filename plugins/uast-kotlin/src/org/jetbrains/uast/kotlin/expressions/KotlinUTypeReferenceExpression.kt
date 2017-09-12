@@ -8,14 +8,14 @@ import org.jetbrains.uast.UTypeReferenceExpression
 open class KotlinUTypeReferenceExpression(
         override val type: PsiType,
         override val psi: PsiElement?,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UTypeReferenceExpression, KotlinUElementWithType
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UTypeReferenceExpression, KotlinUElementWithType
 
 
 class LazyKotlinUTypeReferenceExpression(
         override val psi: PsiElement,
-        override val uastParent: UElement?,
+        givenParent: UElement?,
         private val typeSupplier: () -> PsiType
-) : KotlinAbstractUExpression(), UTypeReferenceExpression {
+) : KotlinAbstractUExpression(givenParent), UTypeReferenceExpression {
     override val type: PsiType by lz { typeSupplier() }
 }

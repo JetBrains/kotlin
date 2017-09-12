@@ -13,8 +13,10 @@ import org.jetbrains.uast.*
 
 class KotlinUAnnotation(
         override val psi: KtAnnotationEntry,
-        override val uastParent: UElement?
+        private val givenParent: UElement?
 ) : UAnnotation {
+    override val uastParent: UElement? by lz { convertParent(givenParent) }
+
     private val resolvedAnnotation: AnnotationDescriptor? by lz { psi.analyze()[BindingContext.ANNOTATION, psi] }
 
     private val resolvedCall: ResolvedCall<*>? by lz { psi.getResolvedCall(psi.analyze()) }

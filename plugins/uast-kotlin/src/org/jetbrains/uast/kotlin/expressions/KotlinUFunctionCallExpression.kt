@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -34,9 +37,9 @@ import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
-        override val uastParent: UElement?,
+        givenParent: UElement?,
         private val _resolvedCall: ResolvedCall<*>?
-) : KotlinAbstractUExpression(), UCallExpression, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UCallExpression, KotlinUElementWithType {
     companion object {
         fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
             if (descriptor is ConstructorDescriptor && descriptor.isPrimary
@@ -99,12 +102,7 @@ class KotlinUFunctionCallExpression(
     }
 
     override val receiver: UExpression?
-        get() {
-            return if (uastParent is UQualifiedReferenceExpression && uastParent.selector == this)
-                uastParent.receiver
-            else
-                null
-        }
+        get() = (uastParent as? UQualifiedReferenceExpression)?.takeIf { it.selector == this }?.receiver
 
     override fun resolve(): PsiMethod? {
         val descriptor = resolvedCall?.resultingDescriptor ?: return null

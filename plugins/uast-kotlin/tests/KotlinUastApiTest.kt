@@ -1,11 +1,14 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiModifier
+import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.findElementByText
 import org.junit.Assert
 import org.junit.Test
@@ -110,6 +113,16 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             val witDefaultValue = file.findElementByText<UAnnotation>("@WithDefaultValue")
             assertEquals(42, witDefaultValue.findAttributeValue("value")!!.evaluate())
             assertEquals(42, witDefaultValue.findAttributeValue(null)!!.evaluate())
+        }
+    }
+
+    @Test fun testIfCondition() {
+        doTest("IfStatement") { _, file ->
+            val psiFile = file.psi
+            val element = psiFile.findElementAt(psiFile.text.indexOf("\"abc\""))!!
+            val binaryExpression = element.getParentOfType<KtBinaryExpression>(false)!!
+            val uBinaryExpression = KotlinUastLanguagePlugin().convertElementWithParent(binaryExpression, null)!!
+            UsefulTestCase.assertInstanceOf(uBinaryExpression.uastParent, UIfExpression::class.java)
         }
     }
 }

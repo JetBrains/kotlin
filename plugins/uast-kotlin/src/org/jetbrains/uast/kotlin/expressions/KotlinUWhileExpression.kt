@@ -23,8 +23,8 @@ import org.jetbrains.uast.UWhileExpression
 
 class KotlinUWhileExpression(
         override val psi: KtWhileExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UWhileExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UWhileExpression {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
 

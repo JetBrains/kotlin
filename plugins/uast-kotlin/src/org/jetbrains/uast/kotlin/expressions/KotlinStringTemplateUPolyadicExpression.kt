@@ -24,11 +24,11 @@ import org.jetbrains.uast.UastBinaryOperator
 
 class KotlinStringTemplateUPolyadicExpression(
         override val psi: KtStringTemplateExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(),
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent),
         UPolyadicExpression,
         KotlinUElementWithType,
         KotlinEvaluatableUElement {
-    override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convertEntry(it, { this })!! } }
+    override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convertEntry(it, this)!! } }
     override val operator = UastBinaryOperator.PLUS
 }

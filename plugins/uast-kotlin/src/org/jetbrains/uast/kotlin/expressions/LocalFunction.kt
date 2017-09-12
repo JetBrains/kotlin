@@ -12,8 +12,10 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 private class KotlinLocalFunctionUVariable(
         val function: KtFunction,
         override val psi: PsiVariable,
-        override val uastParent: UElement?
+        private val givenParent: UElement?
 ) : UVariable, PsiVariable by psi {
+    override val uastParent: UElement? by lz { convertParent(givenParent) }
+
     override val uastInitializer: UExpression? by lz {
         createLocalFunctionLambdaExpression(function, this)
     }
@@ -28,8 +30,8 @@ private class KotlinLocalFunctionUVariable(
 
 private class KotlinLocalFunctionULambdaExpression(
         override val psi: KtFunction,
-        override val uastParent: UElement?
-): KotlinAbstractUExpression(), ULambdaExpression {
+        givenParent: UElement?
+): KotlinAbstractUExpression(givenParent), ULambdaExpression {
     val functionalInterfaceType: PsiType?
         get() = null
 

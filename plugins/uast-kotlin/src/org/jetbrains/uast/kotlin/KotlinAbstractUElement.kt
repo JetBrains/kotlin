@@ -17,11 +17,16 @@
 package org.jetbrains.uast.kotlin
 
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 
-abstract class KotlinAbstractUElement : UElement {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
+
+    override val uastParent: UElement? by lz { convertParent(givenParent) }
+
     override fun equals(other: Any?): Boolean {
         if (other !is UElement) {
             return false
@@ -33,7 +38,30 @@ abstract class KotlinAbstractUElement : UElement {
     override fun hashCode() = psi?.hashCode() ?: 0
 }
 
-abstract class KotlinAbstractUExpression : KotlinAbstractUElement(), UExpression {
+internal fun UElement.convertParent(givenParent: UElement?): UElement? {
+    return if (givenParent != null)
+        givenParent
+    else {
+        val parent = psi?.parent
+        val result = KotlinConverter.unwrapElements(parent)?.let { parentUnwrapped ->
+            if (parent is KtValueArgument && parentUnwrapped is KtAnnotationEntry) {
+                val argumentName = parent.getArgumentName()?.asName?.asString() ?: ""
+                (KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null) as? UAnnotation)
+                    ?.attributeValues?.find { it.name == argumentName }
+            }
+            else
+                KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null)
+        }
+        if (result == this) {
+            throw IllegalStateException("Loop in parent structure")
+        }
+        result
+    }
+}
+
+abstract class KotlinAbstractUExpression(givenParent: UElement?)
+    : KotlinAbstractUElement(givenParent), UExpression {
+
     override val annotations: List<UAnnotation>
         get() {
             val annotatedExpression = psi?.parent as? KtAnnotatedExpression ?: return emptyList()

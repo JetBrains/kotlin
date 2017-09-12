@@ -33,7 +33,11 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUVariable : PsiVariable, UVariable, KotlinUElementWithComments {
+abstract class AbstractKotlinUVariable(private val givenParent: UElement?)
+    : PsiVariable, UVariable, KotlinUElementWithComments {
+
+    override val uastParent: UElement? by lz { convertParent(givenParent) }
+
     override val uastInitializer: UExpression?
         get() {
             val psi = psi
@@ -85,8 +89,8 @@ abstract class AbstractKotlinUVariable : PsiVariable, UVariable, KotlinUElementW
 
 class KotlinUVariable(
         psi: PsiVariable,
-        override val uastParent: UElement?
-) : AbstractKotlinUVariable(), UVariable, PsiVariable by psi {
+        givenParent: UElement?
+) : AbstractKotlinUVariable(givenParent), UVariable, PsiVariable by psi {
     override val psi = unwrap<UVariable, PsiVariable>(psi)
 
     override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
@@ -112,8 +116,8 @@ class KotlinUVariable(
 
 open class KotlinUParameter(
         psi: PsiParameter,
-        override val uastParent: UElement?
-) : AbstractKotlinUVariable(), UParameter, PsiParameter by psi {
+        givenParent: UElement?
+) : AbstractKotlinUVariable(givenParent), UParameter, PsiParameter by psi {
 
     override val psi = unwrap<UParameter, PsiParameter>(psi)
 
@@ -136,8 +140,8 @@ open class KotlinUParameter(
 
 open class KotlinUField(
         psi: PsiField,
-        override val uastParent: UElement?
-) : AbstractKotlinUVariable(), UField, PsiField by psi {
+        givenParent: UElement?
+) : AbstractKotlinUVariable(givenParent), UField, PsiField by psi {
 
     override val psi = unwrap<UField, PsiField>(psi)
 
@@ -172,8 +176,8 @@ open class KotlinUField(
 
 open class KotlinULocalVariable(
         psi: PsiLocalVariable,
-        override val uastParent: UElement?
-) : AbstractKotlinUVariable(), ULocalVariable, PsiLocalVariable by psi {
+        givenParent: UElement?
+) : AbstractKotlinUVariable(givenParent), ULocalVariable, PsiLocalVariable by psi {
 
     override val psi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
 
@@ -213,8 +217,8 @@ open class KotlinUAnnotatedLocalVariable(
 
 open class KotlinUEnumConstant(
         psi: PsiEnumConstant,
-        override val uastParent: UElement?
-) : AbstractKotlinUVariable(), UEnumConstant, PsiEnumConstant by psi {
+        givenParent: UElement?
+) : AbstractKotlinUVariable(givenParent), UEnumConstant, PsiEnumConstant by psi {
 
     override fun getContainingFile(): PsiFile {
         return super.getContainingFile()
@@ -268,8 +272,9 @@ open class KotlinUEnumConstant(
 
     private class KotlinEnumConstantClassReference(
             override val psi: PsiEnumConstant,
-            override val uastParent: UElement?
+            private val givenParent: UElement?
     ) : JavaAbstractUExpression(), USimpleNameReferenceExpression {
+        override val uastParent: UElement? by lz { convertParent(givenParent) }
         override fun resolve() = psi.containingClass
         override val resolvedName: String?
             get() = psi.containingClass?.name
