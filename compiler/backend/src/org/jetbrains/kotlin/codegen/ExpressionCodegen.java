@@ -104,6 +104,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.extractReificationArgument;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isPossiblyUninitializedSingleton;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.unwrapInitialSignatureDescriptor;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
@@ -1737,16 +1738,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            if (isPossiblyUninitializedSingleton(classDescriptor) && isInsideSingleton(classDescriptor)) {
+                return generateThisOrOuterFromContext(classDescriptor, false, false);
+            }
             if (isObject(classDescriptor)) {
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
             if (isEnumEntry(classDescriptor)) {
-                if (isInsideEnumEntry(classDescriptor)) {
-                    return generateThisOrOuterFromContext(classDescriptor, false, false);
-                }
-                else {
-                    return StackValue.enumEntry(classDescriptor, typeMapper);
-                }
+                return StackValue.enumEntry(classDescriptor, typeMapper);
             }
             ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
             if (companionObjectDescriptor != null) {
@@ -2488,6 +2487,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
                     return StackValue.LOCAL_0;
                 }
+                else if (isPossiblyUninitializedSingleton(receiverDescriptor) && isInsideSingleton(receiverDescriptor)) {
+                    return generateThisOrOuterFromContext(receiverDescriptor, false, false);
+                }
                 else {
                     return StackValue.singleton(receiverDescriptor, typeMapper);
                 }
@@ -2572,13 +2574,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return generateThisOrOuter(calleeContainingClass, isSuper, false);
     }
 
-    private boolean isInsideEnumEntry(@NotNull ClassDescriptor enumEntryDescriptor) {
-        assert DescriptorUtils.isEnumEntry(enumEntryDescriptor) :
-                "Enum entry reference expected: " + enumEntryDescriptor;
+    private boolean isInsideSingleton(@NotNull ClassDescriptor singletonClassDescriptor) {
+        assert singletonClassDescriptor.getKind().isSingleton() :
+                "Singleton expected: " + singletonClassDescriptor;
 
         DeclarationDescriptor descriptor = context.getContextDescriptor();
         while (descriptor != null) {
-            if (descriptor == enumEntryDescriptor) return true;
+            if (descriptor == singletonClassDescriptor) return true;
 
             if (descriptor instanceof ClassDescriptor &&
                 !(((ClassDescriptor) descriptor).isInner() || DescriptorUtils.isAnonymousObject(descriptor))) {
@@ -2593,24 +2595,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {
-        boolean isSingleton = calleeContainingClass.getKind().isSingleton();
-        if (isSingleton) {
-            if (calleeContainingClass.equals(context.getThisDescriptor()) &&
-                !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getFunctionDescriptor())) {
-                return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
-            }
-            else if (isEnumEntry(calleeContainingClass)) {
-                if (!isInsideEnumEntry(calleeContainingClass)) {
-                    return StackValue.enumEntry(calleeContainingClass, typeMapper);
-                }
-                // else fall-through
-            }
-            else {
-                return StackValue.singleton(calleeContainingClass, typeMapper);
-            }
+        if (!calleeContainingClass.getKind().isSingleton()) {
+            return generateThisOrOuterFromContext(calleeContainingClass, isSuper, forceOuter);
         }
 
-        return generateThisOrOuterFromContext(calleeContainingClass, isSuper, forceOuter);
+        if (calleeContainingClass.equals(context.getThisDescriptor()) &&
+            !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getFunctionDescriptor())) {
+            return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
+        }
+        else if (CodegenUtilKt.isPossiblyUninitializedSingleton(calleeContainingClass) && isInsideSingleton(calleeContainingClass)) {
+            return generateThisOrOuterFromContext(calleeContainingClass, isSuper, forceOuter);
+        }
+        else if (isEnumEntry(calleeContainingClass)) {
+            return StackValue.enumEntry(calleeContainingClass, typeMapper);
+        }
+        else {
+            return StackValue.singleton(calleeContainingClass, typeMapper);
+        }
     }
 
     private StackValue generateThisOrOuterFromContext(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {

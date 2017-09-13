@@ -420,3 +420,7 @@ fun ExpressionCodegen.generateCallReceiver(rangeCall: ResolvedCall<out CallableD
 
 fun ExpressionCodegen.generateCallSingleArgument(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
         gen(ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!)
+
+fun ClassDescriptor.isPossiblyUninitializedSingleton() =
+        DescriptorUtils.isEnumEntry(this) ||
+        DescriptorUtils.isCompanionObject(this) && DescriptorUtils.isInterface(this.containingDeclaration)
