@@ -28,14 +28,18 @@ import org.jetbrains.uast.java.AbstractJavaUClass
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 
+abstract class AbstractKotlinUClass(private val givenParent: UElement?) : AbstractJavaUClass() {
+    override val uastParent: UElement? by lz {
+        givenParent ?: KotlinUastLanguagePlugin().convertElementWithParent(psi.parent ?: psi.containingFile, null)
+    }
+}
+
 open class KotlinUClass private constructor(
         psi: KtLightClass,
-        private val givenParent: UElement?
-) : AbstractJavaUClass(), PsiClass by psi {
+        givenParent: UElement?
+) : AbstractKotlinUClass(givenParent), PsiClass by psi {
 
     val ktClass = psi.kotlinOrigin
-
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
 
     override val psi = unwrap<UClass, PsiClass>(psi)
 
@@ -56,8 +60,8 @@ open class KotlinUClass private constructor(
         // filter Enum entry classes to avoid duplication with PsiEnumConstant initializer class
         return psi.innerClasses.filter {
             it.name != JvmAbi.DEFAULT_IMPLS_CLASS_NAME && !it.isEnumEntryLightClass()
-        }.map {
-            getLanguagePlugin().convert<UClass>(it, this)
+        }.mapNotNull {
+            getLanguagePlugin().convertOpt<UClass>(it, this)
         }.toTypedArray()
     }
 
@@ -112,20 +116,18 @@ open class KotlinUClass private constructor(
 
 class KotlinUAnonymousClass(
         psi: PsiAnonymousClass,
-        private val givenParent: UElement?
-) : AbstractJavaUClass(), UAnonymousClass, PsiAnonymousClass by psi {
-
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
-
+        givenParent: UElement?
+) : AbstractKotlinUClass(givenParent), UAnonymousClass, PsiAnonymousClass by psi {
+    
     override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
 
-    override fun getOriginalElement(): PsiElement? = super<AbstractJavaUClass>.getOriginalElement()
+    override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUClass>.getOriginalElement()
 
-    override fun getSuperClass(): UClass? = super<AbstractJavaUClass>.getSuperClass()
-    override fun getFields(): Array<UField> = super<AbstractJavaUClass>.getFields()
-    override fun getMethods(): Array<UMethod> = super<AbstractJavaUClass>.getMethods()
-    override fun getInitializers(): Array<UClassInitializer> = super<AbstractJavaUClass>.getInitializers()
-    override fun getInnerClasses(): Array<UClass> = super<AbstractJavaUClass>.getInnerClasses()
+    override fun getSuperClass(): UClass? = super<AbstractKotlinUClass>.getSuperClass()
+    override fun getFields(): Array<UField> = super<AbstractKotlinUClass>.getFields()
+    override fun getMethods(): Array<UMethod> = super<AbstractKotlinUClass>.getMethods()
+    override fun getInitializers(): Array<UClassInitializer> = super<AbstractKotlinUClass>.getInitializers()
+    override fun getInnerClasses(): Array<UClass> = super<AbstractKotlinUClass>.getInnerClasses()
 
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
 

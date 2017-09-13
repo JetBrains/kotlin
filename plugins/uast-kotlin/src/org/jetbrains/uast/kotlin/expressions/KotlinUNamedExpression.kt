@@ -45,52 +45,52 @@ class KotlinUNamedExpression private constructor(
                 valueArguments: List<ValueArgument>,
                 uastParent: UElement?): UNamedExpression {
             return KotlinUNamedExpression(name, uastParent) { expressionParent ->
-                object : KotlinAbstractUExpression(uastParent), UCallExpression {
-                    override val uastParent: UElement? = expressionParent
-
-                    override val kind: UastCallKind = UastCallKind.NESTED_ARRAY_INITIALIZER
-
-                    override val valueArguments: List<UExpression> by lz {
-                        valueArguments.map {
-                            it.getArgumentExpression()?.let { argumentExpression ->
-                                getLanguagePlugin().convert<UExpression>(argumentExpression, this)
-                            } ?: UastEmptyExpression
-                        }
-                    }
-
-                    override val valueArgumentCount: Int
-                        get() = valueArguments.size
-
-                    override val psi: PsiElement?
-                        get() = null
-
-                    override val methodIdentifier: UIdentifier?
-                        get() = null
-
-                    override val classReference: UReferenceExpression?
-                        get() = null
-
-                    override val methodName: String?
-                        get() = null
-
-                    override val typeArgumentCount: Int
-                        get() = 0
-
-                    override val typeArguments: List<PsiType>
-                        get() = emptyList()
-
-                    override val returnType: PsiType?
-                        get() = null
-
-                    override fun resolve() = null
-
-                    override val receiver: UExpression?
-                        get() = null
-
-                    override val receiverType: PsiType?
-                        get() = null
-                }
+                KotlinUVarargExpression(valueArguments, expressionParent)
             }
         }
     }
+}
+class KotlinUVarargExpression(private val valueArgs: List<ValueArgument>,
+                              uastParent: UElement?) : KotlinAbstractUExpression(uastParent), UCallExpression {
+    override val kind: UastCallKind = UastCallKind.NESTED_ARRAY_INITIALIZER
+
+    override val valueArguments: List<UExpression> by lz {
+        valueArgs.map {
+            it.getArgumentExpression()?.let { argumentExpression ->
+                getLanguagePlugin().convert<UExpression>(argumentExpression, this)
+            } ?: UastEmptyExpression
+        }
+    }
+
+    override val valueArgumentCount: Int
+        get() = valueArgs.size
+
+    override val psi: PsiElement?
+        get() = null
+
+    override val methodIdentifier: UIdentifier?
+        get() = null
+
+    override val classReference: UReferenceExpression?
+        get() = null
+
+    override val methodName: String?
+        get() = null
+
+    override val typeArgumentCount: Int
+        get() = 0
+
+    override val typeArguments: List<PsiType>
+        get() = emptyList()
+
+    override val returnType: PsiType?
+        get() = null
+
+    override fun resolve() = null
+
+    override val receiver: UExpression?
+        get() = null
+
+    override val receiverType: PsiType?
+        get() = null
 }

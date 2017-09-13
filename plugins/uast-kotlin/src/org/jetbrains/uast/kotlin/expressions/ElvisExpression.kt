@@ -68,14 +68,13 @@ private fun createElvisExpressions(
     return listOf(declaration, ifExpression)
 }
 
-fun createElvisExpression(elvisExpression: KtBinaryExpression, containingElement: UElement?): UExpression {
+fun createElvisExpression(elvisExpression: KtBinaryExpression, givenParent: UElement?): UExpression {
     val left = elvisExpression.left ?: return UastEmptyExpression
     val right = elvisExpression.right ?: return UastEmptyExpression
 
-    return object : UExpressionList, KotlinEvaluatableUElement {
+    return object : KotlinAbstractUElement(givenParent), UExpressionList, KotlinEvaluatableUElement {
         override val psi: PsiElement? = elvisExpression
         override val kind = KotlinSpecialExpressionKinds.ELVIS
-        override val uastParent: UElement? = containingElement
         override val annotations: List<UAnnotation> = emptyList()
         override val expressions: List<UExpression> by lz {
             createElvisExpressions(left, right, this, elvisExpression.parent)

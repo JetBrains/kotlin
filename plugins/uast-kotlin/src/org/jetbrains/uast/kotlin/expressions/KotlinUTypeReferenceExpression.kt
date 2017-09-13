@@ -2,6 +2,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UTypeReferenceExpression
 
@@ -13,9 +14,11 @@ open class KotlinUTypeReferenceExpression(
 
 
 class LazyKotlinUTypeReferenceExpression(
-        override val psi: PsiElement,
+        override val psi: KtTypeReference,
         givenParent: UElement?,
-        private val typeSupplier: () -> PsiType
+        private val typeSupplier: (() -> PsiType)? = null
 ) : KotlinAbstractUExpression(givenParent), UTypeReferenceExpression {
-    override val type: PsiType by lz { typeSupplier() }
+    override val type: PsiType by lz {
+        typeSupplier?.invoke() ?: psi.toPsiType(uastParent ?: this)
+    }
 }

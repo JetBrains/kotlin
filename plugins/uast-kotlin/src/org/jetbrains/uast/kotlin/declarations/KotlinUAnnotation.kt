@@ -4,8 +4,10 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -43,6 +45,14 @@ class KotlinUAnnotation(
 
     override fun findAttributeValue(name: String?): UExpression? =
             findDeclaredAttributeValue(name) ?: findAttributeDefaultValue(name ?: "value")
+
+    fun findAttributeValueExpression(arg: ValueArgument): UExpression? {
+        val mapping = resolvedCall?.getArgumentMapping(arg)
+        return (mapping as? ArgumentMatch)?.let { match ->
+            val namedExpression = attributeValues.find { it.name == match.valueParameter.name.asString() }
+            namedExpression?.expression as? KotlinUVarargExpression ?: namedExpression
+        }
+    }
 
     override fun findDeclaredAttributeValue(name: String?): UExpression? {
         return attributeValues.find {

@@ -16,16 +16,31 @@
 
 package org.jetbrains.uast.kotlin
 
-import org.jetbrains.kotlin.psi.KtAnnotatedExpression
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.uast.UAnnotation
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.uast.*
 
 abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
 
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
+    override val uastParent: UElement? by lz {
+        givenParent ?: convertParent()
+    }
+
+    protected open fun convertParent(): UElement? {
+        var parent = psi?.parent ?: psi?.containingFile
+
+        if (parent is KtStringTemplateExpression && parent.entries.size == 1) {
+            parent = parent.parent
+        }
+
+        val result = doConvertParent(this, parent)
+        if (result == this) {
+            throw IllegalStateException("Loop in parent structure when converting a $psi")
+        }
+
+        return result
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other !is UElement) {
@@ -38,25 +53,35 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
     override fun hashCode() = psi?.hashCode() ?: 0
 }
 
-internal fun UElement.convertParent(givenParent: UElement?): UElement? {
-    return if (givenParent != null)
-        givenParent
-    else {
-        val parent = psi?.parent
-        val result = KotlinConverter.unwrapElements(parent)?.let { parentUnwrapped ->
-            if (parent is KtValueArgument && parentUnwrapped is KtAnnotationEntry) {
-                val argumentName = parent.getArgumentName()?.asName?.asString() ?: ""
-                (KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null) as? UAnnotation)
-                    ?.attributeValues?.find { it.name == argumentName }
-            }
-            else
-                KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null)
-        }
-        if (result == this) {
-            throw IllegalStateException("Loop in parent structure")
-        }
-        result
+fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
+    val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
+    if (parent is KtValueArgument && parentUnwrapped is KtAnnotationEntry) {
+        return (KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null) as? KotlinUAnnotation)
+            ?.findAttributeValueExpression(parent)
     }
+
+    if (parent is KtParameter) {
+        val annotationClass = findAnnotationClassFromConstructorParameter(parent)
+        if (annotationClass != null) {
+            return annotationClass.methods.find { it.name == parent.name }
+        }
+    }
+
+    val result = KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null)
+
+    if (result is UEnumConstant && element is UDeclaration) {
+        return result.initializingClass
+    }
+    return result
+}
+
+private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter): UClass? {
+    val primaryConstructor = parameter.getStrictParentOfType<KtPrimaryConstructor>() ?: return null
+    val containingClass = primaryConstructor.getContainingClassOrObject()
+    if (containingClass.isAnnotation()) {
+        return KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as UClass
+    }
+    return null
 }
 
 abstract class KotlinAbstractUExpression(givenParent: UElement?)
@@ -68,3 +93,4 @@ abstract class KotlinAbstractUExpression(givenParent: UElement?)
             return annotatedExpression.annotationEntries.map { KotlinUAnnotation(it, this) }
         }
 }
+
