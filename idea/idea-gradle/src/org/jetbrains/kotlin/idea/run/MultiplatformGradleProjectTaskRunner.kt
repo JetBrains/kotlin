@@ -15,7 +15,7 @@
  */
 
 package org.jetbrains.kotlin.idea.run
-
+/*
 import com.intellij.execution.configurations.JavaRunConfigurationModule
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
@@ -30,8 +30,9 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.task.*
 import com.intellij.task.impl.ModuleBuildTaskImpl
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner
@@ -115,6 +116,7 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
                                                                                       File(gradleProjectPath)) ?: return false
 
             val externalSourceSets = externalProjectDataCache.findExternalProject(externalRootProject, rootModel.module)
+            if (externalSourceSets.isEmpty()) return false
 
             for (sourceSet in externalSourceSets.values) {
                 if (includeTests) {
@@ -149,6 +151,7 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
     class FactoryImpl : Factory() {
         override fun isApplicable(module: Module): Boolean {
             return ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module) &&
+                   !GradleSystemRunningSettings.getInstance().isUseGradleAwareMake &&
                    module.isMultiplatformModule()
         }
 
@@ -157,7 +160,6 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
     }
 }
 
-private fun Module.isMultiplatformModule(): Boolean {
-    val settings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-    return settings.targetPlatformKind is TargetPlatformKind.Common || settings.implementedModuleName != null
-}
+private fun Module.isMultiplatformModule(): Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+*/
