@@ -4,6 +4,7 @@ import kotlin.AssertionError
 
 interface TestCase {
     val name: String
+    val suite: TestSuite
 }
 
 interface TestSuite {
@@ -23,8 +24,12 @@ abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String): 
     override fun toString(): String = name
 
     // TODO: Make inner and remove the type param when the bug is fixed.
-    class BasicTestCase<F: Function<Unit>>(override val name: String, val testFunction: F): TestCase {
-        override fun toString(): String = name
+    class BasicTestCase<F: Function<Unit>>(
+            override val name: String,
+            override val suite: AbstractTestSuite<F>,
+            val testFunction: F
+    ) : TestCase {
+        override fun toString(): String = "$suite.$name"
     }
 
     private val _testCases = mutableMapOf<String, BasicTestCase<F>>()
@@ -42,13 +47,11 @@ abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String): 
     val beforeClass: Collection<F>  get() = specialFunctions.getFunctions(TestFunctionKind.BEFORE_CLASS)
     val afterClass:  Collection<F>  get() = specialFunctions.getFunctions(TestFunctionKind.AFTER_CLASS)
 
-    fun registerTestCase(name: String, testFunction: F) = registerTestCase(BasicTestCase(name, testFunction))
+    private fun registerTestCase(testCase: BasicTestCase<F>) = _testCases.put(testCase.name, testCase)
+    fun registerTestCase(name: String, testFunction: F) = registerTestCase(createTestCase(name, testFunction))
+    fun createTestCase(name: String, testFunction: F) = BasicTestCase(name, this, testFunction)
 
-    protected fun registerTestCase(testCase: BasicTestCase<F>) = _testCases.put(testCase.name, testCase)
-    protected fun registerTestCases(testCases: Collection<BasicTestCase<F>>) = testCases.forEach { registerTestCase(it) }
-    protected fun registerTestCases(vararg testCases: BasicTestCase<F>) = registerTestCases(testCases.toList())
-
-    protected fun registerFunction(type: TestFunctionKind, function: F) =
+    fun registerFunction(type: TestFunctionKind, function: F) =
             specialFunctions.getFunctions(type).add(function)
 
     protected abstract fun doBeforeClass()
@@ -83,26 +86,31 @@ abstract class BaseClassSuite<T>(name: String): AbstractTestSuite<T.() -> Unit>(
     abstract fun createInstance(): T
 
     // TODO: What about companions?
-    override fun doBeforeClass() {} // = beforeClass.forEach { createInstance().it() }
-    override fun doAfterClass() {} // = afterClass.forEach { createInstance().it() }
+    override fun doBeforeClass()  {} // = beforeClass.forEach { createInstance().it() }
+    override fun doAfterClass()  {} // = afterClass.forEach { createInstance().it() }
 
     override fun doTest(testCase: BasicTestCase<T.() -> Unit>) {
         val instance = createInstance()
         val testFunction = testCase.testFunction
-        before.forEach { instance.it() }
-        instance.testFunction()
-        after.forEach { instance.it() }
+        try {
+            before.forEach { instance.it() }
+            instance.testFunction()
+        } finally {
+            after.forEach { instance.it() }
+        }
     }
 }
 
-class BaseTopLevelSuite(name: String): AbstractTestSuite<() -> Unit>(name) {
+class TopLevelSuite(name: String): AbstractTestSuite<() -> Unit>(name) {
 
     override fun doBeforeClass() = beforeClass.forEach { it() }
     override fun doAfterClass() = afterClass.forEach { it() }
 
-    override fun doTest(testCase: BasicTestCase<() -> Unit>) {
-        before.forEach { it() }
-        testCase.testFunction()
-        after.forEach { it() }
-    }
+    override fun doTest(testCase: BasicTestCase<() -> Unit>) =
+            try {
+                before.forEach { it() }
+                testCase.testFunction()
+            } finally {
+                after.forEach { it() }
+            }
 }

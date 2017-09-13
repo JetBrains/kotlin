@@ -8,17 +8,8 @@ class A {
     }
 }
 
-//abstract class AA<T> {
-//    abstract fun a(): T
-//}
-//
-//
-//class BB: AA<Int>() {
-//    override fun a() = 5
-//}
-
-//@Test
-//fun test() {
-//    println("test")
-//}
+@Test
+fun test() {
+    println("test")
+}
 
