@@ -71,6 +71,7 @@ class ReformatInspection : LocalInspectionTool() {
     }
 
     private object ReformatQuickFix : LocalQuickFix {
+        override fun getName() = familyName
         override fun getFamilyName(): String = "Reformat File"
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             CodeStyleManager.getInstance(project).reformat(descriptor.psiElement.containingFile)
