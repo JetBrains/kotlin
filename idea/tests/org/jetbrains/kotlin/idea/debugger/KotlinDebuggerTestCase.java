@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger;
 
 import com.google.common.collect.Lists;
 import com.intellij.compiler.impl.CompilerUtil;
+import com.intellij.debugger.DebuggerManagerEx;
 import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
 import com.intellij.execution.ExecutionTestCase;
@@ -127,6 +128,36 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(true);
         }
         super.setUp();
+    }
+
+    @Override
+    protected void runTest() throws Throwable {
+        super.runTest();
+        if(getDebugProcess() != null) {
+            getDebugProcess().getProcessHandler().startNotify();
+            waitProcess(getDebugProcess().getProcessHandler());
+            waitForCompleted();
+            //disposeSession(myDebuggerSession);
+            assertNull(DebuggerManagerEx.getInstanceEx(myProject).getDebugProcess(getDebugProcess().getProcessHandler()));
+            myDebuggerSession = null;
+        }
+
+        if (getChecker().contains("JVMTI_ERROR_WRONG_PHASE(112)")) {
+            myRestart.incrementAndGet();
+            if (needsRestart()) {
+                return;
+            }
+        } else {
+            myRestart.set(0);
+        }
+
+        throwExceptionsIfAny();
+        checkTestOutput();
+    }
+
+    private boolean needsRestart() {
+        int restart = myRestart.get();
+        return restart > 0 && restart <= 3;
     }
 
     private static void deleteLocalCacheDirectory(boolean assertDeleteSuccess) {
