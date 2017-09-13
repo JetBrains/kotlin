@@ -68,13 +68,18 @@ test {
 
 
 task testJre6Tests(type: Test) {
-    dependsOn project(':kotlin-stdlib').tasks.testClasses
+    dependsOn(':kotlin-stdlib:testClasses')
     group = "verification"
 
     executable = "$JDK_18/bin/java"
 
-    testClassesDir = project.file('../build/classes/test')
-    classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
+    doFirst {
+        testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
+        classpath = files(
+                testClassesDirs,
+                configurations.testCompile
+        )
+    }
 }
 
 check.dependsOn testJre6Tests
