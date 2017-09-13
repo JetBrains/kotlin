@@ -18,10 +18,8 @@ sourceSets {
     "test" {}
 }
 
-evaluationDependsOn(":kotlin-android-extensions-runtime")
-
 runtimeJar {
-    from(project(":kotlin-android-extensions-runtime").the<JavaPluginConvention>().sourceSets["main"].output.classesDirs)
+    from(getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output.classesDirs)
 }
 
 dist()

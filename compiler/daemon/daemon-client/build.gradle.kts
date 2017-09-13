@@ -7,14 +7,11 @@ jvmTarget = "1.6"
 
 val nativePlatformUberjar = preloadedDeps("native-platform-uberjar")
 
-val packIntoJar by configurations.creating
-
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(nativePlatformUberjar)
-    packIntoJar(projectClasses(":compiler:daemon-common"))
 }
 
 sourceSets {
@@ -26,7 +23,7 @@ runtimeJar {
     nativePlatformUberjar.forEach {
         from(zipTree(it))
     }
-    from(packIntoJar)
+    from(getSourceSetsFrom(":compiler:daemon-common")["main"].output.classesDirs)
 }
 sourcesJar()
 javadocJar()

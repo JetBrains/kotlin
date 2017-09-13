@@ -77,7 +77,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     from(packedJars)
     for (p in projectsToShadow) {
         dependsOn("$p:classes")
-        from(project(p).the<JavaPluginConvention>().sourceSets.getByName("main").output)
+        from(getSourceSetsFrom(p)["main"].output)
     }
 }
 

@@ -38,22 +38,7 @@ val compilerBaseName = name
 
 val outputJar = File(buildDir, "libs", "$compilerBaseName.jar")
 
-
-
 val compilerModules: Array<String> by rootProject.extra
-
-val packagesToRelocate =
-        listOf("com.intellij",
-               "com.google",
-               "com.sampullara",
-               "org.apache",
-               "org.jdom",
-               "org.picocontainer",
-               "org.jline",
-               "gnu",
-               "javax.inject",
-               "org.fusesource",
-               "kotlinx.coroutines")
 
 val ideaCoreSdkJars: Array<String> by rootProject.extra
 val coreSdkJarsSimple = ideaCoreSdkJars.filterNot { it == "jdom" || it == "log4j" }.toTypedArray()
@@ -131,6 +116,8 @@ val proguard by task<ProGuardTask> {
     libraryjars(proguardLibraryJars)
     printconfiguration("$buildDir/compiler.pro.dump")
 }
+
+noDefaultJar()
 
 dist(targetName = compilerBaseName + ".jar",
      fromTask = if (shrink) proguard

@@ -9,7 +9,7 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea"))
     compile(project(":idea:idea-gradle"))
-    compile(project(":android-extensions-compiler"))
+    compile(project(":plugins:android-extensions-compiler"))
     compile(ideaPluginDeps("android", "sdk-tools", "sdk-common", plugin = "android"))
     compile(ideaPluginDeps("Groovy", plugin = "Groovy"))
     testCompile(project(":compiler.tests-common"))

@@ -52,3 +52,11 @@ fun SourceSet.projectDefault() {
 //
 //fun SourceSet.kotlin(action: SourceDirectorySet.() -> Unit) =
 //        kotlin.action()
+
+fun Project.getSourceSetsFrom(projectPath: String): SourceSetContainer {
+    evaluationDependsOn(projectPath)
+    return project(projectPath).the<JavaPluginConvention>().sourceSets
+}
+
+
+

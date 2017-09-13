@@ -21,7 +21,7 @@ dependencies {
     compile(project(":js:js.serializer"))
     compile(project(":js:js.frontend"))
     compile(project(":js:js.translator"))
-    compile(project(":android-extensions-compiler"))
+    compileOnly(project(":plugins:android-extensions-compiler"))
     compile(project(":kotlin-test:kotlin-test-jvm"))
     compile(commonDep("junit:junit"))
     compile(ideaSdkCoreDeps("intellij-core"))

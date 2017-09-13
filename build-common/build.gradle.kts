@@ -4,13 +4,13 @@ description = "Kotlin Build Common"
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":core:util.runtime"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:cli-common"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":js:js.serializer"))
-    compile(project(":js:js.frontend"))
-    compile(ideaSdkDeps("util"))
+    compileOnly(project(":core:util.runtime"))
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:frontend.java"))
+    compileOnly(project(":js:js.serializer"))
+    compileOnly(project(":js:js.frontend"))
+    compileOnly(ideaSdkDeps("util"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler.tests-common"))
     testCompile(protobufFull())
@@ -28,3 +28,5 @@ runtimeJar()
 testsJar()
 
 projectTest()
+
+publish()

@@ -18,6 +18,11 @@ import java.io.File
 // can be used now only for the non-published projects, due to conflicts in the "archives" config
 // TODO: fix the problem above
 fun Project.classesDirsArtifact(): FileCollection {
+
+    task("uploadArchives") {
+        // hides rule-based task with the same name, which appears to be broken in this project
+    }
+
     val classesDirsCfg = configurations.getOrCreate("classes-dirs")
 
     val classesDirs = the<JavaPluginConvention>().sourceSets["main"].output.classesDirs
@@ -45,6 +50,10 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
         body()
         project.addArtifact(testsJarCfg, this, this)
     }
+}
+
+fun Project.noDefaultJar() {
+    tasks.findByName("jar")?.enabled = false
 }
 
 fun<T> Project.runtimeJarArtifactBy(task: Task, artifactRef: T, body: ConfigurablePublishArtifact.() -> Unit = {}) {
@@ -107,6 +116,11 @@ fun Project.standardPublicJars(): Unit {
 
 fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     apply<plugins.PublishedKotlinModule>()
+
+    afterEvaluate {
+        if (configurations.findByName("classes-dirs") != null)
+            throw GradleException("classesDirsArtifact() is incompatible with publish(), see sources comments for details")
+    }
 
     return (tasks.getByName("uploadArchives") as Upload).apply {
         body()

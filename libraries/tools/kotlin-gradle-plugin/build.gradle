@@ -28,14 +28,13 @@ configurations {
 
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
+    compile project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
 
     compile project(':kotlin-stdlib')
     compile project(':android-extensions-compiler')
-//    compile project(path: ':compiler', configuration: 'embeddableCompilerJar')
     compile project(':kotlin-build-common')
     compile project(':kotlin-compiler-runner')
-    compile project(":compiler:incremental-compilation-impl")
-    compile project(":compiler:daemon")
+//    compileOnly project(":compiler:daemon")
     compile project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'

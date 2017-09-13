@@ -29,7 +29,7 @@ dependencies {
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
     compile(project(":js:js.frontend")) { isTransitive = false }
-    compile(projectClasses(":idea"))
+    compile(project(":idea"))
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
@@ -49,8 +49,8 @@ dependencies {
     compile(ideaUltimatePluginDeps("*.jar", plugin = "gradle"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "Groovy"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "junit"))
-    compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptLanguage"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "uml"))
+    compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptLanguage"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":compiler.tests-common")) { isTransitive = false }
@@ -66,7 +66,7 @@ dependencies {
 
     testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
-    testRuntime(project(":android-extensions-compiler")) { isTransitive = false }
+    testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":idea:idea-maven")) { isTransitive = false }

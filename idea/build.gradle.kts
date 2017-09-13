@@ -66,7 +66,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
-    testCompile(project(":android-extensions-compiler"))
+    testCompile(project(":plugins:android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testCompile(project(":allopen-ide-plugin")) { isTransitive = false }
     testCompile(project(":kotlin-allopen-compiler-plugin"))
@@ -108,7 +108,3 @@ testsJar {}
 
 classesDirsArtifact()
 
-
-task("uploadArchives") {
-    // hides rule-based task with the same name, which appears to be broken in this project
-}
