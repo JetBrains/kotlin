@@ -1,0 +1,18 @@
+public abstract annotation MyAnnotation {
+}
+
+public final class Test1 {
+    private var bar: int
+    public final fun getBar() : int = UastEmptyExpression
+    public final fun setBar(p: int) : void = UastEmptyExpression
+    public fun Test1(bar: int) = UastEmptyExpression
+}
+
+public final class Test2 {
+    private var bar: int
+    @MyAnnotation
+    public final fun getBar() : int = UastEmptyExpression
+    @MyAnnotation
+    public final fun setBar(p: int) : void = UastEmptyExpression
+    public fun Test2(bar: int) = UastEmptyExpression
+}
