@@ -285,13 +285,14 @@ internal object KotlinConverter {
                 }
             }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
-                KotlinUDeclarationsExpression(givenParent).apply {
-                    val tempAssignment = KotlinULocalVariable(UastKotlinPsiVariable.create(expression, uastParent!!), givenParent)
+                val declarationsExpression = KotlinUDeclarationsExpression(givenParent)
+                declarationsExpression.apply {
+                    val tempAssignment = KotlinULocalVariable(UastKotlinPsiVariable.create(expression, declarationsExpression), declarationsExpression)
                     val destructuringAssignments = expression.entries.mapIndexed { i, entry ->
                         val psiFactory = KtPsiFactory(expression.project)
                         val initializer = psiFactory.createAnalyzableExpression("${tempAssignment.name}.component${i + 1}()",
                                                                                 expression.containingFile)
-                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, uastParent!!, initializer), givenParent)
+                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, declarationsExpression, initializer), declarationsExpression)
                     }
                     declarations = listOf(tempAssignment) + destructuringAssignments
                 }
