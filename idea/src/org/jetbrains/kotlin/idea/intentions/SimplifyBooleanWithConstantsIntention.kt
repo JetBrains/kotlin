@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isTrueConstant
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.isFlexible
 
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
@@ -58,7 +61,17 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val topBinary = PsiTreeUtil.getTopmostParentOfType(element, KtBinaryExpression::class.java) ?: element
         val simplified = toSimplifiedExpression(topBinary)
-        topBinary.replace(KtPsiUtil.safeDeparenthesize(simplified, true))
+        val result = topBinary.replaced(KtPsiUtil.safeDeparenthesize(simplified, true))
+        removeRedundantAssertion(result)
+    }
+
+    internal fun removeRedundantAssertion(expression: KtExpression) {
+        val callExpression = expression.getNonStrictParentOfType<KtCallExpression>() ?: return
+        val fqName = callExpression.getCallableDescriptor()?.fqNameOrNull()
+        val valueArguments = callExpression.valueArguments
+        val isRedundant = fqName?.asString() == "kotlin.assert" &&
+                          valueArguments.singleOrNull()?.getArgumentExpression().isTrueConstant()
+        if (isRedundant) callExpression.delete()
     }
 
     private fun toSimplifiedExpression(expression: KtExpression): KtExpression {

@@ -14681,6 +14681,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/simplifyBooleanWithConstants"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("assert.kt")
+        public void testAssert() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/assert.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("deeplyParenthesized.kt")
         public void testDeeplyParenthesized() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/deeplyParenthesized.kt");
