@@ -19631,6 +19631,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/vararg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("assigningArrayToVarargInAnnotation.kt")
+        public void testAssigningArrayToVarargInAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/vararg/assigningArrayToVarargInAnnotation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1978.kt")
         public void testKt1978() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/vararg/kt1978.kt");

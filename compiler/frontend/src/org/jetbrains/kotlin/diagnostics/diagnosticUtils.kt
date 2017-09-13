@@ -55,7 +55,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
         is CallPosition.ValueArgumentPosition -> Pair(
                 callPosition.resolvedCall, {
                     f: CallableDescriptor ->
-                    getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument)
+                    getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument, this)
                 })
         is CallPosition.ExtensionReceiverPosition -> Pair(
                 callPosition.resolvedCall, {

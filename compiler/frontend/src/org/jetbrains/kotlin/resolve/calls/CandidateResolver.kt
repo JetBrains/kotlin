@@ -363,7 +363,7 @@ class CandidateResolver(
             for (argument in resolvedArgument.arguments) {
                 val expression = argument.getArgumentExpression() ?: continue
 
-                val expectedType = getEffectiveExpectedType(parameterDescriptor, argument)
+                val expectedType = getEffectiveExpectedType(parameterDescriptor, argument, context)
 
                 val newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument)).replaceExpectedType(expectedType)
                 val typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(expression, newContext, resolveFunctionArgumentBodies)

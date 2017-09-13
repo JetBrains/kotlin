@@ -278,7 +278,7 @@ class CallCompleter(
             val argumentMapping = getArgumentMapping(valueArgument!!)
             val (expectedType, callPosition) = when (argumentMapping) {
                 is ArgumentMatch -> Pair(
-                        getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument),
+                        getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context),
                         CallPosition.ValueArgumentPosition(results.resultingCall, argumentMapping.valueParameter, valueArgument))
                 else -> Pair(TypeUtils.NO_EXPECTED_TYPE, CallPosition.Unknown)
             }

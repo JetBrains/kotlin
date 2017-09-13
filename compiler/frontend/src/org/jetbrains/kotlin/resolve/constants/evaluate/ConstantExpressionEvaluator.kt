@@ -101,6 +101,8 @@ class ConstantExpressionEvaluator(
         val constants = compileTimeConstants.map { it.toConstantValue(constantType) }
 
         if (argumentsAsVararg) {
+            if (isArrayPassedInNamedForm(constants, resolvedArgument)) return constants.single()
+
             if (parameterDescriptor.declaresDefaultValue() && compileTimeConstants.isEmpty()) return null
 
             return constantValueFactory.createArrayValue(constants, parameterDescriptor.type)
@@ -109,6 +111,12 @@ class ConstantExpressionEvaluator(
             // we should actually get only one element, but just in case of getting many, we take the last one
             return constants.lastOrNull()
         }
+    }
+
+    private fun isArrayPassedInNamedForm(constants: List<ConstantValue<Any?>>, resolvedArgument: ResolvedValueArgument): Boolean {
+        val constant = constants.singleOrNull() ?: return false
+        val argument = resolvedArgument.arguments.singleOrNull() ?: return false
+        return KotlinBuiltIns.isArrayOrPrimitiveArray(constant.type) && argument.isNamed()
     }
 
     private fun checkCompileTimeConstant(

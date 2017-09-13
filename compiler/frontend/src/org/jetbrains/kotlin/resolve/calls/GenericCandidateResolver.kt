@@ -174,7 +174,7 @@ class GenericCandidateResolver(
             context: CallCandidateResolutionContext<*>,
             resolveFunctionArgumentBodies: ResolveArgumentsMode
     ) {
-        val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
+        val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
         val argumentExpression = valueArgument.getArgumentExpression()
 
         val expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT)
@@ -336,7 +336,7 @@ class GenericCandidateResolver(
     ) {
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
 
-        val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
+        val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
 
         if (isCoroutineCallWithAdditionalInference(valueParameterDescriptor, valueArgument)) {
             coroutineInferenceSupport.analyzeCoroutine(functionLiteral, valueArgument, constraintSystem, context, effectiveExpectedType)
@@ -398,7 +398,7 @@ class GenericCandidateResolver(
             constraintSystem: ConstraintSystem.Builder,
             context: CallCandidateResolutionContext<D>
     ) {
-        val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
+        val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
         val expectedType = getExpectedTypeForCallableReference(callableReference, constraintSystem, context, effectiveExpectedType)
                            ?: return
         if (!ReflectionTypes.isCallableType(expectedType)) return

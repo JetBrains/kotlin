@@ -18,16 +18,21 @@ package org.jetbrains.kotlin.resolve.calls.callResolverUtil
 
 import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
@@ -45,6 +50,7 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -177,8 +183,12 @@ fun getSuperCallExpression(call: Call): KtSuperExpression? {
     return (call.explicitReceiver as? ExpressionReceiver)?.expression as? KtSuperExpression
 }
 
-fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {
-    if (argument.getSpreadElement() != null) {
+fun getEffectiveExpectedType(
+        parameterDescriptor: ValueParameterDescriptor,
+        argument: ValueArgument,
+        context: ResolutionContext<*>
+): KotlinType {
+    if (argument.getSpreadElement() != null || shouldCheckAsArray(parameterDescriptor, argument, context)) {
         if (parameterDescriptor.varargElementType == null) {
             // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
             return DONT_CARE
@@ -191,6 +201,31 @@ fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argu
     }
 
     return parameterDescriptor.type
+}
+
+private fun shouldCheckAsArray(
+        parameterDescriptor: ValueParameterDescriptor,
+        argument: ValueArgument,
+        context: ResolutionContext<*>
+): Boolean {
+    if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
+
+    if (!isParameterOfAnnotation(parameterDescriptor)) return false
+
+    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, context)
+}
+
+fun isParameterOfAnnotation(parameterDescriptor: ValueParameterDescriptor): Boolean {
+    val constructedClass = parameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.constructedClass
+    return DescriptorUtils.isAnnotationClass(constructedClass)
+}
+
+fun isArrayOrArrayLiteral(argument: ValueArgument, context: ResolutionContext<*>): Boolean {
+    val argumentExpression = argument.getArgumentExpression() ?: return false
+    if (argumentExpression is KtCollectionLiteralExpression) return true
+
+    val type = context.trace.getType(argumentExpression) ?: return false
+    return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
 }
 
 fun createResolutionCandidatesForConstructors(

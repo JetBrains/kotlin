@@ -620,6 +620,8 @@ public interface Errors {
     DiagnosticFactory1<KtExpression, KotlinType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtExpression> NO_RECEIVER_ALLOWED = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<KtExpression> ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM = DiagnosticFactory0.create(WARNING);
+
     // Call resolution
 
     DiagnosticFactory0<KtExpression> ILLEGAL_SELECTOR = DiagnosticFactory0.create(ERROR);
