@@ -71,20 +71,33 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
     var freeArgsStarted = false
 
     fun ArgumentField.matches(arg: String): Boolean {
-        if (argument.deprecatedName.takeUnless(String::isEmpty) == arg) {
-            errors.deprecatedArguments[argument.deprecatedName] = argument.value
+        if (argument.shortName.takeUnless(String::isEmpty) == arg) {
             return true
         }
 
-        if (argument.value == arg) {
-            if (argument.isAdvanced && property.returnType.classifier != Boolean::class) {
-                errors.extraArgumentsPassedInObsoleteForm.add(arg)
+        val deprecatedName = argument.deprecatedName.takeUnless(String::isEmpty)
+        if (deprecatedName == arg) {
+            errors.deprecatedArguments[deprecatedName] = argument.value
+            return true
+        }
+
+        if (argument.isAdvanced) {
+            if (argument.value == arg) {
+                if (property.returnType.classifier != Boolean::class) {
+                    errors.extraArgumentsPassedInObsoleteForm.add(arg)
+                }
+                return true
             }
-            return true
+
+            if (deprecatedName != null && arg.startsWith(deprecatedName + "=")) {
+                errors.deprecatedArguments[deprecatedName] = argument.value
+                return true
+            }
+
+            return arg.startsWith(argument.value + "=")
         }
 
-        return argument.shortName.takeUnless(String::isEmpty) == arg ||
-               (argument.isAdvanced && arg.startsWith(argument.value + "="))
+        return argument.value == arg
     }
 
     var i = 0
@@ -115,6 +128,9 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
             argumentField.property.returnType.classifier == Boolean::class -> true
             argument.isAdvanced && arg.startsWith(argument.value + "=") -> {
                 arg.substring(argument.value.length + 1)
+            }
+            argument.isAdvanced && arg.startsWith(argument.deprecatedName + "=") -> {
+                arg.substring(argument.deprecatedName.length + 1)
             }
             i == args.size -> {
                 errors.argumentWithoutValue = arg
