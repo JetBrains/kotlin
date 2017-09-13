@@ -21,12 +21,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsIntention
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isTrueConstant
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 class SimplifyComparisonFix(element: KtExpression, val value: Boolean) : KotlinQuickFixAction<KtExpression>(element) {
     override fun getFamilyName() = "Simplify $element to '$value'"
@@ -35,15 +36,29 @@ class SimplifyComparisonFix(element: KtExpression, val value: Boolean) : KotlinQ
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val parent = element.parent
         val replacement = KtPsiFactory(element).createExpression("$value")
-        element.replace(replacement)
+        val replaced = element.replaced(replacement)
+        val simplified = simplifyBooleanExpressionIfNeed(replaced)
+        removeRedundantAssertion(simplified)
+    }
 
-        val booleanExpression = parent.getNonStrictParentOfType<KtBinaryExpression>() ?: return
+    private fun simplifyBooleanExpressionIfNeed(expression: KtExpression): KtExpression {
+        val booleanExpression = expression.getNonStrictParentOfType<KtBinaryExpression>() ?: return expression
         val simplifyIntention = SimplifyBooleanWithConstantsIntention()
-        if (simplifyIntention.isApplicableTo(booleanExpression)) {
-            simplifyIntention.applyTo(booleanExpression, editor)
-        }
+        return if (simplifyIntention.isApplicableTo(booleanExpression))
+            simplifyIntention.simplify(booleanExpression)
+        else
+            expression
+    }
+
+    private fun removeRedundantAssertion(expression: KtExpression) {
+        val callExpression = expression.getNonStrictParentOfType<KtCallExpression>() ?: return
+        val fqName = callExpression.getCallableDescriptor()?.fqNameOrNull()
+        val valueArguments = callExpression.valueArguments
+        val isRedundant = fqName?.asString() == "kotlin.assert" &&
+                          valueArguments.size == 1 &&
+                          valueArguments.firstOrNull()?.getArgumentExpression().isTrueConstant()
+        if (isRedundant) callExpression.delete()
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
