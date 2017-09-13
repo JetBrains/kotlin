@@ -16,6 +16,12 @@ typealias Test9 = suspend (() -> Unit) -> Unit
 typealias Test10 = suspend (suspend () -> Unit) -> Unit
 typealias Test11 = suspend () -> (suspend () -> Unit)
 typealias Test12 = suspend (suspend (() -> Unit)) -> Unit
+typealias Test13 = @A() suspend () -> Unit
+typealias Test14 = @A suspend () -> Unit
+typealias Test15 = (@A() suspend () -> Unit)?
+typealias Test16 = (@A suspend () -> Unit)?
+typealias Test17 = @A suspend RS.() -> Unit
+typealias Test18 = (suspend () -> Unit)?
 
 interface Supertype1 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend () -> Unit<!> {
 
@@ -24,3 +30,8 @@ interface Supertype1 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend () -> Unit<
 interface Supertype2 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend String.() -> Unit<!> {
 
 }
+
+@Target(AnnotationTarget.TYPE)
+annotation class A
+
+interface RS
