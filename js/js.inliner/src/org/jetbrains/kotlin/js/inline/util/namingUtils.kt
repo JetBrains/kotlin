@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.rewriters.LabelNameRefreshingVisitor
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 fun aliasArgumentsIfNeeded(
         context: NamingContext,
@@ -30,7 +31,12 @@ fun aliasArgumentsIfNeeded(
 ) {
     require(arguments.size <= parameters.size) { "arguments.size (${arguments.size}) should be less or equal to parameters.size (${parameters.size})" }
 
+    val defaultParams = mutableListOf<JsParameter>()
     for ((arg, param) in arguments.zip(parameters)) {
+        if (JsAstUtils.isUndefinedExpression(arg)) {
+            defaultParams += param
+            continue
+        }
         val paramName = param.name
 
         val replacement = JsScope.declareTemporaryName(paramName.ident).apply {
@@ -42,7 +48,7 @@ fun aliasArgumentsIfNeeded(
         context.replaceName(paramName, replacement)
     }
 
-    val defaultParams = parameters.subList(arguments.size, parameters.size)
+    defaultParams += parameters.subList(arguments.size, parameters.size)
     for (defaultParam in defaultParams) {
         val paramName = defaultParam.name
         val freshName = JsScope.declareTemporaryName(paramName.ident)

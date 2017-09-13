@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
@@ -243,6 +244,7 @@ class FunctionReader(
         replaceExternalNames(function, replacements, allDefinedNames)
         wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
         function.markInlineArguments(descriptor)
+        markDefaultParams(function)
 
         info.wrapFunctionVariable.let { wrapFunction ->
             for (externalName in (collectReferencedNames(function) - allDefinedNames).filter { it.ident == wrapFunction }) {
@@ -269,6 +271,26 @@ class FunctionReader(
         }
 
         return FunctionWithWrapper(function, wrapper)
+    }
+
+    private fun markDefaultParams(function: JsFunction) {
+        val paramsByNames = function.parameters.associate { it.name to it }
+        for (ifStatement in function.body.statements) {
+            if (ifStatement !is JsIf || ifStatement.elseStatement != null) break
+            val thenStatement = ifStatement.thenStatement as? JsExpressionStatement ?: break
+            val testExpression = ifStatement.ifExpression as? JsBinaryOperation ?: break
+
+            if (testExpression.operator != JsBinaryOperator.REF_EQ) break
+            val testLhs = testExpression.arg1 as? JsNameRef ?: break
+            val param = paramsByNames[testLhs.name] ?: break
+            if (testLhs.qualifier != null) break
+            if ((testExpression.arg2 as? JsPrefixOperation)?.operator != JsUnaryOperator.VOID) break
+
+            val (assignLhs) = JsAstUtils.decomposeAssignmentToVariable(thenStatement.expression) ?: break
+            if (assignLhs != testLhs.name) break
+
+            param.hasDefaultValue = true
+        }
     }
 }
 

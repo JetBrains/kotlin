@@ -5096,6 +5096,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("multiModuleDefaultArgsCleanup.kt")
+        public void testMultiModuleDefaultArgsCleanup() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineSizeReduction/multiModuleDefaultArgsCleanup.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noDuplicateVariableDeclaration.kt")
         public void testNoDuplicateVariableDeclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineSizeReduction/noDuplicateVariableDeclaration.kt");
