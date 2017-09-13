@@ -37,6 +37,8 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testSimpleScript() = doTest("SimpleScript")
 
+    @Test fun testDestructuringDeclaration() = doTest("DestructuringDeclaration")
+
     @Test fun testParameterPropertyWithAnnotation() = doTest("ParameterPropertyWithAnnotation")
 
     @Test fun testParametersWithDefaultValues() = doTest("ParametersWithDefaultValues")

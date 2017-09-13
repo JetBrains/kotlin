@@ -1,0 +1,7 @@
+public final class DestructuringDeclarationKt {
+    public static final fun foo() : void {
+        var var268d4034: kotlin.Pair<? extends java.lang.String,? extends java.lang.Integer> = "foo" <other> 1
+        var a: <ErrorType> = var268d4034.<anonymous class>()
+        var b: <ErrorType> = var268d4034.<anonymous class>()
+    }
+}
