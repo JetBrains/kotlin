@@ -1,5 +1,5 @@
 plugins {
-    id "com.moowork.node" version "1.2.0"
+    id 'com.craigburke.karma' version '1.4.4'
 }
 
 description = 'Kotlin Standard Library for JS'
@@ -21,6 +21,7 @@ def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
 def jsTestOutputFile = "${buildDir}/classes/test/kotlin-stdlib-js_test.js"
 def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
+def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/test/kotlin-test-js_test.js"
 
 
 sourceSets {
@@ -128,7 +129,7 @@ compileKotlin2Js {
 compileTestKotlin2Js {
     dependsOn preprocessSourcesTest
     kotlinOptions {
-        moduleKind = "umd"
+        moduleKind = "plain"
     }
 }
 
@@ -253,33 +254,32 @@ dist {
     }
 }
 
-task populateNodeModules(type: Copy, dependsOn: [compileJs, compileTestKotlin2Js]) {
-    from jsOutputFile
-    from kotlinTestJsOutputFile
 
-    into "${buildDir}/node_modules"
-}
+karma {
+    dependencies(['qunitjs@1.23.1', 'karma-teamcity-reporter@0.1.2'])
 
-node {
-    download = true
-}
-
-task installMocha(type: NpmTask) {
-    args = ['install', 'mocha']
-}
-
-task installTeamcityReporter(type: NpmTask) {
-    args = ['install', 'mocha-teamcity-reporter']
-}
-
-task runMocha(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, installMocha]) {
-    script = file('node_modules/.bin/mocha')
-    args = [jsTestOutputFile]
+    frameworks = ['qunit']
+    browsers = ['PhantomJS']
 
     if (project.hasProperty("teamcity")) {
-        dependsOn installTeamcityReporter
-        args = ["--reporter", "mocha-teamcity-reporter"] + args
+        reporters = ['teamcity']
+    }
+
+    profile('default') {
+        libraryBases = ['']
+        libraryFiles = [jsOutputFile, kotlinTestJsOutputFile]
+
+        sourceBases = []
+        sourceFiles = []
+
+        testBases = ['']
+        testFiles = [jsTestOutputFile, kotlinTestJsTestOutputFile]
     }
 }
 
-test.dependsOn runMocha
+karmaGenerateConfig.outputs.upToDateWhen { false }
+karmaRun {
+    dependsOn testClasses
+    dependsOn tasks.getByPath(':kotlin-test:kotlin-test-js:testClasses')
+}
+clean.dependsOn karmaClean
