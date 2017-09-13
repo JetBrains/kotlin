@@ -849,6 +849,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/assignToProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AssignToProperty extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAssignToProperty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignToProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("differentTypeProperty.kt")
+        public void testDifferentTypeProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/differentTypeProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noProperty.kt")
+        public void testNoProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/noProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple2.kt")
+        public void testSimple2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/simple2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valProperty.kt")
+        public void testValProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/valProperty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/autoImports")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
