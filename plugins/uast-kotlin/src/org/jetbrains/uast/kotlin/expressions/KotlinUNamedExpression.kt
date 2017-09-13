@@ -23,16 +23,14 @@ import org.jetbrains.uast.*
 
 class KotlinUNamedExpression private constructor(
         override val name: String?,
-        private val givenParent: UElement?,
+        givenParent: UElement?,
         expressionProducer: (UElement) -> UExpression
-) : UNamedExpression {
+) : KotlinAbstractUElement(givenParent), UNamedExpression {
     override val expression: UExpression by lz { expressionProducer(this) }
 
     override val annotations: List<UAnnotation> = emptyList()
 
     override val psi: PsiElement? = null
-
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
 
     companion object {
         internal fun create(name: String?, valueArgument: ValueArgument, uastParent: UElement?): UNamedExpression {
