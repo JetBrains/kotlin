@@ -225,18 +225,9 @@ internal fun alignTo(value:Long, align:Long):Long = (value + align - 1) / align 
 internal fun  FunctionDescriptor.subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef): DISubroutineTypeRef {
     return memScoped {
         DICreateSubroutineType(context.debugInfo.builder, allocArrayOf(
-                this@subroutineType.types.map { it.referenceOrValue(context, llvmTargetData) }),
+                this@subroutineType.types.map { it.diType(context, llvmTargetData) }),
                 this@subroutineType.types.size)!!
     }
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun KotlinType.referenceOrValue(context: Context, llvmTargetData: LLVMTargetDataRef):DITypeOpaqueRef {
-    val refType = this.dwarfType(context, llvmTargetData)
-    return if (KotlinBuiltIns.isPrimitiveType(this))
-        refType
-    else
-        dwarfPointerType(context, refType)
 }
 
 @Suppress("UNCHECKED_CAST")

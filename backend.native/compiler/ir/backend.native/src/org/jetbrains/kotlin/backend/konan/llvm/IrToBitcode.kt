@@ -639,10 +639,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return
         }
         using(ClassScope(declaration)) {
-            debugClassDeclaration(declaration) {
-                declaration.declarations.forEach {
-                    it.acceptVoid(this)
-                }
+            declaration.declarations.forEach {
+                it.acceptVoid(this)
             }
         }
     }
@@ -1689,31 +1687,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun IrElement.endColumn() = file().fileEntry.column(this.endOffset)
-
-    //-------------------------------------------------------------------------//
-    @Suppress("UNCHECKED_CAST")
-    private fun debugClassDeclaration(declaration: IrClass, body: () -> Unit): Unit {
-        val doDebugInfo = context.shouldContainDebugInfo() && declaration.descriptor.isExported()
-        val classScope = currentCodeContext.classScope() as ClassScope
-        if (doDebugInfo) context.debugInfo.types[declaration.descriptor.defaultType] = classScope.scope!!
-        body()
-        memScoped {
-            if (doDebugInfo) context.debugInfo.types[declaration.descriptor.defaultType] = DICreateStructType(
-                    refBuilder = context.debugInfo.builder,
-                    scope = context.debugInfo.compilationModule as DIScopeOpaqueRef,
-                    name = declaration.descriptor.typeInfoSymbolName,
-                    file = file().file(),
-                    lineNumber = declaration.startLine(),
-                    sizeInBits = 64 /* TODO */,
-                    alignInBits = 4 /* TODO */,
-                    derivedFrom = null,
-                    elements = classScope.members.toCValues(),
-                    elementsCount = classScope.members.size.toLong(),
-                    refPlace = context.debugInfo.types[declaration.descriptor.defaultType] as DICompositeTypeRef,
-                    flags = 0
-            ) as DITypeOpaqueRef
-        }
-    }
 
     //-------------------------------------------------------------------------//
     private fun debugFieldDeclaration(expression: IrField) {

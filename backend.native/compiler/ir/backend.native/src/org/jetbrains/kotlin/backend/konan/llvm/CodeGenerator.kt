@@ -504,14 +504,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 call(context.llvm.enterFrameFunction, listOf(slots, Int32(slotCount).llvm))
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
-            val slotOffset = pointerSize * slotCount
             memScoped {
                 slotToVariableLocation.forEach { slot, variable ->
-                    val expr = longArrayOf(DwarfOp.DW_OP_minus.value,
-                            slotOffset + runtime.pointerSize * slot.toLong()).toCValues()
+                    val expr = longArrayOf(DwarfOp.DW_OP_plus.value,
+                            runtime.pointerSize * slot.toLong()).toCValues()
                     DIInsertDeclaration(
                             builder       = codegen.context.debugInfo.builder,
-                            value         = slotsPhi,
+                            value         = slots,
                             localVariable = variable.localVariable,
                             location      = variable.location,
                             bb            = prologueBb,
