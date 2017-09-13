@@ -22,7 +22,8 @@ val compilerJar by configurations.creating
 val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
 val packagesToRelocate =
-        listOf("com.intellij",
+        listOf(
+//               "com.intellij",
                "com.google",
                "com.sampullara",
                "org.apache",
@@ -42,6 +43,8 @@ dependencies {
     compile(project(":kotlin-script-runtime"))
     compile(project(":kotlin-reflect"))
 }
+
+noDefaultJar()
 
 runtimeJar(task<ShadowJar>("embeddable")) {
     destinationDir = File(buildDir, "libs")
