@@ -37,7 +37,7 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
     override val keep: MutableList<String> = mutableListOf()
 
-    override fun findKotlinCompilerJar(project: Project): File? = findKotlinJsDceJar(project)
+    override fun findKotlinCompilerClasspath(project: Project): List<File> = findKotlinJsDceClasspath(project)
 
     override fun compile() {}
 
@@ -58,7 +58,7 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val log = GradleKotlinLogger(project.logger)
         val allArgs = argsArray + outputDirArgs + inputFiles
-        val exitCode = runToolInSeparateProcess(allArgs, K2JSDce::class.java.name, listOf(compilerJar),
+        val exitCode = runToolInSeparateProcess(allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
                 log, createLoggingMessageCollector(log))
         throwGradleExceptionIfError(exitCode)
     }

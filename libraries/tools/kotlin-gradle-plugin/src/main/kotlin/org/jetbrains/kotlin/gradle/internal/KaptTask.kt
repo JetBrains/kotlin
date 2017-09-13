@@ -63,7 +63,7 @@ open class KaptTask : ConventionTask() {
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val environment = GradleCompilerEnvironment(kotlinCompileTask.compilerJar, messageCollector, outputItemCollector, args)
+        val environment = GradleCompilerEnvironment(kotlinCompileTask.computedCompilerClasspath, messageCollector, outputItemCollector, args)
         if (environment.toolsJar == null) {
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }
