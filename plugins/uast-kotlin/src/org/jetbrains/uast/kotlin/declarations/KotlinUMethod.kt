@@ -30,11 +30,9 @@ import org.jetbrains.uast.kotlin.*
 
 open class KotlinUMethod(
         psi: KtLightMethod,
-        private val givenParent: UElement?
-) : UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
+        givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
-
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
 
     override val uastDefaultValue by lz {
         val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
@@ -84,8 +82,6 @@ open class KotlinUMethod(
     override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
 
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
-
-    override fun hashCode() = psi.hashCode()
 
     companion object {
         fun create(psi: KtLightMethod, containingElement: UElement?) = KotlinUMethod(psi, containingElement)

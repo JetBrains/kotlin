@@ -33,10 +33,8 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUVariable(private val givenParent: UElement?)
-    : PsiVariable, UVariable, KotlinUElementWithComments {
-
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
+abstract class AbstractKotlinUVariable(givenParent: UElement?)
+    : KotlinAbstractUElement(givenParent), PsiVariable, UVariable, KotlinUElementWithComments {
 
     override val uastInitializer: UExpression?
         get() {
@@ -83,8 +81,6 @@ abstract class AbstractKotlinUVariable(private val givenParent: UElement?)
         get() = UIdentifier(nameIdentifier, this)
 
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
-
-    override fun hashCode() = psi.hashCode()
 }
 
 class KotlinUVariable(

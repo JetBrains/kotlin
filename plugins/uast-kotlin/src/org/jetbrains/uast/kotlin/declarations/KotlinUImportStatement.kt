@@ -28,10 +28,8 @@ import org.jetbrains.uast.USimpleNameReferenceExpression
 
 class KotlinUImportStatement(
         override val psi: KtImportDirective,
-        private val givenParent: UElement?
-) : UImportStatement {
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
-
+        givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UImportStatement {
     override val isOnDemand: Boolean
         get() = psi.isAllUnder
 

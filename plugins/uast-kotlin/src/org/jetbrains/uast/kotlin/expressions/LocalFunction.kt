@@ -12,19 +12,14 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 private class KotlinLocalFunctionUVariable(
         val function: KtFunction,
         override val psi: PsiVariable,
-        private val givenParent: UElement?
-) : UVariable, PsiVariable by psi {
-    override val uastParent: UElement? by lz { convertParent(givenParent) }
-
+        givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UVariable, PsiVariable by psi {
     override val uastInitializer: UExpression? by lz {
         createLocalFunctionLambdaExpression(function, this)
     }
     override val typeReference: UTypeReferenceExpression? = null
     override val uastAnchor: UElement? = null
     override val annotations: List<UAnnotation> = emptyList()
-
-    override fun equals(other: Any?) = other is KotlinLocalFunctionUVariable && psi == other.psi
-    override fun hashCode() = psi.hashCode()
 }
 
 
