@@ -3,7 +3,9 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.*
+import kotlin.reflect.KProperty
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.*
 
