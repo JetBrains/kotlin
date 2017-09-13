@@ -137,13 +137,20 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return with(requiredType) {
             when (original) {
                 is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
-                is KtLightClass -> el<UClass>(build(KotlinUClass.Companion::create))
+                is KtLightClass -> el<UDeclaration> {
+                    (original.kotlinOrigin as? KtEnumEntry)?.let { enumEntry ->
+                        convertEnumEntry(enumEntry, givenParent)
+                    } ?: KotlinUClass.create(original, givenParent)
+                }
 
                 is KtLightFieldImpl.KtLightEnumConstant -> el<UEnumConstant>(build(::KotlinUEnumConstant))
                 is KtLightField -> el<UField>(build(::KotlinUField))
                 is KtLightParameter, is UastKotlinPsiParameter -> el<UParameter>(build(::KotlinUParameter))
                 is UastKotlinPsiVariable -> el<UVariable>(build(::KotlinUVariable))
 
+                is KtEnumEntry -> el<UEnumConstant> {
+                    convertEnumEntry(original, givenParent)
+                }
                 is KtClassOrObject -> el<UClass> {
                     original.toLightClass()?.let { lightClass ->
                         KotlinUClass.create(lightClass, givenParent)
@@ -154,19 +161,35 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                     convertDeclaration(lightMethod, givenParent, requiredType)
                 }
                 is KtPropertyAccessor -> el<UMethod> {
-                    javaPlugin.convertOpt<UMethod>(
-                            LightClassUtil.getLightClassAccessorMethod(original), givenParent)
+                    val lightMethod = LightClassUtil.getLightClassAccessorMethod(original) ?: return null
+                    convertDeclaration(lightMethod, givenParent, requiredType)
                 }
-                is KtProperty -> el<UField> {
-                    javaPlugin.convertOpt<UField>(
-                            LightClassUtil.getLightClassBackingField(original), givenParent)
-                    ?: convertDeclaration(element.parent, givenParent, requiredType)
+                is KtProperty -> el<UVariable> {
+                    if (original.isLocal) {
+                        KotlinConverter.convertPsiElement(element, givenParent,  requiredType)
+                    }
+                    else {
+                        LightClassUtil.getLightClassBackingField(original)?.let {
+                            KotlinUField(it, givenParent)
+                        }
+                    }
                 }
 
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
                 else -> null
+            }
+        }
+    }
+
+    private fun convertEnumEntry(original: KtEnumEntry, givenParent: UElement?): UElement? {
+        return LightClassUtil.getLightClassBackingField(original)?.let { psiField ->
+            if (psiField is KtLightFieldImpl.KtLightEnumConstant) {
+                KotlinUEnumConstant(psiField, givenParent)
+            }
+            else {
+                null
             }
         }
     }
@@ -191,14 +214,13 @@ internal inline fun <reified ActualT : UElement> Class<out UElement>?.expr(f: ()
     return if (this == null || isAssignableFrom(ActualT::class.java)) f() else null
 }
 
-internal fun UElement?.toCallback() = if (this != null) fun(): UElement? { return this } else null
-
 internal object KotlinConverter {
     internal tailrec fun unwrapElements(element: PsiElement?): PsiElement? = when (element) {
         is KtValueArgumentList -> unwrapElements(element.parent)
         is KtValueArgument -> unwrapElements(element.parent)
         is KtDeclarationModifierList -> unwrapElements(element.parent)
         is KtContainerNode -> unwrapElements(element.parent)
+        is KtSimpleNameStringTemplateEntry -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -220,6 +242,9 @@ internal object KotlinConverter {
             }
             is KtClassBody -> el<UExpressionList>(build(KotlinUExpressionList.Companion::createClassBody))
             is KtCatchClause -> el<UCatchClause>(build(::KotlinUCatchClause))
+            is KtVariableDeclaration -> el<UVariable> {
+                convertVariablesDeclaration(element, givenParent).declarations.singleOrNull()
+            }
             is KtExpression -> KotlinConverter.convertExpression(element, givenParent, requiredType)
             is KtLambdaArgument -> KotlinConverter.convertExpression(element.getLambdaExpression(), givenParent, requiredType)
             is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> {
@@ -231,6 +256,9 @@ internal object KotlinConverter {
             }
             is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> el<ULiteralExpression>(build(::KotlinStringULiteralExpression))
             is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, requiredType) } ?: expr<UExpression> { UastEmptyExpression }
+            is KtWhenEntry -> el<USwitchClauseExpressionWithBody>(build(::KotlinUSwitchEntry))
+            is KtWhenCondition -> convertWhenCondition(element, givenParent)
+            is KtTypeReference -> el<UTypeReferenceExpression> { LazyKotlinUTypeReferenceExpression(element, givenParent) }
 
             else -> {
                 if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
@@ -349,7 +377,33 @@ internal object KotlinConverter {
             else -> expr<UExpression>(build(::UnknownKotlinExpression))
         }}
     }
-    
+
+    internal fun convertWhenCondition(condition: KtWhenCondition, givenParent: UElement?): UExpression {
+        return when (condition) {
+            is KtWhenConditionInRange -> KotlinCustomUBinaryExpression(condition, givenParent).apply {
+                leftOperand = KotlinStringUSimpleReferenceExpression("it", this)
+                operator = when {
+                    condition.isNegated -> KotlinBinaryOperators.NOT_IN
+                    else -> KotlinBinaryOperators.IN
+                }
+                rightOperand = KotlinConverter.convertOrEmpty(condition.rangeExpression, this)
+            }
+            is KtWhenConditionIsPattern -> KotlinCustomUBinaryExpressionWithType(condition, givenParent).apply {
+                operand = KotlinStringUSimpleReferenceExpression("it", this)
+                operationKind = when {
+                    condition.isNegated -> KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
+                    else -> UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
+                }
+                val typeRef = condition.typeReference
+                typeReference = typeRef?.let {
+                    LazyKotlinUTypeReferenceExpression(it, this) { typeRef.toPsiType(this, boxed = true) }
+                }
+            }
+            is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(condition.expression, givenParent)
+            else -> UastEmptyExpression
+        }
+    }
+
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement?): UExpression {
         return expression?.let { convertExpression(it, parent, null) } ?: UastEmptyExpression
     }
@@ -376,7 +430,7 @@ private fun convertVariablesDeclaration(
         psi: KtVariableDeclaration,
         parent: UElement?
 ): UDeclarationsExpression {
-    val declarationsExpression = KotlinUDeclarationsExpression(parent)
+    val declarationsExpression = KotlinUDeclarationsExpression(null, parent, psi)
     val parentPsiElement = parent?.psi
     val variable = KotlinUAnnotatedLocalVariable(
             UastKotlinPsiVariable.create(psi, parentPsiElement, declarationsExpression), declarationsExpression) { annotationParent ->

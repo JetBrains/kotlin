@@ -7,9 +7,11 @@ import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.uast.*
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
@@ -73,10 +75,11 @@ class UastKotlinPsiVariable private constructor(
         fun create(
                 declaration: KtVariableDeclaration, 
                 parent: PsiElement?, 
-                containingElement: UElement,
+                containingElement: KotlinUDeclarationsExpression,
                 initializer: KtExpression? = null
         ): PsiLocalVariable {
-            val psiParent = containingElement.getParentOfType<UDeclaration>()?.psi ?: parent
+            val psi = containingElement.psiAnchor ?: containingElement.psi
+            val psiParent = psi?.getNonStrictParentOfType<KtDeclaration>() ?: parent
             val initializerExpression = initializer ?: declaration.initializer
             return UastKotlinPsiVariable(
                     manager = declaration.manager,

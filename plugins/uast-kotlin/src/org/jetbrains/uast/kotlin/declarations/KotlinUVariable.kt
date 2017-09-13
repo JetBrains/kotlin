@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
@@ -215,6 +216,13 @@ open class KotlinUEnumConstant(
         psi: PsiEnumConstant,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), UEnumConstant, PsiEnumConstant by psi {
+    override val initializingClass: UClass? by lz {
+        (psi.initializingClass as? KtLightClass)?.let { initializingClass ->
+            KotlinUClass.create(initializingClass, this)
+        }
+    }
+
+    override val psi = unwrap<UEnumConstant, PsiEnumConstant>(psi)
 
     override fun getContainingFile(): PsiFile {
         return super.getContainingFile()
@@ -223,10 +231,6 @@ open class KotlinUEnumConstant(
     override fun getNameIdentifier(): PsiIdentifier {
         return super.getNameIdentifier()
     }
-
-    override val initializingClass: UClass? by lz { getLanguagePlugin().convertOpt<UClass>(psi.initializingClass, this) }
-
-    override val psi = unwrap<UEnumConstant, PsiEnumConstant>(psi)
 
     override val kind: UastCallKind
         get() = UastCallKind.CONSTRUCTOR_CALL
@@ -270,7 +274,10 @@ open class KotlinUEnumConstant(
             override val psi: PsiEnumConstant,
             private val givenParent: UElement?
     ) : JavaAbstractUExpression(), USimpleNameReferenceExpression {
-        override val uastParent: UElement? by lz { convertParent(givenParent) }
+        override val uastParent: UElement? by lz {
+            givenParent ?: KotlinUastLanguagePlugin().convertElementWithParent(psi.parent ?: psi.containingFile, null)
+        }
+
         override fun resolve() = psi.containingClass
         override val resolvedName: String?
             get() = psi.containingClass?.name

@@ -49,8 +49,8 @@ class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLan
         val facadeOrScriptClass = if (psi.isScript()) psi.script?.toLightClass() else psi.findFacadeClass()
         val classes = psi.declarations.mapNotNull { (it as? KtClassOrObject)?.toLightClass()?.toUClass() }
 
-        (facadeOrScriptClass?.let { listOf(it.toUClass()) } ?: emptyList()) + classes
+        (facadeOrScriptClass?.toUClass()?.let { listOf(it) } ?: emptyList()) + classes
     }
 
-    private fun PsiClass.toUClass() = languagePlugin.convert<UClass>(this, this@KotlinUFile)
+    private fun PsiClass.toUClass() = languagePlugin.convertOpt<UClass>(this, this@KotlinUFile)
 }
