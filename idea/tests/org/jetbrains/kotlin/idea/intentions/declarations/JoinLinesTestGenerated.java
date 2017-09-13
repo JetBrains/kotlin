@@ -419,4 +419,37 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/joinLines/stringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StringTemplate extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInStringTemplate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple2.kt")
+        public void testSimple2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple3.kt")
+        public void testSimple3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple4.kt")
+        public void testSimple4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple4.kt");
+            doTest(fileName);
+        }
+    }
 }
