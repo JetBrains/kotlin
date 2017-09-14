@@ -99,7 +99,7 @@ public class PackageCodegenImpl implements PackageCodegen {
         List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
         for (KtDeclaration declaration : file.getDeclarations()) {
-            if (PsiUtilsKt.hasHeaderModifier(declaration)) continue;
+            if (PsiUtilsKt.hasExpectModifier(declaration)) continue;
 
             if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
                 generatePackagePart = true;

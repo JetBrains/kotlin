@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeAlias
-import org.jetbrains.kotlin.psi.psiUtil.hasImplModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.storage.NotNullLazyValue
@@ -49,7 +49,7 @@ class LazyTypeAliasDescriptor(
     private lateinit var expandedTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var defaultTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var classDescriptorImpl: NullableLazyValue<ClassDescriptor>
-    private val isImpl = (source.getPsi() as? KtTypeAlias)?.hasImplModifier() == true
+    private val isImpl = (source.getPsi() as? KtTypeAlias)?.hasActualModifier() == true
 
     override val underlyingType: SimpleType get() = underlyingTypeImpl()
     override val expandedType: SimpleType get() = expandedTypeImpl()

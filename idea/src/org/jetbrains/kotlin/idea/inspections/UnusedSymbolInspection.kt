@@ -326,10 +326,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun isPlatformImplementation(declaration: KtNamedDeclaration) =
-            declaration.hasImplModifier()
+            declaration.hasActualModifier()
 
     private fun hasPlatformImplementations(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
-        if (!declaration.hasHeaderModifier()) return false
+        if (!declaration.hasExpectModifier()) return false
 
         descriptor as? MemberDescriptor ?: return false
         val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()

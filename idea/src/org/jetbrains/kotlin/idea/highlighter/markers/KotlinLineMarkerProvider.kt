@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
-import org.jetbrains.kotlin.psi.psiUtil.hasImplModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.Icon
@@ -100,10 +100,10 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         for (element in elements) {
             if (element !is KtNamedDeclaration) continue
 
-            if (element.hasHeaderModifier()) {
+            if (element.hasExpectModifier()) {
                 collectImplementationMarkers(element, result)
             }
-            else if (element.hasImplModifier()) {
+            else if (element.hasActualModifier()) {
                 collectHeaderMarkers(element, result)
             }
         }

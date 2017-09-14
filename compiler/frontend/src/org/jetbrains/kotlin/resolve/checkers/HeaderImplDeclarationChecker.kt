@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.psiUtil.hasImplModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -127,7 +127,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         // TODO: use common module here
         val compatibility = findHeaderForImpl(descriptor, descriptor.module) ?: return
 
-        val hasImplModifier = descriptor.isImpl && reportOn.hasImplModifier()
+        val hasImplModifier = descriptor.isImpl && reportOn.hasActualModifier()
         if (!hasImplModifier) {
             if (Compatible !in compatibility) return
 

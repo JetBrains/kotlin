@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
@@ -334,7 +334,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.hasHeaderModifier()) {
+            if (classOrObject.hasExpectModifier()) {
                 return null
             }
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.sourceKind
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
@@ -66,7 +66,7 @@ internal fun KtDeclaration.headerDeclarationIfAny(): KtDeclaration? {
 }
 
 internal fun KtDeclaration.isHeaderOrHeaderClassMember() =
-        hasHeaderModifier() || (containingClassOrObject?.hasHeaderModifier() ?: false)
+        hasExpectModifier() || (containingClassOrObject?.hasExpectModifier() ?: false)
 
 internal fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
     if (this is MemberDescriptor) {

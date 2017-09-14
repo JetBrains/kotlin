@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
-import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 
@@ -100,7 +100,7 @@ interface OverrideMemberChooserObject : ClassMember {
 fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, copyDoc: Boolean): KtCallableDeclaration {
     val project = targetClass.project
 
-    val bodyType = if (targetClass.hasHeaderModifier()) OverrideMemberChooserObject.BodyType.NO_BODY else bodyType
+    val bodyType = if (targetClass.hasExpectModifier()) OverrideMemberChooserObject.BodyType.NO_BODY else bodyType
 
     val descriptor = immediateSuper
     if (preferConstructorParameter && descriptor is PropertyDescriptor) return generateConstructorParameter(project, descriptor)

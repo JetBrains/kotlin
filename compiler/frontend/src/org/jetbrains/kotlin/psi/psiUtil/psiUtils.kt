@@ -383,9 +383,9 @@ fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.text
 
 inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = parents.takeWhile { it is T }.lastOrNull() as? T
 
-fun KtModifierListOwner.hasHeaderModifier() = hasModifier(KtTokens.HEADER_KEYWORD)
-fun KtModifierList.hasHeaderModifier() = hasModifier(KtTokens.HEADER_KEYWORD)
+fun KtModifierListOwner.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD)
+fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD)
 
-fun KtModifierListOwner.hasImplModifier() = hasModifier(KtTokens.IMPL_KEYWORD)
-fun KtModifierList.hasImplModifier() = hasModifier(KtTokens.IMPL_KEYWORD)
+fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD)
+fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD)
 
