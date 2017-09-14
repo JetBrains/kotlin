@@ -53,7 +53,15 @@ function imul(a, b) {
     var buf = new ArrayBuffer(8);
     var bufFloat64 = new Float64Array(buf);
     var bufFloat32 = new Float32Array(buf);
-    var bufInt32 = new Uint32Array(buf);
+    var bufInt32 = new Int32Array(buf);
+    var lowIndex = 0;
+    var highIndex = 1;
+
+    bufFloat64[0] = -1; // bff00000_00000000
+    if (bufInt32[lowIndex] !== 0) {
+        lowIndex = 1;
+        highIndex = 0;
+    }
 
     Kotlin.doubleToBits = function(value) {
         return Kotlin.doubleToRawBits(isNaN(value) ? NaN : value);
@@ -61,12 +69,12 @@ function imul(a, b) {
 
     Kotlin.doubleToRawBits = function(value) {
         bufFloat64[0] = value;
-        return Kotlin.Long.fromBits(bufInt32[0], bufInt32[1]);
+        return Kotlin.Long.fromBits(bufInt32[lowIndex], bufInt32[highIndex]);
     };
 
     Kotlin.doubleFromBits = function(value) {
-        bufInt32[0] = value.low_;
-        bufInt32[1] = value.high_;
+        bufInt32[lowIndex] = value.low_;
+        bufInt32[highIndex] = value.high_;
         return bufFloat64[0];
     };
 
@@ -87,7 +95,7 @@ function imul(a, b) {
     // returns zero value for number with positive sign bit and non-zero value for number with negative sign bit.
     Kotlin.doubleSignBit = function(value) {
         bufFloat64[0] = value;
-        return bufInt32[1] & 0x80000000;
+        return bufInt32[highIndex] & 0x80000000;
     };
 })();
 

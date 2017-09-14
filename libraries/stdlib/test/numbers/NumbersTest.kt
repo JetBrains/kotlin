@@ -158,6 +158,7 @@ class NumbersTest {
         assertTrue(Float.NaN.toBits().let(Float.Companion::fromBits).isNaN())
         assertTrue(Float.NaN.toRawBits().let { Float.fromBits(it) }.isNaN())
 
+        assertEquals(0xbf800000.toInt(), (-1.0F).toBits())
         assertEquals(0x7fc00000, Float.NaN.toBits())
         assertEquals(0x7fc00000, Float.NaN.toRawBits())
 
