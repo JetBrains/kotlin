@@ -112,6 +112,8 @@ fun LazyJavaResolverContext.child(
 fun LazyJavaResolverContext.computeNewDefaultTypeQualifiers(
         additionalAnnotations: Annotations
 ): JavaTypeQualifiersByElementType? {
+    if (components.annotationTypeQualifierResolver.jsr305State.isIgnored()) return defaultTypeQualifiers
+
     val nullabilityQualifiersWithApplicability =
             additionalAnnotations.mapNotNull(this::extractDefaultNullabilityQualifier)
 
