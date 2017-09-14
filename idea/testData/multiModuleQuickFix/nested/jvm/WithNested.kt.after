@@ -1,5 +1,5 @@
 // WithNested: to be implemented
-impl class WithNested {
+actual class WithNested {
 
     class Nested {
         fun bar()
@@ -9,7 +9,7 @@ impl class WithNested {
         fun baz()
     }
 
-    impl fun foo(): Int {
+    actual fun foo(): Int {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

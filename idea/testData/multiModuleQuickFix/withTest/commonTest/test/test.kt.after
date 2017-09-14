@@ -1,4 +1,4 @@
-// "Create header function implementation for platform JVM" "true"
+// "Create actual function for platform JVM" "true"
 
 package test
 

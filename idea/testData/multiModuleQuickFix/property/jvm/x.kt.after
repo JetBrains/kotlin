@@ -1,4 +1,4 @@
 // x: to be implemented
-impl var x: Int
+actual var x: Int
     get() = TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     set(value) {}

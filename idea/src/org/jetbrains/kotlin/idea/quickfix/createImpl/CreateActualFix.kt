@@ -43,9 +43,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
-sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
+sealed class CreateActualFix<out D : KtNamedDeclaration>(
         declaration: D,
-        private val implPlatform: MultiTargetPlatform.Specific,
+        private val actualPlatform: MultiTargetPlatform.Specific,
         private val generateIt: KtPsiFactory.(Project, D) -> D?
 ) : KotlinQuickFixAction<D>(declaration) {
 
@@ -53,7 +53,7 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
 
     protected abstract val elementType: String
 
-    override fun getText() = "Create header $elementType implementation for platform ${implPlatform.platform}"
+    override fun getText() = "Create actual $elementType for platform ${actualPlatform.platform}"
 
     override fun startInWriteAction() = false
 
@@ -61,35 +61,35 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
         val element = element ?: return
         val factory = KtPsiFactory(project)
 
-        val implFile = getOrCreateImplementationFile(project) ?: return
+        val actualFile = getOrCreateImplementationFile(project) ?: return
         val generated = factory.generateIt(project, element) ?: return
 
         runWriteAction {
-            if (implFile.packageDirective?.fqName != file.packageDirective?.fqName &&
-                implFile.declarations.isEmpty()) {
+            if (actualFile.packageDirective?.fqName != file.packageDirective?.fqName &&
+                actualFile.declarations.isEmpty()) {
                 val packageDirective = file.packageDirective
                 packageDirective?.let {
-                    val oldPackageDirective = implFile.packageDirective
+                    val oldPackageDirective = actualFile.packageDirective
                     val newPackageDirective = factory.createPackageDirective(it.fqName)
                     if (oldPackageDirective != null) {
                         oldPackageDirective.replace(newPackageDirective)
                     }
                     else {
-                        implFile.add(newPackageDirective)
+                        actualFile.add(newPackageDirective)
                     }
                 }
             }
-            val implDeclaration = implFile.add(generated) as KtElement
-            val reformatted = CodeStyleManager.getInstance(project).reformat(implDeclaration)
+            val actualDeclaration = actualFile.add(generated) as KtElement
+            val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
             ShortenReferences.DEFAULT.process(reformatted as KtElement)
         }
     }
 
-    private fun Project.implementationModuleOf(headerModule: Module) =
+    private fun Project.implementationModuleOf(expectedModule: Module) =
             allModules().firstOrNull {
                 PackageUtil.checkSourceRootsConfigured(it, false) &&
-                TargetPlatformDetector.getPlatform(it).multiTargetPlatform == implPlatform &&
-                headerModule in ModuleRootManager.getInstance(it).dependencies
+                TargetPlatformDetector.getPlatform(it).multiTargetPlatform == actualPlatform &&
+                expectedModule in ModuleRootManager.getInstance(it).dependencies
             }
 
     private fun getOrCreateImplementationFile(
@@ -98,36 +98,36 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
         val declaration = element as? KtNamedDeclaration ?: return null
         val name = declaration.name ?: return null
 
-        val headerDir = declaration.containingFile.containingDirectory
-        val headerPackage = JavaDirectoryService.getInstance().getPackage(headerDir)
+        val expectedDir = declaration.containingFile.containingDirectory
+        val expectedPackage = JavaDirectoryService.getInstance().getPackage(expectedDir)
 
-        val headerModule = ModuleUtilCore.findModuleForPsiElement(declaration) ?: return null
-        val implModule = project.implementationModuleOf(headerModule) ?: return null
-        val implDirectory = PackageUtil.findOrCreateDirectoryForPackage(
-                implModule, headerPackage?.qualifiedName ?: "", null, false
+        val expectedModule = ModuleUtilCore.findModuleForPsiElement(declaration) ?: return null
+        val actualModule = project.implementationModuleOf(expectedModule) ?: return null
+        val actualDirectory = PackageUtil.findOrCreateDirectoryForPackage(
+                actualModule, expectedPackage?.qualifiedName ?: "", null, false
         ) ?: return null
         return runWriteAction {
             val fileName = "$name.kt"
-            val existingFile = implDirectory.findFile(fileName)
+            val existingFile = actualDirectory.findFile(fileName)
             val packageDirective = declaration.containingKtFile.packageDirective
             val packageName =
-                    if (packageDirective?.packageNameExpression == null) implDirectory.getPackage()?.qualifiedName
+                    if (packageDirective?.packageNameExpression == null) actualDirectory.getPackage()?.qualifiedName
                     else packageDirective.fqName.asString()
             if (existingFile is KtFile) {
                 val existingPackageDirective = existingFile.packageDirective
                 if (existingFile.declarations.isNotEmpty() &&
                     existingPackageDirective?.fqName != packageDirective?.fqName) {
                     val newName = KotlinNameSuggester.suggestNameByName(name) {
-                        implDirectory.findFile("$it.kt") == null
+                        actualDirectory.findFile("$it.kt") == null
                     } + ".kt"
-                    createKotlinFile(newName, implDirectory, packageName)
+                    createKotlinFile(newName, actualDirectory, packageName)
                 }
                 else {
                     existingFile
                 }
             }
             else {
-                createKotlinFile(fileName, implDirectory, packageName)
+                createKotlinFile(fileName, actualDirectory, packageName)
             }
         }
     }
@@ -138,67 +138,68 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
             val declaration = d.psiElement as? KtNamedDeclaration ?: return null
             val compatibility = d.c
             if (compatibility.isNotEmpty()) return null
-            val implPlatform = d.b.getMultiTargetPlatform() as? MultiTargetPlatform.Specific ?: return null
+            val actualPlatform = d.b.getMultiTargetPlatform() as? MultiTargetPlatform.Specific ?: return null
             return when (declaration) {
-                is KtClassOrObject -> CreateHeaderClassImplementationFix(declaration, implPlatform)
-                is KtFunction -> CreateHeaderFunctionImplementationFix(declaration, implPlatform)
-                is KtProperty -> CreateHeaderPropertyImplementationFix(declaration, implPlatform)
+                is KtClassOrObject -> CreateActualClassFix(declaration, actualPlatform)
+                is KtFunction -> CreateActualFunctionFix(declaration, actualPlatform)
+                is KtProperty -> CreateActualPropertyFix(declaration, actualPlatform)
                 else -> null
             }
         }
     }
 }
 
-class CreateHeaderClassImplementationFix(
+class CreateActualClassFix(
         klass: KtClassOrObject,
-        implPlatform: MultiTargetPlatform.Specific
-) : CreateHeaderImplementationFix<KtClassOrObject>(klass, implPlatform, { project, element ->
-    generateClassOrObject(project, element, implNeeded = true)
+        actualPlatform: MultiTargetPlatform.Specific
+) : CreateActualFix<KtClassOrObject>(klass, actualPlatform, { project, element ->
+    generateClassOrObject(project, element, actualNeeded = true)
 }) {
 
-    override val elementType = if ((element as? KtClass)?.isInterface() ?: false) "interface" else "class"
+    override val elementType = if ((element as? KtClass)?.isInterface() == true) "interface" else "class"
 }
 
-class CreateHeaderPropertyImplementationFix(
+class CreateActualPropertyFix(
         property: KtProperty,
-        implPlatform: MultiTargetPlatform.Specific
-) : CreateHeaderImplementationFix<KtProperty>(property, implPlatform, { project, element ->
+        actualPlatform: MultiTargetPlatform.Specific
+) : CreateActualFix<KtProperty>(property, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, element, descriptor, implNeeded = true) }
+    descriptor?.let { generateProperty(project, element, descriptor, actualNeeded = true) }
 }) {
 
     override val elementType = "property"
 }
 
-class CreateHeaderFunctionImplementationFix(
+class CreateActualFunctionFix(
         function: KtFunction,
-        implPlatform: MultiTargetPlatform.Specific
-) : CreateHeaderImplementationFix<KtFunction>(function, implPlatform, { project, element ->
+        actualPlatform: MultiTargetPlatform.Specific
+) : CreateActualFix<KtFunction>(function, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, element, descriptor, implNeeded = true) }
+    descriptor?.let { generateFunction(project, element, descriptor, actualNeeded = true) }
 }) {
 
     override val elementType = "function"
 }
 
-private fun KtModifierListOwner.replaceHeaderModifier(implNeeded: Boolean) {
-    if (implNeeded) {
-        addModifier(KtTokens.IMPL_KEYWORD)
+private fun KtModifierListOwner.replaceExpectModifier(actualNeeded: Boolean) {
+    if (actualNeeded) {
+        addModifier(KtTokens.ACTUAL_KEYWORD)
     }
     else {
         removeModifier(KtTokens.HEADER_KEYWORD)
+        removeModifier(KtTokens.EXPECT_KEYWORD)
     }
 }
 
 private fun KtPsiFactory.generateClassOrObject(
         project: Project,
-        headerClass: KtClassOrObject,
-        implNeeded: Boolean
+        expectedClass: KtClassOrObject,
+        actualNeeded: Boolean
 ): KtClassOrObject {
-    val header = headerClass.text
-    val implClass = if (headerClass is KtObjectDeclaration) createObject(header) else createClass(header)
-    if (headerClass !is KtClass || !headerClass.isInterface()) {
-        implClass.declarations.forEach {
+    val expectedText = expectedClass.text
+    val actualClass = if (expectedClass is KtObjectDeclaration) createObject(expectedText) else createClass(expectedText)
+    if (expectedClass !is KtClass || !expectedClass.isInterface()) {
+        actualClass.declarations.forEach {
             if (it !is KtEnumEntry &&
                 it !is KtClassOrObject &&
                 !it.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
@@ -206,28 +207,28 @@ private fun KtPsiFactory.generateClassOrObject(
             }
         }
 
-        declLoop@ for (headerDeclaration in headerClass.declarations) {
-            if (headerDeclaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) continue
-            val descriptor = headerDeclaration.toDescriptor() ?: continue
-            val implDeclaration: KtDeclaration = when (headerDeclaration) {
-                is KtFunction -> generateFunction(project, headerDeclaration, descriptor as FunctionDescriptor, implNeeded = true)
-                is KtProperty -> generateProperty(project, headerDeclaration, descriptor as PropertyDescriptor, implNeeded = true)
+        declLoop@ for (expectedDeclaration in expectedClass.declarations) {
+            if (expectedDeclaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) continue
+            val descriptor = expectedDeclaration.toDescriptor() ?: continue
+            val actualDeclaration: KtDeclaration = when (expectedDeclaration) {
+                is KtFunction -> generateFunction(project, expectedDeclaration, descriptor as FunctionDescriptor, actualNeeded = true)
+                is KtProperty -> generateProperty(project, expectedDeclaration, descriptor as PropertyDescriptor, actualNeeded = true)
                 else -> continue@declLoop
             }
-            implClass.addDeclaration(implDeclaration)
+            actualClass.addDeclaration(actualDeclaration)
         }
     }
 
-    return implClass.apply {
-        replaceHeaderModifier(implNeeded)
+    return actualClass.apply {
+        replaceExpectModifier(actualNeeded)
     }
 }
 
 private fun KtPsiFactory.generateFunction(
         project: Project,
-        headerFunction: KtFunction,
+        expectedFunction: KtFunction,
         descriptor: FunctionDescriptor,
-        implNeeded: Boolean
+        actualNeeded: Boolean
 ): KtFunction {
     val returnType = descriptor.returnType
     val body = run {
@@ -246,12 +247,12 @@ private fun KtPsiFactory.generateFunction(
         }
     }
 
-    return if (headerFunction is KtSecondaryConstructor) {
-        createSecondaryConstructor(headerFunction.text + " " +  body)
+    return if (expectedFunction is KtSecondaryConstructor) {
+        createSecondaryConstructor(expectedFunction.text + " " + body)
     }
     else {
-        createFunction(headerFunction.text + " " +  body).apply {
-            replaceHeaderModifier(implNeeded)
+        createFunction(expectedFunction.text + " " + body).apply {
+            replaceExpectModifier(actualNeeded)
             if (returnType != null && KotlinBuiltIns.isUnit(returnType)) {
                 typeReference = null
             }
@@ -261,9 +262,9 @@ private fun KtPsiFactory.generateFunction(
 
 private fun KtPsiFactory.generateProperty(
         project: Project,
-        headerProperty: KtProperty,
+        expectedProperty: KtProperty,
         descriptor: PropertyDescriptor,
-        implNeeded: Boolean
+        actualNeeded: Boolean
 ): KtProperty {
     val body = buildString {
         append("\nget()")
@@ -278,8 +279,8 @@ private fun KtPsiFactory.generateProperty(
             append("\nset(value) {}")
         }
     }
-    return createProperty(headerProperty.text + " " + body).apply {
-        replaceHeaderModifier(implNeeded)
+    return createProperty(expectedProperty.text + " " + body).apply {
+        replaceExpectModifier(actualNeeded)
     }
 }
 

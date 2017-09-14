@@ -1,4 +1,4 @@
-// "Create header class implementation for platform JS" "true"
+// "Create actual class for platform JS" "true"
 
 header abstract class <caret>Abstract {
     fun foo(param: String): Int

@@ -1,10 +1,10 @@
 // MyEnum: to be implemented
-impl enum class MyEnum {
+actual enum class MyEnum {
     FIRST,
     SECOND,
     LAST;
 
-    impl val num: Int
+    actual val num: Int
         get() = TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
 }

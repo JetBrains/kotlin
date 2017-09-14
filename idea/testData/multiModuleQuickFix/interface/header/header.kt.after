@@ -1,4 +1,4 @@
-// "Create header interface implementation for platform JVM" "true"
+// "Create actual interface for platform JVM" "true"
 
 header interface Interface {
     fun foo(param: String): Int

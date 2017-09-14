@@ -1,5 +1,5 @@
 // Sealed: to be implemented
-impl sealed class Sealed {
+actual sealed class Sealed {
     object Obj : Sealed
 
     class Klass(x: Int) : Sealed

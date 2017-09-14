@@ -1,3 +1,3 @@
-// "Create header property implementation for platform JVM" "true"
+// "Create actual property for platform JVM" "true"
 
 header var <caret>x: Int

@@ -1,4 +1,4 @@
-// "Create header class implementation for platform JVM" "true"
+// "Create actual class for platform JVM" "true"
 
 header class WithNested {
     fun foo(): Int

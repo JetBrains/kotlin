@@ -1,5 +1,5 @@
 // Interface: to be implemented
-impl interface Interface {
+actual interface Interface {
     fun foo(param: String): Int
 
     fun String.bar(y: Double): Boolean
