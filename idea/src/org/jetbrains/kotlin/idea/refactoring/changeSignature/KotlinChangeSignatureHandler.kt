@@ -165,7 +165,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null
 
             var descriptor = getDescriptor(bindingContext, element)
-            if (descriptor is MemberDescriptor && descriptor.isImpl) {
+            if (descriptor is MemberDescriptor && descriptor.isActual) {
                 descriptor = descriptor.headerDescriptor() ?: descriptor
             }
 

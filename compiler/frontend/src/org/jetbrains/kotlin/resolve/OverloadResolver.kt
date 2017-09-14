@@ -290,7 +290,7 @@ class OverloadResolver(
     private fun isDefinitionsForDifferentPlatforms(member1: DeclarationDescriptorNonRoot, member2: DeclarationDescriptorNonRoot): Boolean {
         if (member1 !is MemberDescriptor || member2 !is MemberDescriptor) return false
 
-        return member1.isImpl && member2.isImpl &&
+        return member1.isActual && member2.isActual &&
                member1.getMultiTargetPlatform() != member2.getMultiTargetPlatform()
     }
 

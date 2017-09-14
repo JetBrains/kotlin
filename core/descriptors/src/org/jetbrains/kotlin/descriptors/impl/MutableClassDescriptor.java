@@ -112,7 +112,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isImpl() {
+    public boolean isActual() {
         return false;
     }
 

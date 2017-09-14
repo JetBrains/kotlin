@@ -179,7 +179,7 @@ fun BackendContext.createPropertyWithBackingFieldBuilder(startOffset: Int, endOf
                     /* lateInit              = */ false,
                     /* isConst               = */ false,
                     /* isExpect              = */ false,
-                    /* isImpl                = */ false,
+                    /* isActual                = */ false,
                     /* isExternal            = */ false,
                     /* isDelegated           = */ false
             )

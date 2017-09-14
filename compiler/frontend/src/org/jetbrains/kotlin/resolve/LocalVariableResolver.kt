@@ -154,7 +154,7 @@ class LocalVariableResolver(
                     /* lateInit = */ false,
                     /* isConst = */ false,
                     /* isExpect = */ false,
-                    /* isImpl = */ false,
+                    /* isActual = */ false,
                     /* isExternal = */ false,
                     variable is KtProperty && variable.hasDelegate()
             )

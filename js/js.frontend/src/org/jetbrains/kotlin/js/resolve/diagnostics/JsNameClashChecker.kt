@@ -68,7 +68,7 @@ class JsNameClashChecker : SimpleDeclarationChecker {
             val existing = scope[name]
             if (existing != null &&
                 existing != descriptor &&
-                existing.isImpl == descriptor.isImpl &&
+                existing.isActual == descriptor.isActual &&
                 existing.isExpect == descriptor.isExpect &&
                 !bindingContext.isCommonDiagnosticReported(declaration)
             ) {
@@ -109,8 +109,8 @@ class JsNameClashChecker : SimpleDeclarationChecker {
         return diagnostics.forElement(declaration).any { it.factory in COMMON_DIAGNOSTICS }
     }
 
-    private val DeclarationDescriptor.isImpl: Boolean
-        get() = this is MemberDescriptor && this.isImpl
+    private val DeclarationDescriptor.isActual: Boolean
+        get() = this is MemberDescriptor && this.isActual
 
     private val DeclarationDescriptor.isExpect: Boolean
         get() = this is MemberDescriptor && this.isExpect

@@ -232,8 +232,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public boolean isImpl() {
-        return original.isImpl();
+    public boolean isActual() {
+        return original.isActual();
     }
 
     @Override

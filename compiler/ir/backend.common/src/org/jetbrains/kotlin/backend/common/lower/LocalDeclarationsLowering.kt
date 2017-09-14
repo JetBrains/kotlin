@@ -598,7 +598,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                         /* lateInit = */ false,
                         /* isConst = */ false,
                         /* isExpect = */ false,
-                        /* isImpl = */ false,
+                        /* isActual = */ false,
                         /* isExternal = */ false,
                         /* isDelegated = */ false)
 

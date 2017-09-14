@@ -72,7 +72,7 @@ internal fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
     if (this is MemberDescriptor) {
         return when {
             isExpect -> this
-            isImpl -> headerDescriptor()
+            isActual -> headerDescriptor()
             else -> null
         }
     }

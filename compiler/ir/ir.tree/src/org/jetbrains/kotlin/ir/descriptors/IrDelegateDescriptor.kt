@@ -61,7 +61,7 @@ abstract class IrDelegateDescriptorBase(
         /* lateInit = */ false,
         /* isConst = */ false,
         /* isExpect = */ false,
-        /* isImpl = */ false,
+        /* isActual = */ false,
         /* isExternal = */ false,
         /* isDelegated = */ true
 ) {

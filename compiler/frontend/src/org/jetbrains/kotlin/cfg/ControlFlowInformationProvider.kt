@@ -665,7 +665,7 @@ class ControlFlowInformationProvider private constructor(
                 if (isMain
                     || functionDescriptor.isOverridableOrOverrides
                     || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                    || functionDescriptor.isExpect || functionDescriptor.isImpl
+                    || functionDescriptor.isExpect || functionDescriptor.isActual
                     || functionDescriptor.isEffectivelyExternal()
                     || OperatorNameConventions.GET_VALUE == functionName
                     || OperatorNameConventions.SET_VALUE == functionName

@@ -68,7 +68,7 @@ private fun KtNamedFunction.getOverloads(): Collection<FunctionDescriptor> {
     val scope = getResolutionScope(context, resolutionFacade)
     val extensionReceiverClass = descriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor
 
-    if (descriptor.isImpl && descriptor.headerDescriptor() != null) return emptyList()
+    if (descriptor.isActual && descriptor.headerDescriptor() != null) return emptyList()
 
     val result = LinkedHashSet<FunctionDescriptor>()
     result += scope.getAllAccessibleFunctions(name)

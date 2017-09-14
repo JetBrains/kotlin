@@ -28,7 +28,7 @@ public interface MemberDescriptor extends DeclarationDescriptorNonRoot, Declarat
 
     boolean isExpect();
 
-    boolean isImpl();
+    boolean isActual();
 
     boolean isExternal();
 }

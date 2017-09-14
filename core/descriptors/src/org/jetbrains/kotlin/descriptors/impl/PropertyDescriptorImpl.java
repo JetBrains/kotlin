@@ -43,7 +43,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final boolean lateInit;
     private final boolean isConst;
     private final boolean isExpect;
-    private final boolean isImpl;
+    private final boolean isActual;
     private final boolean isExternal;
     private final boolean isDelegated;
 
@@ -67,7 +67,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean lateInit,
             boolean isConst,
             boolean isExpect,
-            boolean isImpl,
+            boolean isActual,
             boolean isExternal,
             boolean isDelegated
     ) {
@@ -79,7 +79,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.lateInit = lateInit;
         this.isConst = isConst;
         this.isExpect = isExpect;
-        this.isImpl = isImpl;
+        this.isActual = isActual;
         this.isExternal = isExternal;
         this.isDelegated = isDelegated;
     }
@@ -97,13 +97,13 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean lateInit,
             boolean isConst,
             boolean isExpect,
-            boolean isImpl,
+            boolean isActual,
             boolean isExternal,
             boolean isDelegated
     ) {
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
                                           modality, visibility, isVar, name, kind, source, lateInit, isConst,
-                                          isExpect, isImpl, isExternal, isDelegated);
+                                          isExpect, isActual, isExternal, isDelegated);
     }
 
     public void setType(
@@ -458,7 +458,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     ) {
         return new PropertyDescriptorImpl(
                 newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), newName, kind, SourceElement.NO_SOURCE,
-                isLateInit(), isConst(), isExpect(), isImpl(), isExternal(), isDelegated()
+                isLateInit(), isConst(), isExpect(), isActual(), isExternal(), isDelegated()
         );
     }
 
@@ -485,8 +485,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     @Override
-    public boolean isImpl() {
-        return isImpl;
+    public boolean isActual() {
+        return isActual;
     }
 
     @Override

@@ -92,7 +92,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isInner;
     private final boolean isData;
     private final boolean isExpect;
-    private final boolean isImpl;
+    private final boolean isActual;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -166,7 +166,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isInner = modifierList != null && modifierList.hasModifier(INNER_KEYWORD) && !isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
-        this.isImpl = modifierList != null && PsiUtilsKt.hasActualModifier(modifierList);
+        this.isActual = modifierList != null && PsiUtilsKt.hasActualModifier(modifierList);
 
         this.isExpect = modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) ||
                         containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isExpect();
@@ -503,8 +503,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Override
-    public boolean isImpl() {
-        return isImpl;
+    public boolean isActual() {
+        return isActual;
     }
 
     @NotNull
@@ -527,7 +527,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public String toString() {
         // not using DescriptorRenderer to preserve laziness
-        return (isExpect ? "header " : isImpl ? "impl " : "") + "class " + getName().toString();
+        return (isExpect ? "header " : isActual ? "impl " : "") + "class " + getName().toString();
     }
 
     @Override

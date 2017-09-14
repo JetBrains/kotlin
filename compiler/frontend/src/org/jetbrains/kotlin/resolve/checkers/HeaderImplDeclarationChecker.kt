@@ -127,7 +127,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         // TODO: use common module here
         val compatibility = findHeaderForImpl(descriptor, descriptor.module) ?: return
 
-        val hasImplModifier = descriptor.isImpl && reportOn.hasActualModifier()
+        val hasImplModifier = descriptor.isActual && reportOn.hasActualModifier()
         if (!hasImplModifier) {
             if (Compatible !in compatibility) return
 

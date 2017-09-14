@@ -105,7 +105,7 @@ private fun genProperty(
             /* lateInit = */ false,
             /* isConst = */ false,
             /* isExpect = */ false,
-            /* isImpl = */ false,
+            /* isActual = */ false,
             /* isExternal = */ false,
             /* isDelegated = */ false
     ) {

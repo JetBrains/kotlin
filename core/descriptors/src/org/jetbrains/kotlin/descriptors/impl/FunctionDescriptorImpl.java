@@ -44,7 +44,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isInline = false;
     private boolean isTailrec = false;
     private boolean isExpect = false;
-    private boolean isImpl = false;
+    private boolean isActual = false;
     // Difference between these hidden kinds:
     // 1. isHiddenToOvercomeSignatureClash prohibit calling such functions even in super-call context
     // 2. isHiddenForResolutionEverywhereBesideSupercalls propagates to it's overrides descriptors while isHiddenToOvercomeSignatureClash does not
@@ -140,8 +140,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.isExpect = isExpect;
     }
 
-    public void setImpl(boolean isImpl) {
-        this.isImpl = isImpl;
+    public void setActual(boolean isActual) {
+        this.isActual = isActual;
     }
 
     private void setHiddenToOvercomeSignatureClash(boolean hiddenToOvercomeSignatureClash) {
@@ -263,8 +263,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
-    public boolean isImpl() {
-        return isImpl;
+    public boolean isActual() {
+        return isActual;
     }
 
     @Override
@@ -665,7 +665,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setTailrec(isTailrec);
         substitutedDescriptor.setSuspend(isSuspend);
         substitutedDescriptor.setExpect(isExpect);
-        substitutedDescriptor.setImpl(isImpl);
+        substitutedDescriptor.setActual(isActual);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);
         substitutedDescriptor.setHiddenForResolutionEverywhereBesideSupercalls(configuration.isHiddenForResolutionEverywhereBesideSupercalls);

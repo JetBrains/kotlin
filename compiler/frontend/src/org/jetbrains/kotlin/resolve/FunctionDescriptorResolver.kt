@@ -186,7 +186,7 @@ class FunctionDescriptorResolver(
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
         functionDescriptor.isExpect = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
                                       container is ClassDescriptor && container.isExpect
-        functionDescriptor.isImpl = function.hasActualModifier()
+        functionDescriptor.isActual = function.hasActualModifier()
 
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
@@ -299,8 +299,8 @@ class FunctionDescriptorResolver(
         if (classDescriptor.isExpect) {
             constructorDescriptor.isExpect = true
         }
-        if (classDescriptor.isImpl) {
-            constructorDescriptor.isImpl = true
+        if (classDescriptor.isActual) {
+            constructorDescriptor.isActual = true
         }
         if (declarationToTrace is PsiElement)
             trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)

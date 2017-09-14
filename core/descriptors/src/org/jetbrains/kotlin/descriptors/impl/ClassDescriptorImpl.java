@@ -121,7 +121,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isImpl() {
+    public boolean isActual() {
         return false;
     }
 

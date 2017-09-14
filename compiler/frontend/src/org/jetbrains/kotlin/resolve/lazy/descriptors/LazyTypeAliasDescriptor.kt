@@ -49,14 +49,14 @@ class LazyTypeAliasDescriptor(
     private lateinit var expandedTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var defaultTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var classDescriptorImpl: NullableLazyValue<ClassDescriptor>
-    private val isImpl = (source.getPsi() as? KtTypeAlias)?.hasActualModifier() == true
+    private val isActual = (source.getPsi() as? KtTypeAlias)?.hasActualModifier() == true
 
     override val underlyingType: SimpleType get() = underlyingTypeImpl()
     override val expandedType: SimpleType get() = expandedTypeImpl()
     override val classDescriptor: ClassDescriptor? get() = classDescriptorImpl()
     override fun getDefaultType(): SimpleType = defaultTypeImpl()
 
-    override fun isImpl(): Boolean = isImpl
+    override fun isActual(): Boolean = isActual
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,

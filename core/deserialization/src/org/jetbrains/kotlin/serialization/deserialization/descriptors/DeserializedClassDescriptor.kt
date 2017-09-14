@@ -100,7 +100,7 @@ class DeserializedClassDescriptor(
 
     override fun isExpect() = Flags.IS_HEADER_CLASS.get(classProto.flags)
 
-    override fun isImpl() = false
+    override fun isActual() = false
 
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
