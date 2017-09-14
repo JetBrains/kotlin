@@ -1,9 +1,13 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
 group = 'org.jetbrains.kotlinx'
+version = '0.1'
 
 apply plugin: 'kotlin'
 
 configureJvmProject(project)
-configurePublishing(project)
 
 compileJava {
     sourceCompatibility = 1.8
@@ -41,4 +45,24 @@ compileKotlin.dependsOn preprocessSources
 
 jar {
     from(targetSrc) { include("META-INF/**") }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    configurations = ['archives']
+    pkg {
+        repo = 'kotlinx'
+        name = 'kotlinx.serialization'
+        userOrg = 'kotlin'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/JetBrains/kotlin/tree/rr/kotlinx.serialization/libraries'
+        websiteUrl = 'https://github.com/Kotlin/kotlinx.serialization'
+        issueTrackerUrl = 'https://github.com/Kotlin/kotlinx.serialization/issues'
+
+        githubRepo = 'JetBrains/kotlin'
+        version {
+            name = project.version
+        }
+    }
 }
