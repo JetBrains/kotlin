@@ -110,10 +110,10 @@ class JsNameClashChecker : SimpleDeclarationChecker {
     }
 
     private val DeclarationDescriptor.isActual: Boolean
-        get() = this is MemberDescriptor && this.isActual
+        get() = this is MemberDescriptor && this.isActual || this is PropertyAccessorDescriptor && this.correspondingProperty.isActual
 
     private val DeclarationDescriptor.isExpect: Boolean
-        get() = this is MemberDescriptor && this.isExpect
+        get() = this is MemberDescriptor && this.isExpect || this is PropertyAccessorDescriptor && this.correspondingProperty.isExpect
 
     private fun isFakeOverridingNative(descriptor: CallableMemberDescriptor): Boolean {
         return descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&

@@ -1,0 +1,2 @@
+header class ClassWithImplByExtension
+header val ClassWithImplByExtension.extensionVal: Int
