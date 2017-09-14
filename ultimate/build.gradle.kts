@@ -29,7 +29,8 @@ dependencies {
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
     compile(project(":js:js.frontend")) { isTransitive = false }
-    compile(project(":idea"))
+    compile(projectClasses(":idea"))
+    compile(project(":idea:idea-jvm")) { isTransitive = false }
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
@@ -51,6 +52,7 @@ dependencies {
     compile(ideaUltimatePluginDeps("*.jar", plugin = "junit"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "uml"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptLanguage"))
+    compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptDebugger"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":compiler.tests-common")) { isTransitive = false }
@@ -113,7 +115,9 @@ val ultimatePluginXmlContent: String by lazy {
 
 val prepareResources by task<Copy> {
     dependsOn(":idea:assemble")
-    from(ideaProjectResources, { exclude("META-INF/plugin.xml") })
+    from(ideaProjectResources, {
+        exclude("META-INF/plugin.xml")
+    })
     into(preparedResources)
 }
 
