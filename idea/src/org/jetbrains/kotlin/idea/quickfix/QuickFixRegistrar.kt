@@ -477,7 +477,7 @@ class QuickFixRegistrar : QuickFixContributor {
         OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.registerFactory(RemoveAnnotationFix.JvmOverloads)
 
         HEADER_WITHOUT_IMPLEMENTATION.registerFactory(CreateActualFix)
-        IMPL_MISSING.registerFactory(AddModifierFix.createFactory(KtTokens.IMPL_KEYWORD))
+        IMPL_MISSING.registerFactory(AddModifierFix.createFactory(KtTokens.ACTUAL_KEYWORD))
 
         CAST_NEVER_SUCCEEDS.registerFactory(ReplacePrimitiveCastWithNumberConversionFix)
 
