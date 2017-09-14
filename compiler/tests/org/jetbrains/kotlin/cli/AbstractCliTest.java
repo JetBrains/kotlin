@@ -24,6 +24,7 @@ import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.checkers.AbstractForeignAnnotationsTestKt;
 import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
@@ -162,7 +163,11 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
             return argsWithColonsReplaced
                     .replace("$TEMP_DIR$", tempDir)
-                    .replace("$TESTDATA_DIR$", new File(argsFilePath).getParent());
+                    .replace("$TESTDATA_DIR$", new File(argsFilePath).getParent())
+                    .replace(
+                            "$FOREIGN_ANNOTATIONS_DIR$",
+                            new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
+                    );
         });
     }
 
