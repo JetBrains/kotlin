@@ -251,6 +251,13 @@ public class ModifiersChecker {
                 descriptor instanceof ClassDescriptor && descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                 trace.report(WRONG_MODIFIER_TARGET.on(keyword, KtTokens.HEADER_KEYWORD, "nested class"));
             }
+            else if (keyword == null && modifierList != null) {
+                keyword = modifierList.getModifier(EXPECT_KEYWORD);
+                if (keyword != null &&
+                    descriptor instanceof ClassDescriptor && descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                    trace.report(WRONG_MODIFIER_TARGET.on(keyword, KtTokens.EXPECT_KEYWORD, "nested class"));
+                }
+            }
         }
 
         @NotNull
