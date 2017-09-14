@@ -84,7 +84,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
             LanguageVersion.fromVersionString(commonArguments.apiVersion) ?: languageLevel
         }
         else {
-            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind))
         }
     }
 }
