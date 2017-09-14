@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
@@ -111,7 +112,7 @@ fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, cop
         else -> error("Unknown member to override: $descriptor")
     }
 
-    if (!targetClass.hasModifier(KtTokens.IMPL_KEYWORD)) {
+    if (!targetClass.hasActualModifier()) {
         newMember.removeModifier(KtTokens.IMPL_KEYWORD)
     }
 
