@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/jsr305Usage.kt
+$TESTDATA_DIR$/jsr305
+-d
+$TEMP_DIR$
