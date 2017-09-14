@@ -55,6 +55,16 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testDeprecatedHeader() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testDeprecatedImpl() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testEnum() {
         doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
     }
