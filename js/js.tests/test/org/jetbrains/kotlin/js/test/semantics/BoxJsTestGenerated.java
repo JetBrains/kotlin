@@ -6644,6 +6644,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("incDecOptimization.kt")
+        public void testIncDecOptimization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/incDecOptimization.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("intConversions.kt")
         public void testIntConversions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/intConversions.kt");
