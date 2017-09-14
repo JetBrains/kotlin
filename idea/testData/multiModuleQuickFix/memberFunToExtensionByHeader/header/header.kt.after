@@ -3,4 +3,4 @@
 header class Foo {
 }
 
-header fun Foo.foo(n: Int)
+expect fun Foo.foo(n: Int)
