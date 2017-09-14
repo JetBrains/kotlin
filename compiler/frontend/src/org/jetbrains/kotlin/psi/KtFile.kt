@@ -27,10 +27,10 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -171,7 +171,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             (it is KtProperty ||
              it is KtNamedFunction ||
              it is KtScript ||
-             it is KtTypeAlias) && !it.hasModifier(KtTokens.HEADER_KEYWORD)
+             it is KtTypeAlias) && !it.hasHeaderModifier()
         }
 
         hasTopLeveCallables = result

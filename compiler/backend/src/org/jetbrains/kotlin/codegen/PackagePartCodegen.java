@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
@@ -89,7 +89,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     @Override
     protected void generateBody() {
         for (KtDeclaration declaration : element.getDeclarations()) {
-            if (declaration.hasModifier(KtTokens.HEADER_KEYWORD)) continue;
+            if (PsiUtilsKt.hasHeaderModifier(declaration)) continue;
 
             if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty || declaration instanceof KtTypeAlias) {
                 genSimpleMember(declaration);

@@ -23,8 +23,11 @@ import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import java.util.*
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
@@ -380,3 +383,5 @@ fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.text
 
 inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = parents.takeWhile { it is T }.lastOrNull() as? T
 
+fun KtModifierListOwner.hasHeaderModifier() = hasModifier(KtTokens.HEADER_KEYWORD)
+fun KtModifierList.hasHeaderModifier() = hasModifier(KtTokens.HEADER_KEYWORD)

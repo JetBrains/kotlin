@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
@@ -182,7 +183,7 @@ class FunctionDescriptorResolver(
         functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
-        functionDescriptor.isHeader = container is PackageFragmentDescriptor && function.hasModifier(KtTokens.HEADER_KEYWORD) ||
+        functionDescriptor.isHeader = container is PackageFragmentDescriptor && function.hasHeaderModifier() ||
                                       container is ClassDescriptor && container.isHeader
         functionDescriptor.isImpl = function.hasModifier(KtTokens.IMPL_KEYWORD)
 

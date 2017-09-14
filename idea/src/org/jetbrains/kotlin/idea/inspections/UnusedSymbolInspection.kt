@@ -329,7 +329,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             declaration.hasModifier(KtTokens.IMPL_KEYWORD)
 
     private fun hasPlatformImplementations(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
-        if (!declaration.hasModifier(KtTokens.HEADER_KEYWORD)) return false
+        if (!declaration.hasHeaderModifier()) return false
 
         descriptor as? MemberDescriptor ?: return false
         val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -167,7 +168,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
         this.isImpl = modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD);
 
-        this.isHeader = modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) ||
+        this.isHeader = modifierList != null && PsiUtilsKt.hasHeaderModifier(modifierList) ||
                         containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader();
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)

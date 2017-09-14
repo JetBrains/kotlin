@@ -874,7 +874,7 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(variableDeclaration),
                 modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
-                modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) && container instanceof PackageFragmentDescriptor ||
+                modifierList != null && PsiUtilsKt.hasHeaderModifier(modifierList) && container instanceof PackageFragmentDescriptor ||
                 container instanceof ClassDescriptor && ((ClassDescriptor) container).isHeader(),
                 modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),

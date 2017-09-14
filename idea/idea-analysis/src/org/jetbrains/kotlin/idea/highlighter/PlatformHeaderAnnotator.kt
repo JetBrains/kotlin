@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
@@ -81,7 +81,7 @@ class PlatformHeaderAnnotator : Annotator {
     }
 
     private fun isHeaderDeclaration(declaration: KtDeclaration): Boolean {
-        return declaration.hasModifier(KtTokens.HEADER_KEYWORD) ||
-               declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasModifier(KtTokens.HEADER_KEYWORD) == true
+        return declaration.hasHeaderModifier() ||
+               declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasHeaderModifier() == true
     }
 }
