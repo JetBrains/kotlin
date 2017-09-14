@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.BindingContext.IMPLICIT_RECEIVER_SMARTCAST
+import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 class SmartCastManager {
@@ -100,7 +99,7 @@ class SmartCastManager {
                 .distinct()
         if (subTypes.isEmpty()) return null
 
-        val intersection = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, subTypes)
+        val intersection = TypeIntersector.intersectTypes(subTypes)
         if (intersection == null || !intersection.constructor.isDenotable) {
             return receiverParameterType
         }

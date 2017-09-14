@@ -9,7 +9,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 
     public User[] newArray(int p0) {
         LABEL (L0)
-        LINENUMBER (9)
+        LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
           INVOKESTATIC (kotlinx/android/parcel/Parceler$DefaultImpls, newArray, (Lkotlinx/android/parcel/Parceler;I)[Landroid/os/Parcelable;)
@@ -20,7 +20,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 
     public android.os.Parcelable[] newArray(int p0) {
         LABEL (L0)
-        LINENUMBER (9)
+        LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
@@ -33,7 +33,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
     public void write(android.os.Parcelable p0, android.os.Parcel p1, int p2)
 }
 
-public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0) {

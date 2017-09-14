@@ -55,7 +55,7 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
         }
         else if (delegate != null) {
             assert value != null;
-            statement = generateInitializerForDelegate(descriptor, value);
+            statement = generateInitializerForDelegate(context, descriptor, value);
         }
         else if (Boolean.TRUE.equals(context.bindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
             JsNameRef backingFieldReference = TranslationUtils.backingFieldReference(context, descriptor);

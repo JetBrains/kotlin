@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="gradle-and-groovy-plugin" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="library" exported="" name="android-plugin" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" name="intellij-core" level="project" />

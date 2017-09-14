@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getErasedReceiverType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnExpressionWithBothReceivers
 import org.jetbrains.kotlin.resolve.calls.callUtil.isExplicitSafeCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.SubstitutionFilteringInternalResolveAnnotations
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
@@ -60,6 +61,7 @@ class CandidateResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val genericCandidateResolver: GenericCandidateResolver,
         private val reflectionTypes: ReflectionTypes,
+        private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
         private val smartCastManager: SmartCastManager
 ) {
     fun <D : CallableDescriptor> performResolutionForCandidateCall(
@@ -266,7 +268,7 @@ class CandidateResolver(
 
     private fun checkOuterClassMemberIsAccessible(context: CallCandidateResolutionContext<*>): Boolean {
 
-        fun KtElement.insideScript() = (containingFile as? KtFile)?.isScript ?: false
+        fun KtElement.insideScript() = (containingFile as? KtFile)?.isScript() ?: false
 
         // context.scope doesn't contains outer class implicit receiver if we inside nested class
         // Outer scope for some class in script file is scopeForInitializerResolution see: DeclarationScopeProviderImpl.getResolutionScopeForDeclaration
@@ -580,6 +582,8 @@ class CandidateResolver(
             tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)
             return UNSAFE_CALL_ERROR
         }
+
+        additionalTypeCheckers.forEach { it.checkReceiver(receiverParameter, receiverArgument, safeAccess, this) }
 
         return SUCCESS
     }

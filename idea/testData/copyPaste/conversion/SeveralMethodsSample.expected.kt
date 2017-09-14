@@ -30,7 +30,7 @@ class A {
 
     fun getSelected(): ArrayList<UsageInfo> {
         val result = ArrayList<UsageInfo>()
-        for (i in 0..myChecked.length - 1) {
+        for (i in 0 until myChecked.length) {
             if (myChecked[i]) {
                 result.add(myOverridingMethods.get(i))
             }

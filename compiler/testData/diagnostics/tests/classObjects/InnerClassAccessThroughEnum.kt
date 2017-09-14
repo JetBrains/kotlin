@@ -3,13 +3,13 @@ package a
 
 enum class C {
     E1, E2, E3 {
-        object O_O
+        <!NESTED_CLASS_DEPRECATED!>object O_O<!>
 
         fun b() {
             O_O
         }
 
-        class G
+        <!NESTED_CLASS_DEPRECATED!>class G<!>
     },
 
     E4 {

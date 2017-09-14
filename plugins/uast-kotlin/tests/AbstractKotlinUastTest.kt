@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -43,12 +45,13 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     private var kotlinCoreEnvironment: KotlinCoreEnvironment? = null
 
     override fun getVirtualFile(testName: String): VirtualFile {
-        val projectDir = TEST_KOTLIN_MODEL_DIR
-        val testFile = File(TEST_KOTLIN_MODEL_DIR, testName.substringBefore('/') + ".kt")
+        val testFile = TEST_KOTLIN_MODEL_DIR.listFiles { pathname -> pathname.nameWithoutExtension == testName }.first()
 
         super.initializeEnvironment(testFile)
 
         initializeKotlinEnvironment()
+
+        KotlinScriptDefinitionProvider.getInstance(project)?.addScriptDefinition(StandardScriptDefinition)
 
         val trace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 
@@ -60,7 +63,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         val vfs = VirtualFileManager.getInstance().getFileSystem(URLUtil.FILE_PROTOCOL)
 
         val ideaProject = project
-        ideaProject.baseDir = vfs.findFileByPath(projectDir.canonicalPath)
+        ideaProject.baseDir = vfs.findFileByPath(TEST_KOTLIN_MODEL_DIR.canonicalPath)
 
         return vfs.findFileByPath(testFile.canonicalPath)!!
     }

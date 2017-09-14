@@ -1,0 +1,4 @@
+public final fun `foo-bar`(): dynamic
+public final var `ba-z`: dynamic
+    public final fun <get-ba-z>(): dynamic
+    public final fun <set-ba-z>(/*0*/ <set-?>: dynamic): kotlin.Unit

@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.uast.*
@@ -89,9 +89,11 @@ class KotlinUFunctionCallExpression(
     override val returnType: PsiType?
         get() = getExpressionType()
 
-    override val kind by lz {
-        when (resolvedCall?.resultingDescriptor) {
-            is ConstructorDescriptor -> UastCallKind.CONSTRUCTOR_CALL
+    override val kind: UastCallKind by lz {
+        val resolvedCall = resolvedCall ?: return@lz UastCallKind.METHOD_CALL
+        when {
+            resolvedCall.resultingDescriptor is ConstructorDescriptor -> UastCallKind.CONSTRUCTOR_CALL
+            this.isAnnotationArgumentArrayInitializer() -> UastCallKind.NESTED_ARRAY_INITIALIZER
             else -> UastCallKind.METHOD_CALL
         }
     }
@@ -117,5 +119,11 @@ class KotlinUFunctionCallExpression(
         valueArguments.acceptList(visitor)
 
         visitor.afterVisitCallExpression(this)
+    }
+
+    private fun isAnnotationArgumentArrayInitializer(): Boolean {
+        val resolvedCall = resolvedCall ?: return false
+        // KtAnnotationEntry -> KtValueArgumentList -> KtValueArgument -> arrayOf call
+        return psi.parents.elementAtOrNull(2) is KtAnnotationEntry && CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)
     }
 }

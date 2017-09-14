@@ -64,45 +64,39 @@ class IncrementalPackageFragmentProvider(
             get() = this@IncrementalPackageFragmentProvider.target
 
         fun getPackageFragmentForMultifileClass(multifileClassFqName: FqName): IncrementalMultifileClassPackageFragment? {
-            val facadeInternalName = JvmClassName.byFqNameWithoutInnerClasses(multifileClassFqName).internalName
-            val partsNames = incrementalCache.getStableMultifileFacadeParts(facadeInternalName) ?: return null
-            return IncrementalMultifileClassPackageFragment(multifileClassFqName, partsNames)
+            val facadeName = JvmClassName.byFqNameWithoutInnerClasses(multifileClassFqName)
+            val partsNames = incrementalCache.getStableMultifileFacadeParts(facadeName.internalName) ?: return null
+            return IncrementalMultifileClassPackageFragment(facadeName, partsNames, multifileClassFqName.parent())
         }
 
         override fun getMemberScope(): MemberScope = MemberScope.Empty
     }
 
     inner class IncrementalMultifileClassPackageFragment(
-            private val multifileClassFqName: FqName,
-            val partsInternalNames: Collection<String>
-    ) : PackageFragmentDescriptorImpl(moduleDescriptor, multifileClassFqName.parent()) {
+            val facadeName: JvmClassName,
+            val partsInternalNames: Collection<String>,
+            packageFqName: FqName
+    ) : PackageFragmentDescriptorImpl(moduleDescriptor, packageFqName) {
         private val memberScope = storageManager.createLazyValue {
             ChainedMemberScope.create(
-                    "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
+                    "Member scope for incremental compilation: union of multifile class parts data for $facadeName",
                     partsInternalNames.mapNotNull { internalName ->
                         incrementalCache.getPackagePartData(internalName)?.let { (data, strings) ->
                             val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
 
-                            val jvmBinaryClass = kotlinClassFinder.findKotlinClass(
-                                    ClassId.topLevel(FqName(internalName.replace('/', '.')))
-                            )
+                            val partName = JvmClassName.byInternalName(internalName)
+                            val jvmBinaryClass =
+                                    kotlinClassFinder.findKotlinClass(ClassId.topLevel(partName.fqNameForTopLevelClassMaybeWithDollars))
 
                             DeserializedPackageMemberScope(
                                     this, packageProto, nameResolver,
-                                    JvmPackagePartSource(
-                                            JvmClassName.byInternalName(internalName),
-                                            JvmClassName.byFqNameWithoutInnerClasses(multifileClassFqName.asString()),
-                                            knownJvmBinaryClass = jvmBinaryClass
-                                    ),
+                                    JvmPackagePartSource(partName, facadeName, knownJvmBinaryClass = jvmBinaryClass),
                                     deserializationComponents, classNames = { emptyList() }
                             )
                         }
                     }
             )
         }
-
-        val multifileClassName: Name
-            get() = multifileClassFqName.shortName()
 
         override fun getMemberScope() = memberScope()
     }

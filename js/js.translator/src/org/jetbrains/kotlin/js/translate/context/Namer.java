@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
@@ -89,11 +90,13 @@ public final class Namer {
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
     private static final String THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE";
+    private static final String THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION = "throwUPAE";
     private static final String PROTOTYPE_NAME = "prototype";
     private static final String CAPTURED_VAR_FIELD = "v";
 
     public static final JsNameRef IS_ARRAY_FUN_REF = new JsNameRef("isArray", "Array");
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
+    public static final String WRAP_FUNCTION = "wrapFunction";
     public static final String DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "$default";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
@@ -158,16 +161,6 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getDelegateName(@NotNull String propertyName) {
-        return propertyName + DELEGATE;
-    }
-
-    @NotNull
-    public static JsNameRef getDelegateNameRef(String propertyName) {
-        return new JsNameRef(getDelegateName(propertyName), new JsThisRef());
-    }
-
-    @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
         return pureFqn(CALL_FUNCTION, functionExpression);
     }
@@ -184,7 +177,9 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getCapturedVarAccessor(@NotNull JsExpression ref) {
-        return pureFqn(CAPTURED_VAR_FIELD, ref);
+        JsNameRef result = new JsNameRef(CAPTURED_VAR_FIELD, ref);
+        MetadataProperties.setSideEffects(result, SideEffectKind.DEPENDS_ON_STATE);
+        return result;
     }
 
     @NotNull
@@ -239,6 +234,11 @@ public final class Namer {
     @NotNull
     public static JsExpression throwIllegalStateExceptionFunRef() {
         return new JsNameRef(THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME, kotlinObject());
+    }
+
+    @NotNull
+    public static JsExpression throwUninitializedPropertyAccessExceptionFunRef() {
+        return new JsNameRef(THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION, kotlinObject());
     }
 
     @NotNull
@@ -351,8 +351,29 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsNameRef createInlineFunction() {
+    private static JsNameRef createInlineFunction() {
         return pureFqn(DEFINE_INLINE_FUNCTION, kotlinObject());
+    }
+
+    @NotNull
+    private static JsNameRef wrapFunction() {
+        return pureFqn(WRAP_FUNCTION, kotlinObject());
+    }
+
+    @NotNull
+    public static JsExpression createSpecialFunction(@NotNull SpecialFunction specialFunction) {
+        switch (specialFunction) {
+            case DEFINE_INLINE_FUNCTION:
+                return createInlineFunction();
+            case WRAP_FUNCTION:
+                return wrapFunction();
+            case TO_BOXED_CHAR:
+                return pureFqn("toBoxedChar", kotlinObject());
+            case UNBOX_CHAR:
+                return pureFqn("unboxChar", kotlinObject());
+            default:
+                throw new IllegalArgumentException("Unknown function: " + specialFunction);
+        }
     }
 
     @NotNull

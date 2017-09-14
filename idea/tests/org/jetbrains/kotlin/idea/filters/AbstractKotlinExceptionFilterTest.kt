@@ -26,8 +26,7 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
-import org.jetbrains.kotlin.fileClasses.getFileClassFqName
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.refactoring.toVirtualFile
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -90,7 +89,7 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         }
 
         val stackTraceElement = try {
-            val className = NoResolveFileClassesProvider.getFileClassFqName(file as KtFile)
+            val className = JvmFileClassUtil.getFileClassInfoNoResolve(file as KtFile).fileClassFqName
             val clazz = classLoader.loadClass(className.asString())
             clazz.getMethod("box")?.invoke(null)
             throw AssertionError("class ${className.asString()} should have box() method and throw exception")

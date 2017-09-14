@@ -54,7 +54,9 @@ class ScriptDependenciesManager internal constructor(
     fun getScriptDependencies(file: VirtualFile) = cacheUpdater.getCurrentDependencies(file)
 
     private fun reloadScriptDefinitions() {
-        val def = makeScriptDefsFromTemplatesProviderExtensions(project, { ep, ex -> log.warn("[kts] Error loading definition from ${ep.id}", ex) })
+        val def = makeScriptDefsFromTemplatesProviderExtensions(
+                project, { ep, ex -> /* do nothing, logging these exception creates too much noise*/}
+        )
         scriptDefinitionProvider.setScriptDefinitions(def)
     }
 

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.childForClassOrPackage
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageFragment(
@@ -41,7 +40,7 @@ class LazyJavaPackageFragment(
 
     internal val binaryClasses by c.storageManager.createLazyValue {
         c.components.packageMapper.findPackageParts(fqName.asString()).mapNotNull { partName ->
-            val classId = ClassId(fqName, Name.identifier(partName))
+            val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
             c.components.kotlinClassFinder.findKotlinClass(classId)?.let { partName to it }
         }.toMap()
     }
@@ -56,7 +55,7 @@ class LazyJavaPackageFragment(
 
     override val annotations =
             // Do not resolve package annotations if JSR-305 is disabled
-            if (c.components.annotationTypeQualifierResolver == AnnotationTypeQualifierResolver.Empty) Annotations.EMPTY
+            if (c.components.annotationTypeQualifierResolver.jsr305State.isIgnored()) Annotations.EMPTY
             else c.resolveAnnotations(jPackage)
 
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()
@@ -64,13 +63,13 @@ class LazyJavaPackageFragment(
     internal fun findClassifierByJavaClass(jClass: JavaClass): ClassDescriptor? = scope.javaScope.findClassifierByJavaClass(jClass)
 
     private val partToFacade by c.storageManager.createLazyValue {
-        val result = hashMapOf<String, String>()
-        kotlinClasses@for ((partName, kotlinClass) in binaryClasses) {
+        val result = hashMapOf<JvmClassName, JvmClassName>()
+        kotlinClasses@for ((partInternalName, kotlinClass) in binaryClasses) {
+            val partName = JvmClassName.byInternalName(partInternalName)
             val header = kotlinClass.classHeader
             when (header.kind) {
                 KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                    val facadeName = header.multifileClassName ?: continue@kotlinClasses
-                    result[partName] = facadeName.substringAfterLast('/')
+                    result[partName] = JvmClassName.byInternalName(header.multifileClassName ?: continue@kotlinClasses)
                 }
                 KotlinClassHeader.Kind.FILE_FACADE -> {
                     result[partName] = partName
@@ -81,7 +80,7 @@ class LazyJavaPackageFragment(
         result
     }
 
-    fun getFacadeSimpleNameForPartSimpleName(partName: String): String? = partToFacade[partName]
+    fun getFacadeNameForPartName(partName: JvmClassName): JvmClassName? = partToFacade[partName]
 
     override fun getMemberScope() = scope
 

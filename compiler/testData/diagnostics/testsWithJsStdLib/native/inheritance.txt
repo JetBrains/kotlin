@@ -7,28 +7,28 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external open class B {
+public open external class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final class C : A {
+public final external class C : A {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final class D : B, I {
+public final external class D : B, I {
     public constructor D()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final enum class E : kotlin.Enum<E> {
+public final external enum class E : kotlin.Enum<E> {
     enum entry X
 
     private constructor E()
@@ -45,7 +45,7 @@ public external final enum class E : kotlin.Enum<E> {
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
 
-public external final enum class F : kotlin.Enum<F>, I {
+public final external enum class F : kotlin.Enum<F>, I {
     enum entry X
 
     private constructor F()

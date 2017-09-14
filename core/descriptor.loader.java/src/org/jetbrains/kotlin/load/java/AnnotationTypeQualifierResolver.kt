@@ -19,25 +19,21 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver.QualifierApplicabilityType
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver.TypeQualifierWithApplicability
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 private val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
 private val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
 private val TYPE_QUALIFIER_DEFAULT_FQNAME = FqName("javax.annotation.meta.TypeQualifierDefault")
 
-interface AnnotationTypeQualifierResolver {
-    fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor?
-
-    fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability?
-
+class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305State: Jsr305State) {
     enum class QualifierApplicabilityType {
         METHOD_RETURN_TYPE, VALUE_PARAMETER, FIELD, TYPE_USE
     }
@@ -52,14 +48,6 @@ interface AnnotationTypeQualifierResolver {
         operator fun component2() = QualifierApplicabilityType.values().filter(this::isApplicableTo)
     }
 
-    object Empty : AnnotationTypeQualifierResolver {
-        override fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor? = null
-
-        override fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? = null
-    }
-}
-
-class AnnotationTypeQualifierResolverImpl(storageManager: StorageManager) : AnnotationTypeQualifierResolver {
     private val resolvedNicknames =
             storageManager.createMemoizedFunctionWithNullableValues(this::computeTypeQualifierNickname)
 
@@ -75,14 +63,22 @@ class AnnotationTypeQualifierResolverImpl(storageManager: StorageManager) : Anno
         return resolvedNicknames(classDescriptor)
     }
 
-    override fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor? {
+    fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor? {
+        if (jsr305State.isIgnored()) {
+            return null
+        }
+
         val annotationClass = annotationDescriptor.annotationClass ?: return null
         if (annotationClass.isAnnotatedWithTypeQualifier) return annotationDescriptor
 
         return resolveTypeQualifierNickname(annotationClass)
     }
 
-    override fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
+    fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
+        if (jsr305State.isIgnored()) {
+            return null
+        }
+
         val typeQualifierDefaultAnnotatedClass =
                 annotationDescriptor.annotationClass?.takeIf { it.annotations.hasAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) }
                 ?: return null
@@ -121,5 +117,7 @@ class AnnotationTypeQualifierResolverImpl(storageManager: StorageManager) : Anno
         }
 }
 
+val BUILT_IN_TYPE_QUALIFIER_FQ_NAMES = setOf(JAVAX_NONNULL_ANNOTATION, JAVAX_CHECKFORNULL_ANNOTATION)
+
 private val ClassDescriptor.isAnnotatedWithTypeQualifier: Boolean
-    get() = annotations.hasAnnotation(TYPE_QUALIFIER_FQNAME)
+    get() = fqNameSafe in BUILT_IN_TYPE_QUALIFIER_FQ_NAMES || annotations.hasAnnotation(TYPE_QUALIFIER_FQNAME)

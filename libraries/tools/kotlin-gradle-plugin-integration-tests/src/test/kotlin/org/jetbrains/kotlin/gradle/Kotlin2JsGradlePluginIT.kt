@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -68,8 +70,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             val jarPath = "build/libs/kotlin2JsNoOutputFileProject.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
-            assertEquals(1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject_main.js" },
-                         "The jar should contain an entry `kotlin2JsNoOutputFileProject_main.js` with no duplicates")
+            assertEquals(1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject.js" },
+                         "The jar should contain an entry `kotlin2JsNoOutputFileProject.js` with no duplicates")
         }
     }
 
@@ -104,7 +106,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertFileExists("build/classes/main/kotlin2JsNoOutputFileProject_main.js")
+            assertFileExists("build/classes/main/kotlin2JsNoOutputFileProject.js")
             assertFileExists("build/classes/test/kotlin2JsNoOutputFileProject_test.js")
         }
     }
@@ -160,7 +162,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testKotlinJsBuiltins() {
-        val project = Project("kotlinBuiltins", "3.2")
+        val project = Project("kotlinBuiltins", "4.0")
 
         project.setupWorkingDir()
         val buildGradle = File(project.projectDir, "app").getFileByName("build.gradle")
@@ -205,7 +207,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
 
-            val mapFilePath = "app/build/classes/main/app_main.js.map"
+            val mapFilePath = "app/build/classes/main/app.js.map"
             assertFileExists(mapFilePath)
             val map = fileInWorkingDir(mapFilePath).readText()
 
@@ -223,6 +225,9 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("runRhino") {
             println(output)
             assertSuccessful()
+            val pathPrefix = "mainProject/build/min"
+            assertFileExists("$pathPrefix/exampleapp.js.map")
+            assertFileExists("$pathPrefix/examplelib.js.map")
         }
     }
 
@@ -233,6 +238,26 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertNotContains("this build assumes a single directory for all classes from a source set")
+        }
+    }
+
+    @Test
+    fun testIncrementalCompilation() {
+        val project = Project("kotlin2JsICProject", "4.0")
+        project.build("build") {
+            assertSuccessful()
+            assertContains(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()))
+        }
+
+        val aKt = project.projectDir.getFileByName("A.kt").apply {
+            modify { it.replace("val x: String", "val x: Int") }
+        }
+        val useAKt = project.projectDir.getFileByName("useA.kt")
+        project.build("build") {
+            assertSuccessful()
+            assertContains(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            assertCompiledKotlinSources(project.relativize(aKt, useAKt))
         }
     }
 }

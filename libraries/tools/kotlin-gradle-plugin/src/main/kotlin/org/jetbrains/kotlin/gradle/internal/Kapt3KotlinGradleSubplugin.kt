@@ -84,7 +84,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private val kotlinToKaptGenerateStubsTasksMap = mutableMapOf<KotlinCompile, KaptGenerateStubsTask>()
 
-    override fun isApplicable(project: Project, task: KotlinCompile) = Kapt3GradleSubplugin.isEnabled(project)
+    override fun isApplicable(project: Project, task: AbstractCompile) = task is KotlinCompile && Kapt3GradleSubplugin.isEnabled(project)
 
     fun getKaptGeneratedDir(project: Project, sourceSetName: String): File {
         return File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
@@ -123,7 +123,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     override fun apply(
-            project: Project, 
+            project: Project,
             kotlinCompile: KotlinCompile,
             javaCompile: AbstractCompile,
             variantData: Any?,
@@ -174,9 +174,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
         val kaptTask = context.createKaptKotlinTask()
 
-        kaptTask.dependsOn(*buildDependencies.toTypedArray())
-
+        kaptGenerateStubsTask.dependsOn(*buildDependencies.toTypedArray())
         kaptGenerateStubsTask.dependsOn(*kotlinCompile.dependsOn.toTypedArray())
+
         kaptTask.dependsOn(kaptGenerateStubsTask)
         kotlinCompile.dependsOn(kaptTask)
 
@@ -305,6 +305,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): KaptGenerateStubsTask {
         val kaptTask = project.tasks.create(getKaptTaskName("kaptGenerateStubs"), KaptGenerateStubsTask::class.java)
+        kaptTask.sourceSetName = sourceSetName
         kaptTask.kotlinCompileTask = kotlinCompile
         kotlinToKaptGenerateStubsTasksMap[kotlinCompile] = kaptTask
 

@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<Int>) {
     val <!UNUSED_VARIABLE!>a<!>: String = javaClass.doSomething1("", 1) { p: String -> p }

@@ -20,6 +20,7 @@ import com.google.common.collect.Lists
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
@@ -35,7 +36,9 @@ import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
@@ -52,6 +55,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //TODO: check for 'operator' modifier!
@@ -554,8 +558,29 @@ class DelegatedPropertyResolver(
                     isGet = true, isComplete = true
             )
 
+            if (variableDescriptor.isVar && variableDescriptor.returnType !is DeferredType) {
+                getGetSetValueMethod(
+                        variableDescriptor, delegateExpression, typeInfoForGetValueReceiver.type ?: return null,
+                        traceToResolveConventionMethods, scopeForDelegate, typeInfoForGetValueReceiver.dataFlowInfo,
+                        isGet = false, isComplete = true
+                )
+            }
+
             val call = delegateExpression.getCall(traceToResolveConventionMethods.bindingContext)
-            return call.getResolvedCall(traceToResolveConventionMethods.bindingContext)?.resultingDescriptor?.returnType
+            val pretendReturnType = call.getResolvedCall(traceToResolveConventionMethods.bindingContext)?.resultingDescriptor?.returnType
+            val expectedType = pretendReturnType?.takeUnless { it.contains { it.constructor is TypeVariableTypeConstructor } }
+            return expectedType?.let { AnonymousTypeSubstitutor.safeSubstitute(it.unwrap()) }
         }
+    }
+}
+
+private object AnonymousTypeSubstitutor : NewTypeSubstitutor {
+    override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
+        val declarationDescriptor = constructor.declarationDescriptor
+        if (declarationDescriptor is ClassifierDescriptor && DescriptorUtils.isAnonymousObject(declarationDescriptor)) {
+            return constructor.supertypes.firstOrNull()?.unwrap()
+        }
+
+        return null
     }
 }

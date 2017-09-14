@@ -21,20 +21,24 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface ClassifierUsageChecker {
     fun check(
             targetDescriptor: ClassifierDescriptor,
             trace: BindingTrace,
             element: PsiElement,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
+            deprecationResolver: DeprecationResolver
     )
 
     companion object {
@@ -42,6 +46,7 @@ interface ClassifierUsageChecker {
                 declarations: Collection<PsiElement>,
                 trace: BindingTrace,
                 languageVersionSettings: LanguageVersionSettings,
+                deprecationResolver: DeprecationResolver,
                 checkers: Iterable<ClassifierUsageChecker>
         ) {
             val visitor = object : KtTreeVisitorVoid() {
@@ -58,15 +63,18 @@ interface ClassifierUsageChecker {
 
                     runCheckersWithTarget(target, expression)
 
-                    if (isReferenceToCompanionViaOuterClass(expression, target)) {
+                    getReferenceToCompanionViaClassifier(expression, target)?.let { referenceClassifier ->
                         val outerClass = target.containingDeclaration as ClassDescriptor
                         runCheckersWithTarget(outerClass, expression)
+                        if (referenceClassifier is TypeAliasDescriptor) {
+                            runCheckersWithTarget(referenceClassifier, expression)
+                        }
                     }
                 }
 
                 private fun runCheckersWithTarget(target: ClassifierDescriptor, expression: KtReferenceExpression) {
                     for (checker in checkers) {
-                        checker.check(target, trace, expression, languageVersionSettings)
+                        checker.check(target, trace, expression, languageVersionSettings, deprecationResolver)
                     }
                 }
 
@@ -84,12 +92,9 @@ interface ClassifierUsageChecker {
                     return targets.filterIsInstance<ClassifierDescriptor>().singleOrNull()
                 }
 
-                /**
-                 * @return true iff [expression] references the companion of a class Foo via the name Foo, e.g. in `Foo.bar()`
-                 */
-                private fun isReferenceToCompanionViaOuterClass(expression: KtReferenceExpression, target: ClassifierDescriptor?): Boolean {
-                    return DescriptorUtils.isCompanionObject(target) &&
-                           trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression) != null
+                private fun getReferenceToCompanionViaClassifier(expression: KtReferenceExpression, target: ClassifierDescriptor): ClassifierDescriptor? {
+                    if (!DescriptorUtils.isCompanionObject(target)) return null
+                    return trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression)
                 }
             }
 

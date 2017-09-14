@@ -277,8 +277,6 @@ public abstract class KotlinBuiltIns {
 
         public final FqNameUnsafe functionSupertype = fqNameUnsafe("Function");
 
-
-
         public final FqName throwable = fqName("Throwable");
         public final FqName comparable = fqName("Comparable");
 

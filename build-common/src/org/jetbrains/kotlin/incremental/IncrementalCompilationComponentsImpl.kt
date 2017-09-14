@@ -16,17 +16,13 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 
 class IncrementalCompilationComponentsImpl(
-        private val caches: Map<TargetId, IncrementalCache>,
-        private val lookupTracker: LookupTracker
+        private val caches: Map<TargetId, IncrementalCache>
 ): IncrementalCompilationComponents {
     override fun getIncrementalCache(target: TargetId): IncrementalCache =
             caches[target] ?: throw Exception("Incremental cache for target ${target.name} not found")
-
-    override fun getLookupTracker(): LookupTracker = lookupTracker
 }

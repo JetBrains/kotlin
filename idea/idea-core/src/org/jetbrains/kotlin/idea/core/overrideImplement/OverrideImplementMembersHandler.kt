@@ -106,8 +106,7 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
                 selectedElements: Collection<OverrideMemberChooserObject>,
                 copyDoc: Boolean
         ) {
-            val project = classOrObject.project
-            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project, copyDoc) })
+            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(classOrObject, copyDoc) })
         }
     }
 }

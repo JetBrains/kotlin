@@ -4,6 +4,7 @@ package a
 
 import org.springframework.stereotype.Component
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.ComponentScan
 
 @Component
 open class FooBean {

@@ -1,4 +1,4 @@
-public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0)
@@ -23,7 +23,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public int describeContents() {
         LABEL (L0)
-        LINENUMBER (8)
+        LINENUMBER (9)
           BIPUSH (100)
           IRETURN
         LABEL (L1)

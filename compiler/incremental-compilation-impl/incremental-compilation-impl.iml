@@ -17,5 +17,10 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" name="junit-4.12" level="project" />
+    <orderEntry type="module" module-name="js.frontend" />
+    <orderEntry type="module" module-name="js.translator" />
+    <orderEntry type="module" module-name="js.serializer" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="jps" level="project" />
   </component>
 </module>

@@ -29,10 +29,9 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
@@ -85,9 +84,7 @@ class KotlinChangeSignatureData(
 
     override val primaryCallables: Collection<KotlinCallableDefinitionUsage<PsiElement>> by lazy {
         descriptorsForSignatureChange.map {
-            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.project, it)?.let {
-                (it as? KtDeclaration)?.liftToHeader() ?: it
-            }
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.project, it)
             assert(declaration != null) { "No declaration found for " + baseDescriptor }
             KotlinCallableDefinitionUsage(declaration!!, it, null, null)
         }
@@ -99,13 +96,21 @@ class KotlinChangeSignatureData(
 
     override val affectedCallables: Collection<UsageInfo> by lazy {
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
-            val primaryDeclaration = primaryFunction.declaration as? KtCallableDeclaration ?: return@flatMapTo emptyList()
+            val primaryDeclaration = primaryFunction.declaration as? KtDeclaration ?: return@flatMapTo emptyList()
 
-            if (primaryDeclaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
-                return@flatMapTo primaryDeclaration.headerImplementations().map {
-                    KotlinCallableDefinitionUsage<PsiElement>(it, it.resolveToDescriptor() as CallableDescriptor, primaryFunction, null)
+            if (primaryDeclaration.isHeaderOrHeaderClassMember()) {
+                return@flatMapTo primaryDeclaration.headerImplementations().mapNotNull {
+                    val descriptor = it.resolveToDescriptor()
+                    val callableDescriptor = when (descriptor) {
+                        is CallableDescriptor -> descriptor
+                        is ClassDescriptor -> descriptor.unsubstitutedPrimaryConstructor ?: return@mapNotNull null
+                        else -> return@mapNotNull null
+                    }
+                    KotlinCallableDefinitionUsage<PsiElement>(it, callableDescriptor, primaryFunction, null)
                 }
             }
+
+            if (primaryDeclaration !is KtCallableDeclaration) return@flatMapTo emptyList()
 
             primaryDeclaration.toLightMethods().flatMap { baseMethod ->
                 OverridingMethodsSearch

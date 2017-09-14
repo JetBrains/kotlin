@@ -206,10 +206,11 @@ class ForConverter(
         if (indicesRange != null) return indicesRange
 
         val startConverted = codeConverter.convertExpression(start)
-        return if (reversed)
-            DownToExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else +1))
-        else
-            RangeExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else -1))
+        return when {
+            reversed -> DownToExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else +1))
+            bound !is PsiLiteralExpression && !inclusiveComparison -> UntilExpression(startConverted, convertBound(bound, 0))
+            else -> RangeExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else -1))
+        }
     }
 
     private fun indicesIterationRange(start: PsiExpression, bound: PsiExpression, reversed: Boolean, inclusiveComparison: Boolean): Expression? {
@@ -235,7 +236,7 @@ class ForConverter(
         // check if it's iteration through list indices
         if (collectionSize is PsiMethodCallExpression && collectionSize.argumentList.expressions.isEmpty()) {
             val methodExpr = collectionSize.methodExpression
-            if (methodExpr is PsiReferenceExpression && methodExpr.referenceName == "size") {
+            if (methodExpr.referenceName == "size") {
                 val qualifier = methodExpr.qualifierExpression
                 if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
                     val collectionType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)

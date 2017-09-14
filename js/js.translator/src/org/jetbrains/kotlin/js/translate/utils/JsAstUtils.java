@@ -158,34 +158,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression charToBoxedChar(@NotNull JsExpression expression) {
-        JsInvocation invocation = invokeKotlinFunction("toBoxedChar", unnestBoxing(expression));
-        invocation.setSource(expression.getSource());
-        return withBoxingMetadata(invocation);
-    }
-
-    @NotNull
-    public static JsExpression boxedCharToChar(@NotNull JsExpression expression) {
-        JsInvocation invocation = invokeKotlinFunction("unboxChar", unnestBoxing(expression));
-        invocation.setSource(expression.getSource());
-        return withBoxingMetadata(invocation);
-    }
-
-    @NotNull
-    private static JsExpression unnestBoxing(@NotNull JsExpression expression) {
-        if (expression instanceof JsInvocation && MetadataProperties.getBoxing((JsInvocation) expression)) {
-            return ((JsInvocation) expression).getArguments().get(0);
-        }
-        return expression;
-    }
-
-    @NotNull
-    private static JsInvocation withBoxingMetadata(@NotNull JsInvocation call) {
-        MetadataProperties.setBoxing(call, true);
-        return call;
-    }
-
-    @NotNull
     public static JsExpression toShort(@NotNull JsExpression expression) {
         return invokeKotlinFunction(OperatorConventions.SHORT.getIdentifier(), expression);
     }
@@ -472,7 +444,7 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value, @Nullable SourceElement source) {
+    public static JsStatement defineSimpleProperty(@NotNull JsName name, @NotNull JsExpression value, @Nullable SourceElement source) {
         JsExpression assignment = assignment(new JsNameRef(name, new JsThisRef()), value);
         if (source != null) {
             assignment.setSource(KotlinSourceElementKt.getPsi(source));

@@ -17,5 +17,5 @@
 package org.jetbrains.kotlin.codegen
 
 interface PackagePartRegistry {
-    fun addPart(partShortName: String, facadeShortName: String?)
+    fun addPart(partInternalName: String, facadeInternalName: String?)
 }

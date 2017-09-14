@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
@@ -46,13 +45,14 @@ import java.util.jar.Attributes
 import java.util.jar.Manifest
 import kotlin.LazyThreadSafetyMode.NONE
 
-internal class ClasspathRootsResolver(
+class ClasspathRootsResolver(
         private val psiManager: PsiManager,
         private val messageCollector: MessageCollector?,
         private val additionalModules: List<String>,
-        private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?
+        private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
+        private val javaModuleFinder: CliJavaModuleFinder,
+        private val requireStdlibModule: Boolean
 ) {
-    val javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
@@ -179,14 +179,15 @@ internal class ClasspathRootsResolver(
 
         if (javaModuleFinder.allObservableModules.none()) return
 
+        val sourceModule = sourceModules.singleOrNull()
         val addAllModulePathToRoots = "ALL-MODULE-PATH" in additionalModules
-        if (addAllModulePathToRoots && sourceModules.isNotEmpty()) {
+        if (addAllModulePathToRoots && sourceModule != null) {
             report(ERROR, "-Xadd-modules=ALL-MODULE-PATH can only be used when compiling the unnamed module")
             return
         }
 
         val rootModules = when {
-            sourceModules.isNotEmpty() -> listOf(sourceModules.single().name) + additionalModules
+            sourceModule != null -> listOf(sourceModule.name) + additionalModules
             addAllModulePathToRoots -> modules.map(JavaModule::name)
             else -> computeDefaultRootModules() + additionalModules
         }
@@ -216,6 +217,15 @@ internal class ClasspathRootsResolver(
                         if (module.isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE
                 ))
             }
+        }
+
+        if (requireStdlibModule && sourceModule != null && "kotlin.stdlib" !in allDependencies) {
+            report(
+                    ERROR,
+                    "The Kotlin standard library is not found in the module graph. " +
+                    "Please ensure you have the 'requires kotlin.stdlib' clause in your module definition",
+                    sourceModule.moduleInfoFile
+            )
         }
     }
 

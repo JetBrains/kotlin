@@ -124,7 +124,7 @@ object InlineTestUtil {
                     return null
                 }
 
-                override fun visitMethod(access: Int, name: String, desc: String, signature: String, exceptions: Array<String>): MethodVisitor? {
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
                     if (skipMethodsOfThisClass) {
                         return null
                     }

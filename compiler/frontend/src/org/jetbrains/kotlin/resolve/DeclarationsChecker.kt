@@ -237,7 +237,7 @@ class DeclarationsChecker(
     private fun checkTypeAliasExpansion(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
         val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
         val reportStrategy = TypeAliasDeclarationCheckingReportStrategy(trace, typeAliasDescriptor, declaration)
-        TypeAliasExpander(reportStrategy).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
+        TypeAliasExpander(reportStrategy, true).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
     }
 
     private fun checkConstructorDeclaration(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
@@ -441,7 +441,7 @@ class DeclarationsChecker(
         for (parameter in declaration.valueParameters) {
             trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
                 modifiersChecker.checkModifiersForDeclaration(parameter, it)
-                checkPropertyLateInit(parameter, it)
+                LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it)
             }
         }
 
@@ -539,7 +539,7 @@ class DeclarationsChecker(
         if (containingDeclaration is ClassDescriptor) {
             checkMemberProperty(property, propertyDescriptor, containingDeclaration)
         }
-        checkPropertyLateInit(property, propertyDescriptor)
+        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, property, propertyDescriptor)
         checkPropertyInitializer(property, propertyDescriptor)
         checkAccessors(property, propertyDescriptor)
         checkTypeParameterConstraints(property)
@@ -572,64 +572,6 @@ class DeclarationsChecker(
             if (typeParameterPsi is KtTypeParameter) {
                 trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on(typeParameterPsi))
             }
-        }
-    }
-
-    private fun checkPropertyLateInit(property: KtCallableDeclaration, propertyDescriptor: PropertyDescriptor) {
-        val modifierList = property.modifierList ?: return
-        val modifier = modifierList.getModifier(KtTokens.LATEINIT_KEYWORD) ?: return
-
-        if (!propertyDescriptor.isVar) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable properties"))
-        }
-
-        var returnTypeIsNullable = true
-        var returnTypeIsPrimitive = true
-
-        val returnType = propertyDescriptor.returnType
-        if (returnType != null) {
-            returnTypeIsNullable = TypeUtils.isNullableType(returnType)
-            returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType)
-        }
-
-        if (returnTypeIsNullable) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on nullable properties"))
-        }
-
-        if (returnTypeIsPrimitive) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primitive type properties"))
-        }
-
-        val isAbstract = propertyDescriptor.modality == Modality.ABSTRACT
-        if (isAbstract) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on abstract properties"))
-        }
-
-        if (property is KtParameter) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primary constructor parameters"))
-        }
-
-        var hasDelegateExpressionOrInitializer = false
-        if (property is KtProperty && property.hasDelegateExpressionOrInitializer()) {
-            hasDelegateExpressionOrInitializer = true
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier,
-                                                           "is not allowed on properties with initializer or on delegated properties"))
-        }
-
-        val hasAccessorImplementation = propertyDescriptor.hasAccessorImplementation()
-
-        if (!hasDelegateExpressionOrInitializer && hasAccessorImplementation) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties with a custom getter or setter"))
-        }
-
-        val hasBackingField = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false
-
-        if (!isAbstract && !hasAccessorImplementation && !hasDelegateExpressionOrInitializer && !hasBackingField) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties without backing field"))
-        }
-
-        if (propertyDescriptor.extensionReceiverParameter != null) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on extension properties"))
         }
     }
 
@@ -975,7 +917,7 @@ class DeclarationsChecker(
             return !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
         }
 
-        private fun PropertyDescriptor.hasAccessorImplementation(): Boolean {
+        fun PropertyDescriptor.hasAccessorImplementation(): Boolean {
             getter?.let { if (it.hasBody()) return true }
             setter?.let { if (it.hasBody()) return true }
             return false

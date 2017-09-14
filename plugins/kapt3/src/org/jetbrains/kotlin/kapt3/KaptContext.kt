@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3
 
+import com.intellij.openapi.project.Project
 import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
@@ -34,6 +35,7 @@ import javax.tools.JavaFileManager
 
 class KaptContext<out GState : GenerationState?>(
         val logger: KaptLogger,
+        val project: Project,
         val bindingContext: BindingContext,
         val compiledClasses: List<ClassNode>,
         val origins: Map<Any, JvmDeclarationOrigin>,
@@ -50,7 +52,7 @@ class KaptContext<out GState : GenerationState?>(
     init {
         KaptJavaLog.preRegister(context, logger.messageCollector)
         JavacFileManager.preRegister(context)
-        KaptTreeMaker.preRegister(context)
+        KaptTreeMaker.preRegister(context, this)
         KaptJavaCompiler.preRegister(context)
 
         fileManager = context.get(JavaFileManager::class.java) as JavacFileManager

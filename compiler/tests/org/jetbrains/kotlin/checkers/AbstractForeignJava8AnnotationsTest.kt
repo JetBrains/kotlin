@@ -18,5 +18,5 @@ package org.jetbrains.kotlin.checkers
 
 abstract class AbstractForeignJava8AnnotationsTest : AbstractForeignAnnotationsTest() {
     override val annotationsPath: String
-        get() = "compiler/testData/foreignAnnotationsJava8/annotations"
+        get() = "third-party/jdk8-annotations"
 }

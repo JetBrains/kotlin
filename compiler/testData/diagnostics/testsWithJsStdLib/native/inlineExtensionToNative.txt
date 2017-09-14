@@ -4,7 +4,7 @@ public inline fun A.foo(/*0*/ x: kotlin.Int): kotlin.String
 public operator inline fun A.get(/*0*/ x: kotlin.Int): kotlin.String
 public operator inline fun A.B.get(/*0*/ x: kotlin.Int): kotlin.String
 
-public external final class A {
+public final external class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.Jsr305State
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.utils.Jsr305State
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -93,8 +93,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var additionalJavaModules: Array<String>? by FreezableVar(null)
 
-    @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
+    @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertions for arguments of platform types")
     var noCallAssertions: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xno-receiver-assertions", description = "Don't generate not-null assertion for extension receiver arguments of platform types")
+    var noReceiverAssertions: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
     var noParamAssertions: Boolean by FreezableVar(false)
@@ -148,6 +151,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xuse-javac", description = "Use javac for Java source and class files analysis")
     var useJavac: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xcompile-java", description = "Reuse javac analysis and compile Java source files")
+    var compileJava by FreezableVar(false)
+
     @Argument(
             value = "-Xjavac-arguments",
             valueDescription = "<option[,]>",
@@ -155,19 +161,25 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var javacArguments: Array<String>? by FreezableVar(null)
 
     @Argument(
-            value = "-Xjsr305-annotations",
-            valueDescription = "{ignore|enable}",
-            description = "Specify global behavior for JSR-305 nullability annotations: ignore, or treat as other supported nullability annotations"
+            value = "-Xjsr305",
+            valueDescription = "{ignore|strict|warn}",
+            description = "Specify global behavior for JSR-305 nullability annotations: ignore, treat as other supported nullability annotations, or report a warning"
     )
-    var jsr305GlobalReportLevel: String? by FreezableVar(Jsr305State.DEFAULT.description)
+    var jsr305: String? by FreezableVar(Jsr305State.DEFAULT.description)
+
+    @Argument(
+            value = "-Xno-exception-on-explicit-equals-for-boxed-null",
+            description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
+    )
+    var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 
     override fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags()
-        Jsr305State.findByDescription(jsr305GlobalReportLevel)?.let {
-            result.put(AnalysisFlag.loadJsr305Annotations, it)
+        Jsr305State.findByDescription(jsr305)?.let {
+            result.put(AnalysisFlag.jsr305, it)
         }
         return result
     }

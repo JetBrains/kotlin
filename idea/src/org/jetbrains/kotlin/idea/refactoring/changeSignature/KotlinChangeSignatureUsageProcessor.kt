@@ -229,8 +229,6 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         for (reference in findReferences(functionPsi)) {
             val element = reference.element
 
-            if (functionPsi is KtClass && reference.resolve() !== functionPsi) continue
-
             if (element is KtReferenceExpression) {
                 var parent = element.parent
 
@@ -401,7 +399,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         if (method.containingClass == null) return
 
         val containingDescriptor = method.getJavaMethodDescriptor()?.containingDeclaration as? JavaClassDescriptor ?: return
-        if (containingDescriptor.functionTypeForSamInterface == null) return
+        if (containingDescriptor.defaultFunctionTypeForSamInterface == null) return
         val samClass = method.containingClass ?: return
 
         for (ref in ReferencesSearch.search(samClass)) {

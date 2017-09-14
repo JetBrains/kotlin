@@ -42,6 +42,18 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
         doTest(fileName);
     }
 
+    @TestMetadata("customParcelablesDifferentModule.kt")
+    public void testCustomParcelablesDifferentModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesDifferentModule.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("customParcelablesSameModule.kt")
+    public void testCustomParcelablesSameModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesSameModule.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("customSimple.kt")
     public void testCustomSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimple.kt");
@@ -51,6 +63,12 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
     @TestMetadata("customSimpleWithNewArray.kt")
     public void testCustomSimpleWithNewArray() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimpleWithNewArray.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("describeContentsFromSuperType.kt")
+    public void testDescribeContentsFromSuperType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/describeContentsFromSuperType.kt");
         doTest(fileName);
     }
 
@@ -75,6 +93,12 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
     @TestMetadata("nullableNotNullSize.kt")
     public void testNullableNotNullSize() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/nullableNotNullSize.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parcelable.kt")
+    public void testParcelable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/parcelable.kt");
         doTest(fileName);
     }
 

@@ -16,13 +16,33 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.uast.UBlockExpression
-import org.jetbrains.uast.UElement
+import org.jetbrains.uast.*
 
 class KotlinUBlockExpression(
         override val psi: KtBlockExpression,
         override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UBlockExpression, KotlinUElementWithType {
+
     override val expressions by lz { psi.statements.map { KotlinConverter.convertOrEmpty(it, this) } }
+
+    private class KotlinLazyUBlockExpression(
+            override val uastParent: UElement?,
+            expressionProducer: (expressionParent: UElement?) -> List<UExpression>
+    ) : UBlockExpression {
+        override val psi: PsiElement? = null
+        override val annotations: List<UAnnotation> = emptyList()
+        override val expressions by lz { expressionProducer(this) }
+    }
+
+    companion object {
+        fun create(initializers: List<KtAnonymousInitializer>, uastParent: UElement): UBlockExpression {
+            val languagePlugin = uastParent.getLanguagePlugin()
+            return KotlinLazyUBlockExpression(uastParent) { expressionParent ->
+                initializers.map { languagePlugin.convertOpt<UExpression>(it.body, expressionParent) ?: UastEmptyExpression }
+            }
+        }
+    }
 }

@@ -14,8 +14,8 @@
         <extensionPoint name="syntheticResolveExtension"
                         interface="org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension"
                         area="IDEA_PROJECT"/>
-        <extensionPoint name="findUsagesHandlerDecorator"
-                        interface="org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator"
+        <extensionPoint name="jsSyntheticTranslateExtension"
+                        interface="org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension"
                         area="IDEA_PROJECT"/>
         <extensionPoint name="simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
@@ -47,5 +47,7 @@
                         interface="org.jetbrains.kotlin.script.ScriptHelper"/>
         <extensionPoint name="completionInformationProvider"
                         interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
+        <extensionPoint name="moduleBuilder"
+                        interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
     </extensionPoints>
 </idea-plugin>

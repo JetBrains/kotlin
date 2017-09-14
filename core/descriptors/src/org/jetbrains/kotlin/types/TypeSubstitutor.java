@@ -134,6 +134,21 @@ public class TypeSubstitutor {
 
         // The type is within the substitution range, i.e. T or T?
         KotlinType type = originalProjection.getType();
+        if (type instanceof TypeWithEnhancement) {
+            KotlinType origin = ((TypeWithEnhancement) type).getOrigin();
+            KotlinType enhancement = ((TypeWithEnhancement) type).getEnhancement();
+
+            TypeProjection substitution = unsafeSubstitute(
+                    new TypeProjectionImpl(originalProjection.getProjectionKind(), origin),
+                    recursionDepth + 1
+            );
+
+            KotlinType substitutedEnhancement = substitute(enhancement, originalProjection.getProjectionKind());
+            KotlinType resultingType = TypeWithEnhancementKt.wrapEnhancement(substitution.getType().unwrap(), substitutedEnhancement);
+
+            return new TypeProjectionImpl(substitution.getProjectionKind(), resultingType);
+        }
+
         if (DynamicTypesKt.isDynamic(type) || type.unwrap() instanceof RawType) {
             return originalProjection; // todo investigate
         }

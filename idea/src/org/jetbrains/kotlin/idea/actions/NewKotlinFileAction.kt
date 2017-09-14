@@ -39,6 +39,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
@@ -118,7 +119,9 @@ class NewKotlinFileAction
                     val names = className.trim().split(splitChar)
 
                     for (dirName in names.dropLast(1)) {
-                        targetDir = targetDir.findSubdirectory(dirName) ?: targetDir.createSubdirectory(dirName)
+                        targetDir = targetDir.findSubdirectory(dirName) ?: runWriteAction {
+                            targetDir.createSubdirectory(dirName)
+                        }
                     }
 
                     className = names.last()

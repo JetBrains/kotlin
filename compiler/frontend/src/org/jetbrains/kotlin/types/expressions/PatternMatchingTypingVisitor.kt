@@ -462,7 +462,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (subjectType.containsError() || targetType.containsError()) return
 
         val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue)
-        if (CastDiagnosticsUtil.isRefinementUseless(possibleTypes, targetType, KotlinTypeChecker.DEFAULT, false)) {
+        if (CastDiagnosticsUtil.isRefinementUseless(possibleTypes, targetType, false)) {
             context.trace.report(Errors.USELESS_IS_CHECK.on(isCheck, !negated))
         }
     }

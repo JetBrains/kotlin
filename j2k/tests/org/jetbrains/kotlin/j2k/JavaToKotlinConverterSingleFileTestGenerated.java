@@ -1508,6 +1508,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassWithAnnotations.java")
+        public void testDataClassWithAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClassWithAnnotations.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassWithMutableField.java")
         public void testDataClassWithMutableField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClassWithMutableField.java");
@@ -1781,6 +1787,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("deprecatedDocTag.java")
         public void testDeprecatedDocTag() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTag.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deprecatedDocTagWithAnnotation.java")
+        public void testDeprecatedDocTagWithAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTagWithAnnotation.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deprecatedDocTagWithMultiLineMessage.java")
+        public void testDeprecatedDocTagWithMultiLineMessage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTagWithMultiLineMessage.java");
             doTest(fileName);
         }
 
@@ -2924,6 +2942,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("kt-14248.java")
         public void testKt_14248() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-14248.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt-17379.java")
+        public void testKt_17379() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-17379.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt-19634.java")
+        public void testKt_19634() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-19634.java");
             doTest(fileName);
         }
 

@@ -21,7 +21,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectUtil
+import com.intellij.openapi.project.isProjectOrWorkspaceFile
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
@@ -35,6 +35,8 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
@@ -166,7 +168,7 @@ internal class ScriptDependenciesUpdater(
             currentTimeStamp: TimeStamp,
             scriptDef: KotlinScriptDefinition,
             doResolve: suspend () -> DependenciesResolver.ResolveResult
-    ) = launch(dispatcher) {
+    ) = launch(dispatcher + project.cancelOnDisposal) {
         val result = try {
             doResolve()
         }
@@ -231,7 +233,9 @@ internal class ScriptDependenciesUpdater(
             rootsChangesRunnable.invoke()
         }
         else {
-            application.invokeLater(rootsChangesRunnable, ModalityState.defaultModalityState())
+            launch(EDT(project)) {
+                rootsChangesRunnable()
+            }
         }
     }
 
@@ -250,7 +254,7 @@ internal class ScriptDependenciesUpdater(
                     it.file?.takeIf {
                         // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims
                         // TODO: find out the reason, then consider to fix tests and remove this check
-                        (application.isUnitTestMode || projectFileIndex.isInContent(it)) && !ProjectUtil.isProjectOrWorkspaceFile(it)
+                        (application.isUnitTestMode || projectFileIndex.isInContent(it)) && !isProjectOrWorkspaceFile(it)
                     }
                 })) {
                     notifyRootsChanged()

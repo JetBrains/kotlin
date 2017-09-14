@@ -89,6 +89,18 @@ interface IdentifierInfo {
         override fun toString() = "$receiverInfo${if (safe) "?." else "."}$selectorInfo"
     }
 
+    data class SafeCast(
+            val subjectInfo: IdentifierInfo,
+            val subjectType: KotlinType?,
+            val targetType: KotlinType?
+    ) : IdentifierInfo {
+        override val kind get() = OTHER
+
+        override val canBeBound get() = subjectInfo.canBeBound
+
+        override fun toString() = "$subjectInfo as? ${targetType ?: "???"}"
+    }
+
     companion object {
 
         fun qualified(

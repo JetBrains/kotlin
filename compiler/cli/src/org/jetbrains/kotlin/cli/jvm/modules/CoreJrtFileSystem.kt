@@ -20,30 +20,20 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.ConcurrentFactoryMap
+import com.intellij.util.io.URLUtil
 import java.io.File
 import java.net.URI
 import java.net.URLClassLoader
-import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 
 // There's JrtFileSystem in idea-full which we can't use in the compiler because it depends on NewVirtualFileSystem, absent in intellij-core
-class CoreJrtFileSystem(private val fileSystem: FileSystem) : DeprecatedVirtualFileSystem() {
-    override fun getProtocol(): String = StandardFileSystems.JRT_PROTOCOL
-
-    private fun findFileByPath(path: Path): VirtualFile? =
-            if (Files.exists(path)) CoreLocalPathVirtualFile(this, path) else null
-
-    override fun findFileByPath(path: String): VirtualFile? =
-            findFileByPath(fileSystem.getPath(path))
-
-    override fun refresh(asynchronous: Boolean) {}
-
-    override fun refreshAndFindFileByPath(path: String): VirtualFile? = findFileByPath(path)
-
-    companion object {
-        fun create(jdkHome: File): CoreJrtFileSystem? {
+class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
+    private val handlers = object : ConcurrentFactoryMap<String, CoreJrtHandler?>() {
+        override fun create(jdkHomePath: String): CoreJrtHandler? {
+            val jdkHome = File(jdkHomePath)
             val rootUri = URI.create(StandardFileSystems.JRT_PROTOCOL + ":/")
             val jrtFsJar = loadJrtFsJar(jdkHome) ?: return null
             val fileSystem =
@@ -54,9 +44,43 @@ class CoreJrtFileSystem(private val fileSystem: FileSystem) : DeprecatedVirtualF
                         val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
                         FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
                     }
-            return CoreJrtFileSystem(fileSystem)
+            return CoreJrtHandler(this@CoreJrtFileSystem, jdkHomePath, fileSystem.getPath(""))
         }
+    }
 
+    internal class CoreJrtHandler(
+            val virtualFileSystem: CoreJrtFileSystem,
+            val jdkHomePath: String,
+            private val root: Path
+    ) {
+        fun findFile(fileName: String): VirtualFile? {
+            val path = root.resolve(fileName)
+            return if (Files.exists(path)) CoreJrtVirtualFile(this, path) else null
+        }
+    }
+
+    override fun getProtocol(): String = StandardFileSystems.JRT_PROTOCOL
+
+    override fun findFileByPath(path: String): VirtualFile? {
+        val (jdkHomePath, pathInImage) = splitPath(path)
+        return handlers[jdkHomePath]?.findFile(pathInImage)
+    }
+
+    private fun splitPath(path: String): Pair<String, String> {
+        val separator = path.indexOf(URLUtil.JAR_SEPARATOR)
+        if (separator < 0) {
+            throw IllegalArgumentException("Path in CoreJrtFileSystem must contain a separator: $path")
+        }
+        val localPath = path.substring(0, separator)
+        val pathInJar = path.substring(separator + 2)
+        return Pair(localPath, pathInJar)
+    }
+
+    override fun refresh(asynchronous: Boolean) {}
+
+    override fun refreshAndFindFileByPath(path: String): VirtualFile? = findFileByPath(path)
+
+    companion object {
         private fun loadJrtFsJar(jdkHome: File): File? =
                 File(jdkHome, "lib/jrt-fs.jar").takeIf(File::exists)
 

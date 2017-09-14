@@ -70,31 +70,31 @@ the Kotlin IntelliJ IDEA plugin:
 The following source code is used for testing the Kotlin compiler and/or plugin and is not incorporated into 
 any distributions of the compiler, libraries or plugin:
 
- - Path: compiler/testData/foreignAnnotations/annotations/android
+ - Path: third-party/annotations/android
       - License: Apache 2 (license/third_party/aosp_license.txt)
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
 
- - Path: compiler/testData/foreignAnnotations/annotations/com/android
+ - Path: third-party/annotations/com/android
       - License: Apache 2 (license/third_party/aosp_license.txt)
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
 
- - Path: compiler/testData/foreignAnnotations/annotations/org/eclipse
+ - Path: third-party/annotations/org/eclipse
        - License: Eclipse Public License v1.0 (license/third_party/testdata/eclipse_license.txt)
        - Origin: Eclipse JDT, Copyright (c) 2011, 2013 Stephan Herrmann and others.
 
- - Path: compiler/testData/foreignAnnotations/annotations/edu/umd/cs/findbugs
+ - Path: third-party/annotations/edu/umd/cs/findbugs
        - License: LGPL 2.1 (license/third_party/testdata/findbugs_license.txt)
        - Origin: Bytecode Analysis Framework, Copyright (C) 2005 University of Maryland
    
- - Path: compiler/testData/foreignAnnotationsJava8/annotations/org/eclipse
+ - Path: third-party/jdk8-annotations/org/eclipse
        - License: Eclipse Public License v1.0 (license/third_party/testdata/eclipse_license.txt)
        - Origin: Eclipse JDT, Copyright (c) 2011, 2013 Stephan Herrmann and others.
 
- - Path: compiler/testData/foreignAnnotations/annotations/io/reactivex
+ - Path: third-party/annotations/io/reactivex
        - License: Apache 2 (license/third_party/testdata/rxjava_license.txt)
        - Origin: RxJava, Copyright (c) 2016-present, RxJava Contributors 
    
- - Path: compiler/testData/foreignAnnotations/annotations/lombok
+ - Path: third-party/annotations/lombok
        - License: MIT (license/third_party/testdata/lombok_license.txt)
        - Origin: Project Lombok, Copyright (C) 2009-2013 The Project Lombok Authors
  
@@ -103,6 +103,14 @@ any distributions of the compiler, libraries or plugin:
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
  
  - Path: idea/testData/android/lintQuickfix/requiresApi/RequiresApi.java
+      - License: Apache 2 (license/third_party/aosp_license.txt)
+      - Origin: Copyright (C) 2011-15 The Android Open Source Project
+      
+ - Path: idea/testData/android/lint/IntRange.java
+      - License: Apache 2 (license/third_party/aosp_license.txt)
+      - Origin: Copyright (C) 2011-15 The Android Open Source Project
+      
+ - Path: idea/testData/android/lint/RequiresPermission.java
       - License: Apache 2 (license/third_party/aosp_license.txt)
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
    

@@ -3,3 +3,30 @@ package
 public fun </*0*/ T> listOf(/*0*/ t: T): kotlin.collections.List<T>
 public fun test(): kotlin.Unit
 public fun </*0*/ T : p.Super> kotlin.collections.Collection<T>.foo(): T
+
+package p {
+
+    public open class Other {
+        public constructor Other()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public final var sub: p.Sub!
+        public final var subs: kotlin.collections.(Mutable)Collection<p.Sub!>!
+        public final var supers: kotlin.collections.(Mutable)Collection<p.Super!>!
+    }
+
+    public interface Sub : p.Super {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Super {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

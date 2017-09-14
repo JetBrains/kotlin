@@ -5,13 +5,15 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:10: error: 'impl' constructor of 'Foo' has no corresponding 'header' declaration
+The following declaration is incompatible because number of value parameters is different:
+    public constructor Foo()
+
     impl constructor(s: String) : this()
-    ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+         ^
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:5: error: 'impl' function 'nonPlatformFun' has no corresponding 'header' declaration
     impl fun nonPlatformFun() {}
     ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:5: error: 'impl' property 'nonPlatformVal' has no corresponding 'header' declaration
     impl val nonPlatformVal = ""
     ^
-

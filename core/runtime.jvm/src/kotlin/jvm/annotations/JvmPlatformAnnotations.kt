@@ -29,9 +29,9 @@ import kotlin.reflect.KClass
 @MustBeDocumented
 public annotation class JvmOverloads
 
-
 /**
- * Specifies that a static method or field needs to be generated from this element.
+ * Specifies that an additional static method needs to be generated from this element if it's a function.
+ * If this element is a property, additional static getter/setter methods should be generated.
  *
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#static-methods)
  * for more information.

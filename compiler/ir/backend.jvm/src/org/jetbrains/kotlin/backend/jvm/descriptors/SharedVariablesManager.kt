@@ -111,7 +111,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
             LocalVariableDescriptor(
                     variableDescriptor.containingDeclaration, variableDescriptor.annotations, variableDescriptor.name,
                     getSharedVariableType(variableDescriptor.type),
-                    false, false, variableDescriptor.source
+                    false, false, variableDescriptor.isLateInit, variableDescriptor.source
             )
 
     override fun defineSharedValue(sharedVariableDescriptor: VariableDescriptor, originalDeclaration: IrVariable): IrStatement {

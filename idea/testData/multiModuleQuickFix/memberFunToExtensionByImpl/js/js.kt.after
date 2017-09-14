@@ -1,0 +1,8 @@
+// "Convert member to extension" "true"
+
+impl class Foo {
+}
+
+impl fun Foo.foo(n: Int) {
+
+}

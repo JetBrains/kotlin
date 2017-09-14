@@ -47,12 +47,19 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private val perfCounter = PerformanceCounter.create("Find Java class")
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
+    private lateinit var packagePartProviders: List<JvmPackagePartProvider>
     private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = THashMap()
     private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
     private var useFastClassFilesReading = false
 
-    fun initialize(index: JvmDependenciesIndex, singleJavaFileRootsIndex: SingleJavaFileRootsIndex, useFastClassFilesReading: Boolean) {
+    fun initialize(
+            index: JvmDependenciesIndex,
+            packagePartProviders: List<JvmPackagePartProvider>,
+            singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
+            useFastClassFilesReading: Boolean
+    ) {
         this.index = index
+        this.packagePartProviders = packagePartProviders
         this.singleJavaFileRootsIndex = singleJavaFileRootsIndex
         this.useFastClassFilesReading = useFastClassFilesReading
     }
@@ -179,6 +186,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             found = true
             //abort on first found
             false
+        }
+        if (!found) {
+            found = packagePartProviders.any { it.findPackageParts(packageName).isNotEmpty() }
         }
         if (!found) {
             found = singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName).isNotEmpty()

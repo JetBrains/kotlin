@@ -131,7 +131,7 @@ object TopDownAnalyzerFacadeForJVM {
         val module = moduleContext.module
 
         val incrementalComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-        val lookupTracker = incrementalComponents?.getLookupTracker() ?: LookupTracker.DO_NOTHING
+        val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
 
         val separateModules = !configuration.getBoolean(JVMConfigurationKeys.USE_SINGLE_MODULE)
@@ -174,8 +174,6 @@ object TopDownAnalyzerFacadeForJVM {
                     packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder
             )
 
-            StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(dependenciesContainer, null) }
-
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get<JavaDescriptorResolver>()
 
             dependenciesContext.setDependencies(listOfNotNull(dependenciesContext.module, optionalBuiltInsModule))
@@ -202,8 +200,6 @@ object TopDownAnalyzerFacadeForJVM {
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get<DeserializationConfiguration>()
-
-            StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(this, null) }
         }
 
         moduleClassResolver.sourceCodeResolver = container.get<JavaDescriptorResolver>()

@@ -50,12 +50,12 @@ public class SamType {
     @NotNull
     public KotlinType getKotlinFunctionType() {
         //noinspection ConstantConditions
-        return getJavaClassDescriptor().getFunctionTypeForSamInterface();
+        return getJavaClassDescriptor().getDefaultFunctionTypeForSamInterface();
     }
 
     @NotNull
-    public SimpleFunctionDescriptor getAbstractMethod() {
-        return (SimpleFunctionDescriptor) SingleAbstractMethodUtils.getAbstractMembers(type).get(0);
+    public SimpleFunctionDescriptor getOriginalAbstractMethod() {
+        return (SimpleFunctionDescriptor) SingleAbstractMethodUtils.getAbstractMembers(getJavaClassDescriptor()).get(0);
     }
 
     @Override

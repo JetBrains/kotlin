@@ -2,7 +2,7 @@ package
 
 @kotlin.js.nativeInvoke public fun kotlin.Int.foo(/*0*/ a: kotlin.String): kotlin.Int
 
-public external final class Bar {
+public final external class Bar {
     public constructor Bar(/*0*/ b: kotlin.Int, /*1*/ c: kotlin.Char)
     @kotlin.js.nativeInvoke public final fun baz(/*0*/ d: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -17,17 +17,17 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import javax.lang.model.element.ElementKind
-import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
-import javax.lang.model.type.DeclaredType
 
 class SymbolBasedField(
         element: VariableElement,
+        containingClass: JavaClass,
         javac: JavacWrapper
-) : SymbolBasedMember<VariableElement>(element, javac), JavaField {
+) : SymbolBasedMember<VariableElement>(element, containingClass, javac), JavaField {
 
     override val isEnumEntry: Boolean
         get() = element.kind == ElementKind.ENUM_CONSTANT
@@ -36,12 +36,9 @@ class SymbolBasedField(
         get() = SymbolBasedType.create(element.asType(), javac)
 
     override val initializerValue: Any?
-        get() = element.constantValue
+        by lazy { element.constantValue }
 
     override val hasConstantNotNullInitializer: Boolean
-        get() = element.constantValue != null && element.asType().let {
-            it.kind.isPrimitive ||
-            ((it as? DeclaredType)?.asElement() as? TypeElement)?.qualifiedName?.toString() == "java.lang.String"
-        }
+        get() = initializerValue != null
 
 }

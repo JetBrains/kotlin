@@ -30,7 +30,7 @@ object KotlinStdJSProjectDescriptor : KotlinLightProjectDescriptor() {
     override fun getSdk(): Sdk? = null
 
     override fun configureModule(module: Module, model: ModifiableRootModel) {
-        val configuration = JSLibraryStdDescription(module.project).createNewLibraryForTests() ?: error("Configuration should exist")
+        val configuration = JSLibraryStdDescription(module.project).createNewLibraryForTests()
 
         val editor = NewLibraryEditor(configuration.libraryType, configuration.properties)
         configuration.addRoots(editor)

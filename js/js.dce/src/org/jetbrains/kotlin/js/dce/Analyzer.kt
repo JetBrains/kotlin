@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.dce
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.dce.Context.Node
+import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.context.Namer
 
@@ -30,6 +31,7 @@ class Analyzer(private val context: Context) : JsVisitor() {
     private val invocationsToSkip = mutableSetOf<JsInvocation>()
     val moduleMapping = mutableMapOf<JsStatement, String>()
     private val functionsToEnter = mutableSetOf<JsFunction>()
+    private val functionsToSkip = mutableSetOf<Context.Node>()
 
     val analysisResult = object : AnalysisResult {
         override val nodeMap: Map<JsNode, Node> get() = this@Analyzer.nodeMap
@@ -41,6 +43,8 @@ class Analyzer(private val context: Context) : JsVisitor() {
         override val functionsToEnter: Set<JsFunction> get() = this@Analyzer.functionsToEnter
 
         override val invocationsToSkip: Set<JsInvocation> get() = this@Analyzer.invocationsToSkip
+
+        override val functionsToSkip: Set<Context.Node> get() = this@Analyzer.functionsToSkip
     }
 
     override fun visitVars(x: JsVars) {
@@ -87,13 +91,13 @@ class Analyzer(private val context: Context) : JsVisitor() {
                     }
                 }
 
-                // Object.defineProperty()
                 when {
+                    // Object.defineProperty()
                     context.isObjectDefineProperty(function) ->
                         handleObjectDefineProperty(x, expression.arguments.getOrNull(0), expression.arguments.getOrNull(1),
                                                    expression.arguments.getOrNull(2))
 
-                // Kotlin.defineModule()
+                    // Kotlin.defineModule()
                     context.isDefineModule(function) ->
                         // (just remove it)
                         astNodesToEliminate += x
@@ -227,13 +231,25 @@ class Analyzer(private val context: Context) : JsVisitor() {
                         return leftNode
                     }
 
-                    // lhs = Kotlin.defineInlineFunction('fqn', function() { ... })
+                    // lhs = Kotlin.defineInlineFunction('fqn', <function declaration>)
+                    // where <function declaration> is one of
+                    //   - function() { ... }
+                    //   - wrapFunction(function() { ... })
                     if (context.isDefineInlineFunction(function) && rhs.arguments.size == 2) {
-                        leftNode.functions += rhs.arguments[1] as JsFunction
-                        val defineInlineFunctionNode = context.extractNode(function)
-                        if (defineInlineFunctionNode != null) {
-                            leftNode.dependencies += defineInlineFunctionNode
+                        tryExtractFunction(rhs.arguments[1])?.let { (inlineableFunction, additionalDeps) ->
+                            leftNode.functions += inlineableFunction
+                            val defineInlineFunctionNode = context.extractNode(function)
+                            if (defineInlineFunctionNode != null) {
+                                leftNode.dependencies += defineInlineFunctionNode
+                            }
+                            leftNode.dependencies += additionalDeps
+                            return leftNode
                         }
+                    }
+
+                    tryExtractFunction(rhs)?.let { (functionBody, additionalDeps) ->
+                        leftNode.functions += functionBody
+                        leftNode.dependencies += additionalDeps
                         return leftNode
                     }
                 }
@@ -247,7 +263,7 @@ class Analyzer(private val context: Context) : JsVisitor() {
                             val reassignValue = reassignment.arg2
                             if (reassignNode == secondNode && reassignNode != null && reassignValue is JsObjectLiteral &&
                                 reassignValue.propertyInitializers.isEmpty()
-                                    ) {
+                            ) {
                                 return processAssignment(node, lhs, rhs.arg1)
                             }
                         }
@@ -275,6 +291,31 @@ class Analyzer(private val context: Context) : JsVisitor() {
                 return leftNode
             }
         }
+        return null
+    }
+
+    private fun tryExtractFunction(expression: JsExpression): Pair<JsFunction, List<Context.Node>>? {
+        when (expression) {
+            is JsFunction -> return Pair(expression, emptyList())
+            is JsInvocation -> {
+                if (context.isWrapFunction(expression.qualifier)) {
+                    (expression.arguments.getOrNull(0) as? JsFunction)?.let { wrapper ->
+                        val statementsWithoutBody = wrapper.body.statements.filter { it !is JsReturn }
+                        JsBlock(statementsWithoutBody).let {
+                            context.addNodesForLocalVars(collectDefinedNames(it))
+                            accept(it)
+                        }
+
+                        val wrapperNode = context.extractNode(expression.qualifier)?.also {
+                            functionsToSkip += it
+                        }
+                        val body = wrapper.body.statements.filterIsInstance<JsReturn>().first().expression as JsFunction
+                        return Pair(body, listOfNotNull(wrapperNode))
+                    }
+                }
+            }
+        }
+
         return null
     }
 
@@ -318,6 +359,7 @@ class Analyzer(private val context: Context) : JsVisitor() {
     private fun enterFunction(function: JsFunction, arguments: List<JsExpression>) {
         functionsToEnter += function
         context.addNodesForLocalVars(function.collectLocalVariables())
+        context.markSpecialFunctions(function.body)
 
         for ((param, arg) in function.parameters.zip(arguments)) {
             if (arg is JsFunction && arg.name == null && isProperFunctionalParameter(arg.body, param)) {
@@ -336,6 +378,7 @@ class Analyzer(private val context: Context) : JsVisitor() {
     private fun enterFunctionWithGivenNodes(function: JsFunction, arguments: List<Node>) {
         functionsToEnter += function
         context.addNodesForLocalVars(function.collectLocalVariables())
+        context.markSpecialFunctions(function.body)
 
         for ((param, arg) in function.parameters.zip(arguments)) {
             val paramNode = context.nodes[param.name]!!

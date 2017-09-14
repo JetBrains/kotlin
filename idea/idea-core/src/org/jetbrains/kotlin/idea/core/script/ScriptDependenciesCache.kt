@@ -72,7 +72,7 @@ internal class ScriptDependenciesCache(private val project: Project) {
     private fun updateHighlighting(file: VirtualFile?) {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        launch(EDT) {
+        launch(EDT(project)) {
             if (file != null) {
                 file.let { PsiManager.getInstance(project).findFile(it) }?.let { psiFile ->
                     DaemonCodeAnalyzer.getInstance(project).restart(psiFile)

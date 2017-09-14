@@ -148,7 +148,8 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
 
     @Override
     public String getText() {
-        return "";
+        KtParameter origin = getKotlinOrigin();
+        return origin != null ? origin.getText() : "";
     }
 
     @Override
@@ -183,5 +184,16 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     @Override
     public boolean equals(Object obj) {
         return obj instanceof PsiElement && isEquivalentTo((PsiElement) obj);
+    }
+
+    @Override
+    public int hashCode() {
+        KtParameter kotlinOrigin = getKotlinOrigin();
+        if (kotlinOrigin != null) {
+            return kotlinOrigin.hashCode();
+        }
+        else {
+            return 0;
+        }
     }
 }

@@ -545,6 +545,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
 
+        @TestMetadata("sourceMapCharEscape.args")
+        public void testSourceMapCharEscape() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapCharEscape.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("sourceMapDuplicateRelativePaths.args")
         public void testSourceMapDuplicateRelativePaths() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapDuplicateRelativePaths.args");
@@ -668,6 +674,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsDceTest(fileName);
         }
 
+        @TestMetadata("parseError.args")
+        public void testParseError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/parseError.args");
+            doJsDceTest(fileName);
+        }
+
         @TestMetadata("printReachability.args")
         public void testPrintReachability() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/printReachability.args");
@@ -677,6 +689,12 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("simple.args")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/simple.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("withSourceMap.args")
+        public void testWithSourceMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/withSourceMap.args");
             doJsDceTest(fileName);
         }
     }

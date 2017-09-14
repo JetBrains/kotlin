@@ -31,8 +31,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinRuntimeTypeEvaluator
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinRuntimeTypeEvaluator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 
     override fun isApplicable(expression: KtExpression): Boolean {
+        if (!super.isApplicable(expression)) return false
+
         if (!expression.isPhysical) return false
         val file = expression.containingFile
         if (file !is KtCodeFragment) return false

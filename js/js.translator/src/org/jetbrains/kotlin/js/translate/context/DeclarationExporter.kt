@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
@@ -51,7 +51,7 @@ internal class DeclarationExporter(val context: StaticContext) {
 
         val qualifier = when {
             container is PackageFragmentDescriptor -> {
-                getLocalPackageReference(container.fqName)
+                getLocalPackageName(container.fqName).makeRef()
             }
             DescriptorUtils.isObject(container) -> {
                 JsAstUtils.prototypeOf(context.getInnerNameForDescriptor(container).makeRef())
@@ -129,31 +129,24 @@ internal class DeclarationExporter(val context: StaticContext) {
         statements += JsAstUtils.defineProperty(qualifier, name, propertyLiteral).exportStatement(declaration)
     }
 
-    private fun getLocalPackageReference(packageName: FqName): JsExpression {
+    fun getLocalPackageName(packageName: FqName): JsName {
         if (packageName.isRoot) {
-            return context.fragment.scope.declareName(Namer.getRootPackageName()).makeRef()
+            return context.fragment.scope.declareName(Namer.getRootPackageName())
         }
         var name = localPackageNames[packageName]
         if (name == null) {
             name = JsScope.declareTemporaryName("package$" + packageName.shortName().asString())
             localPackageNames[packageName] = name
             statements += definePackageAlias(packageName.shortName().asString(), name, packageName.asString(),
-                                             getLocalPackageReference(packageName.parent()))
+                                             getLocalPackageName(packageName.parent()).makeRef())
         }
-        return name.makeRef()
+        return name
     }
 
     private fun JsExpression.exportStatement(declaration: DeclarationDescriptor) = JsExpressionStatement(this).also {
         it.exportedTag = context.getTag(declaration)
     }
 
-    private fun EffectiveVisibility.publicOrInternal(): Boolean {
-        if (publicApi) return true
-        if (context.config.configuration.getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return false
-        return toVisibility() == Visibilities.INTERNAL
-    }
-
-    private fun MemberDescriptor.shouldBeExported(force: Boolean) =
-            force || effectiveVisibility(checkPublishedApi = true).publicOrInternal() || AnnotationsUtils.getJsNameAnnotation(this) != null
+    private fun MemberDescriptor.shouldBeExported(force: Boolean) = force || shouldBeExported(context.config)
 }
 

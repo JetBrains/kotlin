@@ -4,7 +4,7 @@ public fun bar(): kotlin.Unit
 public inline fun </*0*/ reified T> foo(/*0*/ x: T): kotlin.Unit
 public operator inline fun </*0*/ reified T> C.plus(/*0*/ other: T): C
 
-public external final class C : I {
+public final external class C : I {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

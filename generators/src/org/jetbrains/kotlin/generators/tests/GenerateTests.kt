@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDiagnosticsWithModifiedMockJdkTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
+import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
@@ -131,6 +132,7 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractMultiModuleRenameTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
+import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractMultiModuleSafeDeleteTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
@@ -141,6 +143,8 @@ import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
+import org.jetbrains.kotlin.incremental.AbstractIncrementalJsCompilerRunnerTest
+import org.jetbrains.kotlin.incremental.AbstractIncrementalJvmCompilerRunnerTest
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
@@ -150,11 +154,14 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
-import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
+import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
+import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
 import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
+import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
+import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
@@ -190,6 +197,8 @@ import java.util.*
 import java.util.regex.Pattern
 
 @Language("RegExp") private val KT_OR_KTS = """^(.+)\.(kt|kts)$"""
+@Language("RegExp") private val KT_OR_KTS_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.(kt|kts)$"""
+
 @Language("RegExp") private val KT_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.kt$"""
 
 fun main(args: Array<String>) {
@@ -203,7 +212,26 @@ fun main(args: Array<String>) {
             model("codegen/box/diagnostics")
         }
 
+        testClass<AbstractDiagnosticsUsingJavacTest> {
+            model("diagnostics/tests")
+            model("codegen/box/diagnostics")
+        }
+
+        testClass<AbstractJavacDiagnosticsTest> {
+            model("javac/diagnostics/tests")
+            model("javac/diagnostics/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
+        }
+
+        testClass<AbstractJavacFieldResolutionTest> {
+            model("javac/fieldsResolution/tests")
+            model("javac/fieldsResolution/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
+        }
+
         testClass<AbstractDiagnosticsTestWithStdLib> {
+            model("diagnostics/testsWithStdLib")
+        }
+
+        testClass<AbstractDiagnosticsTestWithStdLibUsingJavac> {
             model("diagnostics/testsWithStdLib")
         }
 
@@ -228,6 +256,18 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractForeignAnnotationsTest> {
+            model("foreignAnnotations/tests")
+        }
+
+        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathTest> {
+            model("foreignAnnotations/tests")
+        }
+
+        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest> {
+            model("foreignAnnotations/tests")
+        }
+
+        testClass<AbstractJavacForeignAnnotationsTest> {
             model("foreignAnnotations/tests")
         }
 
@@ -338,6 +378,17 @@ fun main(args: Array<String>) {
             model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava")
         }
 
+        testClass<AbstractLoadJavaUsingJavacTest> {
+            model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
+            model("loadJava/compiledJavaAndKotlin", extension = "txt", testMethod = "doTestCompiledJavaAndKotlin")
+            model("loadJava/compiledJavaIncludeObjectMethods", extension = "java", testMethod = "doTestCompiledJavaIncludeObjectMethods")
+            model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin")
+            model("loadJava/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib")
+            model("loadJava/javaAgainstKotlin", extension = "txt", testMethod = "doTestJavaAgainstKotlin")
+            model("loadJava/kotlinAgainstCompiledJavaWithKotlin", extension = "kt", testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin", recursive = false)
+            model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava")
+        }
+
         testClass<AbstractLoadKotlinWithTypeTableTest> {
             model("loadJava/compiledKotlin")
         }
@@ -418,7 +469,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompilerLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("local", "ideRegression"))
+            model("asJava/lightClasses", excludeDirs = listOf("local", "ideRegression"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractTypeBindingTest> {
@@ -458,15 +509,20 @@ fun main(args: Array<String>) {
             model("codegen/java8/box")
         }
 
-        testClass<AbstractDiagnosticsWithFullJdkTest>("DiagnosticsWithJava8TestGenerated") {
-            model("diagnostics/testsWithJava8")
-        }
-
         testClass<AbstractForeignJava8AnnotationsTest> {
             model("foreignAnnotationsJava8/tests")
         }
 
+        testClass<AbstractJavacForeignJava8AnnotationsTest> {
+            model("foreignAnnotationsJava8/tests")
+        }
+
         testClass<AbstractLoadJava8Test> {
+            model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
+            model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
+        }
+
+        testClass<AbstractLoadJava8UsingJavacTest> {
             model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
             model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
         }
@@ -616,12 +672,16 @@ fun main(args: Array<String>) {
         testClass<AbstractSurroundWithTest> {
             model("codeInsight/surroundWith/if", testMethod = "doTestWithIfSurrounder")
             model("codeInsight/surroundWith/ifElse", testMethod = "doTestWithIfElseSurrounder")
+            model("codeInsight/surroundWith/ifElseExpression", testMethod = "doTestWithIfElseExpressionSurrounder")
+            model("codeInsight/surroundWith/ifElseExpressionBraces", testMethod = "doTestWithIfElseExpressionBracesSurrounder")
             model("codeInsight/surroundWith/not", testMethod = "doTestWithNotSurrounder")
             model("codeInsight/surroundWith/parentheses", testMethod = "doTestWithParenthesesSurrounder")
             model("codeInsight/surroundWith/stringTemplate", testMethod = "doTestWithStringTemplateSurrounder")
             model("codeInsight/surroundWith/when", testMethod = "doTestWithWhenSurrounder")
             model("codeInsight/surroundWith/tryCatch", testMethod = "doTestWithTryCatchSurrounder")
+            model("codeInsight/surroundWith/tryCatchExpression", testMethod = "doTestWithTryCatchExpressionSurrounder")
             model("codeInsight/surroundWith/tryCatchFinally", testMethod = "doTestWithTryCatchFinallySurrounder")
+            model("codeInsight/surroundWith/tryCatchFinallyExpression", testMethod = "doTestWithTryCatchFinallyExpressionSurrounder")
             model("codeInsight/surroundWith/tryFinally", testMethod = "doTestWithTryFinallySurrounder")
             model("codeInsight/surroundWith/functionLiteral", testMethod = "doTestWithFunctionLiteralSurrounder")
             model("codeInsight/surroundWith/withIfExpression", testMethod = "doTestWithSurroundWithIfExpression")
@@ -785,17 +845,16 @@ fun main(args: Array<String>) {
             model("refactoring/copyMultiModule", extension = "test", singleClass = true)
         }
 
+        testClass<AbstractMultiModuleSafeDeleteTest> {
+            model("refactoring/safeDeleteMultiModule", extension = "test", singleClass = true)
+        }
+
         testClass<AbstractMultiFileIntentionTest> {
             model("multiFileIntentions", extension = "test", singleClass = true, filenameStartsLowerCase = true)
         }
 
         testClass<AbstractMultiFileInspectionTest> {
             model("multiFileInspections", extension = "test", singleClass = true)
-        }
-
-        testClass<AbstractGradleConfigureProjectByChangingFileTest> {
-            model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
-            model("configuration/gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestGradle")
         }
 
         testClass<AbstractFormatterTest> {
@@ -1059,6 +1118,13 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("idea/idea-gradle/tests", "idea/testData") {
+        testClass<AbstractGradleConfigureProjectByChangingFileTest> {
+            model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
+            model("configuration/gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestGradle")
+        }
+    }
+
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractResolveByStubTest> {
             model("loadJava/compiledKotlin")
@@ -1069,11 +1135,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIdeLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("delegation"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("asJava/lightClasses", excludeDirs = listOf("delegation"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("local", "compilationErrors", "ideRegression"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("asJava/lightClasses", excludeDirs = listOf("local", "compilationErrors", "ideRegression"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
     }
 
@@ -1193,8 +1259,11 @@ fun main(args: Array<String>) {
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
 
-        testClass<AbstractLookupTrackerTest> {
-            model("incremental/lookupTracker", extension = null, recursive = false)
+        testClass<AbstractJvmLookupTrackerTest> {
+            model("incremental/lookupTracker/jvm", extension = null, recursive = false)
+        }
+        testClass<AbstractJsLookupTrackerTest> {
+            model("incremental/lookupTracker/js", extension = null, recursive = false)
         }
 
         testClass(AbstractIncrementalLazyCachesTest::class.java) {
@@ -1212,12 +1281,36 @@ fun main(args: Array<String>) {
     }
 
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        testClass<AbstractProtoComparisonTest> {
+        fun TestGroup.TestClass.commonProtoComparisonTests() {
             model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
             model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
             model("comparison/classMembersOnlyChanged", extension = null, excludeParentDirs = true)
             model("comparison/packageMembers", extension = null, excludeParentDirs = true)
             model("comparison/unchanged", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractJvmProtoComparisonTest> {
+            commonProtoComparisonTests()
+            model("comparison/jvmOnly", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractJsProtoComparisonTest> {
+            commonProtoComparisonTests()
+            model("comparison/jsOnly", extension = null, excludeParentDirs = true)
+        }
+    }
+
+    testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
+        testClass<AbstractIncrementalJvmCompilerRunnerTest> {
+            model("incremental/pureKotlin", extension = null, recursive = false)
+            model("incremental/classHierarchyAffected", extension = null, recursive = false)
+            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
+            model("incremental/withJava", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractIncrementalJsCompilerRunnerTest> {
+            model("incremental/pureKotlin", extension = null, recursive = false)
+            model("incremental/classHierarchyAffected", extension = null, recursive = false)
         }
     }
 
@@ -1410,7 +1503,7 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
         }
 
-        testClass<AbstractJsTypedArraysBoxTest> {
+        testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
             model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }
     }

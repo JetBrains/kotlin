@@ -72,7 +72,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             })
         }
 
-        environment = createEnvironment()
+        environment = createEnvironment(file)
 
         analyzeAndCheck(file, testFiles)
     }
@@ -278,7 +278,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             return jvmSignatureDiagnostics
         }
 
-        override fun toString(): String = ktFile!!.name
+        override fun toString(): String = ktFile?.name ?: "Java file"
     }
 
     companion object {

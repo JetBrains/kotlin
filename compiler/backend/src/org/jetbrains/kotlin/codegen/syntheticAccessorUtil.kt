@@ -22,23 +22,23 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 enum class FieldAccessorKind(val suffix: String) {
     NORMAL("p"),
     IN_CLASS_COMPANION("cp"),
-    FIELD_FROM_LOCAL("lp");
-
-    override fun toString() = suffix
+    FIELD_FROM_LOCAL("lp"),
+    LATEINIT_INTRINSIC("li"),
 }
 
 private fun CallableMemberDescriptor.getJvmName() =
         DescriptorUtils.getJvmName(this) ?: name.asString()
 
-fun getAccessorNameSuffix(descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?,
-                          accessorKind: FieldAccessorKind): String {
+fun getAccessorNameSuffix(
+        descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?, accessorKind: FieldAccessorKind
+): String {
     val suffix = when (descriptor) {
         is ConstructorDescriptor ->
             return "will be ignored"
         is SimpleFunctionDescriptor ->
             descriptor.getJvmName()
         is PropertyDescriptor ->
-            descriptor.getJvmName() + "$" + accessorKind
+            descriptor.getJvmName() + "$" + accessorKind.suffix
         else ->
             throw UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor)
     }

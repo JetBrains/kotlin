@@ -1,0 +1,10 @@
+package test
+
+public fun doNothing(): kotlin.Unit
+
+public open class JavaLangClass {
+    public constructor JavaLangClass()
+
+    // Static members
+    public open fun func(/*0*/ java.lang.Class<kotlin.String!>!): kotlin.Unit
+}

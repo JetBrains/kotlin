@@ -22,14 +22,14 @@ import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.jetbrains.kotlin.js.inline.util.isCallInvocation
+import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.parser.OffsetToSourceMapping
 import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
@@ -48,6 +48,7 @@ private val JS_IDENTIFIER_PART = "$JS_IDENTIFIER_START\\p{Pc}\\p{Mc}\\p{Mn}\\d"
 private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
 private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
+private val WRAP_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($JS_IDENTIFIER)\\.wrapFunction\\s*;").toPattern()
 
 class FunctionReader(
         private val reporter: JsConfig.Reporter,
@@ -70,10 +71,13 @@ class FunctionReader(
             val fileContent: String,
             val moduleVariable: String,
             val kotlinVariable: String,
+            val wrapFunctionVariable: String?,
             offsetToSourceMappingProvider: () -> OffsetToSourceMapping,
             val sourceMap: SourceMap?
     ) {
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
+
+        val wrapFunctionRegex = wrapFunctionVariable?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
     }
 
     private val moduleNameToInfo by lazy {
@@ -95,6 +99,10 @@ class FunctionReader(
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
 
+                val wrapFunctionVariable = WRAP_FUNCTION_PATTERN.matcher(content).let { matcher ->
+                    if (matcher.find() && matcher.group(2) == kotlinVariable) matcher.group(1) else null
+                }
+
                 val sourceMap = sourceMapContent?.let {
                     val sourceMapResult = SourceMapParser.parse(StringReader(it))
                     when (sourceMapResult) {
@@ -111,6 +119,7 @@ class FunctionReader(
                         fileContent = content,
                         moduleVariable = moduleVariable,
                         kotlinVariable = kotlinVariable,
+                        wrapFunctionVariable = wrapFunctionVariable,
                         offsetToSourceMappingProvider = { OffsetToSourceMapping(content) },
                         sourceMap = sourceMap
                 )
@@ -154,8 +163,8 @@ class FunctionReader(
         override fun toString() = text.substring(offset)
     }
 
-    private val functionCache = object : SLRUCache<CallableDescriptor, JsFunction>(50, 50) {
-        override fun createValue(descriptor: CallableDescriptor): JsFunction =
+    private val functionCache = object : SLRUCache<CallableDescriptor, FunctionWithWrapper>(50, 50) {
+        override fun createValue(descriptor: CallableDescriptor): FunctionWithWrapper =
                 readFunction(descriptor).sure { "Could not read function: $descriptor" }
     }
 
@@ -165,9 +174,9 @@ class FunctionReader(
         return currentModuleName != moduleName && moduleName in moduleNameToInfo.keys()
     }
 
-    operator fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
+    operator fun get(descriptor: CallableDescriptor): FunctionWithWrapper = functionCache.get(descriptor)
 
-    private fun readFunction(descriptor: CallableDescriptor): JsFunction? {
+    private fun readFunction(descriptor: CallableDescriptor): FunctionWithWrapper? {
         if (descriptor !in this) return null
 
         val moduleName = getModuleName(descriptor)
@@ -180,10 +189,19 @@ class FunctionReader(
         return null
     }
 
-    private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): JsFunction? {
+    private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): FunctionWithWrapper? {
         val source = info.fileContent
-        val tag = Namer.getFunctionTag(descriptor, config)
-        val index = source.indexOf(tag)
+        var tag = Namer.getFunctionTag(descriptor, config)
+        val tagForModule = tag
+        var index = source.indexOf(tag)
+
+        // Hack for compatibility with old versions of stdlib
+        // TODO: remove in 1.2
+        if (index < 0 && tag == "kotlin.untypedCharArrayF") {
+            tag = "kotlin.charArrayF"
+            index = source.indexOf(tag)
+        }
+
         if (index < 0) return null
 
         // + 1 for closing quote
@@ -192,21 +210,65 @@ class FunctionReader(
             offset++
         }
 
+        val sourcePart = ShallowSubSequence(source, offset, source.length)
+        val wrapFunctionMatcher = info.wrapFunctionRegex?.matcher(sourcePart)
+        val isWrapped = wrapFunctionMatcher?.lookingAt() == true
+        if (isWrapped) {
+            offset += wrapFunctionMatcher!!.end()
+        }
+
         val position = info.offsetToSourceMapping[offset]
-        val function = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
-        val moduleReference = moduleNameMap[tag]?.deepCopy() ?: currentModuleName.makeRef()
+        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram())) ?:
+                           return null
+        functionExpr.fixForwardNameReferences()
+        val (function, wrapper) = if (isWrapped) {
+            InlineMetadata.decomposeWrapper(functionExpr) ?: return null
+        }
+        else {
+            FunctionWithWrapper(functionExpr, null)
+        }
+        val moduleReference = moduleNameMap[tagForModule]?.deepCopy() ?: currentModuleName.makeRef()
+        val wrapperStatements = wrapper?.statements?.filter { it !is JsReturn }
 
         val sourceMap = info.sourceMap
         if (sourceMap != null) {
             val remapper = SourceMapLocationRemapper(sourceMap)
             remapper.remap(function)
+            wrapperStatements?.forEach { remapper.remap(it) }
         }
 
+        val allDefinedNames = collectDefinedNamesInAllScopes(function)
         val replacements = hashMapOf(info.moduleVariable to moduleReference,
                                      info.kotlinVariable to Namer.kotlinObject())
-        replaceExternalNames(function, replacements)
+        replaceExternalNames(function, replacements, allDefinedNames)
+        wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
         function.markInlineArguments(descriptor)
-        return function
+
+        info.wrapFunctionVariable.let { wrapFunction ->
+            for (externalName in (collectReferencedNames(function) - allDefinedNames).filter { it.ident == wrapFunction }) {
+                externalName.specialFunction = SpecialFunction.WRAP_FUNCTION
+            }
+        }
+
+        val namesWithoutSizeEffects = wrapperStatements.orEmpty().asSequence()
+                .flatMap { collectDefinedNames(it).asSequence() }
+                .toSet()
+        function.accept(object : RecursiveJsVisitor() {
+            override fun visitNameRef(nameRef: JsNameRef) {
+                if (nameRef.name in namesWithoutSizeEffects && nameRef.qualifier == null) {
+                    nameRef.sideEffects = SideEffectKind.PURE
+                }
+                super.visitNameRef(nameRef)
+            }
+        })
+
+        wrapperStatements?.forEach {
+            if (it is JsVars && it.vars.size == 1 && it.vars[0].initExpression?.let { extractImportTag(it) } != null) {
+                it.vars[0].name.imported = true
+            }
+        }
+
+        return FunctionWithWrapper(function, wrapper)
     }
 }
 
@@ -245,14 +307,10 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
     visitor.accept(this)
 }
 
-private fun replaceExternalNames(function: JsFunction, externalReplacements: Map<String, JsExpression>) {
-    val replacements = externalReplacements.filterKeys { !function.scope.hasOwnName(it) }
-
-    if (replacements.isEmpty()) return
-
+private fun replaceExternalNames(node: JsNode, replacements: Map<String, JsExpression>, definedNames: Set<JsName>) {
     val visitor = object: JsVisitorWithContextImpl() {
         override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
-            if (x.qualifier != null) return
+            if (x.qualifier != null || x.name in definedNames) return
 
             replacements[x.ident]?.let {
                 ctx.replaceMe(it)
@@ -260,5 +318,17 @@ private fun replaceExternalNames(function: JsFunction, externalReplacements: Map
         }
     }
 
-    visitor.accept(function)
+    visitor.accept(node)
+}
+
+private class ShallowSubSequence(private val underlying: CharSequence, private val start: Int, end: Int) : CharSequence {
+    override val length: Int = end - start
+
+    override fun get(index: Int): Char {
+        if (index !in 0 until length) throw IndexOutOfBoundsException("$index is out of bounds 0..$length")
+        return underlying[index + start]
+    }
+
+    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
+            ShallowSubSequence(underlying, start + startIndex, start + endIndex)
 }

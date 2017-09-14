@@ -43,7 +43,7 @@ import java.util.*
 
 object ArrayFIF : CompositeFIF() {
     @JvmField
-    val GET_INTRINSIC = intrinsify { callInfo, arguments, _ ->
+    val GET_INTRINSIC = intrinsify { callInfo, arguments, context ->
         assert(arguments.size == 1) { "Array get expression must have one argument." }
         val (indexExpression) = arguments
         JsArrayAccess(callInfo.dispatchReceiver, indexExpression)
@@ -108,7 +108,12 @@ object ArrayFIF : CompositeFIF() {
             }
         }
         else {
-            "kotlin.newArrayF"
+            if (primitiveType == CHAR) {
+                "kotlin.untypedCharArrayF"
+            }
+            else {
+                "kotlin.newArrayF"
+            }
         }
     }
 
@@ -183,7 +188,7 @@ object ArrayFIF : CompositeFIF() {
                 }
             }
             else {
-                JsAstUtils.invokeKotlinFunction("newArrayF", size, fn)
+                JsAstUtils.invokeKotlinFunction(if (type == CHAR) "untypedCharArrayF" else "newArrayF", size, fn)
             }
             invocation.inlineStrategy = InlineStrategy.IN_PLACE
             val descriptor = callInfo.resolvedCall.resultingDescriptor.original

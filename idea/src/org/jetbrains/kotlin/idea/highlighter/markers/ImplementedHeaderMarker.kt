@@ -18,25 +18,30 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import java.awt.event.MouseEvent
 
 fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
         implementationsOf(descriptor).isNotEmpty()
 
-private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor): List<DeclarationDescriptor> =
+fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor, checkCompatible: Boolean = true): List<DeclarationDescriptor> =
         with(HeaderImplDeclarationChecker) {
-            descriptor.findCompatibleImplForHeader(this@implementationsOf)
+            if (checkCompatible) {
+                descriptor.findCompatibleImplForHeader(this@implementationsOf)
+            }
+            else {
+                descriptor.findAnyImplForHeader(this@implementationsOf)
+            }
         }
 
 fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {
@@ -65,10 +70,22 @@ fun navigateToPlatformImplementation(e: MouseEvent?, declaration: KtDeclaration)
                                         renderer)
 }
 
+private fun DeclarationDescriptor.headerImplementations(): Collection<DeclarationDescriptor> {
+    if (this is MemberDescriptor) {
+        if (!this.isHeader) return emptyList()
+
+        return module.allImplementingCompatibleModules.flatMap { it.implementationsOf(this) }
+    }
+
+    if (this is ValueParameterDescriptor) {
+        return containingDeclaration.headerImplementations().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
+    }
+
+    return emptyList()
+}
+
 internal fun KtDeclaration.headerImplementations(): Set<KtDeclaration> {
-    val descriptor = toDescriptor() as? MemberDescriptor ?: return emptySet()
-    val commonModuleDescriptor = containingKtFile.findModuleDescriptor()
-    return commonModuleDescriptor.allImplementingCompatibleModules.flatMap {
-        it.implementationsOf(descriptor)
-    }.mapNotNullTo(LinkedHashSet()) { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration }
+    return resolveToDescriptor().headerImplementations().mapNotNullTo(LinkedHashSet()) {
+        DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
+    }
 }

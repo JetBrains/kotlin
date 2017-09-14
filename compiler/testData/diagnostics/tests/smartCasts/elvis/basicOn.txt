@@ -1,0 +1,14 @@
+package
+
+public fun bar(/*0*/ o: kotlin.Any): kotlin.Unit
+public fun baz(/*0*/ o: kotlin.Boolean?): kotlin.Unit
+public fun foo(/*0*/ o: kotlin.Any): kotlin.Unit
+
+public interface Order {
+    public abstract val expired: kotlin.Boolean?
+    public abstract fun doSomething(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun notExpired(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

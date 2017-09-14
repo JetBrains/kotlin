@@ -1334,6 +1334,147 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @TestMetadata("idea/testData/findUsages/kotlin/internal")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Internal extends AbstractFindUsagesTest {
+            public void testAllFilesPresentInInternal() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/internal"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FindFunctionUsages extends AbstractFindUsagesTest {
+                public void testAllFilesPresentInFindFunctionUsages() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/internal/findFunctionUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("enumFunctionUsages.0.kt")
+                public void testEnumFunctionUsages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages/enumFunctionUsages.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinMethodUsages.0.kt")
+                public void testKotlinMethodUsages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages/kotlinMethodUsages.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinMultiRefInImport.0.kt")
+                public void testKotlinMultiRefInImport() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages/kotlinMultiRefInImport.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinOverloadAndExtensionUsages.0.kt")
+                public void testKotlinOverloadAndExtensionUsages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages/kotlinOverloadAndExtensionUsages.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinTopLevelMethodUsages.0.kt")
+                public void testKotlinTopLevelMethodUsages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages/kotlinTopLevelMethodUsages.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinTraitImplThroughDelegate.0.kt")
+                public void testKotlinTraitImplThroughDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages/kotlinTraitImplThroughDelegate.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("usagesOfBaseForFunction.0.kt")
+                public void testUsagesOfBaseForFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findFunctionUsages/usagesOfBaseForFunction.0.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/findUsages/kotlin/internal/findPrimaryConstructorUsages")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FindPrimaryConstructorUsages extends AbstractFindUsagesTest {
+                public void testAllFilesPresentInFindPrimaryConstructorUsages() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/internal/findPrimaryConstructorUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("constructorCall.0.kt")
+                public void testConstructorCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findPrimaryConstructorUsages/constructorCall.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("primaryConstructorByRef.0.kt")
+                public void testPrimaryConstructorByRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findPrimaryConstructorUsages/primaryConstructorByRef.0.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/findUsages/kotlin/internal/findPropertyUsages")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FindPropertyUsages extends AbstractFindUsagesTest {
+                public void testAllFilesPresentInFindPropertyUsages() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/internal/findPropertyUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("kotlinClassObjectPropertyUsage.0.kt")
+                public void testKotlinClassObjectPropertyUsage() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findPropertyUsages/kotlinClassObjectPropertyUsage.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinMultiRefInImport.0.kt")
+                public void testKotlinMultiRefInImport() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findPropertyUsages/kotlinMultiRefInImport.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinPropertyUsages.0.kt")
+                public void testKotlinPropertyUsages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findPropertyUsages/kotlinPropertyUsages.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinTopLevelPropertyUsages.0.kt")
+                public void testKotlinTopLevelPropertyUsages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findPropertyUsages/kotlinTopLevelPropertyUsages.0.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/findUsages/kotlin/internal/findSecondaryConstructorUsages")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FindSecondaryConstructorUsages extends AbstractFindUsagesTest {
+                public void testAllFilesPresentInFindSecondaryConstructorUsages() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/internal/findSecondaryConstructorUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("constructorCall.0.kt")
+                public void testConstructorCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findSecondaryConstructorUsages/constructorCall.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultSecondaryConstructor.0.kt")
+                public void testDefaultSecondaryConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findSecondaryConstructorUsages/defaultSecondaryConstructor.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("secondaryConstructor.0.kt")
+                public void testSecondaryConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/internal/findSecondaryConstructorUsages/secondaryConstructor.0.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
         @TestMetadata("idea/testData/findUsages/kotlin/propertyFiles")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

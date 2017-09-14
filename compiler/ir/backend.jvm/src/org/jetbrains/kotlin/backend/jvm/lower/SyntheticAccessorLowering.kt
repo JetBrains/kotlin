@@ -81,7 +81,7 @@ class ContextAnnotator(val state: GenerationState) : ClassLowerWithContext() {
 
     override fun lowerBefore(irClass: IrClass, data: IrClassContext) {
         val descriptor = irClass.descriptor
-        val newContext: CodegenContext<*> = if (descriptor is FileClassDescriptor || descriptor !is ClassDescriptor) {
+        val newContext: CodegenContext<*> = if (descriptor is FileClassDescriptor) {
             StubCodegenContext(descriptor, data.parent?.codegenContext, data)
         }
         else {

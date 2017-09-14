@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -70,10 +69,10 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
             val transformer = this
 
             private fun replaceEmptyParameterWithEmptyArray(expression: IrMemberAccessExpression) {
-                log("call of: ${expression.descriptor}")
+                log { "call of: ${expression.descriptor}" }
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
                     expression.descriptor.valueParameters.forEach {
-                        log("varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it))}")
+                        log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it))}" }
                     }
                     expression.descriptor.valueParameters.filter { it.varargElementType != null && expression.getValueArgument(it) == null }.forEach {
                         expression.putValueArgument(it.index,
@@ -101,13 +100,13 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
                 expression.transformChildrenVoid(transformer)
                 val hasSpreadElement = hasSpreadElement(expression)
                 if (!hasSpreadElement && expression.elements.all { it is IrConst<*> && KotlinBuiltIns.isString(it.type) }) {
-                    log("skipped vararg expression because it's string array literal")
+                    log { "skipped vararg expression because it's string array literal" }
                     return expression
                 }
                 val irBuilder = context.createIrBuilder(owner, expression.startOffset, expression.endOffset)
                 irBuilder.run {
                     val type = expression.varargElementType
-                    log("$expression: array type:$type, is array of primitives ${!KotlinBuiltIns.isArray(expression.type)}")
+                    log { "$expression: array type:$type, is array of primitives ${!KotlinBuiltIns.isArray(expression.type)}" }
                     val arrayHandle = arrayType(expression.type)
                     val arrayConstructor = arrayHandle.arraySymbol.constructors.find { it.owner.valueParameters.size == 1 }!!
                     val block = irBlock(arrayHandle.arraySymbol.owner.defaultType)
@@ -136,7 +135,7 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
                         irBuilder.startOffset = element.startOffset
                         irBuilder.endOffset   = element.endOffset
                         irBuilder.apply {
-                            log("element:$i> ${ir2string(element)}")
+                            log { "element:$i> ${ir2string(element)}" }
                             val dst = vars[element]!!
                             if (element !is IrSpreadElement) {
                                 val setArrayElementCall = irCall(arrayHandle.setMethodSymbol)
@@ -160,7 +159,7 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
                                 block.statements.add(copyCall)
                                 block.statements.add(incrementVariable(indexTmpVariable.symbol,
                                         irGet(arraySizeVariable.symbol)))
-                                log("element:$i:spread element> ${ir2string(element.expression)}")
+                                log { "element:$i:spread element> ${ir2string(element.expression)}" }
                             }
                         }
                     }
@@ -229,8 +228,8 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
 
     private fun hasSpreadElement(expression: IrVararg?) = expression?.elements?.any { it is IrSpreadElement }?:false
 
-    private fun log(msg:String) {
-        context.log{"VARARG-INJECTOR:    $msg"}
+    private fun log(msg:() -> String) {
+        context.log { "VARARG-INJECTOR:    ${msg()}" }
     }
 
     data class ArrayHandle(val arraySymbol: IrClassSymbol,

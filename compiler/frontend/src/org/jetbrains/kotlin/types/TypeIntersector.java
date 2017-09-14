@@ -37,11 +37,11 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 public class TypeIntersector {
 
     public static boolean isIntersectionEmpty(@NotNull KotlinType typeA, @NotNull KotlinType typeB) {
-        return intersectTypes(KotlinTypeChecker.DEFAULT, new LinkedHashSet<>(Arrays.asList(typeA, typeB))) == null;
+        return intersectTypes(new LinkedHashSet<>(Arrays.asList(typeA, typeB))) == null;
     }
 
     @Nullable
-    public static KotlinType intersectTypes(@NotNull KotlinTypeChecker typeChecker, @NotNull Collection<KotlinType> types) {
+    public static KotlinType intersectTypes(@NotNull Collection<KotlinType> types) {
         assert !types.isEmpty() : "Attempting to intersect empty collection of types, this case should be dealt with on the call site.";
 
         if (types.size() == 1) {
@@ -72,6 +72,7 @@ public class TypeIntersector {
             return ErrorUtils.createErrorType("Intersection of error types: " + types);
         }
 
+        KotlinTypeChecker typeChecker = KotlinTypeChecker.DEFAULT;
         // Now we remove types that have subtypes in the list
         List<KotlinType> resultingTypes = new ArrayList<>();
         outer:
@@ -151,7 +152,7 @@ public class TypeIntersector {
     public static KotlinType getUpperBoundsAsType(@NotNull TypeParameterDescriptor descriptor) {
         List<KotlinType> upperBounds = descriptor.getUpperBounds();
         assert !upperBounds.isEmpty() : "Upper bound list is empty: " + descriptor;
-        KotlinType upperBoundsAsType = intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
+        KotlinType upperBoundsAsType = intersectTypes(upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(descriptor).getNothingType();
     }
 

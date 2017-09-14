@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -38,7 +40,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
 
-class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
+class AnnotationChecker(
+        private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
+        private val languageVersionSettings: LanguageVersionSettings
+) {
 
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace)
@@ -144,13 +149,28 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
             }
         }
 
-        fun applicableWithUseSiteTarget() = useSiteTarget != null && actualTargets.onlyWithUseSiteTarget.any {
-            it in applicableTargets && KotlinTarget.USE_SITE_MAPPING[useSiteTarget] == it
+        fun checkWithUseSiteTargets(additionalTarget: KotlinTarget? = null, useDeprecatedTargets: Boolean = false): Boolean {
+            if (useSiteTarget == null) return false
+
+            val useSiteMapping = KotlinTarget.USE_SITE_MAPPING[useSiteTarget].let {
+                if (useDeprecatedTargets && it == RECEIVER) KotlinTarget.VALUE_PARAMETER else it
+            }
+
+            val allTargets = actualTargets.onlyWithUseSiteTarget + listOfNotNull(additionalTarget)
+            return allTargets.any { it in applicableTargets && it == useSiteMapping }
         }
 
-        if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || applicableWithUseSiteTarget()) {
+        if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
             checkUselessFunctionLiteralAnnotation()
             return
+        }
+
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes)) {
+            val isAnnotationOnType = TargetLists.T_TYPE_REFERENCE == actualTargets
+            if (isAnnotationOnType && checkWithUseSiteTargets(KotlinTarget.VALUE_PARAMETER, true)) {
+                trace.report(Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE.on(entry, useSiteTarget!!.renderName))
+                return
+            }
         }
 
         if (useSiteTarget != null) {
@@ -312,7 +332,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
             val T_OBJECT_LITERAL = targetList(OBJECT_LITERAL, CLASS, EXPRESSION)
 
             val T_TYPE_REFERENCE = targetList(TYPE) {
-                onlyWithUseSiteTarget(VALUE_PARAMETER)
+                onlyWithUseSiteTarget(RECEIVER)
             }
 
             val T_TYPE_PARAMETER = targetList(TYPE_PARAMETER)

@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 interface InliningContext {
     val statementContext: JsContext<JsStatement>
+
+    val statementContextBeforeCurrentFunction: JsContext<JsStatement>
+
     val functionContext: FunctionContext
 
     fun newNamingContext(): NamingContext

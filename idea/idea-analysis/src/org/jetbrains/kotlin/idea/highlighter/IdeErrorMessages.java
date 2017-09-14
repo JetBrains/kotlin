@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataHtmlRenderer;
 import java.net.URL;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
 import static org.jetbrains.kotlin.idea.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.*;
@@ -175,6 +174,14 @@ public class IdeErrorMessages {
         MAP.put(UNSUPPORTED_FEATURE, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED, true));
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING, true));
         MAP.put(EXPERIMENTAL_FEATURE_ERROR, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR, true));
+
+        MAP.put(HEADER_WITHOUT_IMPLEMENTATION, "<html>''header'' {0} has no implementation in module{1}{2}</html>", DECLARATION_NAME_WITH_KIND,
+                PLATFORM, new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
+        MAP.put(IMPLEMENTATION_WITHOUT_HEADER, "<html>''impl'' {0} has no corresponding ''header'' declaration{1}</html>", DECLARATION_NAME_WITH_KIND,
+                new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
+
+        MAP.put(HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED, "<html>''impl'' class ''{0}'' has no implementation of ''header'' class members:{1}</html>",
+                NAME, new IncompatibleHeaderImplClassScopesRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
 
         MAP.setImmutable();
     }

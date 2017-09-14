@@ -23,5 +23,8 @@ interface DeserializationConfiguration {
     val typeAliasesAllowed: Boolean
         get() = true
 
+    val isJvmPackageNameSupported: Boolean
+        get() = true
+
     object Default : DeserializationConfiguration
 }

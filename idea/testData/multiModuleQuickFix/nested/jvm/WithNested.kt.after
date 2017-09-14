@@ -2,11 +2,11 @@
 impl class WithNested {
 
     class Nested {
-        fun bar() = "Nested"
+        fun bar()
     }
 
     inner class Inner {
-        fun baz() = "Inner"
+        fun baz()
     }
 
     impl fun foo(): Int {

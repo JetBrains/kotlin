@@ -25,9 +25,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 internal val PARCEL_TYPE = Type.getObjectType("android/os/Parcel")
 
-internal object GenericParcelSerializer : ParcelSerializer {
-    override val asmType: Type = Type.getObjectType("java/lang/Object")
-
+internal class GenericParcelSerializer(override val asmType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
         v.invokevirtual(PARCEL_TYPE.internalName, "writeValue", "(Ljava/lang/Object;)V", false)
     }
@@ -36,6 +34,7 @@ internal object GenericParcelSerializer : ParcelSerializer {
         v.aconst(asmType) // -> parcel, type
         v.invokevirtual("java/lang/Class", "getClassLoader", "()Ljava/lang/ClassLoader;", false) // -> parcel, classloader
         v.invokevirtual(PARCEL_TYPE.internalName, "readValue", "(Ljava/lang/ClassLoader;)Ljava/lang/Object;", false)
+        v.castIfNeeded(asmType)
     }
 }
 
@@ -63,11 +62,11 @@ internal class ArrayParcelSerializer(override val asmType: Type, private val ele
         v.dupX2() // -> length, arr, index, length
         v.pop() // -> length, arr, index
         v.dup2() // -> length, arr, index, arr, index
-        v.aload(elementSerializer.asmType) // -> length, arr, index, obj
+        v.load(1, PARCEL_TYPE) // -> length, arr, index, arr, index, parcel
+        v.dupX2() // -> length, arr, index, parcel, arr, index, parcel
+        v.pop() // -> length, arr, index, parcel, arr, index
+        v.aload(elementSerializer.asmType) // -> length, arr, index, parcel, obj
         v.castIfNeeded(elementSerializer.asmType)
-
-        v.load(1, PARCEL_TYPE) // -> length, arr, index, obj, parcel
-        v.swap() // -> length, arr, index, parcel, obj
         elementSerializer.writeValue(v) // -> length, arr, index
 
         v.aconst(1) // -> length, arr, index, (1)
@@ -256,10 +255,11 @@ abstract internal class AbstractCollectionParcelSerializer(
         v.ifeq(labelReturn) // -> iterator
 
         v.dup() // -> iterator, iterator
-        v.invokeinterface("java/util/Iterator", "next", "()Ljava/lang/Object;") // -> iterator, obj
 
-        v.load(1, PARCEL_TYPE) // -> iterator, obj, parcel
-        v.swap() // -> iterator, parcel, obj
+        v.load(1, PARCEL_TYPE) // iterator, iterator, parcel
+        v.swap() // iterator, parcel, iterator
+        v.invokeinterface("java/util/Iterator", "next", "()Ljava/lang/Object;") // -> iterator, parcel, obj
+
         doWriteValue(v) // -> iterator
 
         v.goTo(labelIteratorLoop)
@@ -418,13 +418,16 @@ internal class ObjectParcelSerializer(
 
 internal class EnumParcelSerializer(override val asmType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
-        v.invokevirtual(asmType.internalName, "name", "()Ljava/lang/String;", false)
+        v.invokevirtual("java/lang/Enum", "name", "()Ljava/lang/String;", false)
         v.invokevirtual(PARCEL_TYPE.internalName, "writeString", "(Ljava/lang/String;)V", false)
     }
 
     override fun readValue(v: InstructionAdapter) {
         v.invokevirtual(PARCEL_TYPE.internalName, "readString", "()Ljava/lang/String;", false)
-        v.invokestatic(asmType.internalName, "valueOf", "(Ljava/lang/String;)${asmType.descriptor}", false)
+        v.aconst(asmType)
+        v.swap()
+        v.invokestatic("java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;", false)
+        v.castIfNeeded(asmType)
     }
 }
 
@@ -462,16 +465,16 @@ internal class EfficientParcelableParcelSerializer(override val asmType: Type, p
     }
 }
 
-internal class GenericParcelableParcelSerializer(override val asmType: Type) : ParcelSerializer {
+internal class GenericParcelableParcelSerializer(override val asmType: Type, val containerClassType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
         // -> parcel, parcelable
-        v.aconst(0) // -> parcel, parcelable, flags
+        v.load(2, Type.INT_TYPE) // -> parcel, parcelable, flags
         v.invokevirtual(PARCEL_TYPE.internalName, "writeParcelable", "(Landroid/os/Parcelable;I)V", false)
     }
 
     override fun readValue(v: InstructionAdapter) {
         // -> parcel
-        v.aconst(asmType) // -> parcel, type
+        v.aconst(containerClassType) // -> parcel, type
         v.invokevirtual("java/lang/Class", "getClassLoader", "()Ljava/lang/ClassLoader;", false) // -> parcel, classloader
         v.invokevirtual(PARCEL_TYPE.internalName, "readParcelable", "(Ljava/lang/ClassLoader;)Landroid/os/Parcelable;", false)
         v.castIfNeeded(asmType)
@@ -488,6 +491,32 @@ internal class NullAwareParcelSerializerWrapper(val delegate: ParcelSerializer) 
 
     override fun readValue(v: InstructionAdapter) = readValueNullAware(v) {
         delegate.readValue(v)
+    }
+}
+
+internal class PrimitiveArrayParcelSerializer(
+        override val asmType: Type
+) : ParcelSerializer {
+    private val methodNameBase = when (asmType.elementType) {
+        Type.INT_TYPE -> "Int"
+        Type.BOOLEAN_TYPE -> "Boolean"
+        Type.BYTE_TYPE -> "Byte"
+        Type.CHAR_TYPE -> "Char"
+        Type.DOUBLE_TYPE -> "Double"
+        Type.FLOAT_TYPE -> "Float"
+        Type.LONG_TYPE -> "Long"
+        else -> error("Unsupported type ${asmType.elementType.descriptor}")
+    }
+
+    private val writeMethod = Method("write${methodNameBase}Array", "(${asmType.descriptor})V")
+    private val createArrayMethod = Method("create${methodNameBase}Array", "()${asmType.descriptor}")
+
+    override fun writeValue(v: InstructionAdapter) {
+        v.invokevirtual(PARCEL_TYPE.internalName, writeMethod.name, writeMethod.signature, false)
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        v.invokevirtual(PARCEL_TYPE.internalName, createArrayMethod.name, createArrayMethod.signature, false)
     }
 }
 

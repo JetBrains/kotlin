@@ -1,5 +1,6 @@
 package org.jetbrains.uast.kotlin.expressions
 
+import com.intellij.psi.PsiType
 import com.intellij.psi.PsiVariable
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.*
@@ -29,6 +30,8 @@ private class KotlinLocalFunctionULambdaExpression(
         override val psi: KtFunction,
         override val uastParent: UElement?
 ): KotlinAbstractUExpression(), ULambdaExpression {
+    val functionalInterfaceType: PsiType?
+        get() = null
 
     override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
 

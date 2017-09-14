@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -61,7 +60,8 @@ class CallCompleter(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val callCheckers: Iterable<CallChecker>,
         private val builtIns: KotlinBuiltIns,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val deprecationResolver: DeprecationResolver
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -75,10 +75,10 @@ class CallCompleter(
         // it's completed when the outer (variable as function call) is completed
         if (!isInvokeCallOnVariable(context.call)) {
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
+            val contextWithTemporaryTrace = context.replaceBindingTrace(temporaryTrace)
 
-            completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryTrace), tracing)
-
-            completeAllCandidates(context, results)
+            completeResolvedCallAndArguments(resolvedCall, results, contextWithTemporaryTrace, tracing)
+            completeAllCandidates(contextWithTemporaryTrace, results)
 
             temporaryTrace.commit()
         }
@@ -92,7 +92,7 @@ class CallCompleter(
                     if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                     else resolvedCall.call.callElement
 
-            val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
+            val callCheckerContext = CallCheckerContext(context, languageVersionSettings, deprecationResolver)
             for (callChecker in callCheckers) {
                 callChecker.check(resolvedCall, reportOn, callCheckerContext)
 
@@ -120,10 +120,10 @@ class CallCompleter(
             results.resultingCalls
         }) as Collection<MutableResolvedCall<D>>
 
+        val temporaryBindingTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a candidate that is not a resulting call")
         candidates.filterNot { resolvedCall -> resolvedCall.isCompleted }.forEach {
             resolvedCall ->
 
-            val temporaryBindingTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a candidate that is not a resulting call")
             completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY)
         }
     }

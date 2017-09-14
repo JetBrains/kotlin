@@ -20,4 +20,9 @@ internal class A {
         l2 = 10L
         l4 = 10
     }
+
+    fun foo(z: Long) {
+        val b1 = z == 1L
+        val b2 = z != 1L
+    }
 }

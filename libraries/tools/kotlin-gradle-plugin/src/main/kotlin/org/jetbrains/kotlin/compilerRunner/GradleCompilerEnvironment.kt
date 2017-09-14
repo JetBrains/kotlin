@@ -34,8 +34,8 @@ internal class GradleIncrementalCompilerEnvironment(
         val workingDir: File,
         messageCollector: GradleMessageCollector,
         outputItemsCollector: OutputItemsCollector,
-        val kaptAnnotationsFileUpdater: AnnotationFileUpdater?,
-        val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
-        val artifactFile: File?,
-        compilerArgs: CommonCompilerArguments
+        compilerArgs: CommonCompilerArguments,
+        val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
+        val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
+        val artifactFile: File? = null
 ) : GradleCompilerEnvironment(compilerJar, messageCollector, outputItemsCollector, compilerArgs)

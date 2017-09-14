@@ -9,10 +9,10 @@ package common
 // FILE: jvm.kt
 package jvm
 
-<!IMPLEMENTATION_WITHOUT_HEADER!>impl<!> fun foo() {}
+<!IMPLEMENTATION_WITHOUT_HEADER!>impl fun foo()<!> {}
 
 // MODULE: m3-js(m1-common)
 // FILE: js.kt
 package js
 
-<!IMPLEMENTATION_WITHOUT_HEADER!>impl<!> fun foo() {}
+<!IMPLEMENTATION_WITHOUT_HEADER!>impl fun foo()<!> {}

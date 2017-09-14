@@ -15,24 +15,27 @@ class WrongAnnotation2 {
         @SuppressLint("NewApi") // Valid: class-file check on method
         fun foobar(view: View, @SuppressLint("NewApi") foo: Int) {
             // Invalid: class-file check
-            @SuppressLint("NewApi") // Invalid
+            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error> // Invalid
             val a: Boolean
-            @SuppressLint("SdCardPath", "NewApi") // Invalid: class-file based check on local variable
+
+            @SuppressLint("SdCardPath", "NewApi") // TODO: Invalid, class-file based check on local variable
             val b: Boolean
-            @android.annotation.SuppressLint("SdCardPath", "NewApi") // Invalid (FQN)
+
+            @android.annotation.SuppressLint("SdCardPath", "NewApi") // TDOD: Invalid (FQN)
             val c: Boolean
+
             @SuppressLint("SdCardPath") // Valid: AST-based check
             val d: Boolean
         }
 
         init {
             // Local variable outside method: invalid
-            @SuppressLint("NewApi")
+            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error>
             val localvar = 5
         }
 
         private fun test() {
-            @SuppressLint("NewApi") // Invalid
+            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error> // Invalid
             val a = View.MEASURED_STATE_MASK
         }
     }

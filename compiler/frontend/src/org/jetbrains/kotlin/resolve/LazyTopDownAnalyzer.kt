@@ -48,6 +48,7 @@ class LazyTopDownAnalyzer(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val identifierChecker: IdentifierChecker,
         private val languageVersionSettings: LanguageVersionSettings,
+        private val deprecationResolver: DeprecationResolver,
         private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ) {
     fun analyzeDeclarations(
@@ -91,7 +92,7 @@ class LazyTopDownAnalyzer(
                     DescriptorResolver.registerFileInPackage(trace, file)
                     registerDeclarations(file.declarations)
                     val packageDirective = file.packageDirective
-                    assert(file.isScript || packageDirective != null) { "No package in a non-script file: " + file }
+                    assert(file.isScript() || packageDirective != null) { "No package in a non-script file: " + file }
                     packageDirective?.accept(this)
                     c.addFile(file)
                     topLevelFqNames.put(file.packageFqName, packageDirective)
@@ -169,7 +170,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
-                    if (destructuringDeclaration.containingKtFile.isScript) {
+                    if (destructuringDeclaration.containingKtFile.isScript()) {
                         destructuringDeclarations.add(destructuringDeclaration)
                     }
                 }
@@ -215,7 +216,7 @@ class LazyTopDownAnalyzer(
 
         resolveImportsInAllFiles(c)
 
-        ClassifierUsageChecker.check(declarations, trace, languageVersionSettings, classifierUsageCheckers)
+        ClassifierUsageChecker.check(declarations, trace, languageVersionSettings, deprecationResolver, classifierUsageCheckers)
 
         return c
     }

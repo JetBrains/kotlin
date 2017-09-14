@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 
-interface TypeAliasConstructorDescriptor : ConstructorDescriptor {
+interface TypeAliasConstructorDescriptor : ConstructorDescriptor, DescriptorDerivedFromTypeAlias {
     val underlyingConstructorDescriptor: ClassConstructorDescriptor
-    val typeAliasDescriptor: TypeAliasDescriptor
 
     override fun getContainingDeclaration(): TypeAliasDescriptor
 

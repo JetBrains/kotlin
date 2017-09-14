@@ -20,7 +20,7 @@ fun testCommon() {
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl class Foo(val aaa: Boolean) {
+impl class Foo impl constructor(val aaa: Boolean) {
     impl constructor(zzz: Int) : this(zzz == 0)
 
     impl fun f1(xxx: String) = xxx

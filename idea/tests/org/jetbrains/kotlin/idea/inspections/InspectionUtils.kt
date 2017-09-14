@@ -24,10 +24,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.createGlobalContextForTool
-import com.intellij.util.xml.highlighting.DomElementsInspection
-import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
-import org.jetbrains.kotlin.idea.maven.inspections.DifferentKotlinMavenVersionInspection
-import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 
 fun runInspection(
         inspection: LocalInspectionTool, project: Project, files: List<VirtualFile>? = null, withTestDir: String? = null
@@ -35,11 +31,8 @@ fun runInspection(
     val wrapper = LocalInspectionToolWrapper(inspection)
 
     val tool = wrapper.tool
-    if (tool is DomElementsInspection<*> || tool is GradleBaseInspection) {
-        when (tool) {
-            is DifferentKotlinMavenVersionInspection -> tool.testVersionMessage = "\$PLUGIN_VERSION"
-            is DifferentKotlinGradleVersionInspection -> tool.testVersionMessage = "\$PLUGIN_VERSION"
-        }
+    if (tool is PluginVersionDependentInspection) {
+        tool.testVersionMessage = "\$PLUGIN_VERSION"
     }
 
     val scope = if (files != null) AnalysisScope(project, files) else AnalysisScope(project)

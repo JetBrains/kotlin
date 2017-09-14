@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.js.translate.reference
 
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -36,8 +37,9 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
-import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
@@ -106,7 +108,7 @@ class CallArgumentTranslator private constructor(
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {
                         argsBeforeVararg = result
-                        result = mutableListOf<JsExpression>()
+                        result = mutableListOf()
                         concatArguments = prepareConcatArguments(arguments,
                                                                  translateResolvedArgument(actualArgument, argsToJsExpr),
                                                                  null)
@@ -150,6 +152,11 @@ class CallArgumentTranslator private constructor(
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
                 result.add(0, cachedReceiver.reference())
             }
+            else if (DescriptorUtils.isObject(resolvedCall.resultingDescriptor.containingDeclaration)) {
+                cachedReceiver = context().getOrDeclareTemporaryConstVariable(
+                        ReferenceTranslator.translateAsValueReference(resolvedCall.resultingDescriptor.containingDeclaration, context()))
+                result.add(0, cachedReceiver.reference())
+            }
             else {
                 result.add(0, JsNullLiteral())
             }
@@ -185,18 +192,15 @@ class CallArgumentTranslator private constructor(
             val parenthisedArgumentExpression = arg.getArgumentExpression()
 
             val param = argsToParameters[arg]!!.original
-            val parameterType = if (resolvedCall.call.callType == Call.CallType.INVOKE) {
-                DefaultBuiltIns.Instance.anyType
+            val isLambda = resolvedCall.resultingDescriptor.let { it.getFunctionalClassKind() != null || it is FunctionInvokeDescriptor }
+            val parameterType = if (!isLambda) param.varargElementType ?: param.type else context.currentModule.builtIns.anyType
+
+            var argJs = Translation.translateAsExpression(parenthisedArgumentExpression!!, argumentContext)
+            if (!param.isVararg || arg.getSpreadElement() == null) {
+                argJs = TranslationUtils.coerce(context, argJs, parameterType)
             }
-            else {
-                param.varargElementType ?: param.type
-            }
 
-            val argType = context.bindingContext().getType(parenthisedArgumentExpression!!)
-
-            val argJs = Translation.translateAsExpression(parenthisedArgumentExpression, argumentContext)
-
-            arg to TranslationUtils.boxCastIfNeeded(argJs, argType, parameterType)
+            arg to argJs
         }
 
         val resolvedOrder = resolvedCall.valueArgumentsByIndex.orEmpty()
@@ -229,7 +233,7 @@ class CallArgumentTranslator private constructor(
         val arguments = resolvedArgument.arguments
         if (arguments.isEmpty()) {
             return if (shouldWrapVarargInArray) {
-                return listOf(toArray(varargPrimitiveType, listOf<JsExpression>()))
+                return listOf(toArray(varargPrimitiveType, listOf()))
             }
             else {
                 listOf()
@@ -266,14 +270,14 @@ class CallArgumentTranslator private constructor(
         var lastArrayContent = mutableListOf<JsExpression>()
 
         val size = arguments.size
-        for (index in 0..size - 1) {
+        for (index in 0 until size) {
             val valueArgument = arguments[index]
             val expressionArgument = list[index]
 
             if (valueArgument.getSpreadElement() != null) {
                 if (lastArrayContent.size > 0) {
                     concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
-                    lastArrayContent = mutableListOf<JsExpression>()
+                    lastArrayContent = mutableListOf()
                 }
                 concatArguments.add(expressionArgument)
             }

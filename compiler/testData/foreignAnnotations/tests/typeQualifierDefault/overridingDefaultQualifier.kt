@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 import javax.annotation.Nonnull;
 import javax.annotation.meta.TypeQualifierDefault;
 
-@Target(ElementType.PACKAGE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Nonnull
@@ -28,7 +27,6 @@ import java.lang.annotation.Target;
 import javax.annotation.CheckForNull;
 import javax.annotation.meta.TypeQualifierDefault;
 
-@Target(ElementType.PACKAGE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @CheckForNull

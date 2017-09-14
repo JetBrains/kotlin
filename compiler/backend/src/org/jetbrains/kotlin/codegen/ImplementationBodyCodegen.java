@@ -1404,7 +1404,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         else {
             argumentGenerator =
-                    generateSuperCallImplicitArguments(iv, codegen, constructorDescriptor, delegateConstructor, delegateConstructorCallable,
+                    generateSuperCallImplicitArguments(iv, codegen, constructorDescriptor, delegateConstructor, delegationConstructorCall,
+                                                       delegateConstructorCallable,
                                                        delegatingParameters,
                                                        parameters);
         }
@@ -1423,6 +1424,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull ExpressionCodegen codegen,
             @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull ConstructorDescriptor superConstructor,
+            @NotNull ResolvedCall<ConstructorDescriptor> superConstructorCall,
             @NotNull CallableMethod superCallable,
             @NotNull List<JvmMethodParameterSignature> superParameters,
             @NotNull List<JvmMethodParameterSignature> parameters
@@ -1465,7 +1467,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (isAnonymousObject(descriptor)) {
             List<JvmMethodParameterSignature> superValues = superParameters.subList(superIndex, superParameters.size());
-            return new ObjectSuperCallArgumentGenerator(superValues, iv, offset);
+            return new ObjectSuperCallArgumentGenerator(superValues, iv, offset, superConstructorCall);
         }
         else {
             return new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, superConstructor.getValueParameters(),
@@ -1504,49 +1506,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         return new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, delegatingConstructor.getValueParameters(),
                                               delegatingCallable.getValueParameterTypes());
-    }
-
-    private static class ObjectSuperCallArgumentGenerator extends ArgumentGenerator {
-        private final List<JvmMethodParameterSignature> parameters;
-        private final InstructionAdapter iv;
-        private int offset;
-
-        public ObjectSuperCallArgumentGenerator(
-                @NotNull List<JvmMethodParameterSignature> superParameters,
-                @NotNull InstructionAdapter iv,
-                int firstValueParamOffset
-        ) {
-            this.parameters = superParameters;
-            this.iv = iv;
-            this.offset = firstValueParamOffset;
-        }
-
-        @Override
-        public void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
-            generateSuperCallArgument(i);
-        }
-
-        @Override
-        public void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-            Type type = parameters.get(i).getAsmType();
-            pushDefaultValueOnStack(type, iv);
-        }
-
-        @Override
-        public void generateVararg(int i, @NotNull VarargValueArgument argument) {
-            generateSuperCallArgument(i);
-        }
-
-        private void generateSuperCallArgument(int i) {
-            Type type = parameters.get(i).getAsmType();
-            iv.load(offset, type);
-            offset += type.getSize();
-        }
-
-        @Override
-        protected void reorderArgumentsIfNeeded(@NotNull List<ArgumentAndDeclIndex> args) {
-
-        }
     }
 
     private void generateEnumEntries() {

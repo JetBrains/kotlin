@@ -20,4 +20,9 @@ class A {
         l2 = 10L
         l4 = 10
     }
+
+    void foo(long z) {
+        boolean b1 = z == 1;
+        boolean b2 = z != 1;
+    }
 }

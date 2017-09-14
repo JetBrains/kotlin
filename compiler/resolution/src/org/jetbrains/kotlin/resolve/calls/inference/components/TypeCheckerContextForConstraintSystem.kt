@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -42,6 +45,31 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
      * override val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.TAKE_FIRST_FOR_SUBTYPING
      */
     override final fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
+        val hasNoInfer = subType.isTypeVariableWithNoInfer() || superType.isTypeVariableWithNoInfer()
+        if (hasNoInfer) return true
+
+        val hasExact = subType.isTypeVariableWithExact() || superType.isTypeVariableWithExact()
+
+        // we should strip annotation's because we have incorporation operation and they should be not affected
+        val mySubType = if (hasExact) subType.replaceAnnotations(Annotations.EMPTY) else subType
+        val mySuperType = if (hasExact) superType.replaceAnnotations(Annotations.EMPTY) else superType
+
+        val result = internalAddSubtypeConstraint(mySubType, mySuperType)
+        if (!hasExact) return result
+
+        val result2 = internalAddSubtypeConstraint(mySuperType, mySubType)
+
+        if (result == null && result2 == null) return null
+        return (result ?: true) && (result2 ?: true)
+    }
+
+    private fun UnwrappedType.isTypeVariableWithExact() =
+            anyBound(this@TypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasExactAnnotation()
+
+    private fun UnwrappedType.isTypeVariableWithNoInfer() =
+            anyBound(this@TypeCheckerContextForConstraintSystem::isMyTypeVariable) && hasNoInferAnnotation()
+
+    private fun internalAddSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
         assertInputTypes(subType, superType)
 
         var answer: Boolean? = null
@@ -63,7 +91,7 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
      * Foo <: T? <=> Foo & Any <: T
      * Foo <: T -- leave as is
      */
-    fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
+    private fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
         @Suppress("NAME_SHADOWING")
         val typeVariable = typeVariable.upperIfFlexible()
 
@@ -82,7 +110,7 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
      * T? <: Foo <=> T <: Foo && Nothing? <: Foo
      * T  <: Foo -- leave as is
      */
-    fun simplifyUpperConstraint(typeVariable: UnwrappedType, superType: UnwrappedType): Boolean {
+    private fun simplifyUpperConstraint(typeVariable: UnwrappedType, superType: UnwrappedType): Boolean {
         @Suppress("NAME_SHADOWING")
         val typeVariable = typeVariable.lowerIfFlexible()
 
@@ -90,18 +118,14 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
 
         if (typeVariable.isMarkedNullable) {
             // here is important that superType is singleClassifierType
-            return if (superType.anyBound(this::isMyTypeVariable)) {
-                simplifyLowerConstraint(superType, typeVariable)
-            }
-            else {
+            return superType.anyBound(this::isMyTypeVariable) ||
                 isSubtypeOfByTypeChecker(typeVariable.builtIns.nullableNothingType, superType)
-            }
         }
 
         return true
     }
 
-    fun simplifyConstraintForPossibleIntersectionSubType(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
+    private fun simplifyConstraintForPossibleIntersectionSubType(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
         @Suppress("NAME_SHADOWING")
         val subType = subType.lowerIfFlexible()
 

@@ -1,0 +1,35 @@
+package
+
+public fun main(/*0*/ a: A): kotlin.Unit
+
+public open class A {
+    public constructor A()
+    @MyNullable public final var field: kotlin.String!
+    @MyNonnull public open fun bar(): kotlin.String!
+    @MyCheckForNull public open fun baz(/*0*/ @MyNonnull x: kotlin.String!, /*1*/ @MyCheckForNull y: kotlin.CharSequence!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @MyNullable public open fun foo(/*0*/ @MyNonnull x: kotlin.String!, /*1*/ @MyNullable y: kotlin.CharSequence!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierNickname @javax.annotation.CheckForNull @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class MyCheckForNull : kotlin.Annotation {
+    public constructor MyCheckForNull()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierNickname @javax.annotation.Nonnull(when = When.ALWAYS) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class MyNonnull : kotlin.Annotation {
+    public constructor MyNonnull()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierNickname @javax.annotation.Nonnull(when = When.MAYBE) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class MyNullable : kotlin.Annotation {
+    public constructor MyNullable()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

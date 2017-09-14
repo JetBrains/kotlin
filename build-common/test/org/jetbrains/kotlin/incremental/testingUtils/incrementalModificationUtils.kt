@@ -128,13 +128,13 @@ fun getModificationsToPerform(
 }
 
 abstract class Modification(val path: String) {
-    abstract fun perform(workDir: File, mapping: MutableMap<File, File>)
+    abstract fun perform(workDir: File, mapping: MutableMap<File, File>): File?
 
     override fun toString(): String = "${this::class.java.simpleName} $path"
 }
 
 class ModifyContent(path: String, val dataFile: File) : Modification(path) {
-    override fun perform(workDir: File, mapping: MutableMap<File, File>) {
+    override fun perform(workDir: File, mapping: MutableMap<File, File>): File? {
         val file = File(workDir, path)
 
         val oldLastModified = file.lastModified()
@@ -148,11 +148,12 @@ class ModifyContent(path: String, val dataFile: File) : Modification(path) {
         }
 
         mapping[file] = dataFile
+        return file
     }
 }
 
 class TouchFile(path: String, private val touchPolicy: TouchPolicy) : Modification(path) {
-    override fun perform(workDir: File, mapping: MutableMap<File, File>) {
+    override fun perform(workDir: File, mapping: MutableMap<File, File>): File? {
         val file = File(workDir, path)
 
         when (touchPolicy) {
@@ -166,16 +167,18 @@ class TouchFile(path: String, private val touchPolicy: TouchPolicy) : Modificati
             }
         }
 
+        return file
     }
 }
 
 class DeleteFile(path: String) : Modification(path) {
-    override fun perform(workDir: File, mapping: MutableMap<File, File>) {
+    override fun perform(workDir: File, mapping: MutableMap<File, File>): File? {
         val fileToDelete = File(workDir, path)
         if (!fileToDelete.delete()) {
             throw AssertionError("Couldn't delete $fileToDelete")
         }
 
         mapping.remove(fileToDelete)
+        return null
     }
 }

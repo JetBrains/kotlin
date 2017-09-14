@@ -56,6 +56,9 @@ class ReflectJavaEnumValueAnnotationArgument(
         val enumClass = if (clazz.isEnum) clazz else clazz.enclosingClass
         return ReflectJavaField(enumClass.getDeclaredField(value.name))
     }
+
+    override val entryName: Name?
+        get() = Name.identifier(value.name)
 }
 
 class ReflectJavaClassObjectAnnotationArgument(

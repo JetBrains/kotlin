@@ -615,7 +615,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
         is JsNameRef -> {
             val qualifier = expr.qualifier
             if (expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier))) {
-                true
+                expr.name !in temporary
             }
             else {
                 val name = expr.name

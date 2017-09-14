@@ -1,0 +1,63 @@
+package
+
+package a {
+
+    public final annotation class ann : kotlin.Annotation {
+        public constructor ann(/*0*/ value: kotlin.reflect.KClass<(raw) kotlin.Any>)
+        public final val value: kotlin.reflect.KClass<(raw) kotlin.Any>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) public/*package*/ final annotation class ann1 : kotlin.Annotation {
+        public/*package*/ constructor ann1(/*0*/ a: kotlin.String, /*1*/ i: kotlin.Int)
+        public final val a: kotlin.String
+        public final val i: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) public/*package*/ final annotation class ann2 : kotlin.Annotation {
+        public/*package*/ constructor ann2(/*0*/ vararg value: a.ann1 /*kotlin.Array<out a.ann1>*/ = ..., /*1*/ i: kotlin.Int)
+        public final val i: kotlin.Int
+        public final val value: kotlin.Array<a.ann1>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) public/*package*/ final annotation class ann3 : kotlin.Annotation {
+        public/*package*/ constructor ann3(/*0*/ value: kotlin.Int)
+        public final val value: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final annotation class def : kotlin.Annotation {
+        public constructor def(/*0*/ firstDefault: kotlin.String = ..., /*1*/ secondDefault: kotlin.String = ..., /*2*/ notDefault: kotlin.Int)
+        public final val firstDefault: kotlin.String
+        public final val notDefault: kotlin.Int
+        public final val secondDefault: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @a.ann(value = kotlin.String::class) public open class x {
+        public constructor x()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @a.ann2(i = 42, value = {a.ann1(a = "ab", i = 2), a.ann1(a = "b", i = 2), a.ann1(a = "c", i = 3)}) public open fun method(): kotlin.String!
+        @a.ann3(value = 2) public open fun method2(): kotlin.String!
+        @a.def public open fun method3(): kotlin.String!
+        @a.def(value = 1) public open fun method4(): kotlin.String!
+        @a.def(firstDefault = "f", value = 5) public open fun method5(): kotlin.String!
+        @a.def(secondDefault = "s", value = 14) public open fun method6(): kotlin.String!
+        @a.def(firstDefault = "f", secondDefault = "s", value = 17) public open fun method7(): kotlin.String!
+        @a.def(value = 3) public open fun method8(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

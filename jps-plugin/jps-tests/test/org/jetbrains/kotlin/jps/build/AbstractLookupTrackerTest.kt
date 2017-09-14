@@ -16,105 +16,297 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.containers.HashMap
 import com.intellij.util.containers.StringInterner
+import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.build.JvmSourceRoot
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
+import org.jetbrains.kotlin.incremental.isKotlinFile
+import org.jetbrains.kotlin.incremental.js.*
+import org.jetbrains.kotlin.incremental.makeModuleFile
+import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
+import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
+import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
+import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
+import org.jetbrains.kotlin.jps.incremental.runJSCompiler
+import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
+import java.io.*
 import java.util.*
 
-private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "operator fun", "val", "var")
-private val DECLARATION_STARTS_WITH = DECLARATION_KEYWORDS.map { it + " " }
+abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 
-abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
-        allowNoFilesWithSuffixInTestData = true,
-        allowNoBuildLogFileInTestData = true
-) {
-    // ignore KDoc like comments which starts with `/**`, example: /** text */
-    val COMMENT_WITH_LOOKUP_INFO = "/\\*[^*]+\\*/".toRegex()
+    private val sourceToOutputMapping = hashMapOf<File, MutableSet<File>>()
 
-    override fun checkLookups(lookupTracker: LookupTracker, compiledFiles: Set<File>) {
-        if (lookupTracker !is TestLookupTracker) throw AssertionError("Expected TestLookupTracker, but: ${lookupTracker::class.java}")
+    override fun setUp() {
+        super.setUp()
+        sourceToOutputMapping.clear()
+    }
 
-        val fileToLookups = lookupTracker.lookups.groupBy { it.filePath }
-
-        fun checkLookupsInFile(expectedFile: File, actualFile: File) {
-
-            val independentFilePath = FileUtil.toSystemIndependentName(actualFile.path)
-            val lookupsFromFile = fileToLookups[independentFilePath] ?: return
-
-            val text = actualFile.readText()
-
-            val matchResult = COMMENT_WITH_LOOKUP_INFO.find(text)
-            if (matchResult != null) {
-                fail("File $actualFile unexpectedly contains multiline comments. In range ${matchResult.range} found: ${matchResult.value} in $text")
+    override fun markDirty(removedAndModifiedSources: Iterable<File>) {
+        for (sourceFile in removedAndModifiedSources) {
+            val outputs = sourceToOutputMapping.remove(sourceFile) ?: continue
+            for (output in outputs) {
+                output.delete()
             }
-
-            val lines = text.lines().toMutableList()
-
-            for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
-                val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
-
-                val lineContent = lines[line - 1]
-                val parts = ArrayList<CharSequence>(columnToLookups.size * 2)
-
-                var start = 0
-
-                for ((column, lookupsFromColumn) in columnToLookups) {
-                    val end = column - 1
-                    parts.add(lineContent.subSequence(start, end))
-
-                    val lookups = lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/") {
-                        val rest = lineContent.substring(end)
-
-                        val name =
-                                when {
-                                    rest.startsWith(it.name) || // same name
-                                    rest.startsWith("$" + it.name) || // backing field
-                                    DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
-                                         -> ""
-                                    else -> "(" + it.name + ")"
-                                }
-
-                        it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
-                    }
-
-                    parts.add(lookups)
-
-                    start = end
-                }
-
-                lines[line - 1] = parts.joinToString("") + lineContent.subSequence(start, lineContent.length)
-            }
-
-            val actual = lines.joinToString("\n")
-
-            KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
-        }
-
-        for (actualFile in compiledFiles) {
-            val expectedFile = mapWorkingToOriginalFile[actualFile]!!
-
-            checkLookupsInFile(expectedFile, actualFile)
         }
     }
 
-    override fun preProcessSources(srcDir: File) = dropBlockComments(srcDir)
+    override fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services) {
+        for ((sourceFiles, outputFile) in outputItemsCollector.outputs) {
+            if (outputFile.extension == "kotlin_module") continue
 
-    private fun dropBlockComments(workSrcDir: File) {
-        for (file in workSrcDir.walkTopDown()) {
-            if (!file.isFile) continue
-
-            val original = file.readText()
-            val modified = original.replace(COMMENT_WITH_LOOKUP_INFO, "")
-
-            if (original != modified) {
-                file.writeText(modified)
+            for (sourceFile in sourceFiles) {
+                val outputsForSource = sourceToOutputMapping.getOrPut(sourceFile) { hashSetOf() }
+                outputsForSource.add(outputFile)
             }
         }
+    }
+
+    override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
+        val moduleFile = makeModuleFile(
+                name = "test",
+                isTest = true,
+                outputDir = outDir,
+                sourcesToCompile = filesToCompile.toList(),
+                javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
+                classpath = listOf(outDir).filter { it.exists() },
+                friendDirs = emptyList()
+        )
+
+        val args = K2JVMCompilerArguments().apply {
+            buildFile = moduleFile.canonicalPath
+            reportOutputFiles = true
+        }
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
+
+        try {
+            val stream = ByteArrayOutputStream()
+            val out = PrintStream(stream)
+            val exitCode = CompilerRunnerUtil.invokeExecMethod(K2JVMCompiler::class.java.name, argsArray, env, out)
+            val reader = BufferedReader(StringReader(stream.toString()))
+            CompilerOutputParser.parseCompilerMessagesFromReader(env.messageCollector, reader, env.outputItemsCollector)
+
+            return exitCode
+        }
+        finally {
+            moduleFile.delete()
+        }
+    }
+}
+
+abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
+    private var header: ByteArray? = null
+    private val packageParts: MutableMap<File, TranslationResultValue> = hashMapOf()
+
+    override fun setUp() {
+        super.setUp()
+        header = null
+        packageParts.clear()
+    }
+
+    override fun Services.Builder.registerAdditionalServices() {
+        if (header != null) {
+            register(IncrementalDataProvider::class.java, IncrementalDataProviderImpl(header!!, packageParts!!))
+        }
+
+        register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
+    }
+
+    override fun markDirty(removedAndModifiedSources: Iterable<File>) {
+        removedAndModifiedSources.forEach { packageParts.remove(it) }
+    }
+
+    override fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services) {
+        val incrementalResults = services.get(IncrementalResultsConsumer::class.java) as IncrementalResultsConsumerImpl
+        header = incrementalResults.headerMetadata
+        packageParts.putAll(incrementalResults.packageParts)
+    }
+
+    override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
+        val args = K2JSCompilerArguments().apply {
+            outputFile = File(outDir, "out.js").canonicalPath
+            reportOutputFiles = true
+            freeArgs.addAll(filesToCompile.map { it.canonicalPath })
+        }
+        return runJSCompiler(args, env)
+    }
+}
+
+abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
+    private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "operator fun", "val", "var")
+    private val DECLARATION_STARTS_WITH = DECLARATION_KEYWORDS.map { it + " " }
+    // ignore KDoc like comments which starts with `/**`, example: /** text */
+    private val COMMENT_WITH_LOOKUP_INFO = "/\\*[^*]+\\*/".toRegex()
+
+    protected lateinit var srcDir: File
+    protected lateinit var outDir: File
+    private var isICEnabledBackup: Boolean = false
+
+    override fun setUp() {
+        super.setUp()
+        srcDir = File(workingDir, "src").apply { mkdirs() }
+        outDir = File(workingDir, "out")
+        isICEnabledBackup = IncrementalCompilation.isEnabled()
+        IncrementalCompilation.setIsEnabled(true)
+    }
+
+    override fun tearDown() {
+        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        super.tearDown()
+    }
+
+    protected abstract fun markDirty(removedAndModifiedSources: Iterable<File>)
+    protected abstract fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services)
+    protected abstract fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any?
+
+    fun doTest(path: String) {
+        val sb = StringBuilder()
+        fun StringBuilder.indentln(string: String) {
+            appendln("  $string")
+        }
+        fun CompilerOutput.logOutput(stepName: String) {
+            sb.appendln("==== $stepName ====")
+
+            sb.appendln("Compiling files:")
+            for (compiledFile in compiledFiles.sortedBy { it.canonicalPath }) {
+                val lookupsFromFile = lookups[compiledFile]
+                val lookupStatus = when {
+                    lookupsFromFile == null -> "(unknown)"
+                    lookupsFromFile.isEmpty() -> "(no lookups)"
+                    else -> ""
+                }
+                val relativePath = compiledFile.toRelativeString(workingDir).replace("\\", "/")
+                sb.indentln("$relativePath$lookupStatus")
+            }
+
+            sb.appendln("Exit code: $exitCode")
+            errors.forEach(sb::indentln)
+
+            sb.appendln()
+        }
+
+        val testDir = File(path)
+        val workToOriginalFileMap = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
+        var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile() }
+        val steps = getModificationsToPerform(testDir, moduleNames = null, allowNoFilesWithSuffixInTestData = true, touchPolicy = TouchPolicy.CHECKSUM)
+                .filter { it.isNotEmpty() }
+
+        val filesToLookups = arrayListOf<Map<File, List<LookupInfo>>>()
+        fun CompilerOutput.originalFilesToLookups() =
+                compiledFiles.associateBy({ workToOriginalFileMap[it]!! }, { lookups[it] ?: emptyList() })
+
+        make(dirtyFiles).apply {
+            logOutput("INITIAL BUILD")
+            filesToLookups.add(originalFilesToLookups())
+
+        }
+        for ((i, modifications) in steps.withIndex()) {
+            dirtyFiles = modifications.mapNotNullTo(HashSet()) { it.perform(workingDir, workToOriginalFileMap) }
+            make(dirtyFiles).apply {
+                logOutput("STEP ${i + 1}")
+                filesToLookups.add(originalFilesToLookups())
+            }
+        }
+
+        val expectedBuildLog = File(testDir, "build.log")
+        UsefulTestCase.assertSameLinesWithFile(expectedBuildLog.canonicalPath, sb.toString())
+
+        assertEquals(steps.size + 1, filesToLookups.size)
+        for ((i, lookupsAtStepI) in filesToLookups.withIndex()) {
+            val step = if (i == 0) "INITIAL BUILD" else "STEP $i"
+            for ((file, lookups) in lookupsAtStepI) {
+                checkLookupsInFile(step, file, lookups)
+            }
+        }
+    }
+
+    private class CompilerOutput(
+        val exitCode: String,
+        val errors: List<String>,
+        val compiledFiles: Iterable<File>,
+        val lookups: Map<File, List<LookupInfo>>
+    )
+
+    private fun make(filesToCompile: Iterable<File>): CompilerOutput {
+        filesToCompile.forEach {
+            it.writeText(it.readText().replace(COMMENT_WITH_LOOKUP_INFO, ""))
+        }
+
+        markDirty(filesToCompile)
+        val lookupTracker = TestLookupTracker()
+        val messageCollector = TestMessageCollector()
+        val outputItemsCollector = OutputItemsCollectorImpl()
+        val services = Services.Builder().run {
+            register(LookupTracker::class.java, lookupTracker)
+            registerAdditionalServices()
+            build()
+        }
+        val environment = createTestingCompilerEnvironment(messageCollector, outputItemsCollector, services)
+        val exitCode = runCompiler(filesToCompile, environment) as? ExitCode
+        if (exitCode == ExitCode.OK) {
+            processCompilationResults(outputItemsCollector, environment.services)
+        }
+
+        val lookups = lookupTracker.lookups.groupBy { File(it.filePath) }
+        val lookupsFromCompiledFiles = filesToCompile.associate { it to (lookups[it] ?: emptyList()) }
+        return CompilerOutput(exitCode.toString(), messageCollector.errors, filesToCompile, lookupsFromCompiledFiles)
+    }
+
+    protected open fun Services.Builder.registerAdditionalServices() {}
+
+    private fun checkLookupsInFile(step: String, expectedFile: File, lookupsFromFile: List<LookupInfo>) {
+        val text = expectedFile.readText().replace(COMMENT_WITH_LOOKUP_INFO, "")
+        val lines = text.lines().toMutableList()
+
+        for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
+            val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
+
+            val lineContent = lines[line - 1]
+            val parts = ArrayList<CharSequence>(columnToLookups.size * 2)
+
+            var start = 0
+
+            for ((column, lookupsFromColumn) in columnToLookups) {
+                val end = column - 1
+                parts.add(lineContent.subSequence(start, end))
+
+                val lookups = lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/") {
+                    val rest = lineContent.substring(end)
+
+                    val name =
+                            when {
+                                rest.startsWith(it.name) || // same name
+                                rest.startsWith("$" + it.name) || // backing field
+                                DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
+                                -> ""
+                                else -> "(" + it.name + ")"
+                            }
+
+                    it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
+                }
+
+                parts.add(lookups)
+
+                start = end
+            }
+
+            lines[line - 1] = parts.joinToString("") + lineContent.subSequence(start, lineContent.length)
+        }
+
+        val actual = lines.joinToString("\n")
+        KotlinTestUtils.assertEqualsToFile("Lookups do not match after $step", expectedFile, actual)
     }
 }
 

@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.js.analyze
 
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
+import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 
 object TopDownAnalyzerFacadeForJS {
     @JvmStatic
@@ -39,12 +42,18 @@ object TopDownAnalyzerFacadeForJS {
         val context = ContextForNewModule(
                 ProjectContext(config.project), Name.special("<${config.moduleId}>"), JsPlatform.builtIns, null
         )
+
+        // a hack to avoid adding lookups for builtins
+        val lookupTracker = config.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
+        config.configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING)
         context.module.setDependencies(
                 listOf(context.module) +
                 config.moduleDescriptors.map { it.data } +
                 listOf(JsPlatform.builtIns.builtInsModule),
                 config.friendModuleDescriptors.map { it.data }.toSet()
         )
+        lookupTracker?.let { config.configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it) }
+
         val trace = BindingTraceContext()
         trace.record(MODULE_KIND, context.module, config.moduleKind)
         return analyzeFilesWithGivenTrace(files, trace, context, config)
@@ -57,14 +66,20 @@ object TopDownAnalyzerFacadeForJS {
             moduleContext: ModuleContext,
             config: JsConfig
     ): JsAnalysisResult {
-        val packageFragment = config.configuration[JSConfigurationKeys.FALLBACK_METADATA]?.let {
-            KotlinJavascriptSerializationUtil.readDescriptors(it, moduleContext.storageManager, moduleContext.module,
-                                                              DeserializationConfiguration.Default)
+        val lookupTracker = config.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
+        val packageFragment = config.configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let {
+            val metadata = PackagesWithHeaderMetadata(it.headerMetadata, it.compiledPackageParts.values.map { it.metadata })
+            KotlinJavascriptSerializationUtil.readDescriptors(metadata,
+                                                              moduleContext.storageManager,
+                                                              moduleContext.module,
+                                                              DeserializationConfiguration.Default,
+                                                              lookupTracker)
         }
         val analyzerForJs = createTopDownAnalyzerForJs(
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 config.configuration.languageVersionSettings,
+                lookupTracker,
                 packageFragment
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)

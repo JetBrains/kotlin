@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -40,8 +37,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
-
+/*
+ * Notice the difference between two function descriptors in this class.
+ * - [referencedFunction] is the function declaration which is referenced by the "::" expression. This is a real function present in code.
+ * - [functionDescriptor] is a synthetically created function which has the same signature as the "invoke" of the generated callable
+ *   reference subclass. Its parameters include dispatch/extension receiver parameters of the referenced function, and those value
+ *   parameters of the referenced function which are required by the expected function type where the callable reference is passed to.
+ *   In simple cases, these value parameters are all of the referenced function's value parameters. But in cases when the referenced
+ *   function has parameters with default values, or a vararg parameter, functionDescriptor can take fewer parameters than
+ *   referencedFunction if the expected function type takes fewer parameters as well. For example:
+ *
+ * fun foo(a: A, b: B = ..., c: C = ..., vararg d: D) {}
+ *
+ * fun bar(f: (A, B) -> Unit) {}
+ *
+ * // referencedFunction: foo(A, B, C, vararg D)
+ * // functionDescriptor: invoke(A, B)
+ * bar(::foo)
+ */
 public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased {
     private final ResolvedCall<?> resolvedCall;
     private final FunctionDescriptor referencedFunction;
@@ -80,20 +93,21 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
          every argument boils down to calling LOAD with the corresponding index
          */
 
-        KtCallExpression fakeExpression = CodegenUtil.constructFakeFunctionCall(state.getProject(), referencedFunction);
+        int receivers = CallableReferenceUtilKt.computeExpectedNumberOfReceivers(referencedFunction, receiverType != null);
+        KtCallExpression fakeExpression =
+                CodegenUtil.constructFakeFunctionCall(state.getProject(), functionDescriptor.getValueParameters().size() - receivers);
         List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
         ReceiverValue dispatchReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getDispatchReceiverParameter());
         ReceiverValue extensionReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getExtensionReceiverParameter());
-        computeAndSaveArguments(fakeArguments, codegen);
+        computeAndSaveArguments(fakeArguments, codegen, receivers);
 
         ResolvedCall<CallableDescriptor> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {
 
-            private final Map<ValueParameterDescriptor, ResolvedValueArgument> argumentMap;
+            private final Map<ValueParameterDescriptor, ResolvedValueArgument> argumentMap = new LinkedHashMap<>();
             {
-                argumentMap = new LinkedHashMap<>(fakeArguments.size());
                 int index = 0;
-                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+                List<ValueParameterDescriptor> parameters = referencedFunction.getValueParameters();
                 for (ValueArgument argument : fakeArguments) {
                     argumentMap.put(parameters.get(index), new ExpressionValueArgument(argument));
                     index++;
@@ -146,20 +160,14 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         v.areturn(returnType);
     }
 
-    private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {
-        int receivers = (referencedFunction.getDispatchReceiverParameter() != null ? 1 : 0) +
-                        (referencedFunction.getExtensionReceiverParameter() != null ? 1 : 0) -
-                        (receiverType != null ? 1 : 0);
-
-        if (receivers < 0 &&  referencedFunction instanceof ConstructorDescriptor && isObject(referencedFunction.getContainingDeclaration().getContainingDeclaration())) {
-            //reference to object nested class
-            //TODO: seems problem should be fixed on frontend side (note that object instance are captured by generated class)
-            receivers = 0;
-        }
-
-        List<ValueParameterDescriptor> parameters = CollectionsKt.drop(functionDescriptor.getValueParameters(), receivers);
-        for (int i = 0; i < parameters.size(); i++) {
-            ValueParameterDescriptor parameter = parameters.get(i);
+    private void computeAndSaveArguments(
+            @NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen, int receivers
+    ) {
+        List<ValueParameterDescriptor> valueParameters = CollectionsKt.drop(functionDescriptor.getValueParameters(), receivers);
+        assert valueParameters.size() == fakeArguments.size()
+                : functionDescriptor + ": " + valueParameters.size() + " != " + fakeArguments.size();
+        for (int i = 0; i < valueParameters.size(); i++) {
+            ValueParameterDescriptor parameter = valueParameters.get(i);
             ValueArgument fakeArgument = fakeArguments.get(i);
 
             Type type = state.getTypeMapper().mapType(parameter);

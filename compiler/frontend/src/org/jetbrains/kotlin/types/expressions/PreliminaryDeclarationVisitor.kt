@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -26,9 +27,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-class PreliminaryDeclarationVisitor(val declaration: KtDeclaration): AssignedVariablesSearcher() {
+class PreliminaryDeclarationVisitor(
+        val declaration: KtDeclaration,
+        val languageVersionSettings: LanguageVersionSettings
+): AssignedVariablesSearcher() {
 
-    override fun writers(variableDescriptor: VariableDescriptor): MutableSet<KtDeclaration?> {
+    override fun writers(variableDescriptor: VariableDescriptor): MutableSet<Writer> {
         lazyTrigger
         return super.writers(variableDescriptor)
     }
@@ -39,17 +43,18 @@ class PreliminaryDeclarationVisitor(val declaration: KtDeclaration): AssignedVar
 
     companion object {
 
-        fun createForExpression(expression: KtExpression, trace: BindingTrace) {
-            expression.getStrictParentOfType<KtDeclaration>()?.let { createForDeclaration(it, trace) }
+        fun createForExpression(expression: KtExpression, trace: BindingTrace, languageVersionSettings: LanguageVersionSettings) {
+            expression.getStrictParentOfType<KtDeclaration>()?.let { createForDeclaration(it, trace, languageVersionSettings) }
         }
 
         private fun topMostNonClassDeclaration(declaration: KtDeclaration) =
                 declaration.parentsWithSelf.filterIsInstance<KtDeclaration>().findLast { it !is KtClassOrObject } ?: declaration
 
-        fun createForDeclaration(declaration: KtDeclaration, trace: BindingTrace) {
+        fun createForDeclaration(declaration: KtDeclaration, trace: BindingTrace, languageVersionSettings: LanguageVersionSettings) {
             val visitorOwner = topMostNonClassDeclaration(declaration)
             if (trace.get(BindingContext.PRELIMINARY_VISITOR, visitorOwner) != null) return
-            trace.record(BindingContext.PRELIMINARY_VISITOR, visitorOwner, PreliminaryDeclarationVisitor(visitorOwner))
+            trace.record(BindingContext.PRELIMINARY_VISITOR, visitorOwner,
+                         PreliminaryDeclarationVisitor(visitorOwner, languageVersionSettings))
         }
 
         fun getVisitorByVariable(variableDescriptor: VariableDescriptor, bindingContext: BindingContext): PreliminaryDeclarationVisitor? {

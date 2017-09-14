@@ -78,6 +78,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("hugeUnresolvedKotlinxHtml.kt")
+    public void testHugeUnresolvedKotlinxHtml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/hugeUnresolvedKotlinxHtml.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ifElseJavaList.kt")
     public void testIfElseJavaList() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/ifElseJavaList.kt");
@@ -1320,6 +1326,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/java")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Java extends AbstractDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInJava() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/java"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("patternCompileCallableReference.kt")
+        public void testPatternCompileCallableReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/java/patternCompileCallableReference.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kt7585")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1748,6 +1769,27 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("noDefaultImportOfKotlinComparisons.kt")
         public void testNoDefaultImportOfKotlinComparisons() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/sourceCompatibility/noDefaultImportOfKotlinComparisons.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/targetedBuiltIns")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TargetedBuiltIns extends AbstractDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInTargetedBuiltIns() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/targetedBuiltIns"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("blackListed.kt")
+        public void testBlackListed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/targetedBuiltIns/blackListed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsupportedFeature.kt")
+        public void testUnsupportedFeature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/targetedBuiltIns/unsupportedFeature.kt");
             doTest(fileName);
         }
     }

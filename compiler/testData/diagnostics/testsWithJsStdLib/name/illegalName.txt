@@ -5,6 +5,7 @@ private fun ` .private `(): kotlin.String
 @kotlin.js.JsName(name = "validName") private fun ` .private with @JsName `(): kotlin.String
 public fun ` .public `(): kotlin.String
 @kotlin.js.JsName(name = "  ___  ") private fun bar(): kotlin.String
+public fun box(/*0*/ x: dynamic): kotlin.Unit
 @kotlin.js.JsName(name = "  __  ") public fun foo(): kotlin.String
 
 private final class ` .private class ` {

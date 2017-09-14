@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -176,18 +175,22 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
         val typeMapper = KotlinTypeMapper(
                 bindingContext,
                 ClassBuilderMode.full(false),
-                NoResolveFileClassesProvider,
                 IncompatibleClassTracker.DoNothing,
                 descriptor.module.name.asString(),
                 /* isJvm8Target */ false,
                 /* isJvm8TargetWithDefaults */ false)
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {
-            checkParcelableClassProperty(parameter, diagnosticHolder, typeMapper)
+            checkParcelableClassProperty(parameter, descriptor, diagnosticHolder, typeMapper)
         }
     }
 
-    private fun checkParcelableClassProperty(parameter: KtParameter, diagnosticHolder: DiagnosticSink, typeMapper: KotlinTypeMapper) {
+    private fun checkParcelableClassProperty(
+            parameter: KtParameter,
+            containerClass: ClassDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            typeMapper: KotlinTypeMapper
+    ) {
         if (!parameter.hasValOrVar()) {
             val reportElement = parameter.nameIdentifier ?: parameter
             diagnosticHolder.reportFromPlugin(
@@ -197,11 +200,12 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
         val descriptor = typeMapper.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
         val type = descriptor.type
 
-        if (!type.isError) {
+        if (!type.isError && !containerClass.hasCustomParceler()) {
             val asmType = typeMapper.mapType(type)
 
             try {
-                ParcelSerializer.get(type, asmType, typeMapper, strict = true)
+                val context = ParcelSerializer.ParcelSerializerContext(typeMapper, typeMapper.mapType(containerClass.defaultType))
+                ParcelSerializer.get(type, asmType, context, strict = true)
             }
             catch (e: IllegalArgumentException) {
                 // get() throws IllegalArgumentException on unknown types
@@ -209,5 +213,10 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
                 diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_TYPE_NOT_SUPPORTED.on(reportElement), DefaultErrorMessagesAndroid)
             }
         }
+    }
+
+    private fun ClassDescriptor.hasCustomParceler(): Boolean {
+        val companionObjectSuperTypes = companionObjectDescriptor?.let { TypeUtils.getAllSupertypes(it.defaultType) } ?: return false
+        return companionObjectSuperTypes.any { it.isParceler }
     }
 }

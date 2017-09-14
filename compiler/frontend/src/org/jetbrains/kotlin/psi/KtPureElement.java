@@ -34,7 +34,6 @@ public interface KtPureElement {
     /**
      * Returns parent source element.
      */
-    @NotNull
     PsiElement getParent();
 
     @NotNull

@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.js.dce
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
+import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
 import org.jetbrains.kotlin.js.dce.Context.Node
 
 fun Context.isObjectDefineProperty(function: JsExpression) = isObjectFunction(function, "defineProperty")
@@ -25,7 +27,11 @@ fun Context.isObjectGetOwnPropertyDescriptor(function: JsExpression) = isObjectF
 
 fun Context.isDefineModule(function: JsExpression): Boolean = isKotlinFunction(function, "defineModule")
 
-fun Context.isDefineInlineFunction(function: JsExpression): Boolean = isKotlinFunction(function, "defineInlineFunction")
+fun Context.isDefineInlineFunction(function: JsExpression): Boolean =
+        isKotlinFunction(function, "defineInlineFunction") || isSpecialFunction(function, SpecialFunction.DEFINE_INLINE_FUNCTION)
+
+fun Context.isWrapFunction(function: JsExpression): Boolean =
+        isKotlinFunction(function, "wrapFunction") || isSpecialFunction(function, SpecialFunction.WRAP_FUNCTION)
 
 fun Context.isObjectFunction(function: JsExpression, functionName: String): Boolean {
     if (function !is JsNameRef) return false
@@ -42,6 +48,9 @@ fun Context.isKotlinFunction(function: JsExpression, name: String): Boolean {
     val receiver = (function.qualifier as? JsNameRef)?.name ?: return false
     return receiver in nodes && receiver.ident.toLowerCase() == "kotlin"
 }
+
+fun isSpecialFunction(expr: JsExpression, specialFunction: SpecialFunction): Boolean =
+        expr is JsNameRef && expr.qualifier == null && expr.name?.specialFunction == specialFunction
 
 fun Context.isAmdDefine(function: JsExpression): Boolean = isTopLevelFunction(function, "define")
 

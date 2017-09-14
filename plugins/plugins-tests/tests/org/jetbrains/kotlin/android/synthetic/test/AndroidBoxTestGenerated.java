@@ -44,6 +44,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
             doCompileAgainstAndroidSdkTest(fileName);
         }
 
+        @TestMetadata("androidEntityInnerClass")
+        public void testAndroidEntityInnerClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntityInnerClass/");
+            doCompileAgainstAndroidSdkTest(fileName);
+        }
+
         @TestMetadata("fqNameInAttr")
         public void testFqNameInAttr() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInAttr/");
@@ -104,6 +110,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         @TestMetadata("androidEntity")
         public void testAndroidEntity() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntity/");
+            doFakeInvocationTest(fileName);
+        }
+
+        @TestMetadata("androidEntityInnerClass")
+        public void testAndroidEntityInnerClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntityInnerClass/");
             doFakeInvocationTest(fileName);
         }
 

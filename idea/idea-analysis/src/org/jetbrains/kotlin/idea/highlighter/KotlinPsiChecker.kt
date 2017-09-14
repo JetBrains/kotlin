@@ -24,6 +24,7 @@ import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -256,7 +257,17 @@ private class ElementAnnotator(private val element: PsiElement,
     }
 
     private fun setUpAnnotations(diagnostics: List<Diagnostic>, data: AnnotationPresentationInfo) {
-        val fixesMap = createQuickFixes(diagnostics)
+        val fixesMap = try {
+            createQuickFixes(diagnostics)
+        }
+        catch (e: Exception) {
+            if (e is ControlFlowException) {
+                throw e
+            }
+            LOG.error(e)
+            MultiMap<Diagnostic, IntentionAction>()
+        }
+
         for (range in data.ranges) {
             for (diagnostic in diagnostics) {
                 val annotation = data.create(diagnostic, range, holder)
@@ -274,6 +285,10 @@ private class ElementAnnotator(private val element: PsiElement,
                 }
             }
         }
+    }
+
+    companion object {
+        val LOG = Logger.getInstance(ElementAnnotator::class.java)
     }
 }
 

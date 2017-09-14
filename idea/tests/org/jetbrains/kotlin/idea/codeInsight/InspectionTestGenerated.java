@@ -245,6 +245,36 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("naming/class/inspectionData/inspections.test")
+        public void testNaming_class_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/class/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/enumEntry/inspectionData/inspections.test")
+        public void testNaming_enumEntry_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/enumEntry/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/function/inspectionData/inspections.test")
+        public void testNaming_function_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/function/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/privateProperty/inspectionData/inspections.test")
+        public void testNaming_privateProperty_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/privateProperty/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/property/inspectionData/inspections.test")
+        public void testNaming_property_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/property/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableBooleanElvis/inspectionData/inspections.test")
         public void testNullableBooleanElvis_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/nullableBooleanElvis/inspectionData/inspections.test");
@@ -305,6 +335,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("reformat/inspectionData/inspections.test")
+        public void testReformat_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/reformat/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeSetterParameterType/inspectionData/inspections.test")
         public void testRemoveSetterParameterType_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/removeSetterParameterType/inspectionData/inspections.test");
@@ -344,6 +380,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("spelling/inspectionData/inspections.test")
         public void testSpelling_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/spelling/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("suspiciousEqualsCombination/inspectionData/inspections.test")
+        public void testSuspiciousEqualsCombination_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/suspiciousEqualsCombination/inspectionData/inspections.test");
             doTest(fileName);
         }
 

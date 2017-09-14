@@ -33,5 +33,40 @@ class KotlinVersionTest {
             }
         }
     }
+
+    @Test fun versionComparison() {
+        val v100 = KotlinVersion(1, 0, 0)
+        val v107 = KotlinVersion(1, 0, 7)
+        val v110 = KotlinVersion(1, 1, 0)
+        val v114 = KotlinVersion(1, 1, 4)
+        val v115 = KotlinVersion(1, 1, 50)
+        val v120 = KotlinVersion(1, 2, 0)
+        val v122 = KotlinVersion(1, 2, 20)
+        val v2 = KotlinVersion(2, 0, 0)
+
+        val sorted = listOf(v100, v107, v110, v114, v115, v120, v122, v2)
+        for ((prev, next) in sorted.zip(sorted.drop(1))) { // use zipWithNext in 1.2
+            val message = "next: $next, prev: $prev"
+            assertTrue(next > prev, message)
+            assertTrue(next.isAtLeast(prev.major, prev.minor, prev.patch), message)
+            assertTrue(next.isAtLeast(prev.major, prev.minor), message)
+            assertTrue(next.isAtLeast(next.major, next.minor, next.patch), message)
+            assertTrue(next.isAtLeast(next.major, next.minor), message)
+            assertFalse(prev.isAtLeast(next.major, next.minor, next.patch), message)
+        }
+    }
+
+    @JvmVersion // until there's random in JS
+    @Test fun randomVersionComparison() {
+        val random = java.util.Random()
+        fun randomComponent(): Int = random.nextInt(KotlinVersion.MAX_COMPONENT_VALUE + 1)
+        fun randomVersion() = KotlinVersion(randomComponent(), randomComponent(), randomComponent())
+        repeat(10000) {
+            val v1 = randomVersion()
+            val v2 = randomVersion()
+            if (v1.isAtLeast(v2.major, v2.minor, v2.patch))
+                assertTrue(v1 >= v2, "Expected version $v1 >= $v2")
+        }
+    }
 }
 

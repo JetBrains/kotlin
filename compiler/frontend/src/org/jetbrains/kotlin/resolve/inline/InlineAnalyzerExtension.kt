@@ -67,7 +67,7 @@ class InlineAnalyzerExtension(
             }
 
             override fun visitClass(klass: KtClass) {
-                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, klass, descriptor))
+                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, "Local classes"))
             }
 
             override fun visitNamedFunction(function: KtNamedFunction) {
@@ -75,7 +75,7 @@ class InlineAnalyzerExtension(
                     super.visitNamedFunction(function)
                 }
                 else {
-                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor))
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, "Local functions"))
                 }
             }
         }
@@ -95,7 +95,7 @@ class InlineAnalyzerExtension(
                 val inheritDefaultValues = !parameter.declaresDefaultValue()
                 if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || inheritDefaultValues) {
                     if (inheritDefaultValues || !languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)) {
-                        trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, ktParameter, functionDescriptor))
+                        trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, "Functional parameters with inherited default values"))
                     }
                     else {
                         checkDefaultValue(trace, parameter, ktParameter)
@@ -154,9 +154,12 @@ class InlineAnalyzerExtension(
             }
 
     private fun checkHasInlinableAndNullability(functionDescriptor: FunctionDescriptor, function: KtFunction, trace: BindingTrace) {
-        for ((parameter, descriptor) in function.valueParameters.zip(functionDescriptor.valueParameters)) {
-            if (checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)) return
+        var hasInlineArgs = false
+        function.valueParameters.zip(functionDescriptor.valueParameters).forEach {
+            (parameter, descriptor) ->
+            hasInlineArgs = hasInlineArgs or checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)
         }
+        if (hasInlineArgs) return
 
         if (functionDescriptor.isInlineOnlyOrReifiable() || functionDescriptor.isHeader) return
 
@@ -171,7 +174,7 @@ class InlineAnalyzerExtension(
             expression: KtElement,
             functionDescriptor: CallableDescriptor,
             trace: BindingTrace?): Boolean {
-        if (InlineUtil.isInlineLambdaParameter(parameter)) {
+        if (InlineUtil.isInlineParameterExceptNullability(parameter)) {
             if (parameter.type.isMarkedNullable) {
                 trace?.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor))
             }

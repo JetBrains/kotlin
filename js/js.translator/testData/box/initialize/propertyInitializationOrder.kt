@@ -39,7 +39,7 @@ fun box(): String {
         field("e")
         field("f")
         field("g")
-        property("h")
+        field("h")
     }
     if (expectedRegex.find(aBody) == null) return "fail"
 

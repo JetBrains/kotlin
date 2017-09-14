@@ -508,8 +508,8 @@ public class OverridingUtil {
 
         if (!isVisibilityMoreSpecific(a, b)) return false;
 
-        if (a instanceof SimpleFunctionDescriptor) {
-            assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
+        if (a instanceof FunctionDescriptor) {
+            assert b instanceof FunctionDescriptor : "b is " + b.getClass();
 
             return isReturnTypeMoreSpecific(a, aReturnType, b, bReturnType);
         }

@@ -90,19 +90,21 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
                     }
                 }
             }
-
-            if (element is KtNamedDeclaration) {
-                if (element.hasModifier(KtTokens.HEADER_KEYWORD)) {
-                    collectImplementationMarkers(element, result)
-                }
-                else if (element.hasModifier(KtTokens.IMPL_KEYWORD)) {
-                    collectHeaderMarkers(element, result)
-                }
-            }
         }
 
         collectOverriddenFunctions(functions, result)
         collectOverriddenPropertyAccessors(properties, result)
+
+        for (element in elements) {
+            if (element !is KtNamedDeclaration) continue
+
+            if (element.hasModifier(KtTokens.HEADER_KEYWORD)) {
+                collectImplementationMarkers(element, result)
+            }
+            else if (element.hasModifier(KtTokens.IMPL_KEYWORD)) {
+                collectHeaderMarkers(element, result)
+            }
+        }
     }
 }
 
@@ -218,7 +220,7 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
     // clearing the whole BindingTrace.
 
     result.add(LineMarkerInfo(
-            declaration,
+            anchor,
             anchor.textRange,
             if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
             Pass.LINE_MARKERS,
@@ -252,18 +254,18 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
 
 private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDeclaration>,
                                                result: MutableCollection<LineMarkerInfo<*>>) {
-    val mappingToJava = HashMap<PsiMethod, KtNamedDeclaration>()
+    val mappingToJava = HashMap<PsiElement, KtNamedDeclaration>()
     for (property in properties) {
         if (property.isOverridable()) {
             val accessorsPsiMethods = property.getAccessorLightMethods()
-
             for (psiMethod in accessorsPsiMethods) {
                 mappingToJava.put(psiMethod, property)
             }
+            mappingToJava[property] = property
         }
     }
 
-    val classes = collectContainingClasses(mappingToJava.keys)
+    val classes = collectContainingClasses(mappingToJava.keys.filterIsInstance<PsiMethod>())
 
     for (property in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()
@@ -325,17 +327,18 @@ private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
 }
 
 private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
-    val mappingToJava = HashMap<PsiMethod, KtNamedFunction>()
+    val mappingToJava = HashMap<PsiElement, KtNamedFunction>()
     for (function in functions) {
         if (function.isOverridable()) {
             val method = LightClassUtil.getLightClassMethod(function)
             if (method != null) {
                 mappingToJava.put(method, function)
             }
+            mappingToJava.put(function, function)
         }
     }
 
-    val classes = collectContainingClasses(mappingToJava.keys)
+    val classes = collectContainingClasses(mappingToJava.keys.filterIsInstance<PsiMethod>())
 
     for (function in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()

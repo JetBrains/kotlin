@@ -39,6 +39,7 @@ class CallBasedInExpressionGenerator(
             object : BranchedValue(argument, null, argument.type, Opcodes.IFEQ) {
                 override fun putSelector(type: Type, v: InstructionAdapter) {
                     invokeFunction(v)
+                    coerceTo(type, v)
                 }
 
                 override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {

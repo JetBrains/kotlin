@@ -24,10 +24,17 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
+import org.jetbrains.kotlin.types.KotlinType
 
 var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
 var JsName.descriptor: DeclarationDescriptor? by MetadataProperty(default = null)
+
+var JsName.localAlias: JsName? by MetadataProperty(default = null)
+
+var JsName.specialFunction: SpecialFunction? by MetadataProperty(default = null)
+
+var JsExpression.localAlias: JsName? by MetadataProperty(default = null)
 
 // TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
 var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
@@ -50,11 +57,15 @@ var JsParameter.hasDefaultValue: Boolean by MetadataProperty(default = false)
 
 var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
 
-var JsInvocation.boxing: Boolean by MetadataProperty(default = false)
+var JsInvocation.boxing: BoxingKind by MetadataProperty(default = BoxingKind.NONE)
 
 var JsVars.exportedPackage: String? by MetadataProperty(default = null)
 
 var JsExpressionStatement.exportedTag: String? by MetadataProperty(default = null)
+
+var JsExpression.type: KotlinType? by MetadataProperty(default = null)
+
+var JsExpression.isUnit: Boolean by MetadataProperty(default = false)
 
 /**
  * For function and lambda bodies indicates what declaration corresponds to.
@@ -129,4 +140,17 @@ enum class SideEffectKind {
     AFFECTS_STATE,
     DEPENDS_ON_STATE,
     PURE
+}
+
+enum class SpecialFunction(val suggestedName: String) {
+    DEFINE_INLINE_FUNCTION("defineInlineFunction"),
+    WRAP_FUNCTION("wrapFunction"),
+    TO_BOXED_CHAR("toBoxedChar"),
+    UNBOX_CHAR("unboxChar"),
+}
+
+enum class BoxingKind {
+    NONE,
+    BOXING,
+    UNBOXING
 }

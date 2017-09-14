@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.utils.Jsr305State
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
@@ -42,9 +43,9 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
             val settings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module) ?: continue
             val compilerArguments = settings.compilerArguments as? K2JVMCompilerArguments ?: continue
 
-            val jsr305state = Jsr305State.findByDescription(compilerArguments.jsr305GlobalReportLevel)
+            val jsr305state = Jsr305State.findByDescription(compilerArguments.jsr305)
             if (jsr305state != null && jsr305state != Jsr305State.IGNORE) {
-                map.put(AnalysisFlag.loadJsr305Annotations, jsr305state)
+                map.put(AnalysisFlag.jsr305, jsr305state)
                 break
             }
         }

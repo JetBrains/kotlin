@@ -21,7 +21,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
@@ -83,7 +82,7 @@ class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModifi
 
             val projectFileIndex = ProjectRootManager.getInstance(xmlFile.project).fileIndex
             val module = projectFileIndex.getModuleForFile(xmlFile.virtualFile)
-                         ?: (element.parent as? PsiDirectory)?.let { projectFileIndex.getModuleForFile(it.virtualFile) }
+                         ?: element.parent?.let { projectFileIndex.getModuleForFile(it.virtualFile) }
 
             if (module != null && !module.isDisposed) {
                 val resourceManager = AndroidLayoutXmlFileManager.getInstance(module) ?: return false

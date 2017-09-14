@@ -199,6 +199,15 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getLocalProperty(index: Int): PropertyDescriptor? {
+        // TODO: also check that this is a synthetic class (Metadata.k == 3)
+        if (jClass.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME) {
+            jClass.declaringClass?.let { interfaceClass ->
+                if (interfaceClass.isInterface) {
+                    return (interfaceClass.kotlin as KClassImpl<*>).getLocalProperty(index)
+                }
+            }
+        }
+
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
             val proto = descriptor.classProto.getExtension(JvmProtoBuf.classLocalVariable, index)
             val nameResolver = descriptor.c.nameResolver

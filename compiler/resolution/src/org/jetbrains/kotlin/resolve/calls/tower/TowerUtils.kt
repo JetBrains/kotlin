@@ -42,3 +42,8 @@ internal class CandidateWithBoundDispatchReceiverImpl(
         override val descriptor: CallableDescriptor,
         override val diagnostics: List<ResolutionDiagnostic>
 ) : CandidateWithBoundDispatchReceiver
+
+fun <C : Candidate> C.forceResolution(): C {
+    resultingApplicability
+    return this
+}

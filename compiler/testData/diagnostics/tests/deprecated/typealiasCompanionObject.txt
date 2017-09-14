@@ -1,0 +1,21 @@
+package
+
+public fun test1(): Relevant.Companion
+public fun test2(): kotlin.String
+public fun test3(): kotlin.String
+
+public final class Relevant {
+    public constructor Relevant()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val value: kotlin.String = ""
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+@kotlin.Deprecated(message = "Use Relevant") public typealias Obsolete = Relevant

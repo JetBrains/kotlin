@@ -77,9 +77,6 @@ class MultifileClassCodegenImpl(
                     .getContributedDescriptors(DescriptorKindFilter.CALLABLES, MemberScope.ALL_NAME_FILTER)
                     .filterIsInstance<DeserializedCallableMemberDescriptor>()
 
-    private fun KtFile.getFileClassFqName() =
-            state.fileClassesProvider.getFileClassInfo(this).fileClassFqName
-
     private val shouldGeneratePartHierarchy =
             state.inheritMultifileParts
 
@@ -87,7 +84,7 @@ class MultifileClassCodegenImpl(
         val partInternalNamesSet = hashSetOf<String>()
         for (file in files) {
             if (file.hasDeclarationsForPartClass()) {
-                partInternalNamesSet.add(file.getFileClassFqName().toInternalName())
+                partInternalNamesSet.add(JvmFileClassUtil.getFileClassInternalName(file))
             }
         }
         compiledPackageFragment?.let {
@@ -205,14 +202,14 @@ class MultifileClassCodegenImpl(
         val packageFragment = this.packageFragment
                               ?: throw AssertionError("File part $file of $facadeFqName: no package fragment")
 
-        val partType = file.getFileClassFqName().toAsmType()
+        val partType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
         val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, file)
 
         generateNonPartClassDeclarations(file, partContext)
 
         if (!state.generateDeclaredClassFilter.shouldGeneratePackagePart(file) || !file.hasDeclarationsForPartClass()) return
 
-        packagePartRegistry.addPart(partType.internalName.substringAfterLast('/'), facadeClassType.internalName.substringAfterLast('/'))
+        packagePartRegistry.addPart(partType.internalName, facadeClassType.internalName)
 
         val builder = state.factory.newVisitor(MultifileClassPart(file, packageFragment), partType, file)
 
@@ -320,7 +317,7 @@ class MultifileClassCodegenImpl(
 
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded() {
         if (!state.classBuilderMode.generateMetadata) return
-        if (files.any { it.isScript }) return
+        if (files.any { it.isScript() }) return
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 
@@ -372,12 +369,6 @@ class MultifileClassCodegenImpl(
         private fun KtFile.hasDeclarationsForPartClass() =
                 declarations.any { it is KtProperty || it is KtFunction }
 
-        private fun FqName.toInternalName() =
-                AsmUtil.internalNameByFqNameWithoutInnerClasses(this)
-
-        private fun FqName.toAsmType() =
-                AsmUtil.asmTypeByFqNameWithoutInnerClasses(this)
-
         private fun getCompiledPackageFragment(
                 facadeFqName: FqName, state: GenerationState
         ): IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment? {
@@ -393,5 +384,4 @@ class MultifileClassCodegenImpl(
             return incrementalPackageFragment?.getPackageFragmentForMultifileClass(facadeFqName)
         }
     }
-
 }

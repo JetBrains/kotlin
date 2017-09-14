@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -43,9 +44,13 @@ object KotlinJavascriptSerializationUtil {
 
     @JvmStatic
     fun readModule(
-            metadata: ByteArray, storageManager: StorageManager, module: ModuleDescriptor, configuration: DeserializationConfiguration
+            metadata: ByteArray,
+            storageManager: StorageManager,
+            module: ModuleDescriptor,
+            configuration: DeserializationConfiguration,
+            lookupTracker: LookupTracker
     ): JsModuleDescriptor<PackageFragmentProvider?> =
-        readModuleFromProto(readModuleAsProto(metadata, module.name.asString()), storageManager, module, configuration)
+        readModuleFromProto(readModuleAsProto(metadata, module.name.asString()), storageManager, module, configuration, lookupTracker)
 
     @JvmStatic
     fun readModuleAsProto(metadata: ByteArray, name: String): JsModuleDescriptor<KotlinJavaScriptLibraryParts> =
@@ -55,11 +60,12 @@ object KotlinJavascriptSerializationUtil {
     fun readModuleFromProto(
             jsModule: JsModuleDescriptor<KotlinJavaScriptLibraryParts>,
             storageManager: StorageManager, module: ModuleDescriptor,
-            configuration: DeserializationConfiguration
+            configuration: DeserializationConfiguration,
+            lookupTracker: LookupTracker
     ): JsModuleDescriptor<PackageFragmentProvider?> {
         val (header, packageFragmentProtos) = jsModule.data
         return jsModule.copy(createKotlinJavascriptPackageFragmentProvider(
-                storageManager, module, header, packageFragmentProtos, configuration
+                storageManager, module, header, packageFragmentProtos, configuration, lookupTracker
         ))
     }
 
@@ -67,13 +73,14 @@ object KotlinJavascriptSerializationUtil {
             metadata: PackagesWithHeaderMetadata,
             storageManager: StorageManager,
             module: ModuleDescriptor,
-            configuration: DeserializationConfiguration
+            configuration: DeserializationConfiguration,
+            lookupTracker: LookupTracker
     ): PackageFragmentProvider {
         val scopeProto = metadata.packages.map {
             ProtoBuf.PackageFragment.parseFrom(it, JsSerializerProtocol.extensionRegistry)
         }
         val headerProto = JsProtoBuf.Header.parseFrom(CodedInputStream.newInstance(metadata.header), JsSerializerProtocol.extensionRegistry)
-        return createKotlinJavascriptPackageFragmentProvider(storageManager, module, headerProto, scopeProto, configuration)
+        return createKotlinJavascriptPackageFragmentProvider(storageManager, module, headerProto, scopeProto, configuration, lookupTracker)
     }
 
     fun serializeMetadata(

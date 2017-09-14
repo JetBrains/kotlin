@@ -269,4 +269,10 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/StringInSuperConstroctorCall.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("WholeFileChanged.kt")
+    public void testWholeFileChanged() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/WholeFileChanged.kt");
+        doTest(fileName);
+    }
 }

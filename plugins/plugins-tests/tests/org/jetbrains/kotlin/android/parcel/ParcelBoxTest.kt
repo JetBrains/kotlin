@@ -46,4 +46,9 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testEnums() = doTest("enums")
     fun testObjects() = doTest("objects")
     fun testNestedParcelable() = doTest("nestedParcelable")
+    fun testKt19749() = doTest("kt19749")
+    fun testKt19747() = doTest("kt19747")
+    fun testKt19747_2() = doTest("kt19747_2")
+    fun test20002() = doTest("kt20002")
+    fun test20021() = doTest("kt20021")
 }

@@ -1,0 +1,79 @@
+package
+
+public final class A : kotlin.collections.List<kotlin.String> {
+    public constructor A()
+    public open override /*1*/ /*delegation*/ val size: kotlin.Int
+    public open override /*1*/ /*delegation*/ fun contains(/*0*/ element: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ element: kotlin.String): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun iterator(): kotlin.collections.Iterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ element: kotlin.String): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.collections.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.String!>
+    public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B : kotlin.collections.List<kotlin.String> {
+    public constructor B()
+    public open override /*1*/ /*delegation*/ val size: kotlin.Int
+    public open override /*1*/ /*delegation*/ fun contains(/*0*/ element: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ element: kotlin.String): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun iterator(): kotlin.collections.Iterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ element: kotlin.String): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.collections.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.String!>
+    public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C : kotlin.collections.List<kotlin.String> {
+    public constructor C()
+    public open override /*1*/ /*delegation*/ val size: kotlin.Int
+    public open override /*1*/ /*delegation*/ fun contains(/*0*/ element: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ element: kotlin.String): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun iterator(): kotlin.collections.Iterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ element: kotlin.String): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.collections.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.String!>
+    public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final var staticJ: kotlin.collections.(Mutable)List<kotlin.String!>!
+    @MyNullable public final var staticN: kotlin.collections.(Mutable)List<kotlin.String!>!
+    @MyNonnull public final var staticNN: kotlin.collections.(Mutable)List<kotlin.String!>!
+}

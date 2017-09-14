@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
-import org.jetbrains.kotlin.fileClasses.getFileClassType
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
@@ -60,7 +59,6 @@ import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.PrintWriter
 import java.io.StringWriter
-
 
 const val GENERATE_SMAP = true
 const val API = Opcodes.ASM5
@@ -158,31 +156,25 @@ internal fun findVirtualFileImprecise(state: GenerationState, internalClassName:
     return findVirtualFile(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
 }
 
-internal fun getInlineName(
-        codegenContext: CodegenContext<*>,
-        typeMapper: KotlinTypeMapper,
-        fileClassesManager: JvmFileClassesProvider
-): String {
-    return getInlineName(codegenContext, codegenContext.contextDescriptor, typeMapper, fileClassesManager)
-}
+internal fun getInlineName(codegenContext: CodegenContext<*>, typeMapper: KotlinTypeMapper): String =
+        getInlineName(codegenContext, codegenContext.contextDescriptor, typeMapper)
 
 private fun getInlineName(
         codegenContext: CodegenContext<*>,
         currentDescriptor: DeclarationDescriptor,
-        typeMapper: KotlinTypeMapper,
-        fileClassesProvider: JvmFileClassesProvider
+        typeMapper: KotlinTypeMapper
 ): String {
     when (currentDescriptor) {
         is PackageFragmentDescriptor -> {
             val file = DescriptorToSourceUtils.getContainingFile(codegenContext.contextDescriptor)
 
-            val implementationOwnerType: Type? =
+            val implementationOwnerInternalName: String? =
                     if (file == null) {
-                        CodegenContextUtil.getImplementationOwnerClassType(codegenContext)
+                        CodegenContextUtil.getImplementationOwnerClassType(codegenContext)?.internalName
                     }
-                    else fileClassesProvider.getFileClassType(file)
+                    else JvmFileClassUtil.getFileClassInternalName(file)
 
-            if (implementationOwnerType == null) {
+            if (implementationOwnerInternalName == null) {
                 val contextDescriptor = codegenContext.contextDescriptor
                 throw RuntimeException(
                         "Couldn't find declaration for " +
@@ -191,7 +183,7 @@ private fun getInlineName(
                 )
             }
 
-            return implementationOwnerType.internalName
+            return implementationOwnerInternalName
         }
         is ClassifierDescriptor -> {
             return typeMapper.mapType(currentDescriptor).internalName
@@ -207,8 +199,7 @@ private fun getInlineName(
     //TODO: add suffix for special case
     val suffix = if (currentDescriptor.name.isSpecial) "" else currentDescriptor.name.asString()
 
-
-    return getInlineName(codegenContext, currentDescriptor.containingDeclaration!!, typeMapper, fileClassesProvider) + "$" + suffix
+    return getInlineName(codegenContext, currentDescriptor.containingDeclaration!!, typeMapper) + "$" + suffix
 }
 
 internal fun isInvokeOnLambda(owner: String, name: String): Boolean {

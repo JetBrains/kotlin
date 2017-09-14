@@ -262,7 +262,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createPropertySetter(expression: KtExpression): KtPropertyAccessor {
-        val property = createProperty("val x get() = 1\nset(value) = TODO()")
+        val property = if (expression is KtBlockExpression)
+            createProperty("val x get() = 1\nset(value) {\n field = value\n }")
+        else
+            createProperty("val x get() = 1\nset(value) = TODO()")
         val setter = property.setter!!
         val bodyExpression = setter.bodyExpression!!
 
@@ -286,9 +289,9 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return declarations.first() as TDeclaration
     }
 
-    fun createNameIdentifier(name: String): PsiElement {
-        return createProperty(name, null, false).nameIdentifier!!
-    }
+    fun createNameIdentifier(name: String) = createNameIdentifierIfPossible(name)!!
+
+    fun createNameIdentifierIfPossible(name: String) = createProperty(name, null, false).nameIdentifier
 
     fun createSimpleName(name: String): KtSimpleNameExpression {
         return createProperty(name, null, false, name).initializer as KtSimpleNameExpression

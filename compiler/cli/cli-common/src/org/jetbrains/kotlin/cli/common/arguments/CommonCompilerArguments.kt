@@ -76,7 +76,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var skipMetadataVersionCheck: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
+    @Argument(value = "-Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info")
     var allowKotlinPackage: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xreport-output-files", description = "Report source to output files mapping")

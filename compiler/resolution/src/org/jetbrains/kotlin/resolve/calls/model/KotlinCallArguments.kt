@@ -26,12 +26,19 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
-interface ReceiverKotlinCallArgument {
+interface ReceiverKotlinCallArgument : KotlinCallArgument {
     val receiver: DetailedReceiver
+    val isSafeCall: Boolean
 }
 
 class QualifierReceiverKotlinCallArgument(override val receiver: QualifierReceiver) : ReceiverKotlinCallArgument {
+    override val isSafeCall: Boolean
+        get() = false // TODO: add warning
+
     override fun toString() = "$receiver"
+
+    override val isSpread get() = false
+    override val argumentName: Name? get() = null
 }
 
 interface KotlinCallArgument {
@@ -39,18 +46,16 @@ interface KotlinCallArgument {
     val argumentName: Name?
 }
 
-interface PostponableKotlinCallArgument : KotlinCallArgument
+interface PostponableKotlinCallArgument : KotlinCallArgument, ResolutionAtom
 
 interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgument {
     override val receiver: ReceiverValueWithSmartCastInfo
-
-    val isSafeCall: Boolean
 }
 
-interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument
+interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom
 
 interface SubKotlinCallArgument : SimpleKotlinCallArgument {
-    val resolvedCall: ResolvedKotlinCall.OnlyResolvedKotlinCall
+    val callResult: CallResolutionResult
 }
 
 interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
@@ -110,6 +115,8 @@ sealed class LHSResult {
 
     // todo this case is forbid for now
     object Empty: LHSResult()
+
+    object Error: LHSResult()
 }
 
 interface CallableReferenceKotlinCallArgument : PostponableKotlinCallArgument {

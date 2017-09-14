@@ -136,6 +136,7 @@ class IrLocalDelegatedPropertyDelegateDescriptorImpl(
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
     override fun isVar(): Boolean = false
+    override fun isLateInit(): Boolean = false
     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? = throw UnsupportedOperationException()
     override fun getVisibility(): Visibility = Visibilities.LOCAL
 

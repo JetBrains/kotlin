@@ -1,0 +1,9 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>23</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <description>Private property name &lt;code&gt;FOO_BAR&lt;/code&gt; doesn't match regex '[a-z][A-Za-z\d]*' #loc</description>
+    </problem>
+</problems>

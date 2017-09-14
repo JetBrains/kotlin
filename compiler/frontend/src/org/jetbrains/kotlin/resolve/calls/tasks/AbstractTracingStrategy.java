@@ -20,7 +20,9 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -215,6 +217,19 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void typeInferenceFailed(@NotNull ResolutionContext<?> context, @NotNull InferenceErrorData data) {
+        Diagnostic diagnostic = typeInferenceFailedDiagnostic(context, data, reference, call);
+        if (diagnostic != null) {
+            context.trace.report(diagnostic);
+        }
+    }
+
+    @Nullable
+    public static Diagnostic typeInferenceFailedDiagnostic(
+            @NotNull ResolutionContext<?> context,
+            @NotNull InferenceErrorData data,
+            @NotNull KtExpression reference,
+            @NotNull Call call
+    ) {
         ConstraintSystem constraintSystem = data.constraintSystem;
         ConstraintSystemStatus status = constraintSystem.getStatus();
         assert !status.isSuccessful() : "Report error only for not successful constraint system";
@@ -222,12 +237,11 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         if (status.hasErrorInConstrainingTypes()) {
             // Do not report type inference errors if there is one in the arguments
             // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
-            return;
+            return null;
         }
-        BindingTrace trace = context.trace;
         if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) {
             KotlinType declaredReturnType = data.descriptor.getReturnType();
-            if (declaredReturnType == null) return;
+            if (declaredReturnType == null) return null;
 
             ConstraintSystem systemWithoutExpectedTypeConstraint = filterConstraintsOut(constraintSystem, EXPECTED_TYPE_POSITION);
             KotlinType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
@@ -237,31 +251,33 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
             if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(
                     context, call.getCallElement(), data.expectedType, substitutedReturnType)) {
-                trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(call.getCallElement(), data.expectedType, substitutedReturnType));
+                return TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(call.getCallElement(), data.expectedType, substitutedReturnType);
             }
         }
         else if (status.hasCannotCaptureTypesError()) {
-            trace.report(TYPE_INFERENCE_CANNOT_CAPTURE_TYPES.on(reference, data));
+            return TYPE_INFERENCE_CANNOT_CAPTURE_TYPES.on(reference, data);
         }
         else if (status.hasViolatedUpperBound()) {
-            trace.report(TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, data));
+            return TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, data);
         }
         else if (status.hasParameterConstraintError()) {
-            trace.report(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR.on(reference, data));
+            return TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR.on(reference, data);
         }
         else if (status.hasConflictingConstraints()) {
-            trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data));
+            return TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data);
         }
         else if (status.hasTypeInferenceIncorporationError()) {
-            trace.report(TYPE_INFERENCE_INCORPORATION_ERROR.on(reference));
+            return TYPE_INFERENCE_INCORPORATION_ERROR.on(reference);
         }
         else if (status.hasTypeParameterWithUnsatisfiedOnlyInputTypesError()) {
             //todo
-            trace.report(TYPE_INFERENCE_ONLY_INPUT_TYPES.on(reference, data.descriptor.getTypeParameters().get(0)));
+            return TYPE_INFERENCE_ONLY_INPUT_TYPES.on(reference, data.descriptor.getTypeParameters().get(0));
         }
         else {
             assert status.hasUnknownParameters();
-            trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
+            return TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data);
         }
+
+        return null;
     }
 }

@@ -44,7 +44,7 @@ object IdeDescriptorRenderers {
     private val BASE: DescriptorRenderer = DescriptorRenderer.withOptions {
         normalizedVisibilities = true
         withDefinedIn = false
-        showInternalKeyword = false
+        renderDefaultVisibility = false
         overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
         unitReturnType = false
         modifiers = DescriptorRendererModifier.ALL

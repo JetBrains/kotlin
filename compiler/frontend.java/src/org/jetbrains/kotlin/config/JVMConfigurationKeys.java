@@ -50,8 +50,12 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
+    public static final CompilerConfigurationKey<Boolean> DISABLE_RECEIVER_ASSERTIONS =
+            CompilerConfigurationKey.create("disable not-null call receiver assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_PARAM_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null parameter assertions");
+    public static final CompilerConfigurationKey<Boolean> NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL =
+            CompilerConfigurationKey.create("do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
     public static final CompilerConfigurationKey<Boolean> INHERIT_MULTIFILE_PARTS =
@@ -115,7 +119,10 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("use fast class files reading implementation [experimental]");
 
     public static final CompilerConfigurationKey<Boolean> USE_JAVAC =
-            CompilerConfigurationKey.create("use javac");
+            CompilerConfigurationKey.create("use javac [experimental]");
+
+    public static final CompilerConfigurationKey<Boolean> COMPILE_JAVA =
+            CompilerConfigurationKey.create("compile java files [experimental]");
 
     public static final CompilerConfigurationKey<List<String>> ADDITIONAL_JAVA_MODULES =
             CompilerConfigurationKey.create("additional Java modules");

@@ -1,0 +1,85 @@
+package
+
+public interface IBaseWithKotlinDeclaration : kotlin.collections.Map<kotlin.String, kotlin.String> {
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.Set<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.Collection<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestNoDelegationToDefaultMethods : WithDelegation {
+    public constructor TestNoDelegationToDefaultMethods(/*0*/ m: kotlin.collections.Map<kotlin.String, kotlin.String>)
+    public open override /*1*/ /*fake_override*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.Set<kotlin.String>
+    public final override /*1*/ /*fake_override*/ val m: kotlin.collections.Map<kotlin.String, kotlin.String>
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.Collection<kotlin.String>
+    public final override /*1*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public final fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public final fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class TestNoDelegationToDefaultMethods2 : WithDelegation2 {
+    public constructor TestNoDelegationToDefaultMethods2(/*0*/ m: kotlin.collections.Map<kotlin.String, kotlin.String>)
+    public open override /*1*/ /*fake_override*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.Set<kotlin.String>
+    public final override /*1*/ /*fake_override*/ val m: kotlin.collections.Map<kotlin.String, kotlin.String>
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.Collection<kotlin.String>
+    public final override /*1*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public final fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public final override /*1*/ fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class WithDelegation : kotlin.collections.Map<kotlin.String, kotlin.String> {
+    public constructor WithDelegation(/*0*/ m: kotlin.collections.Map<kotlin.String, kotlin.String>)
+    public open override /*1*/ /*delegation*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public open override /*1*/ /*delegation*/ val keys: kotlin.collections.Set<kotlin.String>
+    public final val m: kotlin.collections.Map<kotlin.String, kotlin.String>
+    public open override /*1*/ /*delegation*/ val size: kotlin.Int
+    public open override /*1*/ /*delegation*/ val values: kotlin.collections.Collection<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class WithDelegation2 : kotlin.collections.Map<kotlin.String, kotlin.String>, IBaseWithKotlinDeclaration {
+    public constructor WithDelegation2(/*0*/ m: kotlin.collections.Map<kotlin.String, kotlin.String>)
+    public open override /*2*/ /*delegation*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public open override /*2*/ /*delegation*/ val keys: kotlin.collections.Set<kotlin.String>
+    public final val m: kotlin.collections.Map<kotlin.String, kotlin.String>
+    public open override /*2*/ /*delegation*/ val size: kotlin.Int
+    public open override /*2*/ /*delegation*/ val values: kotlin.collections.Collection<kotlin.String>
+    public open override /*2*/ /*delegation*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public open override /*2*/ /*delegation*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*delegation*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

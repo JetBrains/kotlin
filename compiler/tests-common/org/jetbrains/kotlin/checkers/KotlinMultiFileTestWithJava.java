@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase {
-    private File javaFilesDir;
+    protected File javaFilesDir;
     private File kotlinSourceRoot;
 
     @Override
@@ -73,18 +74,33 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
     }
 
     @NotNull
-    protected KotlinCoreEnvironment createEnvironment() {
+    protected KotlinCoreEnvironment createEnvironment(@NotNull File file) {
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(
                 getConfigurationKind(),
-                getTestJdkKind(),
+                getTestJdkKind(file),
                 CollectionsKt.plus(Collections.singletonList(KotlinTestUtils.getAnnotationsJar()), getExtraClasspath()),
-                Collections.singletonList(javaFilesDir)
+                isJavaSourceRootNeeded() ? Collections.singletonList(javaFilesDir) : Collections.emptyList()
         );
         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
         if (isKotlinSourceRootNeeded()) {
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
+
+        KotlinCoreEnvironment environment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
+        performCustomConfiguration(
+                environment
+        );
+
+        return environment;
+    }
+
+    protected boolean isJavaSourceRootNeeded() {
+        return true;
+    }
+
+    protected void performCustomConfiguration(@NotNull KotlinCoreEnvironment environment) {
+
     }
 
     @NotNull
@@ -93,8 +109,10 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
     }
 
     @NotNull
-    protected TestJdkKind getTestJdkKind() {
-        return TestJdkKind.MOCK_JDK;
+    protected TestJdkKind getTestJdkKind(@NotNull File file) {
+        return InTextDirectivesUtils.isDirectiveDefined(FilesKt.readText(file, Charsets.UTF_8), "FULL_JDK")
+               ? TestJdkKind.FULL_JDK
+               : TestJdkKind.MOCK_JDK;
     }
 
     @NotNull
@@ -113,46 +131,9 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
 
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
-
         String expectedText = KotlinTestUtils.doLoadFile(file);
-
         Map<String, ModuleAndDependencies> modules = new HashMap<>();
-
-        List<F> testFiles =
-                KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactory<M, F>() {
-                    @Override
-                    public F createFile(
-                            @Nullable M module,
-                            @NotNull String fileName,
-                            @NotNull String text,
-                            @NotNull Map<String, String> directives
-                    ) {
-                        if (fileName.endsWith(".java")) {
-                            writeSourceFile(fileName, text, javaFilesDir);
-                        }
-
-                        if (fileName.endsWith(".kt") && kotlinSourceRoot != null) {
-                            writeSourceFile(fileName, text, kotlinSourceRoot);
-                        }
-
-                        return createTestFile(module, fileName, text, directives);
-                    }
-
-                    @Override
-                    public M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
-                        M module = createTestModule(name);
-                        ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies, friends));
-                        assert oldValue == null : "Module " + name + " declared more than once";
-
-                        return module;
-                    }
-
-                    private void writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
-                        File file = new File(targetDir, fileName);
-                        KotlinTestUtils.mkdirs(file.getParentFile());
-                        FilesKt.writeText(file, content, Charsets.UTF_8);
-                    }
-                });
+        List<F> testFiles = createTestFiles(file, expectedText, modules);
 
         doMultiFileTest(file, modules, testFiles);
     }
@@ -162,4 +143,42 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
     protected abstract F createTestFile(M module, String fileName, String text, Map<String, String> directives);
 
     protected abstract void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<F> files) throws Exception;
+
+    protected List<F> createTestFiles(File file, String expectedText, Map<String, ModuleAndDependencies> modules) {
+        return KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactory<M, F>() {
+            @Override
+            public F createFile(
+                    @Nullable M module,
+                    @NotNull String fileName,
+                    @NotNull String text,
+                    @NotNull Map<String, String> directives
+            ) {
+                if (fileName.endsWith(".java")) {
+                    writeSourceFile(fileName, text, javaFilesDir);
+                }
+
+                if ((fileName.endsWith(".kt") || fileName.endsWith(".kts")) && kotlinSourceRoot != null) {
+                    writeSourceFile(fileName, text, kotlinSourceRoot);
+                }
+
+                return createTestFile(module, fileName, text, directives);
+            }
+
+            @Override
+            public M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
+                M module = createTestModule(name);
+                ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies, friends));
+                assert oldValue == null : "Module " + name + " declared more than once";
+
+                return module;
+            }
+
+            private void writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
+                File file = new File(targetDir, fileName);
+                KotlinTestUtils.mkdirs(file.getParentFile());
+                FilesKt.writeText(file, content, Charsets.UTF_8);
+            }
+        });
+    }
+
 }

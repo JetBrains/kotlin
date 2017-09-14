@@ -190,4 +190,8 @@ public class MockPsiManager extends PsiManagerEx {
   @Override
   public void beforeChildAddition(@NotNull PsiTreeChangeEventImpl event) {
   }
+
+  @Override
+  public void dropPsiCaches() {
+  }
 }

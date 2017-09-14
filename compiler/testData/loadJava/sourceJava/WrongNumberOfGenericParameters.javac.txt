@@ -1,0 +1,17 @@
+package test
+
+public interface WrongNumberOfGenericParameters {
+    public abstract fun o0(): test.WrongNumberOfGenericParameters.One<(raw) kotlin.Any!>!
+    public abstract fun o2(): test.WrongNumberOfGenericParameters.One<(raw) kotlin.Any!>!
+    public abstract fun t1(): test.WrongNumberOfGenericParameters.Two<(raw) kotlin.Any!, (raw) kotlin.Any!>!
+    public abstract fun z(): test.WrongNumberOfGenericParameters.Zero!
+
+    public interface One</*0*/ T : kotlin.Any!> {
+    }
+
+    public interface Two</*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!> {
+    }
+
+    public interface Zero {
+    }
+}

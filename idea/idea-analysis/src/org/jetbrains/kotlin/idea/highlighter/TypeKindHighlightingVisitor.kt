@@ -86,6 +86,7 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         val identifier = classOrObject.nameIdentifier
         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
         if (identifier != null && classDescriptor != null) {
+            if (applyHighlighterExtensions(identifier, classDescriptor)) return
             highlightName(identifier, textAttributesKeyForClass(classDescriptor))
         }
         super.visitClassOrObject(classOrObject)

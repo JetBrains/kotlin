@@ -22,8 +22,9 @@ import javax.lang.model.element.ExecutableElement
 
 class SymbolBasedMethod(
         element: ExecutableElement,
+        containingClass: JavaClass,
         javac: JavacWrapper
-) : SymbolBasedMember<ExecutableElement>(element, javac), JavaMethod {
+) : SymbolBasedMember<ExecutableElement>(element, containingClass, javac), JavaMethod {
 
     override val typeParameters: List<JavaTypeParameter>
         get() = element.typeParameters.map { SymbolBasedTypeParameter(it, javac) }

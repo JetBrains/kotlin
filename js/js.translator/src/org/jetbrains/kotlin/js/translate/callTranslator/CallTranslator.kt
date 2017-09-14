@@ -31,11 +31,14 @@ import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 object CallTranslator {
     @JvmOverloads
@@ -52,7 +55,9 @@ object CallTranslator {
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), null)
-        return variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
+        val result = variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
+        result.type = TranslationUtils.getReturnTypeForCoercion(resolvedCall.resultingDescriptor.original)
+        return result
     }
 
     fun translateSet(context: TranslationContext,
@@ -61,7 +66,9 @@ object CallTranslator {
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), value)
-        return variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
+        val result = variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
+        result.type = context.currentModule.builtIns.unitType
+        return result
     }
 
     fun buildCall(context: TranslationContext,
@@ -95,7 +102,7 @@ private fun translateCall(
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
         val variableCall = resolvedCall.variableCall
 
-        return if (variableCall.expectedReceivers()) {
+        val result = if (variableCall.expectedReceivers()) {
             val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.extensionOrDispatchReceiver)
             translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(newReceiver))
         } else {
@@ -110,6 +117,8 @@ private fun translateCall(
                                       ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver))
             }
         }
+
+        return result
     }
 
     val call = resolvedCall.call
@@ -151,8 +160,12 @@ private fun translateFunctionCall(
             callExpression.isTailCallSuspend = true
         }
     }
+
+    callExpression.type = resolvedCall.getReturnType().let { if (resolvedCall.call.isSafeCall()) it.makeNullable() else it }
     return callExpression
 }
+
+fun ResolvedCall<out CallableDescriptor>.getReturnType(): KotlinType = TranslationUtils.getReturnTypeForCoercion(resultingDescriptor)
 
 private val TranslationContext.isInStateMachine
     get() = (declarationDescriptor as? FunctionDescriptor)?.requiresStateMachineTransformation(this) == true

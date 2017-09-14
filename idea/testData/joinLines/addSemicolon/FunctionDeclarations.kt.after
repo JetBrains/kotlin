@@ -1,5 +1,5 @@
 fun foo() {
 
-}<caret> fun boo() {
+}<caret>fun boo() {
 
 }

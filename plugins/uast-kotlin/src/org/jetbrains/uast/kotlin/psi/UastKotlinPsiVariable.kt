@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UastErrorType
@@ -62,7 +63,7 @@ class UastKotlinPsiVariable(
                 parent: PsiElement?, 
                 containingElement: UElement, 
                 initializer: KtExpression? = null
-        ): PsiVariable {
+        ): PsiLocalVariable {
             val psiParent = containingElement.getParentOfType<UDeclaration>()?.psi ?: parent
             return UastKotlinPsiVariable(
                     declaration.manager,
@@ -74,7 +75,7 @@ class UastKotlinPsiVariable(
                     declaration)
         }
         
-        fun create(declaration: KtDestructuringDeclaration, containingElement: UElement): PsiVariable {
+        fun create(declaration: KtDestructuringDeclaration, containingElement: UElement): PsiLocalVariable {
             val psiParent = containingElement.getParentOfType<UDeclaration>()?.psi ?: declaration.parent
             return UastKotlinPsiVariable(
                     declaration.manager,
@@ -86,7 +87,7 @@ class UastKotlinPsiVariable(
                     declaration)
         }
 
-        fun create(initializer: KtExpression, containingElement: UElement, parent: PsiElement): PsiVariable {
+        fun create(initializer: KtExpression, containingElement: UElement, parent: PsiElement): PsiLocalVariable {
             val psiParent = containingElement.getParentOfType<UDeclaration>()?.psi ?: parent
             return UastKotlinPsiVariable(
                     initializer.manager,
@@ -98,7 +99,7 @@ class UastKotlinPsiVariable(
                     initializer)
         }
 
-        fun create(name: String, localFunction: KtFunction, containingElement: UElement): PsiVariable {
+        fun create(name: String, localFunction: KtFunction, containingElement: UElement): PsiLocalVariable {
             val psiParent = containingElement.getParentOfType<UDeclaration>()?.psi ?: localFunction.parent
             return UastKotlinPsiVariable(
                     localFunction.manager,

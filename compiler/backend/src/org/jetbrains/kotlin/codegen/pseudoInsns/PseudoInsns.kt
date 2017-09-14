@@ -26,11 +26,12 @@ import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 val PSEUDO_INSN_CALL_OWNER: String = "kotlin/jvm/internal/\$PseudoInsn"
 
 enum class PseudoInsn(val signature: String = "()V") {
-    FIX_STACK_BEFORE_JUMP(),
+    FIX_STACK_BEFORE_JUMP,
     FAKE_ALWAYS_TRUE_IFEQ("()I"),
     FAKE_ALWAYS_FALSE_IFEQ("()I"),
-    SAVE_STACK_BEFORE_TRY(),
-    RESTORE_STACK_IN_TRY_CATCH()
+    SAVE_STACK_BEFORE_TRY,
+    RESTORE_STACK_IN_TRY_CATCH,
+    STORE_NOT_NULL
     ;
 
     fun emit(iv: InstructionAdapter) {
@@ -66,3 +67,10 @@ fun InstructionAdapter.fakeAlwaysFalseIfeq(label: Label) {
     PseudoInsn.FAKE_ALWAYS_FALSE_IFEQ.emit(this)
     this.ifeq(label)
 }
+
+fun InstructionAdapter.storeNotNull() {
+    PseudoInsn.STORE_NOT_NULL.emit(this)
+}
+
+fun AbstractInsnNode.isPseudo(pseudoInsn: PseudoInsn) =
+        pseudoInsn.isa(this)

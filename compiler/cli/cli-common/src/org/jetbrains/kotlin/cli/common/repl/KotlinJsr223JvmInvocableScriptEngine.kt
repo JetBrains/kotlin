@@ -35,7 +35,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
         val evalState = state.asState(GenericReplEvaluatorState::class.java)
         return evalState.history.map { it.item }.filter { it.instance != null }.reversed().ensureNotEmpty("no script ").let { history ->
             if (receiverInstance != null) {
-                val receiverKlass = receiverClass ?: receiverInstance::class.java.kotlin
+                val receiverKlass = receiverClass ?: receiverInstance::class
                 val receiverInHistory = history.find { it.instance == receiverInstance } ?:
                                         EvalClassWithInstanceAndLoader(receiverKlass, receiverInstance, receiverKlass.java.classLoader, history.first().invokeWrapper)
                 listOf(receiverInHistory) + history.filterNot { it == receiverInHistory }
@@ -54,7 +54,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     override fun invokeMethod(thiz: Any?, name: String?, vararg args: Any?): Any? {
         if (name == null) throw java.lang.NullPointerException("method name cannot be null")
         if (thiz == null) throw IllegalArgumentException("cannot invoke method on the null object")
-        return invokeImpl(prioritizedHistory(thiz::class.java.kotlin, thiz), name, args)
+        return invokeImpl(prioritizedHistory(thiz::class, thiz), name, args)
     }
 
     private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {

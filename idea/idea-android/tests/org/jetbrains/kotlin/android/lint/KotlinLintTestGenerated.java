@@ -66,6 +66,12 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
         doTest(fileName);
     }
 
+    @TestMetadata("findViewById.kt")
+    public void testFindViewById() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lint/findViewById.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("javaPerformance.kt")
     public void testJavaPerformance() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lint/javaPerformance.kt");
@@ -135,6 +141,12 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
     @TestMetadata("sqlite.kt")
     public void testSqlite() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lint/sqlite.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("supportAnnotation.kt")
+    public void testSupportAnnotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lint/supportAnnotation.kt");
         doTest(fileName);
     }
 

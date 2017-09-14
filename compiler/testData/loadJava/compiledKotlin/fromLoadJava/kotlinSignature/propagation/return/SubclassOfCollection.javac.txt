@@ -1,0 +1,21 @@
+package test
+
+public interface SubclassOfCollection</*0*/ E> : kotlin.collections.MutableCollection<E> {
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+        public abstract override /*1*/ /*fake_override*/ fun <get-size>(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in E!>!): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ fun iterator(): kotlin.collections.MutableIterator<E>
+    public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<E>
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeIf(/*0*/ p0: java.util.function.Predicate<in E>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<E!>
+    public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<E>
+}

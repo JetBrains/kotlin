@@ -17,14 +17,24 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {
     interface DataFlowExtras {
@@ -73,6 +83,19 @@ class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: Strin
     }
 }
 
+class RuntimeAssertionsDataFlowExtras(
+        private val c: ResolutionContext<*>,
+        private val dataFlowValue: DataFlowValue,
+        private val expression: KtExpression
+) : RuntimeAssertionInfo.DataFlowExtras {
+    override val canBeNull: Boolean
+        get() = c.dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()
+    override val possibleTypes: Set<KotlinType>
+        get() = c.dataFlowInfo.getCollectedTypes(dataFlowValue)
+    override val presentableText: String
+        get() = StringUtil.trimMiddle(expression.text, 50)
+}
+
 object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
     override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
         if (TypeUtils.noExpectedType(c.expectedType)) return
@@ -80,20 +103,39 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
         val assertionInfo = RuntimeAssertionInfo.create(
                 c.expectedType,
                 expressionType,
-                object : RuntimeAssertionInfo.DataFlowExtras {
-                    override val canBeNull: Boolean
-                        get() = c.dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()
-                    override val possibleTypes: Set<KotlinType>
-                        get() = c.dataFlowInfo.getCollectedTypes(dataFlowValue)
-                    override val presentableText: String
-                        get() = StringUtil.trimMiddle(expression.text, 50)
-
-                    private val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
-                }
+                RuntimeAssertionsDataFlowExtras(c, DataFlowValueFactory.createDataFlowValue(expression, expressionType, c), expression)
         )
 
         if (assertionInfo != null) {
             c.trace.record(JvmBindingContextSlices.RUNTIME_ASSERTION_INFO, expression, assertionInfo)
+        }
+    }
+
+}
+
+object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        if (resolvedCall.call.isSafeCall()) return
+
+        val callee = resolvedCall.resultingDescriptor
+        checkReceiver(callee.extensionReceiverParameter, resolvedCall.extensionReceiver, context)
+    }
+
+    private fun checkReceiver(receiverParameter: ReceiverParameterDescriptor?, receiverValue: ReceiverValue?, context: CallCheckerContext) {
+        if (receiverParameter == null || receiverValue == null) return
+        val expressionReceiverValue = receiverValue.safeAs<ExpressionReceiver>() ?: return
+        val receiverExpression = expressionReceiverValue.expression
+        val c = context.resolutionContext
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverExpression, receiverValue.type, c)
+
+        val assertionInfo = RuntimeAssertionInfo.create(
+                receiverParameter.type,
+                receiverValue.type,
+                RuntimeAssertionsDataFlowExtras(c, dataFlowValue, receiverExpression)
+        )
+
+        if (assertionInfo != null) {
+            c.trace.record(JvmBindingContextSlices.RECEIVER_RUNTIME_ASSERTION_INFO, expressionReceiverValue, assertionInfo)
         }
     }
 }

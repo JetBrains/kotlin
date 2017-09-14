@@ -291,6 +291,13 @@ fun createMethodNodeForSuspendCoroutineOrReturn(
 fun <D : CallableDescriptor?> D.unwrapInitialDescriptorForSuspendFunction(): D =
         this.safeAs<SimpleFunctionDescriptor>()?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
 
+
+fun FunctionDescriptor.getOriginalSuspendFunctionView(bindingContext: BindingContext): FunctionDescriptor =
+        if (isSuspend)
+            getOrCreateJvmSuspendFunctionView(unwrapInitialDescriptorForSuspendFunction().original, bindingContext)
+        else
+            this
+
 fun InstructionAdapter.loadCoroutineSuspendedMarker() {
     invokestatic(
             COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME.internalName,

@@ -1,0 +1,15 @@
+package test
+
+public final class BasicTest : test.InnerWithGenericOuter<kotlin.String> {
+    public constructor BasicTest()
+    protected open fun test(/*0*/ test.InnerWithGenericOuter<kotlin.String>.Module): kotlin.Unit
+}
+
+public abstract class InnerWithGenericOuter</*0*/ T : kotlin.Any!> {
+    public constructor InnerWithGenericOuter</*0*/ T : kotlin.Any!>()
+    protected/*protected and package*/ abstract fun test(/*0*/ test.InnerWithGenericOuter<T!>.Module!): kotlin.Unit
+
+    public open inner class Module /*captured type parameters: /*0*/ T : kotlin.Any!*/ {
+        public constructor Module()
+    }
+}

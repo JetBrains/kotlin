@@ -184,6 +184,25 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField val NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> =
+                markElement(
+                        when (element) {
+                            is KtClassOrObject ->
+                                element.getDeclarationKeyword() ?:
+                                element.nameIdentifier ?:
+                                element
+
+                            is KtNamedFunction ->
+                                element.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?:
+                                element.funKeyword ?:
+                                element
+
+                            else -> element
+                        }
+                )
+    }
+
     @JvmField val TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
         override fun mark(element: KtDeclaration): List<TextRange> {
             if (element is KtTypeParameterListOwner) {

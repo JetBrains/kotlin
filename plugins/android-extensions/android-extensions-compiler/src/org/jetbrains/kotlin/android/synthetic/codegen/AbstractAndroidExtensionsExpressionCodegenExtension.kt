@@ -103,11 +103,12 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         }
 
         if (containerOptions.containerType == AndroidContainerType.UNKNOWN) return null
+        val actualReceiver = StackValue.receiver(resolvedCall, receiver, c.codegen, null)
 
         return StackValue.functionCall(Type.VOID_TYPE) {
             val bytecodeClassName = c.typeMapper.mapType(container).internalName
 
-            receiver.put(c.typeMapper.mapType(container), it)
+            actualReceiver.put(c.typeMapper.mapType(container), it)
             it.invokevirtual(bytecodeClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
         }
     }
@@ -153,7 +154,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val targetClass = codegen.myClass as? KtClass ?: return
 
         val container = codegen.descriptor
-        if (container.kind != ClassKind.CLASS || container.isInner || DescriptorUtils.isLocal(container)) return
+        if (container.kind != ClassKind.CLASS && container.kind != ClassKind.OBJECT) return
 
         val containerOptions = ContainerOptionsProxy.create(container)
         if (containerOptions.getCacheOrDefault(targetClass) == NO_CACHE) return

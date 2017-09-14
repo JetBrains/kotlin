@@ -29,7 +29,7 @@ class JvmMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     companion object {
         @JvmField
-        val INSTANCE = JvmMetadataVersion(1, 1, 7)
+        val INSTANCE = JvmMetadataVersion(1, 1, 8)
 
         @JvmField
         val INVALID_VERSION = JvmMetadataVersion()

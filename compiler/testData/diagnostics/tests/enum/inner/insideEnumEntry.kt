@@ -1,6 +1,6 @@
 enum class E {
     ABC {
-        enum class F {
+        <!NESTED_CLASS_DEPRECATED!>enum class F<!> {
             DEF
         }
     }

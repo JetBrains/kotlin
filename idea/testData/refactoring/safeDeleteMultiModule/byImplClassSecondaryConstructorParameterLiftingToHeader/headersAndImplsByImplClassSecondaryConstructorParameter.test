@@ -1,0 +1,4 @@
+{
+  "mainFile": "JVM/src/test/test.kt",
+  "elementClass": "org.jetbrains.kotlin.psi.KtParameter"
+}

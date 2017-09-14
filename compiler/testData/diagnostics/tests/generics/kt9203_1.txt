@@ -1,0 +1,26 @@
+package
+
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun stream(): Stream<kotlin.String>
+public fun </*0*/ T> toList(): Collector<T, A<T>>
+
+public final class A</*0*/ out T> {
+    public constructor A</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Collector</*0*/ T, /*1*/ R> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Stream</*0*/ T> {
+    public abstract fun </*0*/ R> collect(/*0*/ collector: Collector<in T, R>): R
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

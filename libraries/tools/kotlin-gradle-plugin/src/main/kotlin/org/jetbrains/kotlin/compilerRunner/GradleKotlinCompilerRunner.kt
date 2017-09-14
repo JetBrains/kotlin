@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -29,8 +30,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.incremental.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
 internal const val DAEMON_EXECUTION_STRATEGY = "daemon"
@@ -85,6 +83,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     fun runJvmCompiler(
             sourcesToCompile: List<File>,
             javaSourceRoots: Iterable<File>,
+            javaPackagePrefix: String?,
             args: K2JVMCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
@@ -93,7 +92,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 isTest = false,
                 outputDir = args.destinationAsFile,
                 sourcesToCompile = sourcesToCompile,
-                javaSourceRoots = javaSourceRoots,
+                javaSourceRoots = javaSourceRoots.map { JvmSourceRoot(it, javaPackagePrefix) },
                 classpath = args.classpathAsList,
                 friendDirs = args.friendPaths?.map(::File) ?: emptyList())
         args.buildFile = buildFile.absolutePath
@@ -194,11 +193,17 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         }
 
         val (daemon, sessionId) = connection
+        val targetPlatform = when (compilerClassName) {
+            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
+            K2JS_COMPILER -> CompileService.TargetPlatform.JS
+            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
+            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+        }
         val exitCode = try {
             val res = if (environment is GradleIncrementalCompilerEnvironment) {
-                incrementalCompilationWithDaemon(daemon, sessionId, environment)
+                incrementalCompilationWithDaemon(daemon, sessionId, targetPlatform, environment)
             } else {
-                nonIncrementalCompilationWithDaemon(daemon, sessionId, compilerClassName, environment)
+                nonIncrementalCompilationWithDaemon(daemon, sessionId, targetPlatform, environment)
             }
             exitCodeFromProcessExitCode(res.get())
         }
@@ -216,16 +221,9 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun nonIncrementalCompilationWithDaemon(
             daemon: CompileService,
             sessionId: Int,
-            compilerClassName: String,
+            targetPlatform: CompileService.TargetPlatform,
             environment: GradleCompilerEnvironment
     ): CompileService.CallResult<Int> {
-        val targetPlatform = when (compilerClassName) {
-            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
-            K2JS_COMPILER -> CompileService.TargetPlatform.JS
-            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
-            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
-        }
-
         val verbose = environment.compilerArgs.verbose
         val compilationOptions = CompilationOptions(
                 compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
@@ -241,6 +239,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun incrementalCompilationWithDaemon(
             daemon: CompileService,
             sessionId: Int,
+            targetPlatform: CompileService.TargetPlatform,
             environment: GradleIncrementalCompilerEnvironment
     ): CompileService.CallResult<Int> {
         val knownChangedFiles = environment.changedFiles as? ChangedFiles.Known
@@ -257,7 +256,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 reportSeverity = reportSeverity(verbose),
                 requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),
                 compilerMode = CompilerMode.INCREMENTAL_COMPILER,
-                targetPlatform = CompileService.TargetPlatform.JVM
+                targetPlatform = targetPlatform
         )
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
         val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()

@@ -1,0 +1,10 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/jvm.kt:3:1: error: declaration should be marked with 'impl' (suppress with -Xno-check-impl)
+fun foo(s: String): Array<CharSequence?> = arrayOf(s)
+^

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -68,10 +67,10 @@ class IrCompareTo : IntrinsicMethod() {
         val rightType = argTypes[1]
         val parameterType = comparisonOperandType(leftType, rightType)
 
-        val newSignature = context.state.typeMapper.mapSignatureSkipGeneric(compareCall.descriptor as FunctionDescriptor, OwnerKind.IMPLEMENTATION)
+        val newSignature = context.state.typeMapper.mapSignatureSkipGeneric(compareCall.descriptor, OwnerKind.IMPLEMENTATION)
         return object : IrIntrinsicFunction(compareCall, newSignature, context, listOf(parameterType, parameterType)) {
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
-                val isPrimitiveIntrinsic = codegen.intrinsics.intrinsics.getIntrinsic(compareCall.descriptor as FunctionDescriptor) != null
+                val isPrimitiveIntrinsic = codegen.intrinsics.intrinsics.getIntrinsic(compareCall.descriptor) != null
                 val operationType: Type
                 val leftValue: StackValue
                 val rightValue: StackValue

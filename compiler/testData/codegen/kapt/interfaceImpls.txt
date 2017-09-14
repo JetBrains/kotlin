@@ -1,14 +1,14 @@
 @kotlin.Metadata
-public interface A {
-    inner class A/DefaultImpls
-    public abstract method a(): void
-    public abstract method b(): void
+public final class A$DefaultImpls {
+    inner class A$DefaultImpls
+    public static method a(p0: A): void
 }
 
 @kotlin.Metadata
-public final class A/DefaultImpls {
-    inner class A/DefaultImpls
-    public static method a(p0: A): void
+public interface A {
+    inner class A$DefaultImpls
+    public abstract method a(): void
+    public abstract method b(): void
 }
 
 @kotlin.Metadata

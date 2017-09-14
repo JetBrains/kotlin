@@ -1,6 +1,6 @@
 package
 
-public external open class A {
+public open external class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun f(/*0*/ x: kotlin.Int): kotlin.Unit

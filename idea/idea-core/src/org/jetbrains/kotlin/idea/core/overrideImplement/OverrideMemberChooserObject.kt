@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.renderer.*
@@ -95,7 +96,11 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
-fun OverrideMemberChooserObject.generateMember(project: Project, copyDoc: Boolean): KtCallableDeclaration {
+fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, copyDoc: Boolean): KtCallableDeclaration {
+    val project = targetClass.project
+
+    val bodyType = if (targetClass.hasModifier(KtTokens.HEADER_KEYWORD)) OverrideMemberChooserObject.BodyType.NO_BODY else bodyType
+
     val descriptor = immediateSuper
     if (preferConstructorParameter && descriptor is PropertyDescriptor) return generateConstructorParameter(project, descriptor)
 
@@ -103,6 +108,10 @@ fun OverrideMemberChooserObject.generateMember(project: Project, copyDoc: Boolea
         is SimpleFunctionDescriptor -> generateFunction(project, descriptor, bodyType)
         is PropertyDescriptor -> generateProperty(project, descriptor, bodyType)
         else -> error("Unknown member to override: $descriptor")
+    }
+
+    if (!targetClass.hasModifier(KtTokens.IMPL_KEYWORD)) {
+        newMember.removeModifier(KtTokens.IMPL_KEYWORD)
     }
 
     if (copyDoc) {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+      <facet type="kotlin-language" name="Kotlin">
+        <configuration version="2" platform="JVM 1.6" useProjectSettings="false">
+            <compilerSettings/>
+            <compilerArguments/>
+        </configuration>
+      </facet>
+    </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="Common" />
+  </component>
+</module>

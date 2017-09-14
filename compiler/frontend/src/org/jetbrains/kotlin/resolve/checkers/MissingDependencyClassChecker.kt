@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isComputingDeferredType
@@ -95,7 +96,8 @@ object MissingDependencyClassChecker : CallChecker {
                 targetDescriptor: ClassifierDescriptor,
                 trace: BindingTrace,
                 element: PsiElement,
-                languageVersionSettings: LanguageVersionSettings
+                languageVersionSettings: LanguageVersionSettings,
+                deprecationResolver: DeprecationResolver
         ) {
             diagnosticFor(targetDescriptor, element)?.let(trace::report)
 

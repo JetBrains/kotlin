@@ -30,7 +30,7 @@ internal class KotlinCompilerSettingsSerializer : JpsProjectExtensionSerializer(
                                                                                 KOTLIN_COMPILER_SETTINGS_SECTION) {
 
     override fun loadExtension(project: JpsProject, componentTag: Element) {
-        val settings = XmlSerializer.deserialize(componentTag, CompilerSettings::class.java) ?: CompilerSettings()
+        val settings = XmlSerializer.deserialize(componentTag, CompilerSettings::class.java)
         JpsKotlinCompilerSettings.setCompilerSettings(project, settings)
     }
 

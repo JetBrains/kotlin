@@ -47,6 +47,7 @@ interface KotlinGradleModel : Serializable {
     val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val coroutines: String?
     val platformPluginId: String?
+    val implements: String?
     val transitiveCommonDependencies: Set<String>
 }
 
@@ -55,6 +56,7 @@ class KotlinGradleModelImpl(
         override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val coroutines: String?,
         override val platformPluginId: String?,
+        override val implements: String?,
         override val transitiveCommonDependencies: Set<String>
 ) : KotlinGradleModel
 
@@ -89,7 +91,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
         toProcess.add(startingProject)
         val processed = HashSet<String>()
         val result = HashSet<String>()
-        result.add(startingProject.path)
+        result.add(startingProject.pathOrName())
 
         while (toProcess.isNotEmpty()) {
             val project = toProcess.pollFirst()
@@ -97,7 +99,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
 
             if (!project.plugins.hasPlugin(kotlinPlatformCommonPluginId)) continue
 
-            result.add(project.path)
+            result.add(project.pathOrName())
 
             val compileConfiguration = project.configurations.findByName("compile") ?: continue
             val dependencies = compileConfiguration
@@ -114,6 +116,9 @@ class KotlinGradleModelBuilder : ModelBuilderService {
 
         return result
     }
+
+    // see GradleProjectResolverUtil.getModuleId() in IDEA codebase
+    private fun Project.pathOrName() = if (path == ":") name else path
 
     @Suppress("UNCHECKED_CAST")
     private fun Task.getCompilerArguments(methodName: String): List<String> {
@@ -165,7 +170,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
 
     private fun Task.getSourceSetName(): String {
         return try {
-            javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterCount == 0 }?.invoke(this) as? String
+            javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }?.invoke(this) as? String
         } catch (e : InvocationTargetException) {
             null // can be thrown if property is not initialized yet
         } ?: "main"
@@ -188,13 +193,15 @@ class KotlinGradleModelBuilder : ModelBuilderService {
         }
 
         val platform = platformPluginId ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value
-        val transitiveCommon = getImplements(project)?.let { transitiveCommonDependencies(it) } ?: emptySet()
+        val implementedProject = getImplements(project)
+        val transitiveCommon = implementedProject?.let { transitiveCommonDependencies(it) } ?: emptySet()
 
         return KotlinGradleModelImpl(
                 kotlinPluginId != null || platformPluginId != null,
                 compilerArgumentsBySourceSet,
                 getCoroutines(project),
                 platform,
+                implementedProject?.pathOrName(),
                 transitiveCommon
         )
     }

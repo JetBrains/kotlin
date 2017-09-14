@@ -11,9 +11,6 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="light-classes" />
-    <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module-library">
       <library>
@@ -36,7 +33,6 @@
     <orderEntry type="module" module-name="descriptors" />
     <orderEntry type="library" exported="" name="idea-full" level="project" />
     <orderEntry type="library" name="uast-java" level="project" />
-    <orderEntry type="module" module-name="android-extensions-compiler" />
     <orderEntry type="module" module-name="frontend.script" />
   </component>
 </module>

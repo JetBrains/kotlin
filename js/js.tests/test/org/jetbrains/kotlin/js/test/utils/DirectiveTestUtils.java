@@ -83,6 +83,13 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler PROPERTY_READ_COUNT = new DirectiveHandler("PROPERTY_READ_COUNT") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyReadCount(ast, arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
+        }
+    };
+
     private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_CALLED_IN_SCOPE") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -299,6 +306,7 @@ public class DirectiveTestUtils {
             PROPERTY_NOT_USED,
             PROPERTY_NOT_READ_FROM,
             PROPERTY_NOT_WRITTEN_TO,
+            PROPERTY_READ_COUNT,
             PROPERTY_WRITE_COUNT,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
@@ -340,11 +348,15 @@ public class DirectiveTestUtils {
         }
     }
 
+    private static void checkPropertyReadCount(JsNode node, String propertyName, int expectedCount) throws Exception {
+        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
+        assertEquals("Property read count: " + propertyName, expectedCount, counter.unqualifiedReadCount(propertyName));
+    }
+
     private static void checkPropertyWriteCount(JsNode node, String propertyName, int expectedCount) throws Exception {
         PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
         assertEquals("Property write count: " + propertyName, expectedCount, counter.unqualifiedWriteCount(propertyName));
     }
-
 
     public static void checkFunctionNotCalled(@NotNull JsNode node, @NotNull String functionName, @Nullable String exceptFunction)
             throws Exception {

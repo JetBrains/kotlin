@@ -54,8 +54,7 @@ import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.project.KOTLIN_CONSOLE_KEY
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.Name
@@ -160,7 +159,7 @@ class KotlinConsoleRunner(
 
     private fun enableCompletion(consoleView: LanguageConsoleView) {
         val consoleKtFile = PsiManager.getInstance(project).findFile(consoleView.virtualFile) as? KtFile ?: return
-        consoleKtFile.moduleInfo = ModuleTestSourceInfo(module)
+        configureFileDependencies(consoleKtFile)
     }
 
     override fun createProcessHandler(process: Process): OSProcessHandler {
@@ -268,7 +267,7 @@ class KotlinConsoleRunner(
                           ?: error("Failed to setup PSI for file:\n$text")
 
             replState.submitLine(psiFile)
-            psiFile.moduleInfo = ModuleTestSourceInfo(module)
+            configureFileDependencies(psiFile)
             val scriptDescriptor = psiFile.script!!.resolveToDescriptor() as? LazyScriptDescriptor ?: error("Failed to analyze line:\n$text")
             ForceResolveUtil.forceResolveAllContents(scriptDescriptor)
             replState.lineSuccess(psiFile, scriptDescriptor)
@@ -282,4 +281,8 @@ class KotlinConsoleRunner(
             val consoleFile = consoleView.virtualFile
             return PsiManager.getInstance(project).findFile(consoleFile) as KtFile
         }
+
+    private fun configureFileDependencies(psiFile: KtFile) {
+        psiFile.moduleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?: NotUnderContentRootModuleInfo
+    }
 }

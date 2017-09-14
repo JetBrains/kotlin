@@ -5,49 +5,33 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:1:1: error: header declaration 'plus' has no implementation in module
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:1: error: 'impl' function 'plus' has no corresponding 'header' declaration
 The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public impl fun Int.plus(s: CharSequence): Int
+    public infix header fun Int.plus(s: CharSequence): Int
 
-header infix fun Int.plus(s: CharSequence): Int
-^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:3:1: error: header declaration 'times' has no implementation in module
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public impl fun Double.times(x: CharArray): Unit
-
-header operator fun Double.times(x: CharArray)
-^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:5:1: error: header declaration 'f1' has no implementation in module
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public impl fun f1(): Unit
-
-header external fun f1()
-^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:7:1: error: header declaration 'f2' has no implementation in module
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public impl fun f2(): Unit
-
-header inline fun f2()
-^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:9:1: error: header declaration 'f3' has no implementation in module
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public impl fun f3(): Unit
-
-header tailrec fun f3()
-^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun Int.plus(s: CharSequence): Int = 0
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:1: error: 'impl' function 'times' has no corresponding 'header' declaration
+The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
+    public operator header fun Double.times(x: CharArray): Unit
+
 impl fun Double.times(x: CharArray) {}
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:1: error: 'impl' function 'f1' has no corresponding 'header' declaration
+The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
+    public external header fun f1(): Unit
+
 impl fun f1() {}
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:7:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:7:1: error: 'impl' function 'f2' has no corresponding 'header' declaration
+The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
+    public header inline fun f2(): Unit
+
 impl fun f2() {}
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:9:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:9:1: error: 'impl' function 'f3' has no corresponding 'header' declaration
+The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
+    public header tailrec fun f3(): Unit
+
 impl fun f3() {}
 ^
-

@@ -149,6 +149,8 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, "Inline lambda parameters of suspend function type are not fully supported. Add 'noinline' modifier.");
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
+        MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE,
+                "Use of this annotation with target ''type'' and use site target ''@{0}'' is deprecated", TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
         MAP.put(NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION, "The lambda expression here is an inlined argument so this annotation cannot be stored anywhere");
 
@@ -156,7 +158,6 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING);
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties");
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, "'@field:' annotations could be applied only to properties with backing fields");
-        MAP.put(INAPPLICABLE_RECEIVER_TARGET, "'@receiver:' annotations can only be applied to the receiver type of extension function or extension property declarations");
         MAP.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations could be applied only to primary constructor parameters");
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
         MAP.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration");
@@ -226,6 +227,10 @@ public class DefaultErrorMessages {
         MAP.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces");
 
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", STRING);
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL, "This declaration can only be called on a property literal (e.g. 'Foo::bar')");
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, "This declaration can only be called on a reference to a lateinit property");
+        MAP.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration can not be used inside an inline function");
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point", COMPACT);
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, "Setter visibility must be the same or less permissive than property visibility");
@@ -270,9 +275,14 @@ public class DefaultErrorMessages {
         MAP.put(IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, "Right-hand side of 'impl' type alias cannot contain use-site variance or star projections");
         MAP.put(IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, "Type arguments in the right-hand side of 'impl' type alias should be its type parameters in the same order, e.g. 'impl typealias Foo<A, B> = Bar<A, B>'");
 
-        MAP.put(HEADER_WITHOUT_IMPLEMENTATION, "Header declaration ''{0}'' has no implementation in module{1}{2}", NAME,
-                PLATFORM, PlatformIncompatibilityDiagnosticRenderer.INSTANCE);
-        MAP.put(IMPLEMENTATION_WITHOUT_HEADER, "Modifier 'impl' is only applicable to members that are initially declared in platform-independent code");
+        MAP.put(HEADER_WITHOUT_IMPLEMENTATION, "''header'' {0} has no implementation in module{1}{2}", DECLARATION_NAME_WITH_KIND,
+                PLATFORM, PlatformIncompatibilityDiagnosticRenderer.TEXT);
+        MAP.put(IMPLEMENTATION_WITHOUT_HEADER, "''impl'' {0} has no corresponding ''header'' declaration{1}", DECLARATION_NAME_WITH_KIND,
+                PlatformIncompatibilityDiagnosticRenderer.TEXT);
+
+        MAP.put(HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED, "''impl'' class ''{0}'' has no implementation of ''header'' class members:{1}",
+                NAME, IncompatibleHeaderImplClassScopesRenderer.TEXT);
+        MAP.put(IMPL_MISSING, "Declaration should be marked with 'impl' (suppress with -Xno-check-impl)");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
@@ -280,6 +290,8 @@ public class DefaultErrorMessages {
         MAP.put(VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{2}'' and needs ''override'' modifier", NAME, NAME, NAME);
 
         MAP.put(DATA_CLASS_OVERRIDE_CONFLICT, "Function ''{0}'' generated for the data class conflicts with member of supertype ''{1}''", NAME, NAME);
+        MAP.put(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_WARNING, "Function ''{0}'' generated for the data class has default values for parameters, and conflicts with member of supertype ''{1}''", NAME, NAME);
+        MAP.put(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR, "Function ''{0}'' generated for the data class has default values for parameters, and conflicts with member of supertype ''{1}''", NAME, NAME);
 
         MAP.put(CANNOT_OVERRIDE_INVISIBLE_MEMBER, "''{0}'' has no access to ''{1}'', so it cannot override it", FQ_NAMES_IN_TYPES,
                 FQ_NAMES_IN_TYPES);
@@ -303,7 +315,8 @@ public class DefaultErrorMessages {
         MAP.put(UNUSED_LAMBDA_EXPRESSION, "The lambda expression is unused. If you mean a block, you can use 'run { ... }'");
 
         MAP.put(VAL_REASSIGNMENT, "Val cannot be reassigned", NAME);
-        MAP.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD, "Val cannot be reassigned via backing field", NAME);
+        MAP.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD, "Reassignment of read-only property via backing field is deprecated", NAME);
+        MAP.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, "Reassignment of read-only property via backing field", NAME);
         MAP.put(CAPTURED_VAL_INITIALIZATION, "Captured values initialization is forbidden due to possible reassignment", NAME);
         MAP.put(CAPTURED_MEMBER_VAL_INITIALIZATION, "Captured member values initialization is forbidden due to possible reassignment", NAME);
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);
@@ -417,8 +430,8 @@ public class DefaultErrorMessages {
         MAP.put(NESTED_CLASS_SHOULD_BE_QUALIFIED, "Nested {0} should be qualified as ''{1}''", RENDER_CLASS_OR_OBJECT_NAME, TO_STRING);
 
         MAP.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, "Expression is inaccessible from a nested class ''{0}''", NAME);
-        MAP.put(NESTED_CLASS_NOT_ALLOWED, "Nested class is not allowed here, use 'inner' keyword to make the class inner");
-        MAP.put(NESTED_OBJECT_NOT_ALLOWED, "Objects inside inner classes are prohibited");
+        MAP.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", STRING);
+        MAP.put(NESTED_CLASS_DEPRECATED, "{0} is deprecated here", STRING);
 
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
@@ -833,9 +846,6 @@ public class DefaultErrorMessages {
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", NAME);
         MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left-hand side of a callable reference cannot be a type parameter");
-        MAP.put(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
-                "Left-hand side of a callable reference with a receiver parameter cannot be empty. " +
-                "Please specify the type of the receiver before '::' explicitly");
         MAP.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated");
 
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
@@ -846,7 +856,7 @@ public class DefaultErrorMessages {
         //Inline
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(PRIVATE_CLASS_MEMBER_FROM_INLINE, "Non-private inline function cannot access members of private classes: ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
-        MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "''{0}'' construction is not yet supported in inline functions", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "{0} are not yet supported in inline functions", STRING);
         MAP.put(DECLARATION_CANT_BE_INLINED, "'inline' modifier is not allowed on virtual members. Only private or final members can be inlined");
         MAP.put(OVERRIDE_BY_INLINE, "Override by an inline function");
         MAP.put(REIFIED_TYPE_PARAMETER_IN_OVERRIDE, "Override by a function with reified type parameter");

@@ -24,17 +24,19 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class PropertyReferenceCollector : RecursiveJsVisitor() {
 
-    private val identReadSet = hashSetOf<String>()
+    private val identReadMap = hashMapOf<String, Int>()
     private val identWriteMap = hashMapOf<String, Int>()
 
-    fun hasUnqualifiedReads(expectedIdent: String) = expectedIdent in identReadSet
+    fun hasUnqualifiedReads(expectedIdent: String) = expectedIdent in identReadMap
     fun hasUnqualifiedWrites(expectedIdent: String) = expectedIdent in identWriteMap
 
     fun unqualifiedWriteCount(expectedIdent: String): Int = identWriteMap[expectedIdent] ?: 0
 
+    fun unqualifiedReadCount(expectedIdent: String): Int = identReadMap[expectedIdent] ?: 0
+
     override fun visitNameRef(nameRef: JsNameRef) {
         super.visitNameRef(nameRef)
-        identReadSet.add(nameRef.ident)
+        identReadMap[nameRef.ident] = 1 + unqualifiedReadCount(nameRef.ident)
     }
 
     override fun visitBinaryExpression(x: JsBinaryOperation) {

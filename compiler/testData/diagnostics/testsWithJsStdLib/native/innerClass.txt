@@ -1,6 +1,6 @@
 package
 
-public external final class C {
+public final external class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -14,7 +14,7 @@ public external final class C {
     }
 }
 
-public external final enum class E : kotlin.Enum<E> {
+public final external enum class E : kotlin.Enum<E> {
     enum entry X
 
     private constructor E()

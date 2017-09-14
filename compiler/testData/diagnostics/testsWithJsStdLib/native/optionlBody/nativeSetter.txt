@@ -3,7 +3,7 @@ package
 @kotlin.js.nativeSetter public fun kotlin.String.bar(/*0*/ n: kotlin.Int, /*1*/ v: kotlin.Any): kotlin.Unit
 @kotlin.js.nativeSetter public fun kotlin.String.foo(/*0*/ n: kotlin.Int, /*1*/ v: kotlin.Any): kotlin.Unit
 
-public external final class C {
+public final external class C {
     public constructor C()
     @kotlin.js.nativeSetter public final fun bar(/*0*/ d: kotlin.Double, /*1*/ v: kotlin.Any): kotlin.Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -25,7 +25,6 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
@@ -111,17 +110,10 @@ val Module.languageVersionSettings: LanguageVersionSettings
                 this
         )
 
-        val arguments = facetSettings.compilerArguments
-        if (arguments != null) {
-            facetSettings.compilerSettings?.let { compilerSettings ->
-                parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, arguments)
-            }
-        }
-
         return LanguageVersionSettingsImpl(
                 languageVersion,
                 ApiVersion.createByLanguageVersion(apiVersion),
-                arguments?.configureAnalysisFlags().orEmpty(),
+                facetSettings.mergedCompilerArguments?.configureAnalysisFlags().orEmpty(),
                 extraLanguageFeatures
         )
     }

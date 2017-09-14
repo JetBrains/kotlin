@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.daemon
 
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
@@ -24,11 +23,6 @@ import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
 
-
 class RemoteIncrementalCompilationComponentsClient(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val profiler: Profiler = DummyProfiler()) : IncrementalCompilationComponents {
-    val remoteLookupTrackerClient = RemoteLookupTrackerClient(facade, eventManager, profiler)
-
     override fun getIncrementalCache(target: TargetId): IncrementalCache = RemoteIncrementalCacheClient(facade, target, profiler)
-
-    override fun getLookupTracker(): LookupTracker = remoteLookupTrackerClient
 }

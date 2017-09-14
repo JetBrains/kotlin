@@ -68,8 +68,8 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
         val zippedFiles = UnionFileCollection(configuration.map { project.zipTree(it) })
         val files = project.fileTree(tmpDir)
-                .filter { it.path.endsWith(".js") }
-                .filter { File(it.path.removeSuffix(".js") + ".meta.js").exists() }
+                .filter { file -> SUFFIXES.any { file.path.endsWith(it) } }
+                .filter { file -> SUFFIXES.any { File(file.path.removeSuffix(it) + ".meta.js").exists() } }
 
         // This intermediate task is needed due to bug in Gradle that causes infinite loops in continuous build mode
         val unpackName = sourceSet.getTaskName(UNPACK_DEPENDENCIES_TASK_PREFIX, TASK_SUFFIX)
@@ -93,5 +93,6 @@ class KotlinJsDcePlugin : Plugin<Project> {
         private const val UNPACK_DEPENDENCIES_TASK_PREFIX = "unpackDependencies"
         private const val DEPENDENCIES_TASK_PREFIX = "copyDependencies"
         private const val DCE_TASK_PREFIX = "runDce"
+        private val SUFFIXES = listOf(".js", ".js.map")
     }
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.js;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ExceptionUtil;
@@ -42,10 +43,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.ContentRootsKt;
-import org.jetbrains.kotlin.config.Services;
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser;
+import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.incremental.components.LookupTracker;
+import org.jetbrains.kotlin.incremental.js.TranslationResultValue;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
@@ -56,6 +57,10 @@ import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.js.facade.TranslationUnit;
+import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -66,6 +71,7 @@ import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,6 +106,51 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     }
 
     @NotNull
+    protected TranslationResult translate(
+            @NotNull JsConfig.Reporter reporter,
+            @NotNull List<KtFile> allKotlinFiles,
+            @NotNull JsAnalysisResult jsAnalysisResult,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull JsConfig config
+    ) throws TranslationException {
+        K2JSTranslator translator = new K2JSTranslator(config);
+        IncrementalDataProvider incrementalDataProvider = config.getConfiguration().get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER);
+        if (incrementalDataProvider != null) {
+            Map<File, KtFile> nonCompiledSources = new HashMap<File, KtFile>(allKotlinFiles.size());
+            for (KtFile ktFile : allKotlinFiles) {
+                nonCompiledSources.put(VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()), ktFile);
+            }
+
+            Map<File, TranslationResultValue> compiledParts = incrementalDataProvider.getCompiledPackageParts();
+
+            File[] allSources = new File[compiledParts.size() + allKotlinFiles.size()];
+            int i = 0;
+            for (File file : compiledParts.keySet()) {
+                allSources[i++] = file;
+            }
+            for (File file : nonCompiledSources.keySet()) {
+                allSources[i++] = file;
+            }
+            Arrays.sort(allSources);
+
+            List<TranslationUnit> translationUnits = new ArrayList<>();
+            for (i = 0; i < allSources.length; i++) {
+                KtFile nonCompiled = nonCompiledSources.get(allSources[i]);
+                if (nonCompiled != null) {
+                    translationUnits.add(new TranslationUnit.SourceFile(nonCompiled));
+                }
+                else {
+                    TranslationResultValue translatedValue = compiledParts.get(allSources[i]);
+                    translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst()));
+                }
+            }
+            return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);
+        }
+
+        return translator.translate(reporter, allKotlinFiles, mainCallParameters, jsAnalysisResult);
+    }
+
+    @NotNull
     @Override
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
@@ -109,13 +160,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
-        if (arguments.getFreeArgs().isEmpty()) {
+        if (arguments.getFreeArgs().isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
             if (arguments.getVersion()) {
                 return OK;
             }
             messageCollector.report(ERROR, "Specify at least one source file or directory", null);
             return COMPILATION_ERROR;
         }
+
+        ExitCode plugLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
+        if (plugLoadResult != ExitCode.OK) return plugLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
@@ -139,7 +193,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.COMPILATION_ERROR;
         }
 
-        if (sourcesFiles.isEmpty()) {
+        if (sourcesFiles.isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
             messageCollector.report(ERROR, "No source files", null);
             return COMPILATION_ERROR;
         }
@@ -205,10 +259,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.getMain());
         TranslationResult translationResult;
 
-        K2JSTranslator translator = new K2JSTranslator(config);
         try {
             //noinspection unchecked
-            translationResult = translator.translate(reporter, sourcesFiles, mainCallParameters, jsAnalysisResult);
+            translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
         }
         catch (Exception e) {
             throw ExceptionUtilsKt.rethrow(e);
@@ -323,9 +376,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
 
-        if (arguments.getTypedArrays()) {
-            configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
-        }
+        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, arguments.getTypedArrays());
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.getFriendModulesDisabled());
 
@@ -343,6 +394,21 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             moduleKind = ModuleKind.PLAIN;
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);
+
+        IncrementalDataProvider incrementalDataProvider = services.get(IncrementalDataProvider.class);
+        if (incrementalDataProvider != null) {
+            configuration.put(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, incrementalDataProvider);
+        }
+
+        IncrementalResultsConsumer incrementalResultsConsumer = services.get(IncrementalResultsConsumer.class);
+        if (incrementalResultsConsumer != null) {
+            configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, incrementalResultsConsumer);
+        }
+
+        LookupTracker lookupTracker = services.get(LookupTracker.class);
+        if (lookupTracker != null) {
+            configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, lookupTracker);
+        }
 
         String sourceMapEmbedContentString = arguments.getSourceMapEmbedSources();
         SourceMapSourceEmbedding sourceMapContentEmbedding = sourceMapEmbedContentString != null ?

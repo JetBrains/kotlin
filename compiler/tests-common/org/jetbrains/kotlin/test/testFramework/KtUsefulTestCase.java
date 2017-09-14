@@ -62,16 +62,7 @@ public abstract class KtUsefulTestCase extends TestCase {
     private Application application;
 
     @NotNull
-    protected final Disposable myTestRootDisposable = new Disposable() {
-        @Override
-        public void dispose() { }
-
-        @Override
-        public String toString() {
-            String testName = getTestName(false);
-            return KtUsefulTestCase.this.getClass() + (StringUtil.isEmpty(testName) ? "" : ".test" + testName);
-        }
-    };
+    protected final Disposable myTestRootDisposable = new TestDisposable();
 
     private static final String ourPathToKeep = null;
     private final List<String> myPathsToKeep = new ArrayList<>();
@@ -132,11 +123,14 @@ public abstract class KtUsefulTestCase extends TestCase {
         UIUtil.removeLeakingAppleListeners();
         super.tearDown();
 
-        if (application == null) {
-            resetApplicationToNull();
-        }
+        resetApplicationToNull(application);
 
         application = null;
+    }
+
+    public static void resetApplicationToNull(Application old) {
+        if (old != null) return;
+        resetApplicationToNull();
     }
 
     public static void resetApplicationToNull() {
@@ -478,4 +472,17 @@ public abstract class KtUsefulTestCase extends TestCase {
     private static boolean containsStressWords(@Nullable String name) {
         return name != null && (name.contains("Stress") || name.contains("Slow"));
     }
+
+
+    public class TestDisposable implements Disposable {
+        @Override
+        public void dispose() {
+        }
+
+        @Override
+        public String toString() {
+            String testName = getTestName(false);
+            return KtUsefulTestCase.this.getClass() + (StringUtil.isEmpty(testName) ? "" : ".test" + testName);
+        }
+    };
 }

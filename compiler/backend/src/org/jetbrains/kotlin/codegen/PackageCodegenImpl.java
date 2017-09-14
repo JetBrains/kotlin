@@ -20,7 +20,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SmartList;
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -88,11 +88,8 @@ public class PackageCodegenImpl implements PackageCodegen {
     }
 
     private void generateFile(@NotNull KtFile file) {
-        JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
-
-        if (fileClassInfo.getWithJvmMultifileClass()) {
-            return;
-        }
+        JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
+        if (fileClassInfo.getWithJvmMultifileClass()) return;
 
         Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
         PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType, file);
@@ -125,8 +122,7 @@ public class PackageCodegenImpl implements PackageCodegen {
 
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
 
-        String name = fileClassType.getInternalName();
-        packagePartRegistry.addPart(StringsKt.substringAfterLast(name, '/', name), null);
+        packagePartRegistry.addPart(fileClassType.getInternalName(), null);
 
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 

@@ -26,8 +26,12 @@ class MyActivity(): Activity() {
         }
     })
 
+    val entity2: LayoutContainer = entity
+
     public fun box(): String {
-        return if (entity.login.toString() == "Button") "OK" else ""
+        val o = if (entity.login.toString() == "Button") "O" else ""
+        val k = if (entity2.login.toString() == "Button") "K" else ""
+        return o + k // "OK"
     }
 }
 

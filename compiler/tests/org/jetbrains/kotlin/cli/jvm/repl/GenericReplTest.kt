@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.resetApplicationToNull
 import org.junit.Test
 import java.io.Closeable
 import java.io.File
@@ -170,6 +172,7 @@ internal class TestRepl(
         templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
         repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE
 ) : Closeable {
+    val application = ApplicationManager.getApplication()
 
     private val disposable: Disposable by lazy { Disposer.newDisposable() }
 
@@ -206,6 +209,7 @@ internal class TestRepl(
 
     override fun close() {
         Disposer.dispose(disposable)
+        resetApplicationToNull(application)
     }
 }
 

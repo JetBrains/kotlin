@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.StackValue.createDefaulValue;
+import static org.jetbrains.kotlin.codegen.StackValue.createDefaultValue;
 
 public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final ExpressionCodegen codegen;
@@ -64,7 +64,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaulValue(valueParameterTypes.get(i)), ValueKind.DEFAULT_PARAMETER, i);
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaultValue(valueParameterTypes.get(i)), ValueKind.DEFAULT_PARAMETER, i);
     }
 
     @Override

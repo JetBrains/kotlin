@@ -16,14 +16,20 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.BoxingKind;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -39,16 +45,18 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
+import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 
 public final class TranslationUtils {
 
@@ -56,13 +64,15 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
-            @NotNull FunctionDescriptor descriptor,
-            @NotNull TranslationContext context) {
+    public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(
+            @NotNull JsFunction function, @NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
         JsExpression functionExpression = function;
         if (InlineUtil.isInline(descriptor)) {
-            InlineMetadata metadata = InlineMetadata.compose(function, descriptor, context.getConfig());
-            functionExpression = metadata.getFunctionWithMetadata();
+            InlineMetadata metadata = InlineMetadata.compose(function, descriptor, context);
+            PsiElement sourceInfo = KotlinSourceElementKt.getPsi(descriptor.getSource());
+            functionExpression = metadata.functionWithMetadata(context, sourceInfo);
         }
 
         if (DescriptorUtils.isExtension(descriptor) ||
@@ -179,7 +189,11 @@ public final class TranslationUtils {
         else {
             receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(containingDescriptor));
         }
-        return new JsNameRef(backingFieldName, receiver);
+
+        JsNameRef result = new JsNameRef(backingFieldName, receiver);
+        MetadataProperties.setType(result, getReturnTypeForCoercion(descriptor));
+
+        return result;
     }
 
     @NotNull
@@ -198,10 +212,9 @@ public final class TranslationUtils {
         if (initializer != null) {
             jsInitExpression = Translation.translateAsExpression(initializer, context);
 
-            KotlinType propertyType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.VARIABLE, declaration).getType();
-            KotlinType initType = context.bindingContext().getType(initializer);
-
-            jsInitExpression = boxCastIfNeeded(jsInitExpression, initType, propertyType);
+            KotlinType propertyType = BindingContextUtils.getNotNull(
+                    context.bindingContext(), BindingContext.VARIABLE, declaration).getType();
+            jsInitExpression = coerce(context, jsInitExpression, propertyType);
         }
         return jsInitExpression;
     }
@@ -387,28 +400,152 @@ public final class TranslationUtils {
                ModalityKt.isOverridable(descriptor);
     }
 
-    private static boolean overridesReturnAny(CallableDescriptor c) {
-        KotlinType returnType = c.getOriginal().getReturnType();
-        assert returnType != null;
-        if (KotlinBuiltIns.isAnyOrNullableAny(returnType) || TypeUtils.isTypeParameter(returnType)) return true;
-        for (CallableDescriptor o : c.getOverriddenDescriptors()) {
-            if (overridesReturnAny(o)) return true;
+    @NotNull
+    public static KotlinType getReturnTypeForCoercion(@NotNull CallableDescriptor descriptor) {
+        descriptor = descriptor.getOriginal();
+
+        if (FunctionTypesKt.getFunctionalClassKind(descriptor) != null || descriptor instanceof AnonymousFunctionDescriptor) {
+            return DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
         }
-        return false;
-    }
 
+        Collection<? extends CallableDescriptor> overridden = descriptor.getOverriddenDescriptors();
+        if (overridden.isEmpty()) {
+            return descriptor.getReturnType() != null ?
+                   descriptor.getReturnType() :
+                   DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+        }
 
-    public static boolean shouldBoxReturnValue(CallableDescriptor c) {
-        return overridesReturnAny(c) || c instanceof CallableMemberDescriptor && ModalityKt.isOverridable((CallableMemberDescriptor)c);
+        Set<KotlinType> typesFromOverriddenCallables = overridden.stream()
+                .map(TranslationUtils::getReturnTypeForCoercion)
+                .collect(Collectors.toSet());
+        return typesFromOverriddenCallables.size() == 1
+               ? typesFromOverriddenCallables.iterator().next()
+               : DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
     }
 
     @NotNull
-    public static JsExpression boxCastIfNeeded(@NotNull JsExpression e, @Nullable KotlinType castFrom, @Nullable KotlinType castTo) {
-        if (castFrom != null && KotlinBuiltIns.isCharOrNullableChar(castFrom) &&
-            castTo != null && !KotlinBuiltIns.isCharOrNullableChar(castTo)
-        ) {
-            return JsAstUtils.charToBoxedChar(e);
+    public static KotlinType getDispatchReceiverTypeForCoercion(@NotNull CallableDescriptor descriptor) {
+        descriptor = descriptor.getOriginal();
+        if (descriptor.getDispatchReceiverParameter() == null) {
+            throw new IllegalArgumentException("This method can only be used for class members; " +
+                                               "given descriptor is not a member of a class " + descriptor);
         }
-        return e;
+
+        Collection<? extends CallableDescriptor> overridden = descriptor.getOverriddenDescriptors();
+        if (overridden.isEmpty()) {
+            return descriptor.getDispatchReceiverParameter().getType();
+        }
+
+        Set<KotlinType> typesFromOverriddenCallables = overridden.stream()
+                .map(TranslationUtils::getDispatchReceiverTypeForCoercion)
+                .collect(Collectors.toSet());
+        return typesFromOverriddenCallables.size() == 1
+               ? typesFromOverriddenCallables.iterator().next()
+               : DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+    }
+
+    @NotNull
+    public static JsExpression coerce(@NotNull TranslationContext context, @NotNull JsExpression value, @NotNull KotlinType to) {
+        if (DynamicTypesKt.isDynamic(to)) return value;
+
+        KotlinType from = MetadataProperties.getType(value);
+        if (from == null) {
+            from = context.getCurrentModule().getBuiltIns().getAnyType();
+        }
+
+        if (from.equals(to)) return value;
+
+        if (KotlinBuiltIns.isCharOrNullableChar(to)) {
+            if (!KotlinBuiltIns.isCharOrNullableChar(from) && !(value instanceof JsNullLiteral)) {
+                value = boxedCharToChar(context, value);
+            }
+        }
+        else if (KotlinBuiltIns.isUnit(to)) {
+            if (!KotlinBuiltIns.isUnit(from)) {
+                value = unitToVoid(value);
+            }
+        }
+        else if (KotlinBuiltIns.isCharOrNullableChar(from)) {
+            if (!KotlinBuiltIns.isCharOrNullableChar(to) && !(value instanceof JsNullLiteral)) {
+                value = charToBoxedChar(context, value);
+            }
+        }
+        else if (KotlinBuiltIns.isUnit(from)) {
+            if (!KotlinBuiltIns.isUnit(to) && !MetadataProperties.isUnit(value)) {
+                ClassDescriptor unit = context.getCurrentModule().getBuiltIns().getUnit();
+                JsExpression unitRef = ReferenceTranslator.translateAsValueReference(unit, context);
+                value = JsAstUtils.newSequence(Arrays.asList(value, unitRef));
+            }
+        }
+
+        MetadataProperties.setType(value, to);
+        return value;
+    }
+
+    @NotNull
+    private static JsExpression unitToVoid(@NotNull JsExpression expression) {
+        if (expression instanceof JsBinaryOperation) {
+            JsBinaryOperation binary = (JsBinaryOperation) expression;
+            if (binary.getOperator() == JsBinaryOperator.COMMA && MetadataProperties.isUnit(binary.getArg2())) {
+                return binary.getArg1();
+            }
+        }
+        return expression;
+    }
+
+    @NotNull
+    public static JsExpression charToBoxedChar(@NotNull TranslationContext context, @NotNull JsExpression expression) {
+        if (expression instanceof JsInvocation) {
+            JsInvocation invocation = (JsInvocation) expression;
+            BoxingKind existingKind = MetadataProperties.getBoxing(invocation);
+            switch (existingKind) {
+                case UNBOXING:
+                    return invocation.getArguments().get(0);
+                case BOXING:
+                    return expression;
+                case NONE:
+                    break;
+            }
+        }
+
+        JsInvocation result = invokeSpecialFunction(context, SpecialFunction.TO_BOXED_CHAR, expression);
+        result.setSource(expression.getSource());
+        MetadataProperties.setBoxing(result, BoxingKind.BOXING);
+        return result;
+    }
+
+    @NotNull
+    private static JsExpression boxedCharToChar(@NotNull TranslationContext context, @NotNull JsExpression expression) {
+        if (expression instanceof JsInvocation) {
+            JsInvocation invocation = (JsInvocation) expression;
+            BoxingKind existingKind = MetadataProperties.getBoxing(invocation);
+            switch (existingKind) {
+                case BOXING:
+                    return invocation.getArguments().get(0);
+                case UNBOXING:
+                    return expression;
+                case NONE:
+                    break;
+            }
+        }
+
+        JsInvocation result = invokeSpecialFunction(context, SpecialFunction.UNBOX_CHAR, expression);
+        result.setSource(expression.getSource());
+        MetadataProperties.setBoxing(result, BoxingKind.UNBOXING);
+        return result;
+    }
+
+    @NotNull
+    private static JsInvocation invokeSpecialFunction(
+            @NotNull TranslationContext context,
+            @NotNull SpecialFunction function, @NotNull JsExpression... arguments
+    ) {
+        JsName name = context.getNameForSpecialFunction(function);
+        return new JsInvocation(pureFqn(name, null), arguments);
+    }
+
+    @NotNull
+    public static String getTagForSpecialFunction(@NotNull SpecialFunction specialFunction) {
+        return "special:" + specialFunction.name();
     }
 }

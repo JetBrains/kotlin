@@ -196,16 +196,26 @@ class ConstructorConverter(
                     else {
                         val (field, type) = parameterToField[parameter]!!
                         val propertyInfo = fieldToPropertyInfo(field)
-                        FunctionParameter(propertyInfo.identifier,
-                                          type,
-                                          if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
-                                          converter.convertAnnotations(parameter, AnnotationUseTarget.Param) + converter.convertAnnotations(field),
-                                          propertyInfo.modifiers,
-                                          default)
-                                .assignPrototypes(
-                                        PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
-                                        PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)
-                                )
+
+                        var paramAnnotations = converter.convertAnnotations(parameter, AnnotationUseTarget.Param) +
+                                               converter.convertAnnotations(field, AnnotationUseTarget.Field)
+                        if (propertyInfo.getMethod != null) {
+                            paramAnnotations += converter.convertAnnotations(propertyInfo.getMethod, AnnotationUseTarget.Get)
+                        }
+                        if (propertyInfo.setMethod != null) {
+                            paramAnnotations += converter.convertAnnotations(propertyInfo.setMethod, AnnotationUseTarget.Set)
+                        }
+                        FunctionParameter(
+                                propertyInfo.identifier,
+                                type,
+                                if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
+                                paramAnnotations,
+                                propertyInfo.modifiers,
+                                default
+                        ).assignPrototypes(
+                                PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
+                                PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)
+                        )
                     }
                 },
                 correctCodeConverter = { correct() })

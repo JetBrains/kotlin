@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionExternalPredicatesImpl
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -53,7 +53,7 @@ fun StorageComponentContainer.configureModule(
     platform.platformConfigurator.configureModuleComponents(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
-        extension.addDeclarations(this, platform)
+        extension.registerModuleComponents(this, platform,  moduleContext.module)
     }
 
     configurePlatformIndependentComponents()
@@ -61,7 +61,7 @@ fun StorageComponentContainer.configureModule(
 
 private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<SupertypeLoopCheckerImpl>()
-    useImpl<KotlinResolutionExternalPredicatesImpl>()
+    useImpl<KotlinResolutionStatelessCallbacksImpl>()
 }
 
 fun StorageComponentContainer.configureModule(
@@ -170,7 +170,7 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
                 moduleContext,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 BindingTraceContext(),
-                TargetPlatform.Default,
+                TargetPlatform.Common,
                 TargetPlatformVersion.NoVersion,
                 CompilerEnvironment,
                 LanguageVersionSettingsImpl.DEFAULT

@@ -5,21 +5,9 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/common.kt:1:14: error: header declaration 'Foo' has no implementation in module
-The following declaration is incompatible because some members are not implemented:
-    public final impl class Foo
-No implementations are found for members listed below:
-
+compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:10: error: 'impl' constructor of 'Foo' has no corresponding 'header' declaration
+The following declaration is incompatible because parameter types are different:
     public constructor Foo(s: String)
 
-    The following declaration is incompatible because parameter types are different:
-        public constructor Foo(s: Array<String>)
-
-header class Foo {
-             ^
-compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl class Foo {
-^
-compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
     impl constructor(s: Array<String>)
-    ^
+         ^

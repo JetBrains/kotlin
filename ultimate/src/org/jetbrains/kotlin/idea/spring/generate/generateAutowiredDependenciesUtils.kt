@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.spring.generate
 
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
 import com.intellij.spring.CommonSpringModel
@@ -105,8 +106,11 @@ private fun createAutowiredDependency(
 ): BatchTemplateRunner? {
     val candidateBeanClasses = candidateBean.effectiveBeanClasses().ifEmpty { return null }
     if (!GenerateSpringBeanDependenciesUtil.ensureFileWritable(klass)) return null
-    val property = createAutowiredProperty(klass, candidateBean, candidateBeanClasses, model) ?: return null
-    return addCreatePropertyTemplate(property, candidateBean, candidateBeanClasses)
+    return runWriteAction {
+        createAutowiredProperty(klass, candidateBean, candidateBeanClasses, model)?.let { property ->
+            addCreatePropertyTemplate(property, candidateBean, candidateBeanClasses)
+        }
+    }
 }
 
 fun generateAutowiredDependenciesFor(klass: KtLightClass): List<BatchTemplateRunner> {
@@ -114,7 +118,8 @@ fun generateAutowiredDependenciesFor(klass: KtLightClass): List<BatchTemplateRun
     val candidates = GenerateSpringBeanDependenciesUtil.getAutowiredBeanCandidates(model) { true }
     val dependencies = if (ApplicationManager.getApplication().isUnitTestMode) {
         candidates.map { it.springBean }.filter(klass.project.beanFilter).sortedBy { it.name }
-    } else {
+    }
+    else {
         GenerateSpringBeanDependenciesUtil.chooseDependentBeans(candidates, klass.project, true)
     }
     return dependencies.mapNotNull { createAutowiredDependency(klass, it, model) }

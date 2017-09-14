@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.javac.resolve.ConstantEvaluator
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -29,10 +30,10 @@ import org.jetbrains.kotlin.name.Name
 
 class TreeBasedField(
         tree: JCTree.JCVariableDecl,
-        treePath: TreePath,
+        compilationUnit: CompilationUnitTree,
         containingClass: JavaClass,
         javac: JavacWrapper
-) : TreeBasedMember<JCTree.JCVariableDecl>(tree, treePath, containingClass, javac), JavaField {
+) : TreeBasedMember<JCTree.JCVariableDecl>(tree, compilationUnit, containingClass, javac), JavaField {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
@@ -53,19 +54,16 @@ class TreeBasedField(
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L
 
     override val type: JavaType
-        get() = TreeBasedType.create(tree.getType(), treePath, javac)
+        get() = TreeBasedType.create(tree.getType(), compilationUnit, javac, annotations, containingClass)
 
     override val initializerValue: Any?
         get() = tree.init?.let { initExpr ->
-            if (hasConstantNotNullInitializer && initExpr is JCTree.JCLiteral) {
-                initExpr.value
-            } else {
-                null
-            }
+            if (hasConstantNotNullInitializer) ConstantEvaluator(containingClass, javac, compilationUnit).getValue(initExpr) else null
         }
 
     override val hasConstantNotNullInitializer: Boolean
         get() = tree.init?.let {
+            if (it is JCTree.JCLiteral && it.value == null) return false
             val type = this.type
 
             isFinal && ((type is TreeBasedPrimitiveType) ||

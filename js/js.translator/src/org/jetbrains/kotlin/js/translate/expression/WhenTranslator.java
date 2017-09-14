@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.mutator.CoercionMutator;
+import org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -50,6 +52,9 @@ public final class WhenTranslator extends AbstractTranslator {
     @Nullable
     private final JsExpression expressionToMatch;
 
+    @Nullable
+    private final KotlinType type;
+
     private WhenTranslator(@NotNull KtWhenExpression expression, @NotNull TranslationContext context) {
         super(context);
 
@@ -57,6 +62,8 @@ public final class WhenTranslator extends AbstractTranslator {
 
         KtExpression subject = expression.getSubjectExpression();
         expressionToMatch = subject != null ? context.defineTemporary(Translation.translateAsExpression(subject, context)) : null;
+
+        type = context().bindingContext().getType(expression);
     }
 
     private JsNode translate() {
@@ -106,13 +113,18 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private static JsStatement translateEntryExpression(
+    private JsStatement translateEntryExpression(
             @NotNull KtWhenEntry entry,
             @NotNull TranslationContext context,
             @NotNull JsBlock block) {
         KtExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
-        return Translation.translateAsStatement(expressionToExecute, context, block);
+        JsStatement result = Translation.translateAsStatement(expressionToExecute, context, block);
+        if (type != null) {
+            return LastExpressionMutator.mutateLastExpression(result, new CoercionMutator(type, context));
+        }
+
+        return result;
     }
 
     @NotNull

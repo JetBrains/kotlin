@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZE
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.highlighter.markers.headerDescriptor
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -164,6 +165,9 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null
 
             var descriptor = getDescriptor(bindingContext, element)
+            if (descriptor is MemberDescriptor && descriptor.isImpl) {
+                descriptor = descriptor.headerDescriptor() ?: descriptor
+            }
 
             return when (descriptor) {
                 is FunctionDescriptor -> {

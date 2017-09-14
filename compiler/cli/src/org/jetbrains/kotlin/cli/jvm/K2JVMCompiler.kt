@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -68,22 +69,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             if (it != OK) return it
         }
 
-        try {
-            PluginCliParser.loadPlugins(arguments, configuration)
-        }
-        catch (e: PluginCliOptionProcessingException) {
-            val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
-            messageCollector.report(ERROR, message)
-            return INTERNAL_ERROR
-        }
-        catch (e: CliOptionProcessingException) {
-            messageCollector.report(ERROR, e.message!!)
-            return INTERNAL_ERROR
-        }
-        catch (t: Throwable) {
-            MessageCollectorUtil.reportException(messageCollector, t)
-            return INTERNAL_ERROR
-        }
+        val plugLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration)
+        if (plugLoadResult != ExitCode.OK) return plugLoadResult
 
         if (!arguments.script && arguments.buildFile == null) {
             for (arg in arguments.freeArgs) {
@@ -241,6 +228,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                                       arguments: K2JVMCompilerArguments): Boolean {
         if (arguments.useJavac) {
             environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
+            if (arguments.compileJava) {
+                environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
+            }
             return environment.registerJavac(arguments = arguments.javacArguments)
         }
 
@@ -249,7 +239,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     private fun compileJavaFilesIfNeeded(environment: KotlinCoreEnvironment,
                                          arguments: K2JVMCompilerArguments): Boolean  {
-        if (arguments.useJavac) {
+        if (arguments.compileJava) {
             return JavacWrapper.getInstance(environment.project).use { it.compile() }
         }
         return true
@@ -288,9 +278,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
         if (IncrementalCompilation.isEnabled()) {
-            val components = services.get(IncrementalCompilationComponents::class.java)
-            if (components != null) {
-                configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, components)
+            services.get(LookupTracker::class.java)?.let {
+                configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it)
+            }
+
+            services.get(IncrementalCompilationComponents::class.java)?.let {
+                configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, it)
             }
         }
 
@@ -348,7 +341,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         private fun putAdvancedOptions(configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments) {
             configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
+            configuration.put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, arguments.noReceiverAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
+            configuration.put(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL, arguments.noExceptionOnExplicitEqualsForBoxedNull);
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
@@ -364,6 +359,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
             configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, arguments.addCompilerBuiltIns)
             configuration.put(JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES, arguments.loadBuiltInsFromDependencies)
+
+
 
             arguments.declarationsOutputPath?.let { configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
         }

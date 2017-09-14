@@ -144,9 +144,8 @@ abstract class KtCodeFragment(
         return null
     }
 
-    override fun getImportDirectives(): List<KtImportDirective> {
-        return importsAsImportList()?.imports ?: emptyList()
-    }
+    override val importDirectives: List<KtImportDirective>
+        get() = importsAsImportList()?.imports ?: emptyList()
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
 
@@ -163,7 +162,7 @@ abstract class KtCodeFragment(
     }
 
     fun getContextContainingFile(): KtFile? {
-        return (getOriginalContext() as? KtElement)?.containingKtFile
+        return getOriginalContext()?.containingKtFile
     }
 
     fun getOriginalContext(): KtElement? {

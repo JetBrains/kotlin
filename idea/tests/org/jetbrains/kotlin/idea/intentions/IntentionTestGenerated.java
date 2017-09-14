@@ -738,6 +738,228 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addPropertyAccessors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddPropertyAccessors extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddPropertyAccessors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addPropertyAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/intentions/addPropertyAccessors/both")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Both extends AbstractIntentionTest {
+            @TestMetadata("abstract.kt")
+            public void testAbstract() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/abstract.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInBoth() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addPropertyAccessors/both"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/delegate.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasAccessor.kt")
+            public void testHasAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/hasAccessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasGetter.kt")
+            public void testHasGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/hasGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasSetter.kt")
+            public void testHasSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/hasSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lateinit.kt")
+            public void testLateinit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/lateinit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("top.kt")
+            public void testTop() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/top.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("val.kt")
+            public void testVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/val.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("var.kt")
+            public void testVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/both/var.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/addPropertyAccessors/getter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Getter extends AbstractIntentionTest {
+            @TestMetadata("abstract.kt")
+            public void testAbstract() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/abstract.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInGetter() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addPropertyAccessors/getter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/delegate.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasAccessor.kt")
+            public void testHasAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/hasAccessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasGetter.kt")
+            public void testHasGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/hasGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasSetter.kt")
+            public void testHasSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/hasSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("header.kt")
+            public void testHeader() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/header.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lateinit.kt")
+            public void testLateinit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/lateinit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("top.kt")
+            public void testTop() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/top.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("val.kt")
+            public void testVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/val.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("var.kt")
+            public void testVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/getter/var.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/addPropertyAccessors/setter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Setter extends AbstractIntentionTest {
+            @TestMetadata("abstract.kt")
+            public void testAbstract() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/abstract.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInSetter() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addPropertyAccessors/setter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/delegate.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasAccessor.kt")
+            public void testHasAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/hasAccessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasGetter.kt")
+            public void testHasGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/hasGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasSetter.kt")
+            public void testHasSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/hasSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lateinit.kt")
+            public void testLateinit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/lateinit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("top.kt")
+            public void testTop() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/top.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("val.kt")
+            public void testVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/val.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("var.kt")
+            public void testVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addPropertyAccessors/setter/var.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addValOrVar")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1420,6 +1642,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("isCheckWithSelectorChain.kt")
             public void testIsCheckWithSelectorChain() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheckWithSelectorChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt19666.kt")
+            public void testKt19666() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/kt19666.kt");
                 doTest(fileName);
             }
 
@@ -2116,6 +2344,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/safeAccessToIfThen"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("assignment.kt")
+            public void testAssignment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/assignment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignment2.kt")
+            public void testAssignment2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/assignment2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignment3.kt")
+            public void testAssignment3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/assignment3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("binaryExpressionLhs.kt")
             public void testBinaryExpressionLhs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/binaryExpressionLhs.kt");
@@ -2137,6 +2383,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("customGetterAsReceiver.kt")
             public void testCustomGetterAsReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/customGetterAsReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equality.kt")
+            public void testEquality() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/safeAccessToIfThen/equality.kt");
                 doTest(fileName);
             }
 
@@ -4568,6 +4820,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("overrides.kt")
         public void testOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/overrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleExplicitParameter.kt")
+        public void testSingleExplicitParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/singleExplicitParameter.kt");
             doTest(fileName);
         }
     }
@@ -7751,6 +8009,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("invisible.kt")
+        public void testInvisible() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/invisible.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("last.kt")
         public void testLast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/last.kt");
@@ -7820,6 +8084,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("variables.kt")
         public void testVariables() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/variables.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("visible.kt")
+        public void testVisible() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/visible.kt");
             doTest(fileName);
         }
     }
@@ -12695,6 +12965,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notOnSetterParameter.kt")
+        public void testNotOnSetterParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnSetterParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onOverride.kt")
         public void testOnOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onOverride.kt");
@@ -14810,6 +15086,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forAsExpression.kt")
+        public void testForAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/forAsExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionType.kt")
         public void testFunctionType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/functionType.kt");
@@ -15338,6 +15620,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("xor.kt")
         public void testXor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/xor.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/swapStringEqualsIgnoreCase")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SwapStringEqualsIgnoreCase extends AbstractIntentionTest {
+        public void testAllFilesPresentInSwapStringEqualsIgnoreCase() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/swapStringEqualsIgnoreCase"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("equals.kt")
+        public void testEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapStringEqualsIgnoreCase/equals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsIgnoreCase.kt")
+        public void testEqualsIgnoreCase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapStringEqualsIgnoreCase/equalsIgnoreCase.kt");
             doTest(fileName);
         }
     }

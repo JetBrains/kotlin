@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.android.lint
 
+import com.intellij.codeInspection.InspectionProfileEntry
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.util.PathUtil
 import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import java.io.File
 
@@ -26,9 +30,9 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
 
     override fun setUp() {
         super.setUp()
-        ConfigLibraryUtil.configureKotlinRuntime(myModule)
         AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
-        // needs access to .class files in kotlin runtime jar
+        (myFixture as CodeInsightTestFixtureImpl).setVirtualFileFilter { false } // Allow access to tree elements.
+        ConfigLibraryUtil.configureKotlinRuntime(myModule)
     }
 
     override fun tearDown() {
@@ -36,9 +40,11 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         super.tearDown()
     }
 
-    fun doTest(filename: String) {
-        val ktFile = File(filename)
-        val mainInspectionClassName = findStringWithPrefixes(ktFile.readText(), "// INSPECTION_CLASS: ") ?: error("Empty class name")
+    fun doTest(path: String) {
+        val ktFile = File(path)
+        val fileText = ktFile.readText()
+        val mainInspectionClassName = findStringWithPrefixes(fileText, "// INSPECTION_CLASS: ") ?: error("Empty class name")
+        val dependencies = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// DEPENDENCY: ")
 
         val inspectionClassNames = mutableListOf(mainInspectionClassName)
         for (i in 2..100) {
@@ -48,7 +54,7 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
 
         myFixture.enableInspections(*inspectionClassNames.map { className ->
             val inspectionClass = Class.forName(className)
-            inspectionClass.newInstance() as AndroidLintInspectionBase
+            inspectionClass.newInstance() as InspectionProfileEntry
         }.toTypedArray())
 
         val additionalResourcesDir = File(ktFile.parentFile, getTestName(true))
@@ -63,9 +69,14 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
             }
         }
 
-        val virtualFile = myFixture.copyFileToProject(ktFile.absolutePath, "src/" + getTestName(true) + ".kt")
+        val virtualFile = myFixture.copyFileToProject(ktFile.absolutePath, "src/${PathUtil.getFileName(path)}")
         myFixture.configureFromExistingVirtualFile(virtualFile)
 
-        myFixture.checkHighlighting(true, false, false)
+        dependencies.forEach { dependency ->
+            val (dependencyFile, dependencyTargetPath) = dependency.split(" -> ").map(String::trim)
+            myFixture.copyFileToProject("${PathUtil.getParentPath(path)}/$dependencyFile", "src/$dependencyTargetPath")
+        }
+
+        myFixture.checkHighlighting(true, false, true)
     }
 }

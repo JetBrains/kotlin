@@ -70,7 +70,7 @@ public interface LocalLookup {
                 EnclosedValueDescriptor enclosedValueDescriptor;
                 if (sharedVarType != null) {
                     StackValue.Field wrapperValue = StackValue.receiverWithRefWrapper(localType, classType, fieldName, thiz, vd);
-                    innerValue = StackValue.fieldForSharedVar(localType, classType, fieldName, wrapperValue);
+                    innerValue = StackValue.fieldForSharedVar(localType, classType, fieldName, wrapperValue, vd);
                     enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type);
                 }
                 else {

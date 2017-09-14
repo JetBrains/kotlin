@@ -35,9 +35,10 @@ import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration;
 import org.jetbrains.kotlin.name.ClassId;
@@ -55,6 +56,8 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -81,7 +84,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final BindingContext bindingContext;
     private final GenerationState.GenerateClassFilter filter;
     private final JvmRuntimeTypes runtimeTypes;
-    private final JvmFileClassesProvider fileClassesProvider;
     private final TypeMappingConfiguration<Type> typeMappingConfiguration;
     private final SwitchCodegenProvider switchCodegenProvider;
 
@@ -90,7 +92,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.bindingContext = state.getBindingContext();
         this.filter = state.getGenerateDeclaredClassFilter();
         this.runtimeTypes = state.getJvmRuntimeTypes();
-        this.fileClassesProvider = state.getFileClassesProvider();
         this.typeMappingConfiguration = state.getTypeMapper().getTypeMappingConfiguration();
         this.switchCodegenProvider = new SwitchCodegenProvider(state);
     }
@@ -330,17 +331,25 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (referencedFunction == null) return;
         CallableDescriptor target = referencedFunction.getResultingDescriptor();
 
+        ReceiverValue extensionReceiver = referencedFunction.getExtensionReceiver();
+        ReceiverValue dispatchReceiver = referencedFunction.getDispatchReceiver();
+
+        // TransientReceiver corresponds to an unbound reference, other receiver values -- to bound references
+        KotlinType receiverType =
+                dispatchReceiver != null && !(dispatchReceiver instanceof TransientReceiver) ? dispatchReceiver.getType() :
+                extensionReceiver != null && !(extensionReceiver instanceof TransientReceiver) ? extensionReceiver.getType() :
+                null;
+
         CallableDescriptor callableDescriptor;
         Collection<KotlinType> supertypes;
-
-        KtExpression receiverExpression = expression.getReceiverExpression();
-        KotlinType receiverType = receiverExpression != null ? bindingContext.getType(receiverExpression) : null;
 
         if (target instanceof FunctionDescriptor) {
             callableDescriptor = bindingContext.get(FUNCTION, expression);
             if (callableDescriptor == null) return;
 
-            supertypes = runtimeTypes.getSupertypesForFunctionReference((FunctionDescriptor) target, receiverType != null);
+            supertypes = runtimeTypes.getSupertypesForFunctionReference(
+                    (FunctionDescriptor) target, (AnonymousFunctionDescriptor) callableDescriptor, receiverType != null
+            );
         }
         else if (target instanceof PropertyDescriptor) {
             callableDescriptor = bindingContext.get(VARIABLE, expression);
@@ -384,8 +393,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 Annotations.Companion.getEMPTY(),
                 Name.identifier(variableDescriptor.getName().asString() + "$metadata"),
                 ReflectionTypes.Companion.createKPropertyStarType(DescriptorUtilsKt.getModule(variableDescriptor)),
-                false,
-                false,
                 SourceElement.NO_SOURCE
         );
         bindingTrace.record(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor, metadataVariableDescriptor);
@@ -440,13 +447,19 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             // The first "real" containing class (not a synthetic class for lambda) is the owner of the delegated property metadata
             if (!(descriptor instanceof SyntheticClassDescriptorForLambda)) {
                 ClassId classId = DescriptorUtilsKt.getClassId(descriptor);
-                return classId != null
-                       ? AsmUtil.asmTypeByClassId(classId)
-                       : CodegenBinding.getAsmType(bindingContext, descriptor);
+                if (classId == null) {
+                    return CodegenBinding.getAsmType(bindingContext, descriptor);
+                }
+
+                return AsmUtil.asmTypeByClassId(
+                        DescriptorUtils.isInterface(descriptor)
+                        ? classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+                        : classId
+                );
             }
         }
 
-        return Type.getObjectType(FileClasses.getFileClassInternalName(fileClassesProvider, property.getContainingKtFile()));
+        return Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(property.getContainingKtFile()));
     }
 
     @Override
@@ -532,7 +545,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {
             KtFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
             assert containingFile != null : "File not found for " + descriptor;
-            return FileClasses.getFileClassInternalName(fileClassesProvider, containingFile) + '$' + name;
+            return JvmFileClassUtil.getFileClassInternalName(containingFile) + '$' + name;
         }
 
         return null;
@@ -712,7 +725,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             }
         }
 
-        return FileClasses.getFacadeClassInternalName(fileClassesProvider, file);
+        return JvmFileClassUtil.getFacadeClassInternalName(file);
     }
 
     private static <T> T peekFromStack(@NotNull Stack<T> stack) {

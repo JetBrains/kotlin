@@ -1,0 +1,45 @@
+package
+
+public interface IBase : kotlin.collections.Map<kotlin.String, kotlin.String> {
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.Set<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.Collection<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface TestDerivedInterfaceDefault : IBase {
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.Set<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.Collection<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface TestDerivedInterfaceHiding : IBase {
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.Set<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.Collection<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

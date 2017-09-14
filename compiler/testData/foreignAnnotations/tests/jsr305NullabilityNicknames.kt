@@ -16,6 +16,23 @@ public @interface MyNullable {
 
 }
 
+// FILE: MyCheckForNull.java
+import javax.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import javax.annotation.meta.TypeQualifierNickname;
+import javax.annotation.meta.When;
+
+@Documented
+@TypeQualifierNickname
+@CheckForNull
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MyCheckForNull {
+
+}
+
 // FILE: MyNonnull.java
 import javax.annotation.*;
 import java.lang.annotation.Documented;
@@ -50,6 +67,10 @@ public class A {
         return "";
     }
 
+    @MyCheckForNull
+    public String baz(@MyNonnull String x, @MyCheckForNull CharSequence y) {
+        return "";
+    }
 }
 
 // FILE: main.kt
@@ -58,6 +79,10 @@ fun main(a: A) {
     a.foo("", null)?.length
     a.foo("", null)<!UNSAFE_CALL!>.<!>length
     a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")<!UNSAFE_CALL!>.<!>length
+
+    a.baz("", null)?.length
+    a.baz("", null)<!UNSAFE_CALL!>.<!>length
+    a.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")<!UNSAFE_CALL!>.<!>length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length

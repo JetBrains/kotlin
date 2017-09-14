@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import com.intellij.openapi.command.impl.DummyProject
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.kapt3.KaptContext
@@ -80,6 +81,7 @@ class JavaKaptContextTest {
 
     private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
         KaptContext(KaptLogger(isVerbose = true, messageCollector = messageCollector),
+                    DummyProject.getInstance(),
                     bindingContext = BindingContext.EMPTY,
                     compiledClasses = emptyList(),
                     origins = emptyMap(),

@@ -300,6 +300,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("maxStackAfterOptimizations.kt")
+    public void testMaxStackAfterOptimizations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/maxStackAfterOptimizations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noFlagAnnotations.kt")
     public void testNoFlagAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noFlagAnnotations.kt");
@@ -1035,6 +1041,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     public static class Coroutines extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInCoroutines() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("doNotReassignContinuation.kt")
+        public void testDoNotReassignContinuation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("varValueConflictsWithTable.kt")
@@ -1884,6 +1896,33 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testTrivialInstanceOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/trivialInstanceOf.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LocalLateinit extends AbstractBytecodeTextTest {
+            public void testAllFilesPresentInLocalLateinit() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("checkedAlways.kt")
+            public void testCheckedAlways() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit/checkedAlways.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("checkedOnce.kt")
+            public void testCheckedOnce() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit/checkedOnce.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("initialized.kt")
+            public void testInitialized() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit/initialized.kt");
+                doTest(fileName);
+            }
         }
     }
 

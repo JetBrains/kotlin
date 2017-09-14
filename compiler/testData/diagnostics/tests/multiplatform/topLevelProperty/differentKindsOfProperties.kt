@@ -28,7 +28,7 @@ header var customAccessorVar: String
 
 header <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
-header <!WRONG_MODIFIER_TARGET!>lateinit<!> var lateinitVar: String
+<!INCOMPATIBLE_MODIFIERS!>header<!> <!INCOMPATIBLE_MODIFIERS!>lateinit<!> var lateinitVar: String
 
 <!WRONG_MODIFIER_TARGET!>header<!> val delegated: String by Delegate
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }

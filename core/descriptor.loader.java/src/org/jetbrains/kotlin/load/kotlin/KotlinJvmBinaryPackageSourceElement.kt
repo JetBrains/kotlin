@@ -35,6 +35,6 @@ class KotlinJvmBinaryPackageSourceElement(
 
     fun getContainingBinaryClass(descriptor: DeserializedMemberDescriptor): KotlinJvmBinaryClass? {
         val name = descriptor.getImplClassNameForDeserialized() ?: return null
-        return packageFragment.binaryClasses[name.asString()]
+        return packageFragment.binaryClasses[name.internalName]
     }
 }

@@ -6,12 +6,4 @@ header enum class <caret>MyEnum {
     LAST;
 
     val num: Int
-
-    companion object {
-        fun byNum(num: Int): MyEnum = when (num) {
-            1 -> FIRST
-            2 -> SECOND
-            else -> LAST
-        }
-    }
 }

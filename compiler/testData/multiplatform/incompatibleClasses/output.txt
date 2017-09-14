@@ -5,130 +5,87 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleClasses/common.kt:1:14: error: header declaration 'PClass' has no implementation in module
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:16: error: 'impl' interface 'PClass' has no corresponding 'header' declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public impl interface PClass
+    public final header class PClass
 
-header class PClass
-             ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:2:18: error: header declaration 'PInterface' has no implementation in module
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public impl object PInterface
-
-header interface PInterface
-                 ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:3:8: error: header declaration 'PObject' has no implementation in module
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final impl enum class PObject : Enum<PObject>
-
-header object PObject
-       ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:4:19: error: header declaration 'PEnumClass' has no implementation in module
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final impl annotation class PEnumClass : Annotation
-
-header enum class PEnumClass
-                  ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:5:25: error: header declaration 'PAnnotationClass' has no implementation in module
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final impl class PAnnotationClass
-
-header annotation class PAnnotationClass
-                        ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:7:17: error: header declaration 'InternalObject' has no implementation in module
-The following declaration is incompatible because visibility is different:
-    private impl object InternalObject
-
-internal header object InternalObject
-                ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:8:15: error: header declaration 'PublicObject' has no implementation in module
-The following declaration is incompatible because visibility is different:
-    internal impl object PublicObject
-
-public header object PublicObject
-              ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:9:16: error: header declaration 'PrivateObject' has no implementation in module
-The following declaration is incompatible because visibility is different:
-    public impl object PrivateObject
-
-private header object PrivateObject
-               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:11:19: error: header declaration 'OpenClass' has no implementation in module
-The following declaration is incompatible because modality is different:
-    public final impl class OpenClass
-
-open header class OpenClass
-                  ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:12:23: error: header declaration 'AbstractClass' has no implementation in module
-The following declaration is incompatible because modality is different:
-    public open impl class AbstractClass
-
-abstract header class AbstractClass
-                      ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:13:20: error: header declaration 'FinalClass' has no implementation in module
-The following declaration is incompatible because modality is different:
-    public abstract impl class FinalClass
-
-final header class FinalClass
-                   ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:15:14: error: header declaration 'C1' has no implementation in module
-The following declaration is incompatible because number of type parameters is different:
-    public final impl class C1<A, Extra>
-
-header class C1<A>
-             ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:16:14: error: header declaration 'C2' has no implementation in module
-The following declaration is incompatible because declaration-site variances of type parameters are different:
-    public final impl class C2<out B>
-
-header class C2<B>
-             ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:22:23: error: header declaration 'ExtendsNumber' has no implementation in module
-The following declaration is incompatible because some supertypes are missing in the implementation:
-    public abstract impl class ExtendsNumber
-
-header abstract class ExtendsNumber : Number
-                      ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl interface PClass
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl object PInterface
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl enum class PObject
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl annotation class PEnumClass
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl class PAnnotationClass
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:9: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-private impl object InternalObject
-        ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:8:10: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-internal impl object PublicObject
-         ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:9:8: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-public impl object PrivateObject
-       ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:7: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-final impl class OpenClass
-      ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:6: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-open impl class AbstractClass
-     ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:13:10: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-abstract impl class FinalClass
-         ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl class C1<A, Extra>
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl class C2<out B>
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:22:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl abstract class ExtendsNumber : Any()
-^
+               ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:6: error: 'impl' object 'PInterface' has no corresponding 'header' declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public header interface PInterface
 
+impl object PInterface
+     ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:17: error: 'impl' enum class 'PObject' has no corresponding 'header' declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public header object PObject
+
+impl enum class PObject
+                ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:23: error: 'impl' annotation class 'PEnumClass' has no corresponding 'header' declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public final header enum class PEnumClass : Enum<PEnumClass>
+
+impl annotation class PEnumClass
+                      ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:12: error: 'impl' class 'PAnnotationClass' has no corresponding 'header' declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public final header annotation class PAnnotationClass : Annotation
+
+impl class PAnnotationClass
+           ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:14: error: 'impl' object 'InternalObject' has no corresponding 'header' declaration
+The following declaration is incompatible because visibility is different:
+    internal header object InternalObject
+
+private impl object InternalObject
+             ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:8:15: error: 'impl' object 'PublicObject' has no corresponding 'header' declaration
+The following declaration is incompatible because visibility is different:
+    public header object PublicObject
+
+internal impl object PublicObject
+              ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:9:13: error: 'impl' object 'PrivateObject' has no corresponding 'header' declaration
+The following declaration is incompatible because visibility is different:
+    private header object PrivateObject
+
+public impl object PrivateObject
+            ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:18: error: 'impl' class 'OpenClass' has no corresponding 'header' declaration
+The following declaration is incompatible because modality is different:
+    public open header class OpenClass
+
+final impl class OpenClass
+                 ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:17: error: 'impl' class 'AbstractClass' has no corresponding 'header' declaration
+The following declaration is incompatible because modality is different:
+    public abstract header class AbstractClass
+
+open impl class AbstractClass
+                ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:13:21: error: 'impl' class 'FinalClass' has no corresponding 'header' declaration
+The following declaration is incompatible because modality is different:
+    public final header class FinalClass
+
+abstract impl class FinalClass
+                    ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:12: error: 'impl' class 'C1' has no corresponding 'header' declaration
+The following declaration is incompatible because number of type parameters is different:
+    public final header class C1<A>
+
+impl class C1<A, Extra>
+           ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:12: error: 'impl' class 'C2' has no corresponding 'header' declaration
+The following declaration is incompatible because declaration-site variances of type parameters are different:
+    public final header class C2<B>
+
+impl class C2<out B>
+           ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:22:21: error: 'impl' class 'ExtendsNumber' has no corresponding 'header' declaration
+The following declaration is incompatible because some supertypes are missing in the implementation:
+    public abstract header class ExtendsNumber : Number
+
+impl abstract class ExtendsNumber : Any()
+                    ^

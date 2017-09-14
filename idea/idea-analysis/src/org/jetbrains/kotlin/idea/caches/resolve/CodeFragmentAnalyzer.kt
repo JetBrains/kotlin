@@ -54,7 +54,8 @@ class CodeFragmentAnalyzer(
 
         when (codeFragmentElement) {
             is KtExpression -> {
-                PreliminaryDeclarationVisitor.createForExpression(codeFragmentElement, trace)
+                PreliminaryDeclarationVisitor.createForExpression(codeFragmentElement, trace,
+                                                                  expressionTypingServices.languageVersionSettings)
                 expressionTypingServices.getTypeInfo(
                         scopeForContextElement,
                         codeFragmentElement,

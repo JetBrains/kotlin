@@ -66,6 +66,7 @@ class AnnotationConverter(private val converter: Converter) {
         if (owner is PsiDocCommentOwner) {
             val deprecatedAnnotation = convertDeprecatedJavadocTag(owner, target)
             if (deprecatedAnnotation != null) {
+                convertedAnnotations = convertedAnnotations.filter { it.name.name != deprecatedAnnotation.name.name }
                 convertedAnnotations += deprecatedAnnotation
             }
         }
@@ -76,7 +77,16 @@ class AnnotationConverter(private val converter: Converter) {
     private fun convertDeprecatedJavadocTag(element: PsiDocCommentOwner, target: AnnotationUseTarget?): Annotation? {
         val deprecatedTag = element.docComment?.findTagByName("deprecated") ?: return null
         val deferredExpression = converter.deferredElement<Expression> {
-            LiteralExpression("\"" + StringUtil.escapeStringCharacters(deprecatedTag.content()) + "\"").assignNoPrototype()
+            val text = buildString {
+                val split = deprecatedTag.content().split("\n")
+                val length = split.size
+                split.forEachIndexed { index, s ->
+                    if (index > 0) append("+\n")
+                    val content = if (index == length - 1) s else s + "\n"
+                    append("\"" + StringUtil.escapeStringCharacters(content) + "\"")
+                }
+            }
+            LiteralExpression(text).assignNoPrototype()
         }
         val identifier = Identifier("Deprecated").assignPrototype(deprecatedTag.nameElement)
         return Annotation(identifier,
@@ -111,8 +121,9 @@ class AnnotationConverter(private val converter: Converter) {
     }
 
     private fun effectiveAnnotationUseTarget(name: String, target: AnnotationUseTarget?): AnnotationUseTarget? =
-            when (name) {
-                "Deprecated" -> if (target == AnnotationUseTarget.Param) null else target
+            when {
+                name == "Deprecated" &&
+                (target == AnnotationUseTarget.Param || target == AnnotationUseTarget.Field) -> null
                 else -> target
             }
 

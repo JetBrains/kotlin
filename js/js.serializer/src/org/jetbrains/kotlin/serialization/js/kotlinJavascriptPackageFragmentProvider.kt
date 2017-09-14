@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -31,7 +32,8 @@ fun createKotlinJavascriptPackageFragmentProvider(
         module: ModuleDescriptor,
         header: JsProtoBuf.Header,
         packageFragmentProtos: List<ProtoBuf.PackageFragment>,
-        configuration: DeserializationConfiguration
+        configuration: DeserializationConfiguration,
+        lookupTracker: LookupTracker
 ): PackageFragmentProvider {
     val packageFragments = packageFragmentProtos.mapNotNull { proto ->
         proto.fqName?.let { fqName ->
@@ -52,10 +54,11 @@ fun createKotlinJavascriptPackageFragmentProvider(
             provider,
             LocalClassifierTypeSettings.Default,
             ErrorReporter.DO_NOTHING,
-            LookupTracker.DO_NOTHING,
+            lookupTracker,
             DynamicTypeDeserializer,
             emptyList(),
-            notFoundClasses
+            notFoundClasses,
+            platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent
     )
 
     for (packageFragment in packageFragments) {

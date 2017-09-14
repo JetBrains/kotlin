@@ -90,7 +90,14 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
             removeModifier(KtTokens.OPERATOR_KEYWORD);
         }
 
-        return identifier.replace(KtPsiFactory(this).createNameIdentifier(name));
+        PsiElement newIdentifier = KtPsiFactory(this).createNameIdentifierIfPossible(name);
+        if (newIdentifier != null) {
+            identifier.replace(newIdentifier);
+        }
+        else {
+            identifier.delete();
+        }
+        return this;
     }
 
     @Override

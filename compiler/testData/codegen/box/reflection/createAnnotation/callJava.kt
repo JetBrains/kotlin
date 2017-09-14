@@ -49,7 +49,7 @@ public interface J {
 
 import J.*
 import kotlin.reflect.KClass
-import kotlin.reflect.primaryConstructor
+import kotlin.reflect.full.primaryConstructor
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 

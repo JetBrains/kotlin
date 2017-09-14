@@ -529,7 +529,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 val varDescriptor = field.descriptor
                 //check that variable is inline function parameter
                 return !(varDescriptor is ParameterDescriptor &&
-                         InlineUtil.isInlineLambdaParameter(varDescriptor) &&
+                         InlineUtil.isInlineParameter(varDescriptor) &&
                          InlineUtil.isInline(varDescriptor.containingDeclaration))
             }
 
@@ -631,7 +631,7 @@ class PsiInlineCodegen(
         //TODO deparenthisise typed
         val deparenthesized = KtPsiUtil.deparenthesize(expression)
 
-        return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) && isInlinableParameterExpression(deparenthesized)
+        return InlineUtil.isInlineParameter(valueParameterDescriptor) && isInlinableParameterExpression(deparenthesized)
     }
 
     override fun genValueAndPut(

@@ -109,18 +109,16 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
 }
 
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
-    if (project.isDisposed) {
-        return emptyList()
-    }
-
-    if (!runReadAction { FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project)) }) {
+    if (!runReadAction {
+        !project.isDisposed && FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+    }) {
         return emptyList()
     }
 
     return project.allModules()
             .filter { module ->
                 runReadAction {
-                    FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
+                    !project.isDisposed && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
                 }
             }
 }
@@ -170,7 +168,7 @@ fun getConfigurableModules(project: Project): List<ModuleSourceRootGroup> {
 }
 
 fun getAbleToRunConfigurators(module: Module): Collection<KotlinProjectConfigurator> {
-    val moduleGroup = ModuleSourceRootMap(module.project).toModuleGroup(module)
+    val moduleGroup = module.toModuleGroup()
     return allConfigurators().filter {
         it.getStatus(moduleGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED
     }
@@ -205,9 +203,15 @@ fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, excludeModules: C
     }.map { it.baseModule }
 }
 
+fun findApplicableConfigurator(module: Module): KotlinProjectConfigurator {
+    val moduleGroup = module.toModuleGroup()
+    return allConfigurators().find { it.getStatus(moduleGroup) != ConfigureKotlinStatus.NON_APPLICABLE }
+           ?: KotlinJavaModuleConfigurator.instance
+}
+
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
-    val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
     return runReadAction {
+        val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
         hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind) ) ||
         hasKotlinCommonRuntimeInScope(scope)

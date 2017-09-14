@@ -234,7 +234,7 @@ interface ModuleInfo {
     // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
     // additional members dependent on the JDK
     fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-            if (platform == TargetPlatform.Default)
+            if (platform == TargetPlatform.Common)
                 ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
             else
                 ModuleInfo.DependencyOnBuiltIns.LAST

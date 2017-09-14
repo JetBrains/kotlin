@@ -98,6 +98,15 @@ class CallableReferenceNotCompatible(
         val callableReverenceType: UnwrappedType
 ) : InapplicableArgumentDiagnostic()
 
+// supported by FE but not supported by BE now
+class CallableReferencesDefaultArgumentUsed(
+    val argument: CallableReferenceKotlinCallArgument,
+    val candidate: CallableDescriptor,
+    val defaultsCount: Int
+) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+}
+
 class NotCallableMemberReference(
         override val argument: CallableReferenceKotlinCallArgument,
         val candidate: CallableDescriptor
@@ -119,7 +128,8 @@ class NotCallableExpectedType(
 // SmartCasts
 class SmartCastDiagnostic(
         val argument: ExpressionKotlinCallArgument,
-        val smartCastType: UnwrappedType
+        val smartCastType: UnwrappedType,
+        val kotlinCall: KotlinCall?
 ): KotlinCallDiagnostic(RESOLVED) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
@@ -141,6 +151,22 @@ object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
 }
 
 object AbstractSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
+
+// candidates result
+class NoneCandidatesCallDiagnostic(val kotlinCall: KotlinCall) : KotlinCallDiagnostic(INAPPLICABLE) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
+
+class ManyCandidatesCallDiagnostic(
+        val kotlinCall: KotlinCall,
+        val candidates: Collection<KotlinResolutionCandidate>
+) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }

@@ -18,43 +18,36 @@ package org.jetbrains.kotlin.js.parser
 
 import com.google.gwt.dev.js.JsAstMapper
 import com.google.gwt.dev.js.rhino.*
-import org.jetbrains.kotlin.js.backend.ast.JsFunction
-import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
-import org.jetbrains.kotlin.js.backend.ast.JsScope
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.Reader
 import java.io.StringReader
-import java.util.*
 
-fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement> {
+fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement>? {
     val insideFunction = scope is JsFunctionScope
     val node = parse(code, CodePosition(0, 0), 0, reporter, insideFunction, Parser::parse)
-    return node.toJsAst(scope, fileName) {
+    return node?.toJsAst(scope, fileName) {
         mapStatements(it)
     }
 }
 
-fun parseFunction(code: String, fileName: String, position: CodePosition, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction =
-        parse(code, position, offset, reporter, insideFunction = false) {
-            addObserver(FunctionParsingObserver())
-            primaryExpr(it)
-        }.toJsAst(scope, fileName, JsAstMapper::mapFunction)
+fun parseFunction(code: String, fileName: String, position: CodePosition, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction? {
+    val rootNode = parse(code, position, offset, reporter, insideFunction = false) {
+        addListener(FunctionParsingObserver())
+        primaryExpr(it)
+    }
+    return rootNode?.toJsAst(scope, fileName, JsAstMapper::mapFunction)
+}
 
-private class FunctionParsingObserver : Observer {
+private class FunctionParsingObserver : ParserListener {
     var functionsStarted = 0
 
-    override fun update(o: Observable?, arg: Any?) {
-        when (arg) {
-            is ParserEvents.OnFunctionParsingStart -> {
-                functionsStarted++
-            }
-            is ParserEvents.OnFunctionParsingEnd -> {
-                functionsStarted--
+    override fun functionStarted() {
+        functionsStarted++
+    }
 
-                if (functionsStarted == 0) {
-                    arg.tokenStream.ungetToken(TokenStream.EOF)
-                }
-            }
+    override fun functionEnded(tokenStream: TokenStream) {
+        if (--functionsStarted == 0) {
+            tokenStream.ungetToken(TokenStream.EOF)
         }
     }
 }
@@ -67,13 +60,13 @@ private fun parse(
         reporter: ErrorReporter,
         insideFunction: Boolean,
         parseAction: Parser.(TokenStream)->Any
-): Node {
+): Node? {
     Context.enter().errorReporter = reporter
 
     try {
         val ts = TokenStream(StringReader(code, offset), "<parser>", startPosition)
         val parser = Parser(IRFactory(ts), insideFunction)
-        return parser.parseAction(ts) as Node
+        return parser.parseAction(ts) as? Node
     } finally {
         Context.exit()
     }

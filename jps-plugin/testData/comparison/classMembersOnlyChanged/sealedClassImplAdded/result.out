@@ -1,5 +1,4 @@
-ADDED: class Base$C.class
-changes in test/Base.A: NONE
-changes in test/Base.B: NONE
-changes in test/Base: CLASS_SIGNATURE, MEMBERS
+ADDED test/Base.C
+PROTO DIFFERENCE in test/Base: NESTED_CLASS_NAME_LIST, SEALED_SUBCLASS_FQ_NAME_LIST
+CHANGES in test/Base: CLASS_SIGNATURE, MEMBERS
     [C]

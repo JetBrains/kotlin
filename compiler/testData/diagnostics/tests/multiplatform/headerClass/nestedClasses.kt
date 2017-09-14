@@ -3,23 +3,29 @@
 // FILE: common.kt
 
 header class OuterClass {
-    header class NestedClass {
-        header class DeepNested {
-            header class Another
+    class NestedClass {
+        class DeepNested {
+            class Another {
+                fun f(s: String)
+                val p: Int
+            }
         }
     }
 
-    header inner class InnerClass
+    inner class InnerClass {
+        fun f(x: Int)
+        val p: String
+    }
 
-    header companion object
+    companion object
 }
 
 header class OuterClassWithNamedCompanion {
-    header companion object Factory
+    companion object Factory
 }
 
 header object OuterObject {
-    header object NestedObject
+    object NestedObject
 }
 
 // MODULE: m2-jvm(m1-common)
@@ -28,11 +34,17 @@ header object OuterObject {
 impl class OuterClass {
     impl class NestedClass {
         impl class DeepNested {
-            impl class Another
+            impl class Another {
+                impl fun f(s: String) {}
+                impl val p: Int = 42
+            }
         }
     }
 
-    impl inner class InnerClass
+    impl inner class InnerClass {
+        impl fun f(x: Int) {}
+        impl val p: String = ""
+    }
 
     impl companion object
 }

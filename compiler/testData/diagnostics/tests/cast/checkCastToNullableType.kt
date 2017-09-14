@@ -1,7 +1,7 @@
 // FILE: JavaClass.java
 
-import org.jetbrains.annotations.Nullable
-import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class JavaClass {
     static Integer foo() {

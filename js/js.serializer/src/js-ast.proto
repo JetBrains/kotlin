@@ -40,6 +40,7 @@ message Expression {
     optional Location location = 2;
     optional bool synthetic = 3 [default = false];
     optional SideEffects side_effects = 4 [default = AFFECTS_STATE];
+    optional int32 local_alias = 5;
 
     oneof expression {
         int32 simple_name_reference = 22;
@@ -424,6 +425,16 @@ message NameTable {
 message Name {
     required bool temporary = 1;
     optional int32 identifier = 2;
+    optional int32 local_name_id = 3;
+    optional bool imported = 4 [default = false];
+    optional SpecialFunction special_function = 5;
+}
+
+enum SpecialFunction {
+    DEFINE_INLINE_FUNCTION = 1;
+    WRAP_FUNCTION = 2;
+    TO_BOXED_CHAR = 3;
+    UNBOX_CHAR = 4;
 }
 
 

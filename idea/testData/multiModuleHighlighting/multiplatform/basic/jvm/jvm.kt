@@ -1,8 +1,8 @@
-<error descr="[IMPLEMENTATION_WITHOUT_HEADER] Modifier 'impl' is only applicable to members that are initially declared in platform-independent code">impl</error> class Your {
+impl class <error descr="[IMPLEMENTATION_WITHOUT_HEADER] 'impl' class 'Your' has no corresponding 'header' declaration">Your</error> {
 
 }
 
-header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'His' has no implementation in module jvm for JVM">His</error> {
+header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] 'header' class 'His' has no implementation in module jvm for JVM">His</error> {
 
 }
 

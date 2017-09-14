@@ -19,9 +19,14 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedArrayAnnotationArgument
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedField
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedReferenceAnnotationArgument
 import org.jetbrains.kotlin.load.java.JavaVisibilities
-import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.Modifier
 
 internal val JCTree.JCModifiers.isAbstract: Boolean
@@ -57,5 +62,37 @@ internal fun JCTree.annotations(): Collection<JCTree.JCAnnotation> = when (this)
     else -> null
 } ?: emptyList<JCTree.JCAnnotation>()
 
-fun JavaClass.computeClassId(): ClassId? =
-        outerClass?.computeClassId()?.createNestedClassId(name) ?: fqName?.let { ClassId.topLevel(it) }
+fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaAnnotation> {
+    val filteredAnnotations = arrayListOf<JavaAnnotation>()
+    val targetClassId = ClassId(FqName("java.lang.annotation"), Name.identifier("Target"))
+    for (annotation in this) {
+        val annotationClass = annotation.resolve()
+        val targetAnnotation = annotationClass?.annotations?.find { it.classId == targetClassId } ?: continue
+        val elementTypeArg = targetAnnotation.arguments.firstOrNull() ?: continue
+
+        when (elementTypeArg) {
+            is SymbolBasedArrayAnnotationArgument -> {
+                elementTypeArg.args.find { (it as? SymbolBasedReferenceAnnotationArgument)?.element?.simpleName?.contentEquals("TYPE_USE") ?: false }
+                        ?.let { filteredAnnotations.add(annotation) }
+            }
+            is SymbolBasedReferenceAnnotationArgument -> {
+                elementTypeArg.element.simpleName.takeIf { it.contentEquals("TYPE_USE") }
+                        ?.let { filteredAnnotations.add(annotation) }
+            }
+            is TreeBasedArrayAnnotationArgument -> {
+                elementTypeArg.args.find {
+                    val field = (it as? TreeBasedReferenceAnnotationArgument)?.resolve() as? SymbolBasedField
+                    field?.element?.simpleName?.contentEquals("TYPE_USE") ?: false
+                }?.let { filteredAnnotations.add(annotation) }
+            }
+            is TreeBasedReferenceAnnotationArgument -> {
+                (elementTypeArg.resolve() as? SymbolBasedField)?.let { field ->
+                    field.element.simpleName.takeIf { it.contentEquals("TYPE_USE") }
+                            ?.let { filteredAnnotations.add(annotation) }
+                }
+            }
+        }
+    }
+
+    return filteredAnnotations
+}

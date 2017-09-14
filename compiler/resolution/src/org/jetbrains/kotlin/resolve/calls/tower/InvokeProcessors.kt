@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
@@ -182,7 +180,7 @@ fun <C : Candidate> createCallTowerProcessorForExplicitInvoke(
             usualInvoke
         }
         else {
-            CompositeScopeTowerProcessor(
+            PrioritizedCompositeScopeTowerProcessor(
                     usualInvoke,
                     InvokeExtensionScopeTowerProcessor(functionContext, invokeExtensionDescriptor, explicitReceiver = null)
             )

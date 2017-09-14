@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.requiresTypeAliasExpansion
 
 class TypeAliasExpander(
-        private val reportStrategy: TypeAliasExpansionReportStrategy
+        private val reportStrategy: TypeAliasExpansionReportStrategy,
+        private val shouldCheckBounds: Boolean
 ) {
+
     fun expand(typeAliasExpansion: TypeAliasExpansion, annotations: Annotations) =
             expandRecursively(typeAliasExpansion, annotations,
                               isNullable = false, recursionDepth = 0, withAbbreviatedType = true)
@@ -228,7 +230,9 @@ class TypeAliasExpander(
             if (!substitutedArgument.isStarProjection && !substitutedArgument.type.containsTypeAliasParameters()) {
                 val unsubstitutedArgument = unsubstitutedType.arguments[i]
                 val typeParameter = unsubstitutedType.constructor.parameters[i]
-                DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, unsubstitutedArgument.type, substitutedArgument.type, typeParameter, typeSubstitutor)
+                if (shouldCheckBounds) {
+                    DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, unsubstitutedArgument.type, substitutedArgument.type, typeParameter, typeSubstitutor)
+                }
             }
         }
     }
@@ -242,6 +246,6 @@ class TypeAliasExpander(
             }
         }
 
-        val NON_REPORTING = TypeAliasExpander(TypeAliasExpansionReportStrategy.DO_NOTHING)
+        val NON_REPORTING = TypeAliasExpander(TypeAliasExpansionReportStrategy.DO_NOTHING, false)
     }
 }

@@ -171,6 +171,17 @@ public class CallResolver {
     }
 
     @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
+            @NotNull ResolutionContext<?> context,
+            @NotNull Call call,
+            @NotNull Name name,
+            @NotNull TracingStrategy tracing
+    ) {
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+        return computeTasksAndResolveCall(callResolutionContext, name, tracing, NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
+    }
+
+    @NotNull
     private OverloadResolutionResults<FunctionDescriptor> resolveCallForInvoke(
             @NotNull BasicCallResolutionContext context,
             @NotNull TracingStrategy tracing

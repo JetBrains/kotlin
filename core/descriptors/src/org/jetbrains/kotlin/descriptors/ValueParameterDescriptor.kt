@@ -54,4 +54,6 @@ interface ValueParameterDescriptor : VariableDescriptor, ParameterDescriptor {
     val isCrossinline: Boolean
 
     val isNoinline: Boolean
+
+    override fun isLateInit(): Boolean = false
 }

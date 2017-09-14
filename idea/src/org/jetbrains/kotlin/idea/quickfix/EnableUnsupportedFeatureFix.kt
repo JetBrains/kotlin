@@ -18,32 +18,25 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
-import com.intellij.psi.xml.XmlFile
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
+import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
-import org.jetbrains.kotlin.idea.maven.PomFile
-import org.jetbrains.kotlin.idea.maven.changeLanguageVersion
-import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import org.jetbrains.kotlin.idea.versions.updateLibraries
@@ -64,11 +57,6 @@ sealed class EnableUnsupportedFeatureFix(
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
-            val targetVersion = feature.sinceVersion!!
-
-            val runtimeUpdateRequired = getRuntimeLibraryVersion(module)?.let { ApiVersion.parse(it) }?.let { runtimeVersion ->
-               runtimeVersion < feature.sinceApiVersion
-            } ?: false
 
             val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
             val targetApiLevel = facetSettings.apiLevel?.let { apiLevel ->
@@ -77,67 +65,15 @@ sealed class EnableUnsupportedFeatureFix(
                 else
                     null
             }
-
-            if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isMavenModule(module)) {
-                if (runtimeUpdateRequired) {
-                    Messages.showErrorDialog(project,
-                                             "This language feature requires version ${feature.sinceApiVersion} or later of the Kotlin runtime library. " +
-                                             "Please update the version in your build script.",
-                                             "Update Language Version")
-                    return
-                }
-
-                val element = if (KotlinPluginUtil.isGradleModule(module)) {
-                    updateGradleLanguageVersion(module, file, targetApiLevel)
-                }
-                else {
-                    updateMavenLanguageVersion(module, targetApiLevel)
-                }
-                element?.let {
-                    OpenFileDescriptor(module.project, it.containingFile.virtualFile, it.textRange.startOffset).navigate(true)
-                }
-                return
-            }
-
-            if (runtimeUpdateRequired && !askUpdateRuntime(module, feature.sinceApiVersion)) {
-                return
-            }
-
-            ModuleRootModificationUtil.updateModel(module) {
-                with(facetSettings) {
-                    if (!apiVersionOnly) {
-                        languageLevel = targetVersion
-                    }
-                    if (targetApiLevel != null) {
-                        apiLevel = LanguageVersion.fromVersionString(targetApiLevel)
-                    }
-                }
-            }
-        }
-
-        private fun updateGradleLanguageVersion(module: Module, file: KtFile, targetApiLevel: String?): PsiElement? {
             val forTests = ModuleRootManager.getInstance(module).fileIndex.isInTestSourceContent(file.virtualFile)
-            return KotlinWithGradleConfigurator.changeLanguageVersion(module,
-                if (apiVersionOnly) null else feature.sinceVersion!!.versionString,
-                targetApiLevel, forTests)
-        }
 
-        private fun updateMavenLanguageVersion(module: Module, targetApiLevel: String?): PsiElement? {
-            fun doUpdateMavenLanguageVersion(): PsiElement? {
-                val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
-                val pom = PomFile.forFileOrNull(psi) ?: return null
-                return pom.changeLanguageVersion(
-                        if (apiVersionOnly) null else feature.sinceVersion!!.versionString,
-                        targetApiLevel)
-            }
-
-            val element = doUpdateMavenLanguageVersion()
-            if (element == null) {
-                Messages.showErrorDialog(module.project,
-                                         "Failed to update.pom.xml. Please update the file manually.",
-                                         text)
-            }
-            return element
+            findApplicableConfigurator(module).updateLanguageVersion(
+                    module,
+                    if (apiVersionOnly) null else feature.sinceVersion!!.versionString,
+                    targetApiLevel,
+                    feature.sinceApiVersion,
+                    forTests
+            )
         }
     }
 

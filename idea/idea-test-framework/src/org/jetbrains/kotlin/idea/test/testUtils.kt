@@ -69,7 +69,6 @@ fun Module.configureAs(kind: ModuleKind) {
             this.configureAs(KotlinStdJSProjectDescriptor)
         }
 
-        else -> throw IllegalArgumentException("Unknown kind=$kind")
     }
 }
 

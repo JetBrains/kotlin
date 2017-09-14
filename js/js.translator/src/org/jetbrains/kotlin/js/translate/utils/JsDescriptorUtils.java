@@ -125,7 +125,8 @@ public final class JsDescriptorUtils {
     }
 
     private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
-        return accessorDescriptor == null || accessorDescriptor.isDefault();
+        return accessorDescriptor == null || accessorDescriptor.isDefault() &&
+               !(accessorDescriptor instanceof PropertySetterDescriptor && accessorDescriptor.getCorrespondingProperty().isLateInit());
     }
 
     public static boolean sideEffectsPossibleOnRead(@NotNull PropertyDescriptor property) {
@@ -169,7 +170,7 @@ public final class JsDescriptorUtils {
     }
 
     @Nullable
-    private static FunctionDescriptor findRealDeclaration(FunctionDescriptor descriptor) {
+    private static FunctionDescriptor findRealDeclaration(@NotNull FunctionDescriptor descriptor) {
         if (descriptor.getModality() == Modality.ABSTRACT) return null;
         if (descriptor.getKind().isReal()) return descriptor;
 
