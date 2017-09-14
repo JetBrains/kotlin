@@ -368,6 +368,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 }
                 else {
                     it.removeModifier(KtTokens.IMPL_KEYWORD)
+                    it.removeModifier(KtTokens.ACTUAL_KEYWORD)
                 }
             }
         }
@@ -392,6 +393,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 element.ownerFunction?.let {
                     if (it.dropImplModifier == true) {
                         it.removeModifier(KtTokens.IMPL_KEYWORD)
+                        it.removeModifier(KtTokens.ACTUAL_KEYWORD)
                         it.dropImplModifier = null
                     }
                 }
@@ -400,11 +402,11 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
     }
 
-    private fun shouldAllowPropagationToHeader(parameter: KtParameter): Boolean {
+    private fun shouldAllowPropagationToExpected(parameter: KtParameter): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) return parameter.project.ALLOW_LIFTING_IMPL_PARAMETER_TO_HEADER
 
         return Messages.showYesNoDialog(
-                "Do you want to delete this parameter in header declaration and all its implementations?",
+                "Do you want to delete this parameter in expected declaration and all related actual ones?",
                 RefactoringBundle.message("safe.delete.title"),
                 Messages.getQuestionIcon()
         ) == Messages.YES
@@ -417,7 +419,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             is KtParameter -> {
                 val headerParameter = element.liftToExpected() as? KtParameter
                 if (headerParameter != null && headerParameter != element) {
-                    if (shouldAllowPropagationToHeader(element)) {
+                    if (shouldAllowPropagationToExpected(element)) {
                         return listOf(headerParameter)
                     } else {
                         element.ownerFunction?.dropImplModifier = true
