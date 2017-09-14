@@ -1,10 +1,10 @@
 // -- Module: <m1-common> --
 package
 
-public final header class Foo {
+public final expect class Foo {
     public constructor Foo()
-    public header final val foo: kotlin.String
-    public final header fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    public expect final val foo: kotlin.String
+    public final expect fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -14,10 +14,10 @@ public final header class Foo {
 // -- Module: <m2-jvm> --
 package
 
-public final impl class Foo {
+public final actual class Foo {
     public constructor Foo()
-    public impl final val foo: kotlin.String = "JVM"
-    public final impl fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    public actual final val foo: kotlin.String = "JVM"
+    public final actual fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -27,10 +27,10 @@ public final impl class Foo {
 // -- Module: <m3-js> --
 package
 
-public final impl class Foo {
+public final actual class Foo {
     public constructor Foo()
-    public impl final val foo: kotlin.String = "JS"
-    public final impl fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    public actual final val foo: kotlin.String = "JS"
+    public final actual fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

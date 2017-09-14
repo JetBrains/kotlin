@@ -2,25 +2,25 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header interface Interface
+expect interface Interface
 
-header annotation class Anno(val prop: String)
+expect annotation class Anno(val prop: String)
 
-header object Object
+expect object Object
 
-header class Class
+expect class Class
 
-header enum class En { ENTRY }
+expect enum class En { ENTRY }
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl interface Interface
+actual interface Interface
 
-impl annotation class Anno impl constructor(impl val prop: String)
+actual annotation class Anno actual constructor(actual val prop: String)
 
-impl object Object
+actual object Object
 
-impl class Class
+actual class Class
 
-impl enum class En { ENTRY }
+actual enum class En { ENTRY }

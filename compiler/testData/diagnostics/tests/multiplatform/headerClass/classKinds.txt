@@ -1,23 +1,23 @@
 // -- Module: <m1-common> --
 package
 
-public final header annotation class Anno : kotlin.Annotation {
+public final expect annotation class Anno : kotlin.Annotation {
     public constructor Anno(/*0*/ prop: kotlin.String)
-    public header final val prop: kotlin.String
+    public expect final val prop: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class Class {
+public final expect class Class {
     public constructor Class()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header enum class En : kotlin.Enum<En> {
-    header enum entry ENTRY
+public final expect enum class En : kotlin.Enum<En> {
+    expect enum entry ENTRY
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
@@ -32,13 +32,13 @@ public final header enum class En : kotlin.Enum<En> {
     public final /*synthesized*/ fun values(): kotlin.Array<En>
 }
 
-public header interface Interface {
+public expect interface Interface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public header object Object {
+public expect object Object {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -48,22 +48,22 @@ public header object Object {
 // -- Module: <m2-jvm> --
 package
 
-public final impl annotation class Anno : kotlin.Annotation {
+public final actual annotation class Anno : kotlin.Annotation {
     public constructor Anno(/*0*/ prop: kotlin.String)
-    public impl final val prop: kotlin.String
+    public actual final val prop: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final impl class Class {
+public final actual class Class {
     public constructor Class()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final impl enum class En : kotlin.Enum<En> {
+public final actual enum class En : kotlin.Enum<En> {
     enum entry ENTRY
 
     private constructor En()
@@ -82,13 +82,13 @@ public final impl enum class En : kotlin.Enum<En> {
     public final /*synthesized*/ fun values(): kotlin.Array<En>
 }
 
-public impl interface Interface {
+public actual interface Interface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public impl object Object {
+public actual object Object {
     private constructor Object()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

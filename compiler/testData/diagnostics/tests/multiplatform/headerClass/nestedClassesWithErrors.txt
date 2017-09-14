@@ -1,29 +1,29 @@
 // -- Module: <m1-common> --
 package
 
-public final header class B {
+public final expect class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final header class N {
+    public final expect class N {
         public constructor N()
-        public final header fun body(): kotlin.Unit
+        public final expect fun body(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final header fun extraHeader(): kotlin.Unit
+        public final expect fun extraHeader(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
 
-public final header class C {
+public final expect class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final header enum class E : kotlin.Enum<C.E> {
+    public final expect enum class E : kotlin.Enum<C.E> {
         public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -37,14 +37,14 @@ public final header class C {
         public final /*synthesized*/ fun values(): kotlin.Array<C.E>
     }
 
-    public final header inner class I {
+    public final expect inner class I {
         public constructor I()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public final header class N {
+    public final expect class N {
         public constructor N()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -52,13 +52,13 @@ public final header class C {
     }
 }
 
-public final header class D {
+public final expect class D {
     public constructor D()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final header class N {
+    public final expect class N {
         public constructor N()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -66,13 +66,13 @@ public final header class D {
     }
 }
 
-public final header class E {
+public final expect class E {
     public constructor E()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final header class N {
+    public final expect class N {
         public constructor N()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -84,29 +84,29 @@ public final header class E {
 // -- Module: <m1-jvm> --
 package
 
-public final impl class B {
+public final actual class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final impl class N {
+    public final actual class N {
         public constructor N()
-        public final impl fun body(): kotlin.Unit
+        public final actual fun body(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final impl fun extraHeader(): kotlin.Unit
+        public final actual fun extraHeader(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
 
-public final impl class C {
+public final actual class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final impl enum class E : kotlin.Enum<C.E> {
+    public final actual enum class E : kotlin.Enum<C.E> {
         private constructor E()
         public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
@@ -123,14 +123,14 @@ public final impl class C {
         public final /*synthesized*/ fun values(): kotlin.Array<C.E>
     }
 
-    public final impl inner class I {
+    public final actual inner class I {
         public constructor I()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public final impl class N {
+    public final actual class N {
         public constructor N()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -138,14 +138,14 @@ public final impl class C {
     }
 }
 
-public final impl class D {
+public final actual class D {
     public constructor D()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final impl class E {
+public final actual class E {
     public constructor E()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -2,39 +2,39 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header val justVal: String
-header var justVar: String
+expect val justVal: String
+expect var justVar: String
 
-header val String.extensionVal: Unit
-header var <T> T.genericExtensionVar: T
+expect val String.extensionVal: Unit
+expect var <T> T.genericExtensionVar: T
 
-header val valWithGet: String
+expect val valWithGet: String
     get
-header var varWithGetSet: String
+expect var varWithGetSet: String
     get set
 
-header var varWithPlatformGetSet: String
-    <!WRONG_MODIFIER_TARGET!>header<!> get
-    <!WRONG_MODIFIER_TARGET!>header<!> set
+expect var varWithPlatformGetSet: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> get
+    <!WRONG_MODIFIER_TARGET!>expect<!> set
 
-header val backingFieldVal: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
-header var backingFieldVar: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
+expect val backingFieldVal: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
+expect var backingFieldVar: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
 
-header val customAccessorVal: String
+expect val customAccessorVal: String
     <!HEADER_DECLARATION_WITH_BODY!>get()<!> = "no"
-header var customAccessorVar: String
+expect var customAccessorVar: String
     <!HEADER_DECLARATION_WITH_BODY!>get()<!> = "no"
     <!HEADER_DECLARATION_WITH_BODY!>set(value)<!> {}
 
-header <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
+expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
-<!INCOMPATIBLE_MODIFIERS!>header<!> <!INCOMPATIBLE_MODIFIERS!>lateinit<!> var lateinitVar: String
+<!INCOMPATIBLE_MODIFIERS!>expect<!> <!INCOMPATIBLE_MODIFIERS!>lateinit<!> var lateinitVar: String
 
-<!WRONG_MODIFIER_TARGET!>header<!> val delegated: String by Delegate
+<!WRONG_MODIFIER_TARGET!>expect<!> val delegated: String by Delegate
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 fun test(): String {
-    <!WRONG_MODIFIER_TARGET!>header<!> val localVariable: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> val localVariable: String
     localVariable = "no"
     return localVariable
 }

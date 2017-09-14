@@ -1,7 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
-header class Foo(
+expect class Foo(
         <!HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val constructorProperty: String<!>,
         constructorParameter: String
 ) {

@@ -2,17 +2,17 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-inline header fun inlineFun()
-header fun nonInlineFun()
+inline expect fun inlineFun()
+expect fun nonInlineFun()
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-<!IMPLEMENTATION_WITHOUT_HEADER!>impl fun inlineFun()<!> { }
-impl fun nonInlineFun() { }
+<!IMPLEMENTATION_WITHOUT_HEADER!>actual fun inlineFun()<!> { }
+actual fun nonInlineFun() { }
 
 // MODULE: m3-js(m1-common)
 // FILE: js.kt
 
-impl <!NOTHING_TO_INLINE!>inline<!> fun inlineFun() { }
-impl <!NOTHING_TO_INLINE!>inline<!> fun nonInlineFun() { }
+actual <!NOTHING_TO_INLINE!>inline<!> fun inlineFun() { }
+actual <!NOTHING_TO_INLINE!>inline<!> fun nonInlineFun() { }

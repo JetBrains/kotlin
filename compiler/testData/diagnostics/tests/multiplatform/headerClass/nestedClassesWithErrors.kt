@@ -2,45 +2,45 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class B {
+expect class B {
     class N {
         <!HEADER_DECLARATION_WITH_BODY, JVM:HEADER_DECLARATION_WITH_BODY!>fun body()<!> {}
-        <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>header<!> fun extraHeader()
+        <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> fun extraHeader()
     }
 }
 
-header class C {
-    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>header<!> class N
-    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>header<!> enum class E
-    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>header<!> inner class I
+expect class C {
+    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> class N
+    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> enum class E
+    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> inner class I
 }
 
-header class D {
+expect class D {
     class N
 }
 
-header class E {
+expect class E {
     class N
 }
 
 // MODULE: m1-jvm(m1-common)
 // FILE: jvm.kt
 
-impl class B {
-    impl class N {
-        impl fun body() {}
-        impl fun extraHeader() {}
+actual class B {
+    actual class N {
+        actual fun body() {}
+        actual fun extraHeader() {}
     }
 }
 
-impl class C {
-    impl class N
-    impl enum class E
-    impl inner class I
+actual class C {
+    actual class N
+    actual enum class E
+    actual inner class I
 }
 
-impl class <!HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED!>D<!>
+actual class <!HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED!>D<!>
 
-impl class E {
+actual class E {
     class <!IMPL_MISSING!>N<!>
 }

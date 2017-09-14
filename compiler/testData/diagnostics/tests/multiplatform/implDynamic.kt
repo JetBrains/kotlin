@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class Foo {
+expect class Foo {
     constructor(p: Any)
 
     fun f1(s: String): Int
@@ -18,12 +18,12 @@ header class Foo {
 
 // TODO: do not suppress UNSUPPORTED once JS files in multi-platform tests are analyzed with JS analyzer facade
 
-impl class Foo {
-    impl constructor(p: dynamic) {}
+actual class Foo {
+    actual constructor(p: dynamic) {}
 
-    impl fun f1(s: dynamic): dynamic = null!!
+    actual fun f1(s: dynamic): dynamic = null!!
 
-    impl fun f2(s: dynamic): MutableMap<Boolean?, Foo> = null!!
+    actual fun f2(s: dynamic): MutableMap<Boolean?, Foo> = null!!
 
-    impl fun <T : Set<Number>> f3(t: T): dynamic = null!!
+    actual fun <T : Set<Number>> f3(t: T): dynamic = null!!
 }
