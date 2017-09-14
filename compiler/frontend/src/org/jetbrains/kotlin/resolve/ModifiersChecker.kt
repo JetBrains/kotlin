@@ -109,7 +109,10 @@ object ModifierCheckerCore {
     )
 
     // NOTE: deprecated targets must be possible!
-    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
+            HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
+            IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
+    )
 
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
