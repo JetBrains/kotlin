@@ -152,7 +152,7 @@ private fun getExtraLanguageFeatures(
 
 val KtElement.languageVersionSettings: LanguageVersionSettings
     get() {
-        if (ServiceManager.getService(containingKtFile.project, ProjectFileIndex::class.java) == null) {
+        if (ServiceManager.getService(project, ProjectFileIndex::class.java) == null) {
             return LanguageVersionSettingsImpl.DEFAULT
         }
         return ModuleUtilCore.findModuleForPsiElement(this)?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
@@ -160,7 +160,7 @@ val KtElement.languageVersionSettings: LanguageVersionSettings
 
 val KtElement.jvmTarget: JvmTarget
     get() {
-        if (ServiceManager.getService(containingKtFile.project, ProjectFileIndex::class.java) == null) {
+        if (ServiceManager.getService(project, ProjectFileIndex::class.java) == null) {
             return JvmTarget.DEFAULT
         }
         return ModuleUtilCore.findModuleForPsiElement(this)?.targetPlatform?.version as? JvmTarget ?: JvmTarget.DEFAULT
