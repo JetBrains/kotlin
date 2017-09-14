@@ -78,6 +78,21 @@ public class ParcelQuickFixTestGenerated extends AbstractParcelQuickFixTest {
         }
     }
 
+    @TestMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/classShouldBeAnnotated")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClassShouldBeAnnotated extends AbstractParcelQuickFixTest {
+        public void testAllFilesPresentInClassShouldBeAnnotated() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/classShouldBeAnnotated"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.before.Main.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/classShouldBeAnnotated/simple.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
     @TestMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/deleteIncompatible")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -188,6 +203,21 @@ public class ParcelQuickFixTestGenerated extends AbstractParcelQuickFixTest {
         @TestMetadata("simple.before.Main.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/propertyWontBeSerialized/simple.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
+    @TestMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/removeDuplicatingTypeParcelerAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveDuplicatingTypeParcelerAnnotation extends AbstractParcelQuickFixTest {
+        public void testAllFilesPresentInRemoveDuplicatingTypeParcelerAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/removeDuplicatingTypeParcelerAnnotation"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.before.Main.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/quickfix/removeDuplicatingTypeParcelerAnnotation/simple.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
     }
