@@ -26,7 +26,7 @@ enum class Jsr305State(
 
     companion object {
         @JvmField
-        val DEFAULT: Jsr305State = IGNORE
+        val DEFAULT: Jsr305State = WARN
 
         fun findByDescription(description: String?) = values().firstOrNull { it.description == description }
     }

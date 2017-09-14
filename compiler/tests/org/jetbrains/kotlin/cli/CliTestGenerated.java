@@ -218,6 +218,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("jsr305NoFlag.args")
+        public void testJsr305NoFlag() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305NoFlag.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("jvm8Target.args")
         public void testJvm8Target() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jvm8Target.args");

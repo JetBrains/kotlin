@@ -40,7 +40,7 @@ class AnalysisFlag<out T> internal constructor(
         }
 
         object Jsr305StateWarnByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.WARN)
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.DEFAULT)
         }
     }
 
