@@ -19,7 +19,6 @@ apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'java-gradle-plugin'
 
 group = 'org.jetbrains.kotlin'
 version = konanVersion
