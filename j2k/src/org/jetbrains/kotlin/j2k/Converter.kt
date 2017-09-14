@@ -581,7 +581,7 @@ class Converter private constructor(
                 }
             }
 
-            val params = convertParameterList(method, overloadReducer)
+            val params = convertParameterList(method, false, overloadReducer)
 
             val typeParameterList = convertTypeParameterList(method.typeParameterList)
             val body = deferredElement { codeConverter: CodeConverter ->

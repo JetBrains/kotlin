@@ -1,27 +1,45 @@
 public class Test {
 
-    private final boolean isA = true;
+    private int x = 1;
 
-    private final boolean isB = true;
+    private final boolean a = true;
 
-    private final C c = new C();
+    private final boolean b = true;
 
+    private final boolean c() {
+        return true;
+    }
+
+    private final boolean isD() {
+        return true;
+    }
+
+    private final E e = new E();
+
+    public static class E {
+        public boolean ee = true;
+    }
+
+    public static class F {
+        public boolean f = true;
+    }
 
     public void foo() {
-        foo(isA, this.isB, c.isC, new D().isD);
+        foo(a, this.b, c(), isD(), e.ee, new F().f);
+    }
+    public void foo(boolean a, boolean b, boolean c, boolean isD, boolean e, boolean f) {
     }
 
-    public void foo(boolean isA, boolean isB, boolean isC, boolean isD) {
-        System.out.println("isA=" + isA + ",isB=" + isB + "isC=" + isC + "isD=" + isD);
+    public void bar() {
+        bar(a, a, b);
+    }
+    public void bar(boolean a, boolean e, boolean f) {
     }
 
-
-    public static class C {
-        public boolean isC = true;
+    public void baz() {
+        baz(!a, ++x, x++, x + x + 1);
     }
-
-    public static class D {
-        public boolean isD = true;
+    public void baz(boolean a, int x, int y, int z) {
     }
 
 }

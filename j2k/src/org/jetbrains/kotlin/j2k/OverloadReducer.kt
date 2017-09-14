@@ -175,6 +175,7 @@ class OverloadReducer(
 
 fun Converter.convertParameterList(
         method: PsiMethod,
+        isConstructor: Boolean,
         overloadReducer: OverloadReducer?,
         convertParameter: (parameter: PsiParameter, default: DeferredElement<Expression>?) -> FunctionParameter = { parameter, default -> convertParameter(parameter, defaultValue = default) },
         correctCodeConverter: CodeConverter.() -> CodeConverter = { this }
@@ -190,11 +191,7 @@ fun Converter.convertParameterList(
                 val defaultValueConverted = if (defaultValue != null)
                     deferredElement { codeConverter ->
                         val expr = codeConverter.correctCodeConverter().convertExpression(defaultValue, parameter.type)
-                        val refExpr = (defaultValue as? PsiReferenceExpression)
-                        if (refExpr != null && !refExpr.isQualified && refExpr.referenceName == parameter.name)
-                            QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), expr, null)
-                        else
-                            expr
+                        if (isConstructor) expr else (expr.convertDefaultValue(params) ?: expr)
                     }
                 else
                     null
@@ -203,4 +200,30 @@ fun Converter.convertParameterList(
             LPar.withPrototype(lParen),
             RPar.withPrototype(rParen)
     ).assignPrototype(parameterList)
+}
+
+private fun Expression.convertDefaultValue(params: Array<out PsiParameter>): Expression? = when (this) {
+    is Identifier ->
+        if (params.any { it.name == name })
+            QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), this, null).assignNoPrototype()
+        else
+            null
+    is QualifiedExpression ->
+        qualifier.convertDefaultValue(params)?.let {
+            QualifiedExpression(it, identifier, null).assignNoPrototype()
+        }
+    is PrefixExpression ->
+        expression.convertDefaultValue(params)?.let {
+            PrefixExpression(op, it).assignNoPrototype()
+        }
+    is PostfixExpression ->
+        expression.convertDefaultValue(params)?.let {
+            PostfixExpression(op, it).assignNoPrototype()
+        }
+    is BinaryExpression -> {
+        val convertedLeft = left.convertDefaultValue(params) ?: left
+        val convertedRight = right.convertDefaultValue(params) ?: right
+        BinaryExpression(convertedLeft, convertedRight, op).assignNoPrototype()
+    }
+    else -> null
 }

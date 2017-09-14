@@ -83,7 +83,7 @@ class ConstructorConverter(
         else {
             if (overloadReducer.shouldDropMethod(constructor)) return null
 
-            val params = converter.convertParameterList(constructor, overloadReducer)
+            val params = converter.convertParameterList(constructor, true, overloadReducer)
 
             val thisOrSuper = findThisOrSuperCall(constructor)
             val thisOrSuperDeferred = if (thisOrSuper != null)
@@ -188,6 +188,7 @@ class ConstructorConverter(
 
         val parameterList = converter.convertParameterList(
                 primaryConstructor,
+                true,
                 overloadReducer,
                 { parameter, default ->
                     if (!parameterToField.containsKey(parameter)) {

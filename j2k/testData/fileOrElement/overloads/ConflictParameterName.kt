@@ -1,23 +1,38 @@
 class Test {
 
-    private val isA = true
+    private var x = 1
 
-    private val isB = true
+    private val a = true
 
-    private val c = C()
+    private val b = true
+
+    private val isD: Boolean
+        get() = true
+
+    private val e = E()
+
+    private fun c(): Boolean {
+        return true
+    }
+
+    class E {
+        var ee = true
+    }
+
+    class F {
+        var f = true
+    }
 
     @JvmOverloads
-    fun foo(isA: Boolean = this.isA, isB: Boolean = this.isB, isC: Boolean = c.isC, isD: Boolean = D().isD) {
-        println("isA=" + isA + ",isB=" + isB + "isC=" + isC + "isD=" + isD)
+    fun foo(a: Boolean = this.a, b: Boolean = this.b, c: Boolean = c(), isD: Boolean = this.isD, e: Boolean = this.e.ee, f: Boolean = F().f) {
     }
 
-
-    class C {
-        var isC = true
+    @JvmOverloads
+    fun bar(a: Boolean = this.a, e: Boolean = this.a, f: Boolean = b) {
     }
 
-    class D {
-        var isD = true
+    @JvmOverloads
+    fun baz(a: Boolean = !this.a, x: Int = ++this.x, y: Int = this.x++, z: Int = this.x + this.x + 1) {
     }
 
 }
