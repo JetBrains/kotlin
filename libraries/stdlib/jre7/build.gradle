@@ -1,0 +1,76 @@
+description = 'Kotlin Standard Library JRE 7 extension (deprecated)'
+
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+configurePublishing(project)
+
+dependencies {
+    compile project(':kotlin-stdlib')
+    testCompile project(':kotlin-test:kotlin-test-junit')
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir 'src'
+        }
+    }
+    test {
+        kotlin {
+            srcDir 'test'
+            if(!System.properties.'idea.active') {
+                srcDir '../test'
+            }
+        }
+    }
+}
+
+jar {
+    manifestAttributes(manifest, project, 'Main')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions.jdkHome = JDK_17
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xmultifile-parts-inherit",
+            "-Xdump-declarations-to", "${buildDir}/stdlib-jre7-declarations.json",
+            "-module-name", project.name
+    ]
+}
+
+compileTestKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}
+
+kotlin.experimental.coroutines 'enable'
+
+test {
+    executable = "$JDK_17/bin/java"
+}
+
+task testJre6Tests(type: Test) {
+    dependsOn project(':kotlin-stdlib').tasks.testClasses
+    group = "verification"
+
+    executable = "$JDK_17/bin/java"
+
+    testClassesDir = project.file('../build/classes/test')
+    classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
+}
+
+check.dependsOn testJre6Tests
