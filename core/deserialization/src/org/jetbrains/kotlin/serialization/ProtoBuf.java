@@ -7936,7 +7936,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -7950,7 +7950,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -8546,7 +8546,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -8562,7 +8562,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -9663,7 +9663,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -9679,7 +9679,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -9695,7 +9695,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -9714,7 +9714,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
@@ -13615,7 +13615,7 @@ public final class ProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -13633,7 +13633,7 @@ public final class ProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -13938,7 +13938,7 @@ public final class ProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -13958,7 +13958,7 @@ public final class ProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -14637,7 +14637,7 @@ public final class ProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -14657,7 +14657,7 @@ public final class ProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -14677,7 +14677,7 @@ public final class ProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -14700,7 +14700,7 @@ public final class ProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
@@ -15348,7 +15348,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -15368,7 +15368,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -15696,7 +15696,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -15718,7 +15718,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -16409,7 +16409,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -16431,7 +16431,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -16453,7 +16453,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -16478,7 +16478,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {

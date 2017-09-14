@@ -9743,7 +9743,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -9757,7 +9757,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -10465,7 +10465,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -10481,7 +10481,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -11826,7 +11826,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -11842,7 +11842,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -11858,7 +11858,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -11877,7 +11877,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
@@ -17734,7 +17734,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -17752,7 +17752,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -18097,7 +18097,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -18117,7 +18117,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -18930,7 +18930,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -18950,7 +18950,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -18970,7 +18970,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -18993,7 +18993,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
@@ -20039,7 +20039,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -20059,7 +20059,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -20417,7 +20417,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -20439,7 +20439,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -21239,7 +21239,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -21261,7 +21261,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -21283,7 +21283,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -21308,7 +21308,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
