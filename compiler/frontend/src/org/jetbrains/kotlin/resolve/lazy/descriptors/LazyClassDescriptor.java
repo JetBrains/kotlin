@@ -166,7 +166,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isInner = modifierList != null && modifierList.hasModifier(INNER_KEYWORD) && !isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
-        this.isImpl = modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD);
+        this.isImpl = modifierList != null && PsiUtilsKt.hasImplModifier(modifierList);
 
         this.isHeader = modifierList != null && PsiUtilsKt.hasHeaderModifier(modifierList) ||
                         containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader();

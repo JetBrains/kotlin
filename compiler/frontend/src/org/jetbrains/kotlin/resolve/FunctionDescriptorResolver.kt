@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasHeaderModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasImplModifier
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
@@ -185,7 +186,7 @@ class FunctionDescriptorResolver(
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
         functionDescriptor.isHeader = container is PackageFragmentDescriptor && function.hasHeaderModifier() ||
                                       container is ClassDescriptor && container.isHeader
-        functionDescriptor.isImpl = function.hasModifier(KtTokens.IMPL_KEYWORD)
+        functionDescriptor.isImpl = function.hasImplModifier()
 
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
         for (valueParameterDescriptor in valueParameterDescriptors) {

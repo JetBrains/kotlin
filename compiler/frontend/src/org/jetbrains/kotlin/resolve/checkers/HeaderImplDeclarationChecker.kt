@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.psiUtil.hasImplModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -127,7 +127,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         // TODO: use common module here
         val compatibility = findHeaderForImpl(descriptor, descriptor.module) ?: return
 
-        val hasImplModifier = descriptor.isImpl && reportOn.hasModifier(KtTokens.IMPL_KEYWORD)
+        val hasImplModifier = descriptor.isImpl && reportOn.hasImplModifier()
         if (!hasImplModifier) {
             if (Compatible !in compatibility) return
 

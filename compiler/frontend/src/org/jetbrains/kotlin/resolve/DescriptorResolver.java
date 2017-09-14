@@ -876,7 +876,7 @@ public class DescriptorResolver {
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
                 modifierList != null && PsiUtilsKt.hasHeaderModifier(modifierList) && container instanceof PackageFragmentDescriptor ||
                 container instanceof ClassDescriptor && ((ClassDescriptor) container).isHeader(),
-                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
+                modifierList != null && PsiUtilsKt.hasImplModifier(modifierList),
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 propertyInfo.getHasDelegate()
         );
@@ -1202,7 +1202,7 @@ public class DescriptorResolver {
                 false,
                 false,
                 classDescriptor.isHeader(),
-                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
+                modifierList != null && PsiUtilsKt.hasImplModifier(modifierList),
                 false,
                 false
         );

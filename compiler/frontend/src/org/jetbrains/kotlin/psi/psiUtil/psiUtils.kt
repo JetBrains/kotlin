@@ -385,3 +385,7 @@ inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = pare
 
 fun KtModifierListOwner.hasHeaderModifier() = hasModifier(KtTokens.HEADER_KEYWORD)
 fun KtModifierList.hasHeaderModifier() = hasModifier(KtTokens.HEADER_KEYWORD)
+
+fun KtModifierListOwner.hasImplModifier() = hasModifier(KtTokens.IMPL_KEYWORD)
+fun KtModifierList.hasImplModifier() = hasModifier(KtTokens.IMPL_KEYWORD)
+

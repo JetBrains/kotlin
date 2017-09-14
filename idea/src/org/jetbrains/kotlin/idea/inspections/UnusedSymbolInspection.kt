@@ -326,7 +326,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun isPlatformImplementation(declaration: KtNamedDeclaration) =
-            declaration.hasModifier(KtTokens.IMPL_KEYWORD)
+            declaration.hasImplModifier()
 
     private fun hasPlatformImplementations(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
         if (!declaration.hasHeaderModifier()) return false
