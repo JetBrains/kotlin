@@ -130,6 +130,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         super.setUp();
     }
 
+    /*
     @Override
     protected void runTest() throws Throwable {
         super.runTest();
@@ -159,6 +160,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         int restart = myRestart.get();
         return restart > 0 && restart <= 3;
     }
+    */
 
     private static void deleteLocalCacheDirectory(boolean assertDeleteSuccess) {
         System.out.println("-- Remove local cache directory --");
