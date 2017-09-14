@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.utils
 
 enum class Jsr305State(
-        val description: String,
-        val shouldReportWarning: Boolean = false,
-        val shouldReportError: Boolean = false
+        val description: String
 ) {
     IGNORE("ignore"),
-    WARN("warn", shouldReportWarning = true),
-    STRICT("strict", shouldReportError = true),
+    WARN("warn"),
+    STRICT("strict"),
     ;
 
     companion object {
