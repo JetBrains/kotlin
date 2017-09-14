@@ -90,6 +90,21 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
         doTest(fileName);
     }
 
+    @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305Ignore")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jsr305Ignore extends AbstractJavacForeignAnnotationsTest {
+        public void testAllFilesPresentInJsr305Ignore() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305Ignore"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("parametersAreNonnullByDefault.kt")
+        public void testParametersAreNonnullByDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305Ignore/parametersAreNonnullByDefault.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
