@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -78,6 +80,7 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.Type
@@ -524,6 +527,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         private fun exception(e: Throwable): Nothing = throw EvaluateExceptionUtil.createEvaluateException(e)
 
+        private val IGNORED_DIAGNOSTICS: Set<DiagnosticFactory<*>> = Errors.INVISIBLE_REFERENCE_DIAGNOSTICS
+
         // contextFile must be NotNull when analyzeInlineFunctions = true
         private fun KtFile.checkForErrors(analyzeInlineFunctions: Boolean = false, contextFile: KtFile? = null): ExtendedAnalysisResult {
             return runInReadActionWithWriteActionPriorityWithPCE {
@@ -543,7 +548,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
 
                 val bindingContext = analysisResult.bindingContext
-                bindingContext.diagnostics.firstOrNull { it.severity == Severity.ERROR }?.let {
+                val filteredDiagnostics = bindingContext.diagnostics.filter { it.factory !in IGNORED_DIAGNOSTICS }
+                filteredDiagnostics.firstOrNull { it.severity == Severity.ERROR }?.let {
                     if (it.psiElement.containingFile == this) {
                         exception(DefaultErrorMessages.render(it))
                     }
