@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PatternConditionPlus
@@ -67,6 +68,8 @@ class KotlinLanguageInjector(
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
         private val ABSENT_KOTLIN_INJECTION = BaseInjection("ABSENT_KOTLIN_BASE_INJECTION")
     }
+
+    var annotationInjectionsEnabled = Registry.`is`("kotlin.annotation.injection.enabled", false)
 
     private val kotlinSupport: KotlinLanguageInjectionSupport? by lazy {
         ArrayList(InjectorUtils.getActiveInjectionSupports()).filterIsInstance(KotlinLanguageInjectionSupport::class.java).firstOrNull()
@@ -273,6 +276,7 @@ class KotlinLanguageInjector(
     }
 
     private fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
+        if (!annotationInjectionsEnabled) return null
         val argument = host.parent as? KtValueArgument ?: return null
         val annotationEntry = argument.parent.parent as? KtAnnotationEntry ?: return null
         if (!fastCheckInjectionsExists(annotationEntry)) return null
