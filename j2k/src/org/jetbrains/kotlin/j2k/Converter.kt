@@ -162,7 +162,7 @@ class Converter private constructor(
         }
 
         val annotations = convertAnnotations(psiClass)
-        var modifiers = convertModifiers(psiClass, false)
+        var modifiers = convertModifiers(psiClass, false, false)
         val typeParameters = convertTypeParameterList(psiClass.typeParameterList)
         val extendsTypes = convertToNotNullableTypes(psiClass.extendsList)
         val implementsTypes = convertToNotNullableTypes(psiClass.implementsList)
@@ -222,7 +222,7 @@ class Converter private constructor(
             settings.openByDefault || referenceSearcher.hasInheritors(psiClass)
     }
 
-    private fun shouldConvertIntoObject(psiClass: PsiClass): Boolean {
+    fun shouldConvertIntoObject(psiClass: PsiClass): Boolean {
         val methods = psiClass.methods
         val fields = psiClass.fields
         val classes = psiClass.innerClasses
@@ -295,7 +295,7 @@ class Converter private constructor(
 
         return Class(psiClass.declarationIdentifier(),
                      convertAnnotations(psiClass),
-                     convertModifiers(psiClass, false).with(Modifier.ANNOTATION).without(Modifier.ABSTRACT),
+                     convertModifiers(psiClass, false, false).with(Modifier.ANNOTATION).without(Modifier.ABSTRACT),
                      TypeParameterList.Empty,
                      listOf(),
                      null,
@@ -305,7 +305,7 @@ class Converter private constructor(
 
     fun convertInitializer(initializer: PsiClassInitializer): Initializer {
         return Initializer(deferredElement { codeConverter -> codeConverter.convertBlock(initializer.body) },
-                           convertModifiers(initializer, false)).assignPrototype(initializer)
+                           convertModifiers(initializer, false, false)).assignPrototype(initializer)
     }
 
     fun convertProperty(propertyInfo: PropertyInfo, classKind: ClassKind): Member {
@@ -544,7 +544,7 @@ class Converter private constructor(
 
         val annotations = convertAnnotations(method) + convertThrows(method)
 
-        var modifiers = convertModifiers(method, classKind.isOpen())
+        var modifiers = convertModifiers(method, classKind.isOpen(), classKind == ClassKind.OBJECT)
 
         val statementsToInsert = ArrayList<Statement>()
         for (parameter in method.parameterList.parameters) {
@@ -735,7 +735,7 @@ class Converter private constructor(
         return Identifier(identifier.text!!).assignPrototype(identifier)
     }
 
-    fun convertModifiers(owner: PsiModifierListOwner, isMethodInOpenClass: Boolean): Modifiers {
+    fun convertModifiers(owner: PsiModifierListOwner, isMethodInOpenClass: Boolean, isInObject: Boolean): Modifiers {
         var modifiers = Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
                 .assignPrototype(owner.modifierList, CommentsAndSpacesInheritance.NO_SPACES)
 
@@ -752,10 +752,14 @@ class Converter private constructor(
             if (owner.hasModifierProperty(PsiModifier.NATIVE))
                 modifiers = modifiers.with(Modifier.EXTERNAL)
 
-            modifiers = modifiers.adaptForContainingClassVisibility(owner.containingClass).adaptProtectedVisibility(owner)
+            modifiers = modifiers.adaptForObject(isInObject)
+                    .adaptForContainingClassVisibility(owner.containingClass)
+                    .adaptProtectedVisibility(owner)
         }
         else if (owner is PsiField) {
-            modifiers = modifiers.adaptForContainingClassVisibility(owner.containingClass).adaptProtectedVisibility(owner)
+            modifiers = modifiers.adaptForObject(isInObject)
+                    .adaptForContainingClassVisibility(owner.containingClass)
+                    .adaptProtectedVisibility(owner)
         }
         else if (owner is PsiClass && owner.scope is PsiMethod) {
             // Local class should not have visibility modifiers
@@ -763,6 +767,12 @@ class Converter private constructor(
         }
 
         return modifiers
+    }
+
+    private fun Modifiers.adaptForObject(isInObject: Boolean): Modifiers {
+        if (!isInObject) return this
+        if (!modifiers.contains(Modifier.PROTECTED)) return this
+        return without(Modifier.PROTECTED).with(Modifier.INTERNAL)
     }
 
     // to convert package local members in package local class into public member (when it's not override, open or abstract)

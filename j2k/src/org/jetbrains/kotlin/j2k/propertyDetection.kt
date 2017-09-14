@@ -85,7 +85,8 @@ class PropertyInfo(
     companion object {
         fun fromFieldWithNoAccessors(field: PsiField, converter: Converter): PropertyInfo {
             val isVar = field.isVar(converter.referenceSearcher)
-            val modifiers = converter.convertModifiers(field, false)
+            val isInObject = field.containingClass?.let { converter.shouldConvertIntoObject(it) } == true
+            val modifiers = converter.convertModifiers(field, false, isInObject)
             return PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, modifiers, null, null)
         }
     }
@@ -221,9 +222,9 @@ private class PropertyDetector(
 
             val propertyAccess = modifiers.accessModifier()
             val setterAccess = if (setterInfo != null)
-                converter.convertModifiers(setterInfo.method, false).accessModifier()
+                converter.convertModifiers(setterInfo.method, false, false).accessModifier()
             else if (field != null && field.isVar(converter.referenceSearcher))
-                converter.convertModifiers(field, false).accessModifier()
+                converter.convertModifiers(field, false, false).accessModifier()
             else
                 propertyAccess
             val specialSetterAccess = setterAccess?.takeIf { it != propertyAccess }
@@ -366,9 +367,9 @@ private class PropertyDetector(
     }
 
     private fun convertModifiers(field: PsiField?, getMethod: PsiMethod?, setMethod: PsiMethod?, isOverride: Boolean): Modifiers {
-        val fieldModifiers = field?.let { converter.convertModifiers(it, false) } ?: Modifiers.Empty
-        val getterModifiers = getMethod?.let { converter.convertModifiers(it, isOpenClass) } ?: Modifiers.Empty
-        val setterModifiers = setMethod?.let { converter.convertModifiers(it, isOpenClass) } ?: Modifiers.Empty
+        val fieldModifiers = field?.let { converter.convertModifiers(it, false, false) } ?: Modifiers.Empty
+        val getterModifiers = getMethod?.let { converter.convertModifiers(it, isOpenClass, false) } ?: Modifiers.Empty
+        val setterModifiers = setMethod?.let { converter.convertModifiers(it, isOpenClass, false) } ?: Modifiers.Empty
 
         val modifiers = ArrayList<Modifier>()
 
