@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
@@ -40,11 +40,11 @@ fun ModuleDescriptor.commonModuleOrNull(): ModuleDescriptor? {
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
-        with(HeaderImplDeclarationChecker) {
-            descriptor.findCompatibleHeaderForImpl(this@declarationOf).firstOrNull()
+        with(ExpectedActualDeclarationChecker) {
+            descriptor.findCompatibleExpectedForActual(this@declarationOf).firstOrNull()
         }
 
-fun getHeaderDeclarationTooltip(declaration: KtDeclaration): String? {
+fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
@@ -54,39 +54,39 @@ fun getHeaderDeclarationTooltip(declaration: KtDeclaration): String? {
     return "Has declaration in common module"
 }
 
-fun navigateToHeaderDeclaration(declaration: KtDeclaration) {
-    declaration.headerDeclarationIfAny()?.navigate(false)
+fun navigateToExpectedDeclaration(declaration: KtDeclaration) {
+    declaration.expectedDeclarationIfAny()?.navigate(false)
 }
 
-internal fun MemberDescriptor.headerDescriptor() = module.commonModuleOrNull()?.declarationOf(this)
+internal fun MemberDescriptor.expectedDescriptor() = module.commonModuleOrNull()?.declarationOf(this)
 
-internal fun KtDeclaration.headerDeclarationIfAny(): KtDeclaration? {
-    val headerDescriptor = (toDescriptor() as? MemberDescriptor)?.headerDescriptor() ?: return null
-    return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
+internal fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
+    val expectedDescriptor = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() ?: return null
+    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
 }
 
-internal fun KtDeclaration.isExpectOrExpectClassMember() =
+internal fun KtDeclaration.isExpectedOrExpectedClassMember() =
         hasExpectModifier() || (containingClassOrObject?.hasExpectModifier() ?: false)
 
-internal fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
+internal fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {
     if (this is MemberDescriptor) {
         return when {
             isExpect -> this
-            isActual -> headerDescriptor()
+            isActual -> expectedDescriptor()
             else -> null
         }
     }
 
     if (this is ValueParameterDescriptor) {
-        val containingHeaderDescriptor = containingDeclaration.liftToHeader() as? CallableDescriptor ?: return null
-        return containingHeaderDescriptor.valueParameters.getOrNull(index)
+        val containingExpectedDescriptor = containingDeclaration.liftToExpected() as? CallableDescriptor ?: return null
+        return containingExpectedDescriptor.valueParameters.getOrNull(index)
     }
 
     return null
 }
 
-internal fun KtDeclaration.liftToHeader(): KtDeclaration? {
+internal fun KtDeclaration.liftToExpected(): KtDeclaration? {
     val descriptor = resolveToDescriptorIfAny()
-    val headerDescriptor = descriptor?.liftToHeader() ?: return null
-    return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
+    val expectedDescriptor = descriptor?.liftToExpected() ?: return null
+    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
 }

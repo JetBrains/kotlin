@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.formatClass
 import org.jetbrains.kotlin.idea.refactoring.formatFunction
@@ -362,7 +362,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
     override fun prepareForDeletion(element: PsiElement) {
         if (element is KtDeclaration) {
-            element.headerImplementations().forEach {
+            element.actualsForExpected().forEach {
                 if (it is KtParameter) {
                     (it.parent as? KtParameterList)?.removeParameter(it)
                 }
@@ -415,7 +415,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     ): Collection<PsiElement>? {
         when (element) {
             is KtParameter -> {
-                val headerParameter = element.liftToHeader() as? KtParameter
+                val headerParameter = element.liftToExpected() as? KtParameter
                 if (headerParameter != null && headerParameter != element) {
                     if (shouldAllowPropagationToHeader(element)) {
                         return listOf(headerParameter)

@@ -77,8 +77,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
@@ -968,12 +968,12 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
 }
 
 internal fun KtDeclaration.withHeaderImplementations(): List<KtDeclaration> {
-    val header = liftToHeader() ?: return listOf(this)
-    val implementations = header.headerImplementations()
+    val header = liftToExpected() ?: return listOf(this)
+    val implementations = header.actualsForExpected()
     return listOf(header) + implementations
 }
 
 internal fun KtDeclaration.resolveToHeaderDescriptorIfPossible(): DeclarationDescriptor {
     val descriptor = unsafeResolveToDescriptor()
-    return descriptor.liftToHeader() ?: descriptor
+    return descriptor.liftToExpected() ?: descriptor
 }

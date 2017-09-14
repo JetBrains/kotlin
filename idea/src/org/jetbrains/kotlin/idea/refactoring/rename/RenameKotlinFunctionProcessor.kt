@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
@@ -108,7 +108,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             get() = originalDeclaration
     }
 
-    private fun substituteForHeaderOrImpl(element: PsiElement?) = (element?.namedUnwrappedElement as? KtNamedDeclaration)?.liftToHeader()
+    private fun substituteForHeaderOrImpl(element: PsiElement?) = (element?.namedUnwrappedElement as? KtNamedDeclaration)?.liftToExpected()
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
         substituteForHeaderOrImpl(element)?.let { return it }

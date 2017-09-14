@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectOrExpectClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -98,8 +98,8 @@ class KotlinChangeSignatureData(
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.declaration as? KtDeclaration ?: return@flatMapTo emptyList()
 
-            if (primaryDeclaration.isExpectOrExpectClassMember()) {
-                return@flatMapTo primaryDeclaration.headerImplementations().mapNotNull {
+            if (primaryDeclaration.isExpectedOrExpectedClassMember()) {
+                return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
                     val descriptor = it.unsafeResolveToDescriptor()
                     val callableDescriptor = when (descriptor) {
                         is CallableDescriptor -> descriptor

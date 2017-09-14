@@ -101,10 +101,10 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
             if (element !is KtNamedDeclaration) continue
 
             if (element.hasExpectModifier()) {
-                collectImplementationMarkers(element, result)
+                collectActualMarkers(element, result)
             }
             else if (element.hasActualModifier()) {
-                collectHeaderMarkers(element, result)
+                collectExpectedMarkers(element, result)
             }
         }
     }
@@ -182,22 +182,22 @@ private val OVERRIDDEN_PROPERTY = object : MarkerType(
     }
 }
 
-private val PLATFORM_IMPLEMENTATION = MarkerType(
-        "PLATFORM_IMPLEMENTATION",
-        { it?.let { getPlatformImplementationTooltip(it.parent as KtDeclaration) } },
+private val PLATFORM_ACTUAL = MarkerType(
+        "PLATFORM_ACTUAL",
+        { it?.let { getPlatformActualTooltip(it.parent as KtDeclaration) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToPlatformImplementation(e, it.parent as KtDeclaration) }
+                element?.let { navigateToPlatformActual(e, it.parent as KtDeclaration) }
             }
         }
 )
 
-private val HEADER_DECLARATION = MarkerType(
-        "HEADER_DECLARATION",
-        { it?.let { getHeaderDeclarationTooltip(it.parent as KtDeclaration) } },
+private val EXPECTED_DECLARATION = MarkerType(
+        "EXPECTED_DECLARATION",
+        { it?.let { getExpectedDeclarationTooltip(it.parent as KtDeclaration) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToHeaderDeclaration(it.parent as KtDeclaration) }
+                element?.let { navigateToExpectedDeclaration(it.parent as KtDeclaration) }
             }
         }
 )
@@ -286,13 +286,13 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
     }
 }
 
-private fun collectImplementationMarkers(declaration: KtNamedDeclaration,
-                                         result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectActualMarkers(declaration: KtNamedDeclaration,
+                                 result: MutableCollection<LineMarkerInfo<*>>) {
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    if (commonModuleDescriptor.allImplementingCompatibleModules.none { it.hasImplementationsOf(descriptor) }) return
+    if (commonModuleDescriptor.allImplementingCompatibleModules.none { it.hasActualsFor(descriptor) }) return
 
     val anchor = declaration.nameIdentifier ?: declaration
 
@@ -301,14 +301,14 @@ private fun collectImplementationMarkers(declaration: KtNamedDeclaration,
             anchor.textRange,
             KotlinIcons.FROM_HEADER,
             Pass.LINE_MARKERS,
-            PLATFORM_IMPLEMENTATION.tooltip,
-            PLATFORM_IMPLEMENTATION.navigationHandler,
+            PLATFORM_ACTUAL.tooltip,
+            PLATFORM_ACTUAL.navigationHandler,
             GutterIconRenderer.Alignment.RIGHT
     ))
 }
 
-private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
-                                 result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectExpectedMarkers(declaration: KtNamedDeclaration,
+                                   result: MutableCollection<LineMarkerInfo<*>>) {
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
@@ -322,8 +322,8 @@ private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
             anchor.textRange,
             KotlinIcons.FROM_IMPL,
             Pass.LINE_MARKERS,
-            HEADER_DECLARATION.tooltip,
-            HEADER_DECLARATION.navigationHandler,
+            EXPECTED_DECLARATION.tooltip,
+            EXPECTED_DECLARATION.navigationHandler,
             GutterIconRenderer.Alignment.RIGHT
     ))
 }

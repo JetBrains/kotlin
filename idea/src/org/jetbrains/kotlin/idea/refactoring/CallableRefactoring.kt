@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectOrExpectClassMember
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -57,7 +57,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
     private val LOG = Logger.getInstance(CallableRefactoring::class.java)
 
     @Suppress("UNCHECKED_CAST")
-    val callableDescriptor = callableDescriptor.liftToHeader() as? T ?: callableDescriptor
+    val callableDescriptor = callableDescriptor.liftToExpected() as? T ?: callableDescriptor
 
     private val kind = (callableDescriptor as? CallableMemberDescriptor)?.kind ?: CallableMemberDescriptor.Kind.DECLARATION
 
@@ -76,7 +76,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
             else -> {
                 throw IllegalStateException("Unexpected callable kind: $kind")
             }
-        }.map { it.liftToHeader() as? CallableDescriptor ?: it }
+        }.map { it.liftToExpected() as? CallableDescriptor ?: it }
     }
 
     private fun showSuperFunctionWarningDialog(superCallables: Collection<CallableDescriptor>,
@@ -184,8 +184,8 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
     val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
     return baseCallables + baseCallables.flatMapTo(HashSet<PsiElement>()) { callable ->
-        if (callable is KtDeclaration && callable.isExpectOrExpectClassMember()) {
-            callable.headerImplementations()
+        if (callable is KtDeclaration && callable.isExpectedOrExpectedClassMember()) {
+            callable.actualsForExpected()
         }
         else {
             callable.toLightMethods().flatMap { psiMethod ->

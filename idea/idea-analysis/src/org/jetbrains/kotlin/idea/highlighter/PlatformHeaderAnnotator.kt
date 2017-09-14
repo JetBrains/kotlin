@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 
 val ModuleDescriptor.sourceKind: SourceKind
@@ -68,7 +68,7 @@ class PlatformHeaderAnnotator : Annotator {
 
         val trace = BindingTraceContext()
         for (module in implementingModules) {
-            HeaderImplDeclarationChecker.checkHeaderDeclarationHasImplementation(declaration, descriptor, trace, module)
+            ExpectedActualDeclarationChecker.checkExpectedDeclarationHasActual(declaration, descriptor, trace, module)
         }
 
         val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()

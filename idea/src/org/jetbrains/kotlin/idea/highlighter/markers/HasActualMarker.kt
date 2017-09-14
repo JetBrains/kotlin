@@ -26,66 +26,66 @@ import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import java.awt.event.MouseEvent
 
-fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
-        implementationsOf(descriptor).isNotEmpty()
+fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
+        actualsFor(descriptor).isNotEmpty()
 
-fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor, checkCompatible: Boolean = true): List<DeclarationDescriptor> =
-        with(HeaderImplDeclarationChecker) {
+fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = true): List<DeclarationDescriptor> =
+        with(ExpectedActualDeclarationChecker) {
             if (checkCompatible) {
-                descriptor.findCompatibleImplForHeader(this@implementationsOf)
+                descriptor.findCompatibleActualForExpected(this@actualsFor)
             }
             else {
-                descriptor.findAnyImplForHeader(this@implementationsOf)
+                descriptor.findAnyActualForExpected(this@actualsFor)
             }
         }
 
-fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {
+fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val platformModulesWithImplementation = commonModuleDescriptor.allImplementingCompatibleModules.filter {
-        it.hasImplementationsOf(descriptor)
+    val platformModulesWithActuals = commonModuleDescriptor.allImplementingCompatibleModules.filter {
+        it.hasActualsFor(descriptor)
     }
-    if (platformModulesWithImplementation.isEmpty()) return null
+    if (platformModulesWithActuals.isEmpty()) return null
 
-    return platformModulesWithImplementation.joinToString(prefix = "Has implementations in ") {
+    return platformModulesWithActuals.joinToString(prefix = "Has actuals in ") {
         (it.getMultiTargetPlatform() as MultiTargetPlatform.Specific).platform
     }
 }
 
-fun navigateToPlatformImplementation(e: MouseEvent?, declaration: KtDeclaration) {
-    val implementations = declaration.headerImplementations()
-    if (implementations.isEmpty()) return
+fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration) {
+    val actuals = declaration.actualsForExpected()
+    if (actuals.isEmpty()) return
 
     val renderer = DefaultPsiElementCellRenderer()
     PsiElementListNavigator.openTargets(e,
-                                        implementations.toTypedArray(),
-                                        "Choose implementation of ${declaration.name}",
-                                        "Implementations of ${declaration.name}",
+                                        actuals.toTypedArray(),
+                                        "Choose actual for ${declaration.name}",
+                                        "Actuals for ${declaration.name}",
                                         renderer)
 }
 
-private fun DeclarationDescriptor.headerImplementations(): Collection<DeclarationDescriptor> {
+private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor> {
     if (this is MemberDescriptor) {
         if (!this.isExpect) return emptyList()
 
-        return module.allImplementingCompatibleModules.flatMap { it.implementationsOf(this) }
+        return module.allImplementingCompatibleModules.flatMap { it.actualsFor(this) }
     }
 
     if (this is ValueParameterDescriptor) {
-        return containingDeclaration.headerImplementations().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
+        return containingDeclaration.actualsForExpected().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
     }
 
     return emptyList()
 }
 
-internal fun KtDeclaration.headerImplementations(): Set<KtDeclaration> {
-    return unsafeResolveToDescriptor().headerImplementations().mapNotNullTo(LinkedHashSet()) {
+internal fun KtDeclaration.actualsForExpected(): Set<KtDeclaration> {
+    return unsafeResolveToDescriptor().actualsForExpected().mapNotNullTo(LinkedHashSet()) {
         DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
     }
 }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.highlighter.markers.headerDescriptor
+import org.jetbrains.kotlin.idea.highlighter.markers.expectedDescriptor
 import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -68,7 +68,7 @@ private fun KtNamedFunction.getOverloads(): Collection<FunctionDescriptor> {
     val scope = getResolutionScope(context, resolutionFacade)
     val extensionReceiverClass = descriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor
 
-    if (descriptor.isActual && descriptor.headerDescriptor() != null) return emptyList()
+    if (descriptor.isActual && descriptor.expectedDescriptor() != null) return emptyList()
 
     val result = LinkedHashSet<FunctionDescriptor>()
     result += scope.getAllAccessibleFunctions(name)

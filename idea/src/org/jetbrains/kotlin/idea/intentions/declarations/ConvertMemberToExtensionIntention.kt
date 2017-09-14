@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectOrExpectClassMember
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.withHeaderImplementations
@@ -72,7 +72,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         var allowHeader = true
 
-        element.liftToHeader()?.headerImplementations()?.let {
+        element.liftToExpected()?.actualsForExpected()?.let {
             if (it.isEmpty()) {
                 allowHeader = askIfHeaderIsAllowed(element.containingKtFile)
             }
@@ -111,7 +111,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
-        val isEffectiveHeader = allowHeader && element.isExpectOrExpectClassMember()
+        val isEffectiveHeader = allowHeader && element.isExpectedOrExpectedClassMember()
 
         val file = element.containingKtFile
         val project = file.project
@@ -260,7 +260,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             element: KtCallableDeclaration,
             allowHeader: Boolean = true
     ): Pair<KtCallableDeclaration, KtExpression?> {
-        val headerDeclaration = element.liftToHeader() as? KtCallableDeclaration
+        val headerDeclaration = element.liftToExpected() as? KtCallableDeclaration
         if (headerDeclaration != null) {
             element.withHeaderImplementations().filterIsInstance<KtCallableDeclaration>().forEach {
                 if (it != element) {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
-import org.jetbrains.kotlin.idea.highlighter.markers.implementationsOf
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsFor
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -57,7 +57,7 @@ private fun AnnotationWithTarget.isExpectOfAnnotation(fqName: String, implModule
 
     return implModules
         .any { module ->
-            module.implementationsOf(annotationClass, checkCompatible = false)
+            module.actualsFor(annotationClass, checkCompatible = false)
                 .filterIsInstance<TypeAliasDescriptor>()
                 .any { it.classDescriptor?.fqNameSafe?.asString() == fqName }
         }
