@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.parcel.serializers
 
+import kotlinx.android.parcel.WriteWith
 import org.jetbrains.kotlin.android.parcel.isParcelize
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -41,17 +43,30 @@ import java.util.concurrent.ConcurrentHashMap
 
 private val RAWVALUE_ANNOTATION_FQNAME = FqName("kotlinx.android.parcel.RawValue")
 
+internal typealias TypeParcelerMapping = Pair<KotlinType, KotlinType>
+
 interface ParcelSerializer {
     val asmType: Type
 
     fun writeValue(v: InstructionAdapter)
     fun readValue(v: InstructionAdapter)
 
-    class ParcelSerializerContext(val typeMapper: KotlinTypeMapper, val containerClassType: Type)
+    data class ParcelSerializerContext(
+            val typeMapper: KotlinTypeMapper,
+            val containerClassType: Type,
+            val typeParcelers: List<TypeParcelerMapping>
+    ) {
+        fun findParcelerClass(type: KotlinType): KotlinType? {
+            return typeParcelers.firstOrNull { it.first == type }?.second
+        }
+    }
 
     companion object {
-        private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType): Type {
-            return if (type.isError) Type.getObjectType("java/lang/Object") else mapType(type)
+        private val WRITE_WITH_FQNAME = FqName(WriteWith::class.java.name)
+
+        private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType, forceBoxed: Boolean) = when {
+            type.isError -> Type.getObjectType("java/lang/Object")
+            else -> mapType(type, null, if (forceBoxed) TypeMappingMode.GENERIC_ARGUMENT else TypeMappingMode.DEFAULT)
         }
 
         fun get(
@@ -65,6 +80,19 @@ interface ParcelSerializer {
 
             val className = asmType.className
             fun strict() = strict && !type.annotations.hasAnnotation(RAWVALUE_ANNOTATION_FQNAME)
+
+            type.annotations.findAnnotation(WRITE_WITH_FQNAME)?.let { writeWith ->
+                val parceler = writeWith.type.arguments.singleOrNull()?.type
+                if (parceler != null && !parceler.isError) {
+                    return TypeParcelerParcelSerializer(asmType, parceler, context.typeMapper)
+                }
+            }
+
+            context.findParcelerClass(type)?.let { typeParceler ->
+                if (!typeParceler.isError) {
+                    return TypeParcelerParcelSerializer(asmType, typeParceler, context.typeMapper)
+                }
+            }
 
             return when {
                 asmType.descriptor == "[I"
@@ -83,7 +111,7 @@ interface ParcelSerializer {
 
                 asmType.sort == Type.ARRAY -> {
                     val elementType = type.builtIns.getArrayElementType(type)
-                    val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType), context, strict = strict())
+                    val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType, forceBoxed = false), context, strict = strict())
 
                     wrapToNullAwareIfNeeded(type, ArrayParcelSerializer(asmType, elementSerializer))
                 }
@@ -110,7 +138,7 @@ interface ParcelSerializer {
                     || className == TreeSet::class.java.canonicalName
                 -> {
                     val elementType = type.arguments.single().type
-                    val elementAsmType = typeMapper.mapTypeSafe(elementType)
+                    val elementAsmType = typeMapper.mapTypeSafe(elementType, forceBoxed = true)
 
                     if (className == List::class.java.canonicalName) {
                         // Don't care if the element type is nullable cause both writeStrongBinder() and writeString() support null values
@@ -137,9 +165,9 @@ interface ParcelSerializer {
                 -> {
                     val (keyType, valueType) = type.arguments.apply { assert(this.size == 2) }
                     val keySerializer = get(
-                            keyType.type, typeMapper.mapTypeSafe(keyType.type), context, forceBoxed = true, strict = strict())
+                            keyType.type, typeMapper.mapTypeSafe(keyType.type, forceBoxed = true), context, forceBoxed = true, strict = strict())
                     val valueSerializer = get(
-                            valueType.type, typeMapper.mapTypeSafe(valueType.type), context, forceBoxed = true, strict = strict())
+                            valueType.type, typeMapper.mapTypeSafe(valueType.type, forceBoxed = true), context, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, MapParcelSerializer(asmType, keySerializer, valueSerializer))
                 }
 
@@ -186,7 +214,7 @@ interface ParcelSerializer {
                 asmType.isSparseArray() -> {
                     val elementType = type.arguments.single().type
                     val elementSerializer = get(
-                            elementType, typeMapper.mapTypeSafe(elementType), context, forceBoxed = true, strict = strict())
+                            elementType, typeMapper.mapTypeSafe(elementType, forceBoxed = true), context, forceBoxed = true, strict = strict())
                     wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(asmType, elementSerializer))
                 }
 
@@ -214,7 +242,7 @@ interface ParcelSerializer {
                         }
 
                         val creatorAsmType = when {
-                            creatorVar != null -> typeMapper.mapTypeSafe(creatorVar.type)
+                            creatorVar != null -> typeMapper.mapTypeSafe(creatorVar.type, forceBoxed = true)
                             clazz.isParcelize -> Type.getObjectType(asmType.internalName + "\$Creator")
                             else -> null
                         }

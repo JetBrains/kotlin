@@ -43,4 +43,7 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testKt19747_2() = doTest("kt19747_2")
     fun test20002() = doTest("kt20002")
     fun test20021() = doTest("kt20021")
+    fun testCustomSerializerSimple() = doTest("customSerializerSimple")
+    fun testCustomSerializerWriteWith() = doTest("customSerializerWriteWith")
+    fun testCustomSerializerBoxing() = doTest("customSerializerBoxing")
 }
