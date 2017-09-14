@@ -72,6 +72,11 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     if (result is UEnumConstant && element is UDeclaration) {
         return result.initializingClass
     }
+
+    if (result is USwitchClauseExpressionWithBody && element.psi !is KtWhenCondition) {
+        return result.body
+    }
+
     return result
 }
 
