@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiComment
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
@@ -33,6 +35,9 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -65,6 +70,13 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
         val targetSibling = element.parentsWithSelf.first { it.parent == targetParent }
 
         val objectDeclaration = element.objectDeclaration
+
+        val containingClass = element.containingClass()
+        val hasMemberReference = containingClass?.getBody()?.allChildren?.any {
+            (it is KtProperty || it is KtNamedFunction) &&
+            ReferencesSearch.search(it, element.useScope).findFirst() != null
+        } ?: false
+
         val newClass = psiFactory.createClass("class $className")
         objectDeclaration.getSuperTypeList()?.let {
             newClass.add(psiFactory.createColon())
@@ -104,6 +116,7 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
                             }
                 }
                 functionDeclaration.replaced(newClass).apply {
+                    if (hasMemberReference && containingClass == (parent.parent as? KtClass)) addModifier(KtTokens.INNER_KEYWORD)
                     primaryConstructor?.let { CodeStyleManager.getInstance(project).reformat(it) }
                 }
             }
@@ -116,7 +129,11 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
         val containers = element.getExtractionContainers(strict = true, includeAll = true)
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            return doApply(editor, element, containers.last())
+            val targetComment = element.containingKtFile.findDescendantOfType<PsiComment>()?.takeIf {
+                it.text == "// TARGET_BLOCK:"
+            }
+            val target = containers.firstOrNull { it == targetComment?.parent } ?: containers.last()
+            return doApply(editor, element, target)
         }
 
         chooseContainerElementIfNecessary(
