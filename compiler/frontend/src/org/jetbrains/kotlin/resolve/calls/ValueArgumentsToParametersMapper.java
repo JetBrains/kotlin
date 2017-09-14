@@ -187,7 +187,7 @@ public class ValueArgumentsToParametersMapper {
                         candidate.getContainingDeclaration() instanceof ClassDescriptor) {
                         // We do not allow named arguments for members of header classes until we're able to use both
                         // headers and platform definitions when compiling platform code
-                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, HEADER_CLASS_MEMBER));
+                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, EXPECTED_CLASS_MEMBER));
                     }
                     else if (!candidate.hasStableParameterNames()) {
                         report(NAMED_ARGUMENTS_NOT_ALLOWED.on(

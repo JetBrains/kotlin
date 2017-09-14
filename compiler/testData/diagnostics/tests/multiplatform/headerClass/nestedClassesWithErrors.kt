@@ -4,7 +4,7 @@
 
 expect class B {
     class N {
-        <!HEADER_DECLARATION_WITH_BODY, JVM:HEADER_DECLARATION_WITH_BODY!>fun body()<!> {}
+        <!EXPECTED_DECLARATION_WITH_BODY, JVM:EXPECTED_DECLARATION_WITH_BODY!>fun body()<!> {}
         <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> fun extraHeader()
     }
 }
@@ -39,8 +39,8 @@ actual class C {
     actual inner class I
 }
 
-actual class <!HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED!>D<!>
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>
 
 actual class E {
-    class <!IMPL_MISSING!>N<!>
+    class <!ACTUAL_MISSING!>N<!>
 }

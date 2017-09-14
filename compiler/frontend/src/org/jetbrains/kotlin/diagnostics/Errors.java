@@ -554,30 +554,31 @@ public interface Errors {
 
     // Multi-platform projects
 
-    DiagnosticFactory0<KtDeclaration> HEADER_DECLARATION_WITH_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtParameter> HEADER_DECLARATION_WITH_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtConstructorDelegationCall> HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtParameter> HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtConstructor<?>> HEADER_ENUM_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtEnumEntry> HEADER_ENUM_ENTRY_WITH_BODY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtExpression> HEADER_PROPERTY_INITIALIZER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtDeclaration> EXPECTED_DECLARATION_WITH_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtParameter> EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtConstructorDelegationCall> EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtParameter> EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtConstructor<?>> EXPECTED_ENUM_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtEnumEntry> EXPECTED_ENUM_ENTRY_WITH_BODY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> EXPECTED_PROPERTY_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_NOT_TO_CLASS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_NOT_TO_CLASS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtTypeAlias>
+            ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory3<KtDeclaration, MemberDescriptor, ModuleDescriptor,
-            Map<Incompatible, Collection<MemberDescriptor>>> HEADER_WITHOUT_IMPLEMENTATION =
+            Map<Incompatible, Collection<MemberDescriptor>>> NO_ACTUAL_FOR_EXPECT =
             DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory2<KtDeclaration, MemberDescriptor,
-            Map<Incompatible, Collection<MemberDescriptor>>> IMPLEMENTATION_WITHOUT_HEADER =
+            Map<Incompatible, Collection<MemberDescriptor>>> ACTUAL_WITHOUT_EXPECT =
             DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory2<KtDeclaration, ClassDescriptor,
-            List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED =
+            List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS =
             DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> IMPL_MISSING = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtDeclaration> ACTUAL_MISSING = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -603,7 +604,7 @@ public interface Errors {
     enum BadNamedArgumentsTarget {
         NON_KOTLIN_FUNCTION,
         INVOKE_ON_FUNCTION_TYPE,
-        HEADER_CLASS_MEMBER,
+        EXPECTED_CLASS_MEMBER,
     }
 
     DiagnosticFactory0<KtExpression> VARARG_OUTSIDE_PARENTHESES = DiagnosticFactory0.create(ERROR);

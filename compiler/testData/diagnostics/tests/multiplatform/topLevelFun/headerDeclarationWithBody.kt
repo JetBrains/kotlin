@@ -4,6 +4,6 @@
 
 <!CONFLICTING_OVERLOADS!>expect fun foo()<!>
 
-<!CONFLICTING_OVERLOADS, HEADER_DECLARATION_WITH_BODY!>expect fun foo()<!> {}
+<!CONFLICTING_OVERLOADS, EXPECTED_DECLARATION_WITH_BODY!>expect fun foo()<!> {}
 
-<!HEADER_DECLARATION_WITH_BODY!>expect fun bar()<!> {}
+<!EXPECTED_DECLARATION_WITH_BODY!>expect fun bar()<!> {}

@@ -23,7 +23,7 @@ fun foo() {
 // FILE: jvm.kt
 
 class Outer actual constructor() {
-    actual class <!IMPLEMENTATION_WITHOUT_HEADER!>Nested<!>
+    actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
 
     <!WRONG_MODIFIER_TARGET!>actual<!> init {}
 }
@@ -31,5 +31,5 @@ class Outer actual constructor() {
 fun foo() {
     <!WRONG_MODIFIER_TARGET!>actual<!> fun localFun() {}
     <!WRONG_MODIFIER_TARGET!>actual<!> var <!UNUSED_VARIABLE!>x<!> = 42
-    <!WRONG_MODIFIER_TARGET!>actual<!> class <!IMPLEMENTATION_WITHOUT_HEADER!>Bar<!>
+    <!WRONG_MODIFIER_TARGET!>actual<!> class <!ACTUAL_WITHOUT_EXPECT!>Bar<!>
 }

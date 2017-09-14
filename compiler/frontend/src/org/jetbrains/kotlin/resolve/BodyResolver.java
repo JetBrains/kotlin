@@ -618,7 +618,7 @@ public class BodyResolver {
             trace.report(ANONYMOUS_INITIALIZER_IN_INTERFACE.on(anonymousInitializer));
         }
         if (classDescriptor.isExpect()) {
-            trace.report(HEADER_DECLARATION_WITH_BODY.on(anonymousInitializer));
+            trace.report(EXPECTED_DECLARATION_WITH_BODY.on(anonymousInitializer));
         }
     }
 

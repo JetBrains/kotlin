@@ -1,4 +1,4 @@
 package org.junit
 
-@Suppress("HEADER_WITHOUT_IMPLEMENTATION")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 header annotation class Test

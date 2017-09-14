@@ -1,5 +1,5 @@
 <!UNSUPPORTED_FEATURE!>expect<!> fun foo1()
-<!UNSUPPORTED_FEATURE!>expect<!> val bar1 = <!HEADER_PROPERTY_INITIALIZER!>42<!>
+<!UNSUPPORTED_FEATURE!>expect<!> val bar1 = <!EXPECTED_PROPERTY_INITIALIZER!>42<!>
 <!UNSUPPORTED_FEATURE!>expect<!> class Baz1
 
 <!UNSUPPORTED_FEATURE!>actual<!> fun foo2() = 42

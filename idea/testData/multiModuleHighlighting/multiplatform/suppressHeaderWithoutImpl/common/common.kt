@@ -1,7 +1,7 @@
 // See KT-15601
 
-@Suppress("HEADER_WITHOUT_IMPLEMENTATION")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect interface Event
 
 @Suppress("SOMETHING_WRONG")
-expect class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] 'header' class 'Wrong' has no implementation in module jvm for JVM">Wrong</error>
+expect class <error descr="[NO_ACTUAL_FOR_EXPECT] 'header' class 'Wrong' has no implementation in module jvm for JVM">Wrong</error>

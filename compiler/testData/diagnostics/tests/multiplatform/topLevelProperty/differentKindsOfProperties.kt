@@ -17,14 +17,14 @@ expect var varWithPlatformGetSet: String
     <!WRONG_MODIFIER_TARGET!>expect<!> get
     <!WRONG_MODIFIER_TARGET!>expect<!> set
 
-expect val backingFieldVal: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
-expect var backingFieldVar: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
+expect val backingFieldVal: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
+expect var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
 expect val customAccessorVal: String
-    <!HEADER_DECLARATION_WITH_BODY!>get()<!> = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
 expect var customAccessorVar: String
-    <!HEADER_DECLARATION_WITH_BODY!>get()<!> = "no"
-    <!HEADER_DECLARATION_WITH_BODY!>set(value)<!> {}
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
 expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 

@@ -134,7 +134,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val d = DiagnosticFactory.cast(diagnostic, Errors.HEADER_WITHOUT_IMPLEMENTATION)
+            val d = DiagnosticFactory.cast(diagnostic, Errors.NO_ACTUAL_FOR_EXPECT)
             val declaration = d.psiElement as? KtNamedDeclaration ?: return null
             val compatibility = d.c
             if (compatibility.isNotEmpty()) return null

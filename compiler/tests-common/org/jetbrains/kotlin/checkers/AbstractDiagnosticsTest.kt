@@ -344,7 +344,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val dependencies = moduleDescriptor.testOnly_AllDependentModules
 
         // TODO: diagnostics on common code reported during the platform module analysis should be distinguished somehow
-        // E.g. "<!JVM:IMPLEMENTATION_WITHOUT_HEADER!>...<!>
+        // E.g. "<!JVM:ACTUAL_WITHOUT_EXPECT!>...<!>
         val result = ArrayList<KtFile>(0)
         for (dependency in dependencies) {
             if (dependency.getCapability(MultiTargetPlatform.CAPABILITY) == MultiTargetPlatform.Common) {

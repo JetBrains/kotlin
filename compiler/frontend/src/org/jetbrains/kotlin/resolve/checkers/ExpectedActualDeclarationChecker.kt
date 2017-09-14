@@ -92,7 +92,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(reportOn, descriptor, platformModule, incompatibility))
+            diagnosticHolder.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, platformModule, incompatibility))
         }
     }
 
@@ -132,7 +132,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             if (Compatible !in compatibility) return
 
             if (checkExpected) {
-                diagnosticHolder.report(Errors.IMPL_MISSING.on(reportOn))
+                diagnosticHolder.report(Errors.ACTUAL_MISSING.on(reportOn))
             }
         }
 
@@ -164,7 +164,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 val classDescriptor =
                         (descriptor as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor as? ClassDescriptor
                         ?: (descriptor as ClassDescriptor)
-                diagnosticHolder.report(Errors.HEADER_CLASS_MEMBERS_ARE_NOT_IMPLEMENTED.on(
+                diagnosticHolder.report(Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.on(
                         reportOn, classDescriptor, nonTrivialUnimplemented
                 ))
             }
@@ -173,7 +173,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            diagnosticHolder.report(Errors.IMPLEMENTATION_WITHOUT_HEADER.on(reportOn, descriptor, incompatibility))
+            diagnosticHolder.report(Errors.ACTUAL_WITHOUT_EXPECT.on(reportOn, descriptor, incompatibility))
         }
     }
 
