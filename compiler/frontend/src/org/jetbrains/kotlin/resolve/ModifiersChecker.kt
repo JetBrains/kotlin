@@ -87,7 +87,9 @@ object ModifierCheckerCore {
             OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
             INFIX_KEYWORD     to EnumSet.of(FUNCTION),
             HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
-            IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
+            IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS),
+            EXPECT_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
+            ACTUAL_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
     )
 
     private val featureDependencies = mapOf(
@@ -95,6 +97,8 @@ object ModifierCheckerCore {
             INLINE_KEYWORD    to listOf(LanguageFeature.InlineProperties),
             HEADER_KEYWORD    to listOf(LanguageFeature.MultiPlatformProjects),
             IMPL_KEYWORD      to listOf(LanguageFeature.MultiPlatformProjects),
+            EXPECT_KEYWORD    to listOf(LanguageFeature.MultiPlatformProjects),
+            ACTUAL_KEYWORD      to listOf(LanguageFeature.MultiPlatformProjects),
             LATEINIT_KEYWORD  to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables)
     )
 
@@ -183,7 +187,7 @@ object ModifierCheckerCore {
         result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
 
         // lateinit is incompatible with header
-        result += incompatibilityRegister(LATEINIT_KEYWORD, HEADER_KEYWORD)
+        result += incompatibilityRegister(LATEINIT_KEYWORD, HEADER_KEYWORD, EXPECT_KEYWORD)
 
         return result
     }
