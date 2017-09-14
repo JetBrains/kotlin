@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import java.util.*
 
@@ -105,7 +106,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var coroutinesState: String? by FreezableVar(WARN)
 
-    open fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
+    open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlag.multiPlatformDoNotCheckImpl, noCheckImpl)
