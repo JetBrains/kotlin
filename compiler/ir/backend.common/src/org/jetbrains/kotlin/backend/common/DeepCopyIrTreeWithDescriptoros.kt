@@ -277,7 +277,7 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                 /* source                = */ oldDescriptor.source,
                 /* lateInit              = */ oldDescriptor.isLateInit,
                 /* isConst               = */ oldDescriptor.isConst,
-                /* isHeader              = */ oldDescriptor.isHeader,
+                /* isExpect              = */ oldDescriptor.isExpect,
                 /* isImpl                = */ oldDescriptor.isImpl,
                 /* isExternal            = */ oldDescriptor.isExternal,
                 /* isDelegated           = */ oldDescriptor.isDelegated

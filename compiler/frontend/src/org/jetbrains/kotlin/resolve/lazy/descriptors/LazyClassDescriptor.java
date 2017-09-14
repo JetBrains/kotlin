@@ -91,7 +91,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final ClassKind kind;
     private final boolean isInner;
     private final boolean isData;
-    private final boolean isHeader;
+    private final boolean isExpect;
     private final boolean isImpl;
 
     private final Annotations annotations;
@@ -168,8 +168,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
         this.isImpl = modifierList != null && PsiUtilsKt.hasActualModifier(modifierList);
 
-        this.isHeader = modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) ||
-                        containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader();
+        this.isExpect = modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) ||
+                        containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isExpect();
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<>();
@@ -498,8 +498,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Override
-    public boolean isHeader() {
-        return isHeader;
+    public boolean isExpect() {
+        return isExpect;
     }
 
     @Override
@@ -527,7 +527,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public String toString() {
         // not using DescriptorRenderer to preserve laziness
-        return (isHeader ? "header " : isImpl ? "impl " : "") + "class " + getName().toString();
+        return (isExpect ? "header " : isImpl ? "impl " : "") + "class " + getName().toString();
     }
 
     @Override

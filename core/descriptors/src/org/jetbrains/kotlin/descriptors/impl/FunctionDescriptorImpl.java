@@ -43,7 +43,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isExternal = false;
     private boolean isInline = false;
     private boolean isTailrec = false;
-    private boolean isHeader = false;
+    private boolean isExpect = false;
     private boolean isImpl = false;
     // Difference between these hidden kinds:
     // 1. isHiddenToOvercomeSignatureClash prohibit calling such functions even in super-call context
@@ -136,8 +136,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.isTailrec = isTailrec;
     }
 
-    public void setHeader(boolean isHeader) {
-        this.isHeader = isHeader;
+    public void setExpect(boolean isExpect) {
+        this.isExpect = isExpect;
     }
 
     public void setImpl(boolean isImpl) {
@@ -258,8 +258,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
-    public boolean isHeader() {
-        return isHeader;
+    public boolean isExpect() {
+        return isExpect;
     }
 
     @Override
@@ -664,7 +664,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
         substitutedDescriptor.setSuspend(isSuspend);
-        substitutedDescriptor.setHeader(isHeader);
+        substitutedDescriptor.setExpect(isExpect);
         substitutedDescriptor.setImpl(isImpl);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);

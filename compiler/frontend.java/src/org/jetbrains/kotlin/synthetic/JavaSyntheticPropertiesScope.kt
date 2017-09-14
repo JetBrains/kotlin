@@ -296,7 +296,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             source: SourceElement
     ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(
             containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
-            /* lateInit = */ false, /* isConst = */ false, /* isHeader = */ false, /* isImpl = */ false, /* isExternal = */ false,
+            /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isImpl = */ false, /* isExternal = */ false,
             /* isDelegated = */ false
     ) {
 

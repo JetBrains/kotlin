@@ -250,7 +250,7 @@ class DeclarationsChecker(
     }
 
     private fun checkHeaderClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
-        if (!constructorDescriptor.isHeader) return
+        if (!constructorDescriptor.isExpect) return
 
         if (declaration.hasBody()) {
             trace.report(HEADER_DECLARATION_WITH_BODY.on(declaration))
@@ -633,11 +633,11 @@ class DeclarationsChecker(
 
         val initializer = property.initializer
         val delegate = property.delegate
-        val isHeader = propertyDescriptor.isHeader
+        val isExpect = propertyDescriptor.isExpect
         if (initializer != null) {
             when {
                 inInterface -> trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
-                isHeader -> trace.report(HEADER_PROPERTY_INITIALIZER.on(initializer))
+                isExpect -> trace.report(HEADER_PROPERTY_INITIALIZER.on(initializer))
                 !backingFieldRequired -> trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
                 property.receiverTypeReference != null -> trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
             }
@@ -650,7 +650,7 @@ class DeclarationsChecker(
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
             val isExternal = propertyDescriptor.isEffectivelyExternal()
-            if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isHeader && isUninitialized && !isExternal) {
+            if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isExpect && isUninitialized && !isExternal) {
                 if (propertyDescriptor.extensionReceiverParameter != null && !hasAccessorImplementation) {
                     trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
                 }
@@ -696,7 +696,7 @@ class DeclarationsChecker(
 
         if (containingDescriptor is ClassDescriptor) {
             val inInterface = containingDescriptor.kind == ClassKind.INTERFACE
-            val isHeaderClass = containingDescriptor.isHeader
+            val isExpectClass = containingDescriptor.isExpect
             if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
             }
@@ -712,17 +712,17 @@ class DeclarationsChecker(
                     trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(function))
                 }
             }
-            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isHeaderClass) {
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isExpectClass) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
         }
         else /* top-level only */ {
-            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isHeader) {
+            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isExpect) {
                 trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
             }
         }
 
-        if (functionDescriptor.isHeader) {
+        if (functionDescriptor.isExpect) {
             checkHeaderFunction(function)
         }
 
@@ -789,7 +789,7 @@ class DeclarationsChecker(
             accessorDescriptor: PropertyAccessorDescriptor?
     ) {
         if (accessor == null || accessorDescriptor == null) return
-        if (propertyDescriptor.isHeader && accessor.hasBody()) {
+        if (propertyDescriptor.isExpect && accessor.hasBody()) {
             trace.report(HEADER_DECLARATION_WITH_BODY.on(accessor))
         }
 
@@ -829,7 +829,7 @@ class DeclarationsChecker(
     private fun checkEnumEntry(enumEntry: KtEnumEntry, enumEntryClass: ClassDescriptor) {
         val enumClass = enumEntryClass.containingDeclaration as ClassDescriptor
         if (DescriptorUtils.isEnumClass(enumClass)) {
-            if (enumClass.isHeader) {
+            if (enumClass.isExpect) {
                 if (enumEntry.getBody() != null) {
                     trace.report(HEADER_ENUM_ENTRY_WITH_BODY.on(enumEntry))
                 }

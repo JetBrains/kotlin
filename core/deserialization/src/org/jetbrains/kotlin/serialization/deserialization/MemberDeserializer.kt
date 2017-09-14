@@ -175,7 +175,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isInline = Flags.IS_INLINE.get(flags)
         function.isTailrec = Flags.IS_TAILREC.get(flags)
         function.isSuspend = Flags.IS_SUSPEND.get(flags)
-        function.isHeader = Flags.IS_HEADER_FUNCTION.get(flags)
+        function.isExpect = Flags.IS_HEADER_FUNCTION.get(flags)
         return function
     }
 

@@ -166,7 +166,7 @@ public class BodyResolver {
             @NotNull KtSecondaryConstructor constructor,
             @NotNull ClassConstructorDescriptor descriptor
     ) {
-        if (descriptor.isHeader() || isEffectivelyExternal(descriptor)) {
+        if (descriptor.isExpect() || isEffectivelyExternal(descriptor)) {
             // For header and external classes, we do not resolve constructor delegation calls because they are prohibited
             return DataFlowInfo.Companion.getEMPTY();
         }
@@ -367,7 +367,7 @@ public class BodyResolver {
                     descriptor.getUnsubstitutedPrimaryConstructor() != null &&
                     superClass.getKind() != ClassKind.INTERFACE &&
                     !superClass.getConstructors().isEmpty() &&
-                    !descriptor.isHeader() && !isEffectivelyExternal(descriptor) &&
+                    !descriptor.isExpect() && !isEffectivelyExternal(descriptor) &&
                     !ErrorUtils.isError(superClass)
                 ) {
                     trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
@@ -428,7 +428,7 @@ public class BodyResolver {
         assert enumEntryDescriptor.getKind() == ClassKind.ENUM_ENTRY : "Enum entry expected: " + enumEntryDescriptor;
         ClassDescriptor enumClassDescriptor = (ClassDescriptor) enumEntryDescriptor.getContainingDeclaration();
         if (enumClassDescriptor.getKind() != ClassKind.ENUM_CLASS) return;
-        if (enumClassDescriptor.isHeader()) return;
+        if (enumClassDescriptor.isExpect()) return;
 
         List<ClassConstructorDescriptor> applicableConstructors = DescriptorUtilsKt.getConstructorForEmptyArgumentsList(enumClassDescriptor);
         if (applicableConstructors.size() != 1) {
@@ -617,7 +617,7 @@ public class BodyResolver {
         if (classDescriptor.getConstructors().isEmpty()) {
             trace.report(ANONYMOUS_INITIALIZER_IN_INTERFACE.on(anonymousInitializer));
         }
-        if (classDescriptor.isHeader()) {
+        if (classDescriptor.isExpect()) {
             trace.report(HEADER_DECLARATION_WITH_BODY.on(anonymousInitializer));
         }
     }

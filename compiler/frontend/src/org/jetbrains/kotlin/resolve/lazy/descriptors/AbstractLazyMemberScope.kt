@@ -72,11 +72,11 @@ protected constructor(
         // See getFirstClassifierDiscriminateHeaders()
         var result: ClassifierDescriptor? = null
         for (klass in classes) {
-            if (!klass.isHeader) return klass
+            if (!klass.isExpect) return klass
             if (result == null) result = klass
         }
         for (typeAlias in typeAliases) {
-            if (!typeAlias.isHeader) return typeAlias
+            if (!typeAlias.isExpect) return typeAlias
             if (result == null) result = typeAlias
         }
         return result

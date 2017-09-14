@@ -56,7 +56,7 @@ val ModuleDescriptor.allImplementingCompatibleModules
 class PlatformHeaderAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         val declaration = element as? KtDeclaration ?: return
-        if (!isHeaderDeclaration(declaration)) return
+        if (!isExpectDeclaration(declaration)) return
 
         if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Common) return
 
@@ -64,7 +64,7 @@ class PlatformHeaderAnnotator : Annotator {
         if (implementingModules.isEmpty()) return
 
         val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
-        if (!descriptor.isHeader) return
+        if (!descriptor.isExpect) return
 
         val trace = BindingTraceContext()
         for (module in implementingModules) {
@@ -80,7 +80,7 @@ class PlatformHeaderAnnotator : Annotator {
         KotlinPsiChecker().annotateElement(declaration, holder, SimpleDiagnostics(filteredList))
     }
 
-    private fun isHeaderDeclaration(declaration: KtDeclaration): Boolean {
+    private fun isExpectDeclaration(declaration: KtDeclaration): Boolean {
         return declaration.hasExpectModifier() ||
                declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasExpectModifier() == true
     }

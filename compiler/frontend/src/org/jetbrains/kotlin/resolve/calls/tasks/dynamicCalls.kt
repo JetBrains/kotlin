@@ -98,7 +98,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                 SourceElement.NO_SOURCE,
                 /* lateInit = */ false,
                 /* isConst = */ false,
-                /* isHeader = */ false,
+                /* isExpect = */ false,
                 /* isImpl = */ false,
                 /* isExternal = */ false,
                 /* isDelegated = */ false

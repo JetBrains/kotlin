@@ -153,7 +153,7 @@ class LocalVariableResolver(
                     variable.toSourceElement(),
                     /* lateInit = */ false,
                     /* isConst = */ false,
-                    /* isHeader = */ false,
+                    /* isExpect = */ false,
                     /* isImpl = */ false,
                     /* isExternal = */ false,
                     variable is KtProperty && variable.hasDelegate()

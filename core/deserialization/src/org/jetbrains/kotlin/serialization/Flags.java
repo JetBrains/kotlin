@@ -98,7 +98,7 @@ public class Flags {
             boolean isCompanionObject,
             boolean isData,
             boolean isExternal,
-            boolean isHeader
+            boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -107,7 +107,7 @@ public class Flags {
                | IS_INNER.toFlags(inner)
                | IS_DATA.toFlags(isData)
                | IS_EXTERNAL_CLASS.toFlags(isExternal)
-               | IS_HEADER_CLASS.toFlags(isHeader)
+               | IS_HEADER_CLASS.toFlags(isExpect)
                ;
     }
 
@@ -153,7 +153,7 @@ public class Flags {
             boolean isTailrec,
             boolean isExternal,
             boolean isSuspend,
-            boolean isHeader
+            boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -165,7 +165,7 @@ public class Flags {
                | IS_TAILREC.toFlags(isTailrec)
                | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
                | IS_SUSPEND.toFlags(isSuspend)
-               | IS_HEADER_FUNCTION.toFlags(isHeader)
+               | IS_HEADER_FUNCTION.toFlags(isExpect)
                 ;
     }
 
@@ -182,7 +182,7 @@ public class Flags {
             boolean lateInit,
             boolean isExternal,
             boolean isDelegated,
-            boolean isHeader
+            boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -196,7 +196,7 @@ public class Flags {
                | HAS_CONSTANT.toFlags(hasConstant)
                | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
                | IS_DELEGATED.toFlags(isDelegated)
-               | IS_HEADER_PROPERTY.toFlags(isHeader)
+               | IS_HEADER_PROPERTY.toFlags(isExpect)
                 ;
     }
 

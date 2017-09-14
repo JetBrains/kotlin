@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectOrExpectClassMember
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
@@ -111,7 +111,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
-        val isEffectiveHeader = allowHeader && element.isHeaderOrHeaderClassMember()
+        val isEffectiveHeader = allowHeader && element.isExpectOrExpectClassMember()
 
         val file = element.containingKtFile
         val project = file.project

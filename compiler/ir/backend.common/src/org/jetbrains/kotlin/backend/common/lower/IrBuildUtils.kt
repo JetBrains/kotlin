@@ -178,7 +178,7 @@ fun BackendContext.createPropertyWithBackingFieldBuilder(startOffset: Int, endOf
                     /* source                = */ SourceElement.NO_SOURCE,
                     /* lateInit              = */ false,
                     /* isConst               = */ false,
-                    /* isHeader              = */ false,
+                    /* isExpect              = */ false,
                     /* isImpl                = */ false,
                     /* isExternal            = */ false,
                     /* isDelegated           = */ false

@@ -116,7 +116,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isHeader() {
+    public boolean isExpect() {
         return false;
     }
 

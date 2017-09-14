@@ -61,7 +61,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
 
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
-        if (descriptor.isHeader) {
+        if (descriptor.isExpect) {
             checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module)
         }
         else {
@@ -100,7 +100,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         return when (header) {
             is CallableMemberDescriptor -> {
                 header.findNamesakesFromModule(platformModule).filter { impl ->
-                    header != impl && !impl.isHeader &&
+                    header != impl && !impl.isExpect &&
                     // TODO: support non-source definitions (e.g. from Java)
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
@@ -109,7 +109,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             }
             is ClassDescriptor -> {
                 header.findClassifiersFromModule(platformModule).filter { impl ->
-                    header != impl && !impl.isHeader &&
+                    header != impl && !impl.isExpect &&
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
                     areCompatibleClassifiers(header, impl)
@@ -201,7 +201,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
                 }
 
                 candidates.filter { declaration ->
-                    impl != declaration && declaration.isHeader
+                    impl != declaration && declaration.isExpect
                 }.groupBy { declaration ->
                     // TODO: optimize by caching this per impl-header class pair, do not create a new substitutor for each impl member
                     val substitutor =
@@ -217,7 +217,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             is ClassifierDescriptorWithTypeParameters -> {
                 impl.findClassifiersFromModule(commonModule).filter { declaration ->
                     impl != declaration &&
-                    declaration is ClassDescriptor && declaration.isHeader
+                    declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { header ->
                     areCompatibleClassifiers(header as ClassDescriptor, impl)
                 }
@@ -408,8 +408,8 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         with(NewKotlinTypeChecker) {
             val context = object : TypeCheckerContext(false) {
                 override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
-                    return isHeaderClassAndImplTypeAlias(a, b, platformModule) ||
-                           isHeaderClassAndImplTypeAlias(b, a, platformModule) ||
+                    return isExpectClassAndImplTypeAlias(a, b, platformModule) ||
+                           isExpectClassAndImplTypeAlias(b, a, platformModule) ||
                            super.areEqualTypeConstructors(a, b)
                 }
             }
@@ -421,7 +421,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     // is java.lang.StringBuilder. For the purposes of type compatibility checking, we must consider these types equal here.
     // Note that the case of an "impl class" works as expected though, because the impl class by definition has the same FQ name
     // as the corresponding header class, so their type constructors are equal as per AbstractClassTypeConstructor#equals
-    private fun isHeaderClassAndImplTypeAlias(
+    private fun isExpectClassAndImplTypeAlias(
             headerTypeConstructor: TypeConstructor,
             implTypeConstructor: TypeConstructor,
             platformModule: ModuleDescriptor
@@ -429,7 +429,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         val header = headerTypeConstructor.declarationDescriptor
         val impl = implTypeConstructor.declarationDescriptor
         return header is ClassifierDescriptorWithTypeParameters &&
-               header.isHeader &&
+               header.isExpect &&
                impl is ClassifierDescriptorWithTypeParameters &&
                header.findClassifiersFromModule(platformModule).any { classifier ->
                    // Note that it's fine to only check that this "impl typealias" expands to the expected class, without checking

@@ -155,7 +155,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isHeader() {
+    public boolean isExpect() {
         return false;
     }
 

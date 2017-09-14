@@ -252,7 +252,7 @@ class OverloadResolver(
                 if (isConstructorsOfDifferentRedeclaredClasses(member1, member2)) continue
                 if (isTopLevelMainInDifferentFiles(member1, member2)) continue
                 if (isDefinitionsForDifferentPlatforms(member1, member2)) continue
-                if (isHeaderDeclarationAndDefinition(member1, member2) || isHeaderDeclarationAndDefinition(member2, member1)) continue
+                if (isExpectDeclarationAndDefinition(member1, member2) || isExpectDeclarationAndDefinition(member2, member1)) continue
 
                 if (!overloadChecker.isOverloadable(member1, member2)) {
                     redeclarations.add(member1)
@@ -282,9 +282,9 @@ class OverloadResolver(
         return file1 == null || file2 == null || file1 !== file2
     }
 
-    private fun isHeaderDeclarationAndDefinition(declaration: DeclarationDescriptor, definition: DeclarationDescriptor): Boolean {
-        return declaration is MemberDescriptor && declaration.isHeader &&
-               definition is MemberDescriptor && !definition.isHeader
+    private fun isExpectDeclarationAndDefinition(declaration: DeclarationDescriptor, definition: DeclarationDescriptor): Boolean {
+        return declaration is MemberDescriptor && declaration.isExpect &&
+               definition is MemberDescriptor && !definition.isExpect
     }
 
     private fun isDefinitionsForDifferentPlatforms(member1: DeclarationDescriptorNonRoot, member2: DeclarationDescriptorNonRoot): Boolean {

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectOrExpectClassMember
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -184,7 +184,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
     val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
     return baseCallables + baseCallables.flatMapTo(HashSet<PsiElement>()) { callable ->
-        if (callable is KtDeclaration && callable.isHeaderOrHeaderClassMember()) {
+        if (callable is KtDeclaration && callable.isExpectOrExpectClassMember()) {
             callable.headerImplementations()
         }
         else {

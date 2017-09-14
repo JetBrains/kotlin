@@ -72,7 +72,7 @@ fun navigateToPlatformImplementation(e: MouseEvent?, declaration: KtDeclaration)
 
 private fun DeclarationDescriptor.headerImplementations(): Collection<DeclarationDescriptor> {
     if (this is MemberDescriptor) {
-        if (!this.isHeader) return emptyList()
+        if (!this.isExpect) return emptyList()
 
         return module.allImplementingCompatibleModules.flatMap { it.implementationsOf(this) }
     }

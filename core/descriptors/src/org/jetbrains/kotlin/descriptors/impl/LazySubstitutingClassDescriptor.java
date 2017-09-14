@@ -227,8 +227,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public boolean isHeader() {
-        return original.isHeader();
+    public boolean isExpect() {
+        return original.isExpect();
     }
 
     @Override

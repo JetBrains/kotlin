@@ -45,7 +45,7 @@ class FlatSignature<out T> private constructor(
         val hasExtensionReceiver: Boolean,
         val hasVarargs: Boolean,
         val numDefaults: Int,
-        val isHeader: Boolean,
+        val isExpect: Boolean,
         val isSyntheticMember: Boolean
 ) {
     val isGeneric = typeParameters.isNotEmpty()
@@ -63,7 +63,7 @@ class FlatSignature<out T> private constructor(
                                  hasExtensionReceiver = false,
                                  hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                                  numDefaults = numDefaults,
-                                 isHeader = descriptor is MemberDescriptor && descriptor.isHeader,
+                                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
                                  isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
                                  )
         }
@@ -83,7 +83,7 @@ class FlatSignature<out T> private constructor(
                                  hasExtensionReceiver = extensionReceiverType != null,
                                  hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                                  numDefaults = numDefaults,
-                                 isHeader = descriptor is MemberDescriptor && descriptor.isHeader,
+                                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
                                  isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
             )
         }
@@ -100,7 +100,7 @@ class FlatSignature<out T> private constructor(
                               hasExtensionReceiver = false,
                               hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                               numDefaults = descriptor.valueParameters.count { it.hasDefaultValue() },
-                              isHeader = descriptor is MemberDescriptor && descriptor.isHeader,
+                              isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
                               isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
                 )
 

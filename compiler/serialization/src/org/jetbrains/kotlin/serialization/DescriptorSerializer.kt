@@ -66,7 +66,7 @@ class DescriptorSerializer private constructor(
         val flags = Flags.getClassFlags(
                 hasAnnotations(classDescriptor), classDescriptor.visibility, classDescriptor.modality, classDescriptor.kind,
                 classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData, classDescriptor.isExternal,
-                classDescriptor.isHeader
+                classDescriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -187,7 +187,7 @@ class DescriptorSerializer private constructor(
         val flags = Flags.getPropertyFlags(
                 hasAnnotations, descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isVar,
                 hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
-                @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isHeader
+                @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -233,7 +233,7 @@ class DescriptorSerializer private constructor(
         val flags = Flags.getFunctionFlags(
                 hasAnnotations(descriptor), descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isOperator,
                 descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal, descriptor.isSuspend,
-                descriptor.isHeader
+                descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags

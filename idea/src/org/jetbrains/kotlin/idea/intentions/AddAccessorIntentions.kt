@@ -38,7 +38,7 @@ abstract class AbstractAddAccessorsIntention(
             return null
         }
         val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return null
-        if (descriptor.isHeader) return null
+        if (descriptor.isExpect) return null
 
         if (addSetter && (!element.isVar || element.setter != null)) return null
         if (addGetter && element.getter != null) return null

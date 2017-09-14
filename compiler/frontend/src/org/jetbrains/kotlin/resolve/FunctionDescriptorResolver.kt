@@ -184,8 +184,8 @@ class FunctionDescriptorResolver(
         functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
-        functionDescriptor.isHeader = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
-                                      container is ClassDescriptor && container.isHeader
+        functionDescriptor.isExpect = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
+                                      container is ClassDescriptor && container.isExpect
         functionDescriptor.isImpl = function.hasActualModifier()
 
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
@@ -296,8 +296,8 @@ class FunctionDescriptorResolver(
                 isPrimary,
                 declarationToTrace.toSourceElement()
         )
-        if (classDescriptor.isHeader) {
-            constructorDescriptor.isHeader = true
+        if (classDescriptor.isExpect) {
+            constructorDescriptor.isExpect = true
         }
         if (classDescriptor.isImpl) {
             constructorDescriptor.isImpl = true

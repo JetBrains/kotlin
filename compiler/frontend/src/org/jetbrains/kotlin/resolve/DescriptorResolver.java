@@ -875,7 +875,7 @@ public class DescriptorResolver {
                 modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
                 modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) && container instanceof PackageFragmentDescriptor ||
-                container instanceof ClassDescriptor && ((ClassDescriptor) container).isHeader(),
+                container instanceof ClassDescriptor && ((ClassDescriptor) container).isExpect(),
                 modifierList != null && PsiUtilsKt.hasActualModifier(modifierList),
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 propertyInfo.getHasDelegate()
@@ -1201,7 +1201,7 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(parameter),
                 false,
                 false,
-                classDescriptor.isHeader(),
+                classDescriptor.isExpect(),
                 modifierList != null && PsiUtilsKt.hasActualModifier(modifierList),
                 false,
                 false

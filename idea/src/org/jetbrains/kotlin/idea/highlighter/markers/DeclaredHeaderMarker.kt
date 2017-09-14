@@ -65,13 +65,13 @@ internal fun KtDeclaration.headerDeclarationIfAny(): KtDeclaration? {
     return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
 }
 
-internal fun KtDeclaration.isHeaderOrHeaderClassMember() =
+internal fun KtDeclaration.isExpectOrExpectClassMember() =
         hasExpectModifier() || (containingClassOrObject?.hasExpectModifier() ?: false)
 
 internal fun DeclarationDescriptor.liftToHeader(): DeclarationDescriptor? {
     if (this is MemberDescriptor) {
         return when {
-            isHeader -> this
+            isExpect -> this
             isImpl -> headerDescriptor()
             else -> null
         }

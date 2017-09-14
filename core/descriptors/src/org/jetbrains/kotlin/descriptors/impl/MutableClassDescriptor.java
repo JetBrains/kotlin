@@ -107,7 +107,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isHeader() {
+    public boolean isExpect() {
         return false;
     }
 
