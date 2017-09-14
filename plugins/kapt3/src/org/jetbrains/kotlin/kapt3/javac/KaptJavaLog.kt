@@ -105,7 +105,7 @@ class KaptJavaLog(
                 fun makeWriter(severity: CompilerMessageSeverity) = PrintWriter(MessageCollectorBackedWriter(messageCollector, severity))
                 val errWriter = makeWriter(ERROR)
                 val warnWriter = makeWriter(STRONG_WARNING)
-                val noticeWriter = makeWriter(INFO)
+                val noticeWriter = makeWriter(WARNING)
                 KaptJavaLog(it, errWriter, warnWriter, noticeWriter, interceptorData)
             })
         }
