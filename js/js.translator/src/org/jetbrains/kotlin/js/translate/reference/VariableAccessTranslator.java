@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.js.translate.reference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation;
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
@@ -78,6 +78,14 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
                 } else {
                     setInlineCallMetadata(e, referenceExpression, getter, context());
                 }
+            }
+        }
+        else if (original instanceof LocalVariableDescriptor) {
+            LocalVariableDescriptor originalLocal = (LocalVariableDescriptor) original;
+            if (originalLocal.isLateInit()) {
+                JsInvocation throwInvocation = new JsInvocation(Namer.throwUninitializedPropertyAccessExceptionFunRef(),
+                                                                new JsStringLiteral(originalLocal.getName().asString()));
+                return new JsConditional(new JsBinaryOperation(JsBinaryOperator.EQ, e, new JsNullLiteral()), throwInvocation, e);
             }
         }
         return e;
