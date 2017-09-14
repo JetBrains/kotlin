@@ -5534,6 +5534,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("errorType.kt")
+        public void testErrorType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/errorType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("independentProperty.kt")
         public void testIndependentProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/independentProperty.kt");

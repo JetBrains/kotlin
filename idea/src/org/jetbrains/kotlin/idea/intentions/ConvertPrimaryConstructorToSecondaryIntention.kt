@@ -72,7 +72,11 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         for (property in klass.getProperties()) {
             if (property.isIndependent(klass, context)) continue
             if (property.typeReference == null) {
-                SpecifyTypeExplicitlyIntention().applyTo(property, editor)
+                with (SpecifyTypeExplicitlyIntention()) {
+                    if (applicabilityRange(property) != null) {
+                        applyTo(property, editor)
+                    }
+                }
             }
             val initializer = property.initializer!!
             initializerMap[property] = initializer.text
