@@ -202,7 +202,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
                 languageVersion,
                 ApiVersion.createByLanguageVersion(apiVersion),
-                arguments.configureAnalysisFlags(),
+                arguments.configureAnalysisFlags(configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)),
                 extraLanguageFeatures
         ));
     }

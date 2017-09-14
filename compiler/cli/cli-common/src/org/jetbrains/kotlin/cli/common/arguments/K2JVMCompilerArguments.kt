@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.utils.Jsr305State
@@ -162,6 +164,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
             value = "-Xjsr305",
+            deprecatedName = "-Xjsr305-annotations",
             valueDescription = "{ignore|strict|warn}",
             description = "Specify global behavior for JSR-305 nullability annotations: ignore, treat as other supported nullability annotations, or report a warning"
     )
@@ -170,11 +173,22 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 
-    override fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
-        val result = super.configureAnalysisFlags()
-        Jsr305State.findByDescription(jsr305)?.let {
-            result.put(AnalysisFlag.jsr305, it)
+    override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
+        val result = super.configureAnalysisFlags(collector)
+
+        if (jsr305 == "enable") {
+            collector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
+            )
+            result.put(AnalysisFlag.jsr305, Jsr305State.STRICT)
         }
+        else {
+            Jsr305State.findByDescription(jsr305)?.let {
+                result.put(AnalysisFlag.jsr305, it)
+            }
+        }
+
         return result
     }
 }
