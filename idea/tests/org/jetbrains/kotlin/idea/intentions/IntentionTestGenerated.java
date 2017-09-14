@@ -5390,6 +5390,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertObjectLiteralToClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("inClass.kt")
+        public void testInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inClassHasMethodReference.kt")
+        public void testInClassHasMethodReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inClassHasMethodReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inClassHasPropertyReference.kt")
+        public void testInClassHasPropertyReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inClassHasPropertyReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inFunction.kt")
+        public void testInFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectLiteralNoCapture.kt")
         public void testObjectLiteralNoCapture() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/objectLiteralNoCapture.kt");
