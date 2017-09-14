@@ -218,9 +218,27 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("jsr305Ignore.args")
+        public void testJsr305Ignore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305Ignore.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("jsr305NoFlag.args")
         public void testJsr305NoFlag() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305NoFlag.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305Strict.args")
+        public void testJsr305Strict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305Strict.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305Warn.args")
+        public void testJsr305Warn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305Warn.args");
             doJvmTest(fileName);
         }
 
