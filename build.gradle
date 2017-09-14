@@ -273,7 +273,7 @@ targetList.each { target ->
                 suffix = 'bat'
             task(taskName, type:GradleBuild) {
                 dependsOn ':tools:kotlin-native-gradle-plugin:jar'
-                tasks = ['clean', 'compileKonan', 'klibInstall']
+                tasks = ['clean', 'klibInstall']
                 buildFile project('klib').file('platform.gradle')
                 dir project(':klib').projectDir
                 startParameter.projectProperties = [
