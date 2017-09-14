@@ -97,6 +97,16 @@ function imul(a, b) {
         bufFloat64[0] = value;
         return bufInt32[highIndex] & 0x80000000;
     };
+
+    Kotlin.numberHashCode = function(obj) {
+        if ((obj | 0) === obj) {
+            return obj | 0;
+        }
+        else {
+            bufFloat64[0] = obj;
+            return (bufInt32[highIndex] * 31 | 0) + bufInt32[lowIndex] | 0;
+        }
+    }
 })();
 
 
