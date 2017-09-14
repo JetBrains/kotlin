@@ -219,7 +219,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         try {
-            return declaration.unsafeResolveToDescriptor()
+            return declaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
         }
         catch (e: NoDescriptorForDeclarationException) {
             return null
