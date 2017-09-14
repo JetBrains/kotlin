@@ -117,7 +117,7 @@ extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
 
 extra["ideaCoreSdkJars"] = arrayOf("annotations", "asm-all", "guava", "intellij-core", "jdom", "jna", "log4j", "picocontainer",
-                                   "snappy-in-java", "streamex", "trove4j", "xpp3-1.1.4-min", "xstream")
+                                   "snappy-in-java", "trove4j", "xpp3-1.1.4-min", "xstream")
 
 extra["compilerModules"] = arrayOf(":compiler:util",
                                    ":compiler:container",
