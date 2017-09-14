@@ -114,6 +114,7 @@ fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, cop
 
     if (!targetClass.hasActualModifier()) {
         newMember.removeModifier(KtTokens.IMPL_KEYWORD)
+        newMember.removeModifier(KtTokens.ACTUAL_KEYWORD)
     }
 
     if (copyDoc) {
