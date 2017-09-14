@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.formatClass
 import org.jetbrains.kotlin.idea.refactoring.formatFunction
-import org.jetbrains.kotlin.idea.refactoring.withHeaderImplementations
+import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
@@ -86,7 +86,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         fun getSearchInfo(element: PsiElement) = NonCodeUsageSearchInfo(getIgnoranceCondition(), element)
 
         fun searchKotlinDeclarationReferences(declaration: KtDeclaration): Sequence<PsiReference> {
-            val elementsToSearch = if (declaration is KtParameter) declaration.withHeaderImplementations() else listOf(declaration)
+            val elementsToSearch = if (declaration is KtParameter) declaration.withExpectedActuals() else listOf(declaration)
             return elementsToSearch.asSequence().flatMap {
                 val searchParameters = KotlinReferencesSearchParameters(
                         it,

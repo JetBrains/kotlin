@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMe
 import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
-import org.jetbrains.kotlin.idea.refactoring.withHeaderImplementations
+import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -61,7 +61,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
     }
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
-        if (!element.withHeaderImplementations().all { it is KtCallableDeclaration && isApplicable(it) }) return null
+        if (!element.withExpectedActuals().all { it is KtCallableDeclaration && isApplicable(it) }) return null
         return (element.nameIdentifier ?: return null).textRange
     }
 
@@ -70,16 +70,16 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
     //TODO: local class
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
-        var allowHeader = true
+        var allowExpected = true
 
         element.liftToExpected()?.actualsForExpected()?.let {
             if (it.isEmpty()) {
-                allowHeader = askIfHeaderIsAllowed(element.containingKtFile)
+                allowExpected = askIfExpectedIsAllowed(element.containingKtFile)
             }
         }
 
         runWriteAction {
-            val (extension, bodyToSelect) = createExtensionCallableAndPrepareBodyToSelect(element, allowHeader)
+            val (extension, bodyToSelect) = createExtensionCallableAndPrepareBodyToSelect(element, allowExpected)
 
             editor?.apply {
                 unblockDocument()
@@ -106,12 +106,12 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
 
     private fun processSingleDeclaration(
             element: KtCallableDeclaration,
-            allowHeader: Boolean
+            allowExpected: Boolean
     ): Pair<KtCallableDeclaration, KtExpression?> {
         val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
-        val isEffectiveHeader = allowHeader && element.isExpectedOrExpectedClassMember()
+        val isEffectivelyExpected = allowExpected && element.isExpectedOrExpectedClassMember()
 
         val file = element.containingKtFile
         val project = file.project
@@ -157,8 +157,9 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         extension.modifierList?.getModifier(KtTokens.OPEN_KEYWORD)?.delete()
         extension.modifierList?.getModifier(KtTokens.FINAL_KEYWORD)?.delete()
 
-        if (isEffectiveHeader && !extension.hasModifier(KtTokens.HEADER_KEYWORD))
-        extension.addModifier(KtTokens.HEADER_KEYWORD)
+        if (isEffectivelyExpected && !extension.hasExpectModifier()) {
+            extension.addModifier(KtTokens.EXPECT_KEYWORD)
+        }
 
         var bodyToSelect: KtExpression? = null
 
@@ -179,7 +180,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
 
         when (extension) {
             is KtFunction -> {
-                if (!extension.hasBody() && !isEffectiveHeader) {
+                if (!extension.hasBody() && !isEffectivelyExpected) {
                     //TODO: methods in PSI for setBody
                     extension.add(psiFactory.createBlock(bodyText))
                     selectBody(extension)
@@ -189,7 +190,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             is KtProperty -> {
                 val templateProperty = psiFactory.createDeclaration<KtProperty>("var v: Any\nget()=$bodyText\nset(value){\n$bodyText\n}")
 
-                if (!isEffectiveHeader) {
+                if (!isEffectivelyExpected) {
                     val templateGetter = templateProperty.getter!!
                     val templateSetter = templateProperty.setter!!
 
@@ -244,13 +245,13 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         return extension to bodyToSelect
     }
 
-    private fun askIfHeaderIsAllowed(file: KtFile): Boolean {
+    private fun askIfExpectedIsAllowed(file: KtFile): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) {
             return file.allChildren.any { it is PsiComment && it.text.trim() == "// ALLOW_HEADER_WITHOUT_IMPLS" }
         }
 
         return Messages.showYesNoDialog(
-                "Do you want to make new extension a header declaration?",
+                "Do you want to make new extension an expected declaration?",
                 text,
                 Messages.getQuestionIcon()
         ) == Messages.YES
@@ -258,18 +259,18 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
 
     private fun createExtensionCallableAndPrepareBodyToSelect(
             element: KtCallableDeclaration,
-            allowHeader: Boolean = true
+            allowExpected: Boolean = true
     ): Pair<KtCallableDeclaration, KtExpression?> {
-        val headerDeclaration = element.liftToExpected() as? KtCallableDeclaration
-        if (headerDeclaration != null) {
-            element.withHeaderImplementations().filterIsInstance<KtCallableDeclaration>().forEach {
+        val expectedDeclaration = element.liftToExpected() as? KtCallableDeclaration
+        if (expectedDeclaration != null) {
+            element.withExpectedActuals().filterIsInstance<KtCallableDeclaration>().forEach {
                 if (it != element) {
-                    processSingleDeclaration(it, allowHeader)
+                    processSingleDeclaration(it, allowExpected)
                 }
             }
         }
 
-        return processSingleDeclaration(element, allowHeader)
+        return processSingleDeclaration(element, allowExpected)
     }
 
     private fun newTypeParameterList(member: KtCallableDeclaration): KtTypeParameterList? {

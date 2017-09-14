@@ -967,13 +967,13 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
     return containingObject.isCompanion() && containingObject.containingClassOrObject == klass
 }
 
-internal fun KtDeclaration.withHeaderImplementations(): List<KtDeclaration> {
+internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
     val header = liftToExpected() ?: return listOf(this)
     val implementations = header.actualsForExpected()
     return listOf(header) + implementations
 }
 
-internal fun KtDeclaration.resolveToHeaderDescriptorIfPossible(): DeclarationDescriptor {
+internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
     val descriptor = unsafeResolveToDescriptor()
     return descriptor.liftToExpected() ?: descriptor
 }
