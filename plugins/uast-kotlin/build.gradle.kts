@@ -11,6 +11,7 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compile(project(":idea:idea-core"))
     compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all") }
+    compileOnly(preloadedDeps("uast-common", "uast-java"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
