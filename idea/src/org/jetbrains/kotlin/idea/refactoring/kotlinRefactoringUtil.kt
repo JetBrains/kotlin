@@ -149,7 +149,8 @@ fun PsiElement.getUsageContext(): PsiElement {
                 this,
                 KtPropertyAccessor::class.java,
                 KtProperty::class.java,
-                KtFunction::class.java,
+                KtNamedFunction::class.java,
+                KtConstructor::class.java,
                 KtClassOrObject::class.java
         ) ?: containingFile
         else -> ConflictsUtil.getContainer(this)

@@ -96,7 +96,8 @@ class MoveDeclarationsDescriptor @JvmOverloads constructor(
         val deleteSourceFiles: Boolean = false,
         val moveCallback: MoveCallback? = null,
         val openInEditor: Boolean = false,
-        val allElementsToMove: List<PsiElement>? = null
+        val allElementsToMove: List<PsiElement>? = null,
+        val analyzeConflicts: Boolean = true
 )
 
 class ConflictUsageInfo(element: PsiElement, val messages: Collection<String>) : UsageInfo(element)
@@ -226,8 +227,10 @@ class MoveKotlinDeclarationsProcessor(
 
             internalUsages += descriptor.delegate.findInternalUsages(descriptor)
             collectUsages(kotlinToLightElements, externalUsages)
-            conflictChecker.checkAllConflicts(externalUsages, internalUsages, conflicts)
-            descriptor.delegate.collectConflicts(descriptor, internalUsages, conflicts)
+            if (descriptor.analyzeConflicts) {
+                conflictChecker.checkAllConflicts(externalUsages, internalUsages, conflicts)
+                descriptor.delegate.collectConflicts(descriptor, internalUsages, conflicts)
+            }
 
             usages += internalUsages
             usages += externalUsages
