@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.uast.*
@@ -28,7 +29,20 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
     }
 
     protected open fun convertParent(): UElement? {
+        val psi = psi
         var parent = psi?.parent ?: psi?.containingFile
+
+        if (psi is KtAnnotationEntry) {
+            val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
+            val target = psi.useSiteTarget?.getAnnotationUseSiteTarget()
+            when (target) {
+                AnnotationUseSiteTarget.PROPERTY_GETTER ->
+                    parent = (parentUnwrapped as? KtProperty)?.getter ?: parent
+
+                AnnotationUseSiteTarget.PROPERTY_SETTER ->
+                    parent = (parentUnwrapped as? KtProperty)?.setter ?: parent
+            }
+        }
 
         if (parent is KtStringTemplateExpression && parent.entries.size == 1) {
             parent = parent.parent
