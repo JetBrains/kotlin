@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.generators.util;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class GeneratorsFileUtil {
 
         boolean useTempFile = !SystemInfo.isWindows;
 
-        File tempFile = useTempFile ? new File(file.getName() + ".tmp") : file;
+        File tempFile = useTempFile ? new File(KotlinTestUtils.tmpDir(file.getName()), file.getName() + ".tmp") : file;
 
         FileUtil.writeToFile(tempFile, newText);
         System.out.println("File written: " + tempFile.getAbsolutePath());
