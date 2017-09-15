@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.maven.*
 
 val SERIALIZATION_COMPILER_PLUGIN_ID = "org.jetbrains.kotlinx.serialization"
 
-@Component(role = KotlinMavenPluginExtension::class, hint = "kotlin-serialization")
+@Component(role = KotlinMavenPluginExtension::class, hint = "kotlinx-serialization")
 class KotlinSerializationMavenPlugin : KotlinMavenPluginExtension {
     @Requirement
     lateinit var logger: Logger

@@ -15,7 +15,7 @@
     </properties>
 
     <groupId>org.jetbrains.kotlinx</groupId>
-    <artifactId>kotlin-maven-serialization</artifactId>
+    <artifactId>kotlinx-maven-serialization-plugin</artifactId>
     <packaging>jar</packaging>
     <version>0.1</version>
 
