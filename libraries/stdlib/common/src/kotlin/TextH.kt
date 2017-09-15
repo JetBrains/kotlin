@@ -16,13 +16,13 @@
 
 package kotlin.text
 
-header interface Appendable {
+expect interface Appendable {
     fun append(c: Char): Appendable
     fun append(csq: CharSequence?): Appendable
     fun append(csq: CharSequence?, start: Int, end: Int): Appendable
 }
 
-header class StringBuilder : Appendable, CharSequence {
+expect class StringBuilder : Appendable, CharSequence {
     constructor()
     constructor(capacity: Int)
     constructor(seq: CharSequence)
@@ -38,7 +38,7 @@ header class StringBuilder : Appendable, CharSequence {
     fun append(obj: Any?): StringBuilder
 }
 
-header class Regex {
+expect class Regex {
     constructor(pattern: String)
     constructor(pattern: String, option: RegexOption)
     constructor(pattern: String, options: Set<RegexOption>)
@@ -65,11 +65,11 @@ header class Regex {
     }
 }
 
-header class MatchGroup {
+expect class MatchGroup {
     val value: String
 }
 
-header enum class RegexOption {
+expect enum class RegexOption {
     IGNORE_CASE,
     MULTILINE
 }
@@ -77,127 +77,127 @@ header enum class RegexOption {
 
 // From char.kt
 
-header fun Char.isWhitespace(): Boolean
-header fun Char.toLowerCase(): Char
-header fun Char.toUpperCase(): Char
-header fun Char.isHighSurrogate(): Boolean
-header fun Char.isLowSurrogate(): Boolean
+expect fun Char.isWhitespace(): Boolean
+expect fun Char.toLowerCase(): Char
+expect fun Char.toUpperCase(): Char
+expect fun Char.isHighSurrogate(): Boolean
+expect fun Char.isLowSurrogate(): Boolean
 
 // From string.kt
 
-internal header fun String.nativeIndexOf(str: String, fromIndex: Int): Int
-internal header fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
-internal header fun String.nativeStartsWith(s: String, position: Int): Boolean
-internal header fun String.nativeEndsWith(s: String): Boolean
+internal expect fun String.nativeIndexOf(str: String, fromIndex: Int): Int
+internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
+internal expect fun String.nativeStartsWith(s: String, position: Int): Boolean
+internal expect fun String.nativeEndsWith(s: String): Boolean
 
 
-public header fun String.substring(startIndex: Int): String
-public header fun String.substring(startIndex: Int, endIndex: Int): String
+public expect fun String.substring(startIndex: Int): String
+public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
 
-public header inline fun String.toUpperCase(): String
-public header inline fun String.toLowerCase(): String
-public header inline fun String.capitalize(): String
-public header inline fun String.decapitalize(): String
-public header fun CharSequence.repeat(n: Int): String
+public expect inline fun String.toUpperCase(): String
+public expect inline fun String.toLowerCase(): String
+public expect inline fun String.capitalize(): String
+public expect inline fun String.decapitalize(): String
+public expect fun CharSequence.repeat(n: Int): String
 
 
 // TOOD: requires optional parameters (and named!)
-header fun String.replace(oldChar: Char, newChar: Char): String
-header fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String
-header fun String.replace(oldValue: String, newValue: String): String
-header fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String
-header fun String.replaceFirst(oldChar: Char, newChar: Char): String
-header fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean): String
-header fun String.replaceFirst(oldValue: String, newValue: String): String
-header fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean): String
-header fun String?.equals(other: String?): Boolean
-header fun String?.equals(other: String?, ignoreCase: Boolean): Boolean
+expect fun String.replace(oldChar: Char, newChar: Char): String
+expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String
+expect fun String.replace(oldValue: String, newValue: String): String
+expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String
+expect fun String.replaceFirst(oldChar: Char, newChar: Char): String
+expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean): String
+expect fun String.replaceFirst(oldValue: String, newValue: String): String
+expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean): String
+expect fun String?.equals(other: String?): Boolean
+expect fun String?.equals(other: String?, ignoreCase: Boolean): Boolean
 
 // From stringsCode.kt
 
-internal inline header fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
-internal inline header fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
+internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
+internal inline expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
-header fun CharSequence.isBlank(): Boolean
-header fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean): Boolean
+expect fun CharSequence.isBlank(): Boolean
+expect fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean): Boolean
 
 
-
-/**
- * Parses the string as a signed [Byte] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-header fun String.toByte(): Byte
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toByte(radix: Int): Byte
+expect fun String.toByte(): Byte
+
+/**
+ * Parses the string as a signed [Byte] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+expect fun String.toByte(radix: Int): Byte
 
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toShort(): Short
+expect fun String.toShort(): Short
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toShort(radix: Int): Short
+expect fun String.toShort(radix: Int): Short
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toInt(): Int
+expect fun String.toInt(): Int
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toInt(radix: Int): Int
+expect fun String.toInt(radix: Int): Int
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toLong(): Long
+expect fun String.toLong(): Long
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toLong(radix: Int): Long
+expect fun String.toLong(radix: Int): Long
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toDouble(): Double
+expect fun String.toDouble(): Double
 
 /**
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-header fun String.toFloat(): Float
+expect fun String.toFloat(): Float
 
 /**
  * Parses the string as a [Double] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-header fun String.toDoubleOrNull(): Double?
+expect fun String.toDoubleOrNull(): Double?
 
 /**
  * Parses the string as a [Float] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-header fun String.toFloatOrNull(): Float?
+expect fun String.toFloatOrNull(): Float?
 
 
 @PublishedApi
-internal header fun checkRadix(radix: Int): Int
-internal header fun digitOf(char: Char, radix: Int): Int
+internal expect fun checkRadix(radix: Int): Int
+internal expect fun digitOf(char: Char, radix: Int): Int

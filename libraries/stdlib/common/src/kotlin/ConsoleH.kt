@@ -2,10 +2,10 @@ package kotlin.io
 
 
 /** Prints a newline to the standard output stream. */
-public header fun println()
+public expect fun println()
 
 /** Prints the given message and newline to the standard output stream. */
-public header fun println(message: Any?)
+public expect fun println(message: Any?)
 
 /** Prints the given message to the standard output stream. */
-public header fun print(message: Any?)
+public expect fun print(message: Any?)

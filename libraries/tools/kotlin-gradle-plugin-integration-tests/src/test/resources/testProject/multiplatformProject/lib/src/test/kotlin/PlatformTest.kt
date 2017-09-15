@@ -1,6 +1,6 @@
 package foo
 
-header class PlatformTest {
+expect class PlatformTest {
     val value: PlatformClass
 }
 
