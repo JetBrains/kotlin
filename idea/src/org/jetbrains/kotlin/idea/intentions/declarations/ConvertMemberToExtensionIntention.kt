@@ -247,7 +247,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
 
     private fun askIfExpectedIsAllowed(file: KtFile): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            return file.allChildren.any { it is PsiComment && it.text.trim() == "// ALLOW_HEADER_WITHOUT_IMPLS" }
+            return file.allChildren.any { it is PsiComment && it.text.trim() == "// ALLOW_EXPECT_WITHOUT_ACTUAL" }
         }
 
         return Messages.showYesNoDialog(
