@@ -509,8 +509,8 @@ internal class DescriptorRendererImpl(
 
     private fun renderMemberModifiers(descriptor: MemberDescriptor, builder: StringBuilder) {
         renderModifier(builder, descriptor.isExternal, "external")
-        renderModifier(builder, DescriptorRendererModifier.HEADER in modifiers && descriptor.isExpect, "expect")
-        renderModifier(builder, DescriptorRendererModifier.IMPL in modifiers && descriptor.isActual, "actual")
+        renderModifier(builder, DescriptorRendererModifier.EXPECT in modifiers && descriptor.isExpect, "expect")
+        renderModifier(builder, DescriptorRendererModifier.ACTUAL in modifiers && descriptor.isActual, "actual")
     }
 
     private fun renderAdditionalModifiers(functionDescriptor: FunctionDescriptor, builder: StringBuilder) {
