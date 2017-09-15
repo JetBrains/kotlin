@@ -47,13 +47,35 @@ jar {
     from(targetSrc) { include("META-INF/**") }
 }
 
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        mavenProject(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId project.name
+            version project.version
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    configurations = ['archives']
+    publications = ['mavenProject']
     pkg {
         repo = 'kotlinx'
-        name = 'kotlinx.serialization'
+        name = 'kotlinx.serialization.plugin'
         userOrg = 'kotlin'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/JetBrains/kotlin/tree/rr/kotlinx.serialization/libraries'
