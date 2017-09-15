@@ -85,7 +85,7 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null,
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
     val extraLanguageFeatures = getExtraLanguageFeatures(
-            TargetPlatformKind.Common,
+            null,
             CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this).settings),
             compilerSettings,
             null
@@ -134,7 +134,7 @@ private val Module.implementsCommonModule: Boolean
             && ModuleRootManager.getInstance(this).dependencies.any { it.targetPlatform == TargetPlatformKind.Common }
 
 private fun getExtraLanguageFeatures(
-        targetPlatformKind: TargetPlatformKind<*>,
+        targetPlatformKind: TargetPlatformKind<*>?,
         coroutineSupport: LanguageFeature.State,
         compilerSettings: CompilerSettings?,
         module: Module?
