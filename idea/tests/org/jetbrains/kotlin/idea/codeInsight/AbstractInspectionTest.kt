@@ -40,7 +40,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
         }
         catch (e: Throwable) {
-            TestLoggerFactory.onTestFinished(false)
+            //TestLoggerFactory.onTestFinished(false)
             throw e
         }
     }

@@ -248,10 +248,10 @@ public abstract class KtUsefulTestCase extends TestCase {
             logPerClassCost(setupCost, TOTAL_SETUP_COST_MILLIS);
 
             runTest();
-            TestLoggerFactory.onTestFinished(true);
+            //TestLoggerFactory.onTestFinished(true);
         }
         catch (Throwable running) {
-            TestLoggerFactory.onTestFinished(false);
+            //TestLoggerFactory.onTestFinished(false);
             exception = running;
         }
         finally {
