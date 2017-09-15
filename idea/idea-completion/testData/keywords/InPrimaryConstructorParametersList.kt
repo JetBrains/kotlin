@@ -14,7 +14,7 @@ class TestSample(<caret>)
 // EXIST: private
 // EXIST: protected
 // EXIST: internal
-// EXIST: impl
+// EXIST: actual
 /* TODO: keywords below should not be here*/
 // EXIST: abstract
 // EXIST: const
