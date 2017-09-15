@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * One may use bintrayUser/bintrayKey project properties or BINTRAY_USER/BINTRAY_KEY environment variables to upload
  * built plugin to bintray repository.
@@ -46,6 +62,22 @@ repositories {
     mavenCentral()
 }
 
+task pluginMetadata {
+    def outputDir = file("$buildDir/$name")
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        def metadata = new Properties()
+        metadata.put("implementation-classpath", sourceSets.main.runtimeClasspath.join(File.pathSeparator))
+        file("$outputDir/plugin-under-test-metadata.properties").withPrintWriter {
+            metadata.store(it, "Plugin metadata")
+        }
+    }
+}
+
 dependencies {
     compile project(':shared')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -56,6 +88,7 @@ dependencies {
     testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
+    testRuntime files(pluginMetadata)
 }
 
 test {
