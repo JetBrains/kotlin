@@ -136,6 +136,7 @@ private val MODIFIERS_TO_REPLACE = mapOf(
 )
 
 private val MODIFIERS_ORDER = listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD,
+                                     HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
                                      FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD,
                                      CONST_KEYWORD,
                                      EXTERNAL_KEYWORD,
