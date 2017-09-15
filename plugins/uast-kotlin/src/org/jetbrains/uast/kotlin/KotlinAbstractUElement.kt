@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 
 abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
 
@@ -94,6 +95,13 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     if (result is KotlinUDestructuringDeclarationExpression &&
         element.psi == (parent as KtDestructuringDeclaration).initializer) {
         return result.tempVarAssignment
+    }
+
+    if (result is KotlinUElvisExpression && parent is KtBinaryExpression) {
+        when (element.psi) {
+            parent.left -> return result.lhsDeclaration
+            parent.right -> return result.rhsIfExpression
+        }
     }
 
     return result

@@ -72,26 +72,39 @@ fun createElvisExpression(elvisExpression: KtBinaryExpression, givenParent: UEle
     val left = elvisExpression.left ?: return UastEmptyExpression
     val right = elvisExpression.right ?: return UastEmptyExpression
 
-    return object : KotlinAbstractUElement(givenParent), UExpressionList, KotlinEvaluatableUElement {
-        override val psi: PsiElement? = elvisExpression
-        override val kind = KotlinSpecialExpressionKinds.ELVIS
-        override val annotations: List<UAnnotation> = emptyList()
-        override val expressions: List<UExpression> by lz {
-            createElvisExpressions(left, right, this, elvisExpression.parent)
-        }
-        override fun asRenderString(): String {
-            return kind.name + " " +
-                   expressions.joinToString(separator = "\n", prefix = "{\n", postfix = "\n}") {
-                       it.asRenderString().withMargin
-                   }
-        }
-        override fun getExpressionType(): PsiType? {
-            val leftType = left.analyze()[BindingContext.EXPRESSION_TYPE_INFO, left]?.type ?: return null
-            val rightType = right.analyze()[BindingContext.EXPRESSION_TYPE_INFO, right]?.type ?: return null
+    return KotlinUElvisExpression(elvisExpression, left, right, givenParent)
+}
 
-            return CommonSupertypes
-                    .commonSupertype(listOf(leftType, rightType))
-                    .toPsiType(this, elvisExpression, boxed = false)
-        }
+class KotlinUElvisExpression(
+    private val elvisExpression: KtBinaryExpression,
+    private val left: KtExpression,
+    private val right: KtExpression,
+    givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UExpressionList, KotlinEvaluatableUElement {
+
+    override val psi: PsiElement? = elvisExpression
+    override val kind = KotlinSpecialExpressionKinds.ELVIS
+    override val annotations: List<UAnnotation> = emptyList()
+    override val expressions: List<UExpression> by lz {
+        createElvisExpressions(left, right, this, elvisExpression.parent)
+    }
+
+    val lhsDeclaration get() = (expressions[0] as UDeclarationsExpression).declarations.single()
+    val rhsIfExpression get() = expressions[1] as UIfExpression
+
+    override fun asRenderString(): String {
+        return kind.name + " " +
+               expressions.joinToString(separator = "\n", prefix = "{\n", postfix = "\n}") {
+                   it.asRenderString().withMargin
+               }
+    }
+
+    override fun getExpressionType(): PsiType? {
+        val leftType = left.analyze()[BindingContext.EXPRESSION_TYPE_INFO, left]?.type ?: return null
+        val rightType = right.analyze()[BindingContext.EXPRESSION_TYPE_INFO, right]?.type ?: return null
+
+        return CommonSupertypes
+            .commonSupertype(listOf(leftType, rightType))
+            .toPsiType(this, elvisExpression, boxed = false)
     }
 }
