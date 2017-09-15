@@ -48,7 +48,9 @@ class IncrementalCompilationOptions(
         /** @See [ReportSeverity] */
         reportSeverity: Int,
         /** @See [CompilationResultCategory]] */
-        requestedCompilationResults: Array<Int>
+        requestedCompilationResults: Array<Int>,
+        val resultDifferenceFile: File? = null,
+        val friendDifferenceFile: File? = null
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0

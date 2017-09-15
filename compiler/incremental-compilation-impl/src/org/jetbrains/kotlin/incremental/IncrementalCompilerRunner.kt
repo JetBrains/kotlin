@@ -255,22 +255,27 @@ abstract class IncrementalCompilerRunner<
         if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
             buildDirtyLookupSymbols.addAll(additionalDirtyLookupSymbols())
         }
-        if (changesRegistry != null) {
-            if (compilationMode is CompilationMode.Incremental) {
-                val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
-                changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
-            }
-            else {
-                assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode::class.java}" }
-                changesRegistry.unknownChanges(currentBuildInfo.startTS)
-            }
-        }
+
+        val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
+        processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
 
         if (exitCode == ExitCode.OK) {
             cacheVersions.forEach { it.saveIfNeeded() }
         }
 
         return exitCode
+    }
+
+    protected open fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
+        if (changesRegistry == null) return
+
+        if (compilationMode is CompilationMode.Incremental) {
+            changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
+        }
+        else {
+            assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode::class.java}" }
+            changesRegistry.unknownChanges(currentBuildInfo.startTS)
+        }
     }
 
     companion object {
