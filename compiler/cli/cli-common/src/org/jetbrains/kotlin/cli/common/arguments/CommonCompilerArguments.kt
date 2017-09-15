@@ -89,8 +89,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
     var multiPlatform: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
-    var noCheckImpl: Boolean by FreezableVar(false)
+    @Argument(value = "-Xno-check-actual", description = "Do not check presence of 'actual' modifier in multi-platform projects")
+    var noCheckActual: Boolean by FreezableVar(false)
 
     @Argument(
             value = "-Xintellij-plugin-root",
@@ -109,7 +109,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
-            put(AnalysisFlag.multiPlatformDoNotCheckImpl, noCheckImpl)
+            put(AnalysisFlag.multiPlatformDoNotCheckActual, noCheckActual)
         }
     }
 

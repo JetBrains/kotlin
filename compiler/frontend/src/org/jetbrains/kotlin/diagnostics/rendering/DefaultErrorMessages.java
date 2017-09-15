@@ -282,7 +282,7 @@ public class DefaultErrorMessages {
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "''impl'' class ''{0}'' has no implementation of ''header'' class members:{1}",
                 NAME, IncompatibleHeaderImplClassScopesRenderer.TEXT);
-        MAP.put(ACTUAL_MISSING, "Declaration should be marked with 'impl' (suppress with -Xno-check-impl)");
+        MAP.put(ACTUAL_MISSING, "Declaration should be marked with 'actual' (suppress with -Xno-check-actual)");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");

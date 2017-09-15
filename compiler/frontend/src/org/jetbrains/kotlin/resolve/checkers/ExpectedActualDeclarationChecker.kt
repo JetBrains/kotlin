@@ -65,7 +65,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             checkExpectedDeclarationHasActual(declaration, descriptor, diagnosticHolder, descriptor.module)
         }
         else {
-            val checkExpected = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckImpl)
+            val checkExpected = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
             checkActualDeclarationHasExpected(declaration, descriptor, diagnosticHolder, checkExpected)
         }
     }

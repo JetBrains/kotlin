@@ -49,7 +49,7 @@ class AnalysisFlag<out T> internal constructor(
         val skipMetadataVersionCheck by Flag.Boolean
 
         @JvmStatic
-        val multiPlatformDoNotCheckImpl by Flag.Boolean
+        val multiPlatformDoNotCheckActual by Flag.Boolean
 
         @JvmStatic
         val jsr305 by Flag.Jsr305StateWarnByDefault
