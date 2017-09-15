@@ -90,6 +90,7 @@ private val knownTargets = mapOf(
         "iphone_sim" to "ios_sim",
         "ios_sim" to "ios_sim",
         "raspberrypi" to "raspberrypi",
+        "mips" to "mips",
         "android_arm32" to "android_arm32",
         "android_arm64" to "android_arm64",
         "mingw" to "mingw",

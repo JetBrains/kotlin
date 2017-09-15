@@ -2111,6 +2111,7 @@ task interop3(type: RunInteropKonanTest) {
     // There are plans to provide a solution and turn this
     // test back on.
     disabled = (project.testTarget == 'raspberrypi') ||
+               (project.testTarget == 'mips') ||
                (project.testTarget == 'wasm32') // No interop for wasm yet.
     goldValue = "8 9 12 13 14 \n"
     source = "interop/basics/3.kt"

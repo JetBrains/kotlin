@@ -131,7 +131,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
             listOf(dsymutil, "-dump-debug-map" ,executable)
 }
 
-internal open class LinuxBasedPlatform(distribution: Distribution)
+internal open class LinuxBasedPlatform(val distribution: Distribution)
     : PlatformFlags(distribution.targetProperties) {
 
     private val llvmLib = distribution.llvmLib
@@ -139,7 +139,7 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
     private val linker = "$targetToolchain/bin/ld.gold"
     private val pluginOptimizationFlags = propertyTargetList("pluginOptimizationFlags")
     private val specificLibs
-        = propertyTargetList("abiSpecificLibraries").map{it -> "-L${targetSysRoot}/$it"}
+        = propertyTargetList("abiSpecificLibraries").map { "-L${targetSysRoot}/$it" }
 
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isUnixStaticLib }
@@ -148,13 +148,14 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
         // TODO: Can we extract more to the konan.properties?
         return mutableListOf(linker).apply {
             addAll(listOf("--sysroot=${targetSysRoot}",
-                    "-export-dynamic", "-z", "relro", "--hash-style=gnu",
+                    "-export-dynamic", "-z", "relro",
                     "--build-id", "--eh-frame-hdr", // "-m", "elf_x86_64",
                     "-dynamic-linker", propertyTargetString("dynamicLinker"),
                     "-o", executable,
                     "${targetSysRoot}/usr/lib64/crt1.o",
                     "${targetSysRoot}/usr/lib64/crti.o", "${libGcc}/crtbegin.o",
                     "-L${llvmLib}", "-L${libGcc}"))
+            if (distribution.target != KonanTarget.MIPS) add("--hash-style=gnu") // MIPS doesn't support hash-style=gnu
             addAll(specificLibs)
             addAll(listOf("-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib"))
             if (optimize) addAll(listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags)
@@ -217,7 +218,7 @@ internal class LinkStage(val context: Context) {
     private val distribution = context.config.distribution
 
     private val platform = when (target) {
-        KonanTarget.LINUX, KonanTarget.RASPBERRYPI ->
+        KonanTarget.LINUX, KonanTarget.RASPBERRYPI, KonanTarget.MIPS ->
             LinuxBasedPlatform(distribution)
         KonanTarget.MACBOOK, KonanTarget.IPHONE, KonanTarget.IPHONE_SIM ->
             MacOSBasedPlatform(distribution)
@@ -395,7 +396,7 @@ internal class LinkStage(val context: Context) {
             }
             outputStream.close()
         }
-        val exitCode =  process.waitFor()
+        val exitCode = process.waitFor()
         return exitCode
     }
 
