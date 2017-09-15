@@ -110,7 +110,7 @@ typedef unsigned long long U_64;
 
 #endif
 
-#if defined(HYS390X) || defined(HYS390) || defined(HYPPC64) || defined(HYPPC32)
+#if defined(HYS390X) || defined(HYS390) || defined(HYPPC64) || defined(HYPPC32) || defined(__MIPSEB__)
 #define HY_BIG_ENDIAN
 #else
 #define HY_LITTLE_ENDIAN
