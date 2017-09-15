@@ -14,606 +14,606 @@ import kotlin.comparisons.*
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public header operator fun ClosedRange<Int>.contains(value: Byte): Boolean
+public expect operator fun ClosedRange<Int>.contains(value: Byte): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public header operator fun ClosedRange<Long>.contains(value: Byte): Boolean
+public expect operator fun ClosedRange<Long>.contains(value: Byte): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public header operator fun ClosedRange<Short>.contains(value: Byte): Boolean
+public expect operator fun ClosedRange<Short>.contains(value: Byte): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public header operator fun ClosedRange<Double>.contains(value: Byte): Boolean
+public expect operator fun ClosedRange<Double>.contains(value: Byte): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public header operator fun ClosedRange<Float>.contains(value: Byte): Boolean
+public expect operator fun ClosedRange<Float>.contains(value: Byte): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public header operator fun ClosedRange<Int>.contains(value: Double): Boolean
+public expect operator fun ClosedRange<Int>.contains(value: Double): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public header operator fun ClosedRange<Long>.contains(value: Double): Boolean
+public expect operator fun ClosedRange<Long>.contains(value: Double): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public header operator fun ClosedRange<Byte>.contains(value: Double): Boolean
+public expect operator fun ClosedRange<Byte>.contains(value: Double): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public header operator fun ClosedRange<Short>.contains(value: Double): Boolean
+public expect operator fun ClosedRange<Short>.contains(value: Double): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public header operator fun ClosedRange<Float>.contains(value: Double): Boolean
+public expect operator fun ClosedRange<Float>.contains(value: Double): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public header operator fun ClosedRange<Int>.contains(value: Float): Boolean
+public expect operator fun ClosedRange<Int>.contains(value: Float): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public header operator fun ClosedRange<Long>.contains(value: Float): Boolean
+public expect operator fun ClosedRange<Long>.contains(value: Float): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public header operator fun ClosedRange<Byte>.contains(value: Float): Boolean
+public expect operator fun ClosedRange<Byte>.contains(value: Float): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public header operator fun ClosedRange<Short>.contains(value: Float): Boolean
+public expect operator fun ClosedRange<Short>.contains(value: Float): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public header operator fun ClosedRange<Double>.contains(value: Float): Boolean
+public expect operator fun ClosedRange<Double>.contains(value: Float): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public header operator fun ClosedRange<Long>.contains(value: Int): Boolean
+public expect operator fun ClosedRange<Long>.contains(value: Int): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public header operator fun ClosedRange<Byte>.contains(value: Int): Boolean
+public expect operator fun ClosedRange<Byte>.contains(value: Int): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public header operator fun ClosedRange<Short>.contains(value: Int): Boolean
+public expect operator fun ClosedRange<Short>.contains(value: Int): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public header operator fun ClosedRange<Double>.contains(value: Int): Boolean
+public expect operator fun ClosedRange<Double>.contains(value: Int): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public header operator fun ClosedRange<Float>.contains(value: Int): Boolean
+public expect operator fun ClosedRange<Float>.contains(value: Int): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public header operator fun ClosedRange<Int>.contains(value: Long): Boolean
+public expect operator fun ClosedRange<Int>.contains(value: Long): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public header operator fun ClosedRange<Byte>.contains(value: Long): Boolean
+public expect operator fun ClosedRange<Byte>.contains(value: Long): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-public header operator fun ClosedRange<Short>.contains(value: Long): Boolean
+public expect operator fun ClosedRange<Short>.contains(value: Long): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public header operator fun ClosedRange<Double>.contains(value: Long): Boolean
+public expect operator fun ClosedRange<Double>.contains(value: Long): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public header operator fun ClosedRange<Float>.contains(value: Long): Boolean
+public expect operator fun ClosedRange<Float>.contains(value: Long): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-public header operator fun ClosedRange<Int>.contains(value: Short): Boolean
+public expect operator fun ClosedRange<Int>.contains(value: Short): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-public header operator fun ClosedRange<Long>.contains(value: Short): Boolean
+public expect operator fun ClosedRange<Long>.contains(value: Short): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-public header operator fun ClosedRange<Byte>.contains(value: Short): Boolean
+public expect operator fun ClosedRange<Byte>.contains(value: Short): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-public header operator fun ClosedRange<Double>.contains(value: Short): Boolean
+public expect operator fun ClosedRange<Double>.contains(value: Short): Boolean
 
 /**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("floatRangeContains")
-public header operator fun ClosedRange<Float>.contains(value: Short): Boolean
+public expect operator fun ClosedRange<Float>.contains(value: Short): Boolean
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Int.downTo(to: Byte): IntProgression
+public expect infix fun Int.downTo(to: Byte): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Long.downTo(to: Byte): LongProgression
+public expect infix fun Long.downTo(to: Byte): LongProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Byte.downTo(to: Byte): IntProgression
+public expect infix fun Byte.downTo(to: Byte): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Short.downTo(to: Byte): IntProgression
+public expect infix fun Short.downTo(to: Byte): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Char.downTo(to: Char): CharProgression
+public expect infix fun Char.downTo(to: Char): CharProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Int.downTo(to: Int): IntProgression
+public expect infix fun Int.downTo(to: Int): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Long.downTo(to: Int): LongProgression
+public expect infix fun Long.downTo(to: Int): LongProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Byte.downTo(to: Int): IntProgression
+public expect infix fun Byte.downTo(to: Int): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Short.downTo(to: Int): IntProgression
+public expect infix fun Short.downTo(to: Int): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Int.downTo(to: Long): LongProgression
+public expect infix fun Int.downTo(to: Long): LongProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Long.downTo(to: Long): LongProgression
+public expect infix fun Long.downTo(to: Long): LongProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Byte.downTo(to: Long): LongProgression
+public expect infix fun Byte.downTo(to: Long): LongProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Short.downTo(to: Long): LongProgression
+public expect infix fun Short.downTo(to: Long): LongProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Int.downTo(to: Short): IntProgression
+public expect infix fun Int.downTo(to: Short): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Long.downTo(to: Short): LongProgression
+public expect infix fun Long.downTo(to: Short): LongProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Byte.downTo(to: Short): IntProgression
+public expect infix fun Byte.downTo(to: Short): IntProgression
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value has to be less than this value.
  */
-public header infix fun Short.downTo(to: Short): IntProgression
+public expect infix fun Short.downTo(to: Short): IntProgression
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public header fun IntProgression.reversed(): IntProgression
+public expect fun IntProgression.reversed(): IntProgression
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public header fun LongProgression.reversed(): LongProgression
+public expect fun LongProgression.reversed(): LongProgression
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public header fun CharProgression.reversed(): CharProgression
+public expect fun CharProgression.reversed(): CharProgression
 
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public header infix fun IntProgression.step(step: Int): IntProgression
+public expect infix fun IntProgression.step(step: Int): IntProgression
 
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public header infix fun LongProgression.step(step: Long): LongProgression
+public expect infix fun LongProgression.step(step: Long): LongProgression
 
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-public header infix fun CharProgression.step(step: Int): CharProgression
+public expect infix fun CharProgression.step(step: Int): CharProgression
 
-internal header fun Int.toByteExactOrNull(): Byte?
+internal expect fun Int.toByteExactOrNull(): Byte?
 
-internal header fun Long.toByteExactOrNull(): Byte?
+internal expect fun Long.toByteExactOrNull(): Byte?
 
-internal header fun Short.toByteExactOrNull(): Byte?
+internal expect fun Short.toByteExactOrNull(): Byte?
 
-internal header fun Double.toByteExactOrNull(): Byte?
+internal expect fun Double.toByteExactOrNull(): Byte?
 
-internal header fun Float.toByteExactOrNull(): Byte?
+internal expect fun Float.toByteExactOrNull(): Byte?
 
-internal header fun Long.toIntExactOrNull(): Int?
+internal expect fun Long.toIntExactOrNull(): Int?
 
-internal header fun Double.toIntExactOrNull(): Int?
+internal expect fun Double.toIntExactOrNull(): Int?
 
-internal header fun Float.toIntExactOrNull(): Int?
+internal expect fun Float.toIntExactOrNull(): Int?
 
-internal header fun Double.toLongExactOrNull(): Long?
+internal expect fun Double.toLongExactOrNull(): Long?
 
-internal header fun Float.toLongExactOrNull(): Long?
+internal expect fun Float.toLongExactOrNull(): Long?
 
-internal header fun Int.toShortExactOrNull(): Short?
+internal expect fun Int.toShortExactOrNull(): Short?
 
-internal header fun Long.toShortExactOrNull(): Short?
+internal expect fun Long.toShortExactOrNull(): Short?
 
-internal header fun Double.toShortExactOrNull(): Short?
+internal expect fun Double.toShortExactOrNull(): Short?
 
-internal header fun Float.toShortExactOrNull(): Short?
-
-/**
- * Returns a range from this value up to but excluding the specified [to] value.
- */
-public header infix fun Int.until(to: Byte): IntRange
+internal expect fun Float.toShortExactOrNull(): Short?
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Long.until(to: Byte): LongRange
+public expect infix fun Int.until(to: Byte): IntRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Byte.until(to: Byte): IntRange
+public expect infix fun Long.until(to: Byte): LongRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Short.until(to: Byte): IntRange
+public expect infix fun Byte.until(to: Byte): IntRange
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ */
+public expect infix fun Short.until(to: Byte): IntRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
  * If the [to] value is less than or equal to ['\u0000'] the returned range is empty.
  */
-public header infix fun Char.until(to: Char): CharRange
+public expect infix fun Char.until(to: Char): CharRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
  * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
-public header infix fun Int.until(to: Int): IntRange
+public expect infix fun Int.until(to: Int): IntRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Long.until(to: Int): LongRange
-
-/**
- * Returns a range from this value up to but excluding the specified [to] value.
- * 
- * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
- */
-public header infix fun Byte.until(to: Int): IntRange
+public expect infix fun Long.until(to: Int): LongRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
  * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
-public header infix fun Short.until(to: Int): IntRange
+public expect infix fun Byte.until(to: Int): IntRange
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
+ */
+public expect infix fun Short.until(to: Int): IntRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
-public header infix fun Int.until(to: Long): LongRange
+public expect infix fun Int.until(to: Long): LongRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
-public header infix fun Long.until(to: Long): LongRange
+public expect infix fun Long.until(to: Long): LongRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
-public header infix fun Byte.until(to: Long): LongRange
+public expect infix fun Byte.until(to: Long): LongRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
-public header infix fun Short.until(to: Long): LongRange
+public expect infix fun Short.until(to: Long): LongRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Int.until(to: Short): IntRange
+public expect infix fun Int.until(to: Short): IntRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Long.until(to: Short): LongRange
+public expect infix fun Long.until(to: Short): LongRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Byte.until(to: Short): IntRange
+public expect infix fun Byte.until(to: Short): IntRange
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public header infix fun Short.until(to: Short): IntRange
+public expect infix fun Short.until(to: Short): IntRange
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public header fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T
+public expect fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public header fun Byte.coerceAtLeast(minimumValue: Byte): Byte
+public expect fun Byte.coerceAtLeast(minimumValue: Byte): Byte
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public header fun Short.coerceAtLeast(minimumValue: Short): Short
+public expect fun Short.coerceAtLeast(minimumValue: Short): Short
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public header fun Int.coerceAtLeast(minimumValue: Int): Int
+public expect fun Int.coerceAtLeast(minimumValue: Int): Int
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public header fun Long.coerceAtLeast(minimumValue: Long): Long
+public expect fun Long.coerceAtLeast(minimumValue: Long): Long
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public header fun Float.coerceAtLeast(minimumValue: Float): Float
+public expect fun Float.coerceAtLeast(minimumValue: Float): Float
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
  * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public header fun Double.coerceAtLeast(minimumValue: Double): Double
+public expect fun Double.coerceAtLeast(minimumValue: Double): Double
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public header fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T
+public expect fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public header fun Byte.coerceAtMost(maximumValue: Byte): Byte
+public expect fun Byte.coerceAtMost(maximumValue: Byte): Byte
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public header fun Short.coerceAtMost(maximumValue: Short): Short
+public expect fun Short.coerceAtMost(maximumValue: Short): Short
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public header fun Int.coerceAtMost(maximumValue: Int): Int
+public expect fun Int.coerceAtMost(maximumValue: Int): Int
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public header fun Long.coerceAtMost(maximumValue: Long): Long
+public expect fun Long.coerceAtMost(maximumValue: Long): Long
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public header fun Float.coerceAtMost(maximumValue: Float): Float
+public expect fun Float.coerceAtMost(maximumValue: Float): Float
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
  * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public header fun Double.coerceAtMost(maximumValue: Double): Double
+public expect fun Double.coerceAtMost(maximumValue: Double): Double
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public header fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T
+public expect fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public header fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte
+public expect fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public header fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short
+public expect fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public header fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int
+public expect fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public header fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long
+public expect fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public header fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float
+public expect fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public header fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double
+public expect fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double
 
 /**
  * Ensures that this value lies in the specified [range].
@@ -621,26 +621,26 @@ public header fun Double.coerceIn(minimumValue: Double, maximumValue: Double): D
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
 @SinceKotlin("1.1")
-public header fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T
+public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T
 
 /**
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
-public header fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T
+public expect fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T
 
 /**
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
-public header fun Int.coerceIn(range: ClosedRange<Int>): Int
+public expect fun Int.coerceIn(range: ClosedRange<Int>): Int
 
 /**
  * Ensures that this value lies in the specified [range].
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
-public header fun Long.coerceIn(range: ClosedRange<Long>): Long
+public expect fun Long.coerceIn(range: ClosedRange<Long>): Long
 

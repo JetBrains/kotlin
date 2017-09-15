@@ -14,441 +14,441 @@ import kotlin.comparisons.*
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public header inline operator fun <T> List<T>.component1(): T
+public expect inline operator fun <T> List<T>.component1(): T
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public header inline operator fun <T> List<T>.component2(): T
+public expect inline operator fun <T> List<T>.component2(): T
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public header inline operator fun <T> List<T>.component3(): T
+public expect inline operator fun <T> List<T>.component3(): T
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public header inline operator fun <T> List<T>.component4(): T
+public expect inline operator fun <T> List<T>.component4(): T
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public header inline operator fun <T> List<T>.component5(): T
+public expect inline operator fun <T> List<T>.component5(): T
 
 /**
  * Returns `true` if [element] is found in the collection.
  */
-public header operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(element: T): Boolean
+public expect operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(element: T): Boolean
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
-public header fun <T> Iterable<T>.elementAt(index: Int): T
+public expect fun <T> Iterable<T>.elementAt(index: Int): T
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> List<T>.elementAt(index: Int): T
+public expect inline fun <T> List<T>.elementAt(index: Int): T
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
  */
-public header fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T
+public expect fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T
+public expect inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
  */
-public header fun <T> Iterable<T>.elementAtOrNull(index: Int): T?
+public expect fun <T> Iterable<T>.elementAtOrNull(index: Int): T?
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> List<T>.elementAtOrNull(index: Int): T?
+public expect inline fun <T> List<T>.elementAtOrNull(index: Int): T?
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T?
+public expect inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T?
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T?
+public expect inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T?
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T?
+public expect inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T?
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the collection is empty.
  */
-public header fun <T> Iterable<T>.first(): T
+public expect fun <T> Iterable<T>.first(): T
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the list is empty.
  */
-public header fun <T> List<T>.first(): T
+public expect fun <T> List<T>.first(): T
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public header inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T
+public expect inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T
 
 /**
  * Returns the first element, or `null` if the collection is empty.
  */
-public header fun <T> Iterable<T>.firstOrNull(): T?
+public expect fun <T> Iterable<T>.firstOrNull(): T?
 
 /**
  * Returns the first element, or `null` if the list is empty.
  */
-public header fun <T> List<T>.firstOrNull(): T?
+public expect fun <T> List<T>.firstOrNull(): T?
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public header inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T?
+public expect inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T?
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T
+public expect inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
-public header fun <T> List<T>.getOrNull(index: Int): T?
+public expect fun <T> List<T>.getOrNull(index: Int): T?
 
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public header fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): Int
+public expect fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): Int
 
 /**
  * Returns first index of [element], or -1 if the list does not contain element.
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
-public header fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int
+public expect fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
-public header inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int
+public expect inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the list does not contain such element.
  */
-public header inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int
+public expect inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
-public header inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int
+public expect inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the list does not contain such element.
  */
-public header inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int
+public expect inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the collection is empty.
  */
-public header fun <T> Iterable<T>.last(): T
+public expect fun <T> Iterable<T>.last(): T
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the list is empty.
  */
-public header fun <T> List<T>.last(): T
+public expect fun <T> List<T>.last(): T
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public header inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T
+public expect inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public header inline fun <T> List<T>.last(predicate: (T) -> Boolean): T
+public expect inline fun <T> List<T>.last(predicate: (T) -> Boolean): T
 
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public header fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int
+public expect fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int
 
 /**
  * Returns last index of [element], or -1 if the list does not contain element.
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
-public header fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int
+public expect fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int
 
 /**
  * Returns the last element, or `null` if the collection is empty.
  */
-public header fun <T> Iterable<T>.lastOrNull(): T?
+public expect fun <T> Iterable<T>.lastOrNull(): T?
 
 /**
  * Returns the last element, or `null` if the list is empty.
  */
-public header fun <T> List<T>.lastOrNull(): T?
+public expect fun <T> List<T>.lastOrNull(): T?
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public header inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T?
+public expect inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T?
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public header inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T?
+public expect inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T?
 
 /**
  * Returns the single element, or throws an exception if the collection is empty or has more than one element.
  */
-public header fun <T> Iterable<T>.single(): T
+public expect fun <T> Iterable<T>.single(): T
 
 /**
  * Returns the single element, or throws an exception if the list is empty or has more than one element.
  */
-public header fun <T> List<T>.single(): T
+public expect fun <T> List<T>.single(): T
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public header inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T
+public expect inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T
 
 /**
  * Returns single element, or `null` if the collection is empty or has more than one element.
  */
-public header fun <T> Iterable<T>.singleOrNull(): T?
+public expect fun <T> Iterable<T>.singleOrNull(): T?
 
 /**
  * Returns single element, or `null` if the list is empty or has more than one element.
  */
-public header fun <T> List<T>.singleOrNull(): T?
+public expect fun <T> List<T>.singleOrNull(): T?
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public header inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T?
+public expect inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T?
 
 /**
  * Returns a list containing all elements except first [n] elements.
  */
-public header fun <T> Iterable<T>.drop(n: Int): List<T>
+public expect fun <T> Iterable<T>.drop(n: Int): List<T>
 
 /**
  * Returns a list containing all elements except last [n] elements.
  */
-public header fun <T> List<T>.dropLast(n: Int): List<T>
+public expect fun <T> List<T>.dropLast(n: Int): List<T>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  */
-public header inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T>
+public expect inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  */
-public header inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T>
+public expect inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public header inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T>
+public expect inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T>
+public expect inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T>
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C
+public expect inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C
 
 /**
  * Returns a list containing all elements that are instances of specified type parameter R.
  */
-public header inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R>
+public expect inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R>
 
 /**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
-public header inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C
+public expect inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public header inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T>
+public expect inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements that are not `null`.
  */
-public header fun <T : Any> Iterable<T?>.filterNotNull(): List<T>
+public expect fun <T : Any> Iterable<T?>.filterNotNull(): List<T>
 
 /**
  * Appends all elements that are not `null` to the given [destination].
  */
-public header fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(destination: C): C
+public expect fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(destination: C): C
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public header inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C
+public expect inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public header inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean): C
+public expect inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean): C
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public header fun <T> List<T>.slice(indices: IntRange): List<T>
+public expect fun <T> List<T>.slice(indices: IntRange): List<T>
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public header fun <T> List<T>.slice(indices: Iterable<Int>): List<T>
+public expect fun <T> List<T>.slice(indices: Iterable<Int>): List<T>
 
 /**
  * Returns a list containing first [n] elements.
  */
-public header fun <T> Iterable<T>.take(n: Int): List<T>
+public expect fun <T> Iterable<T>.take(n: Int): List<T>
 
 /**
  * Returns a list containing last [n] elements.
  */
-public header fun <T> List<T>.takeLast(n: Int): List<T>
+public expect fun <T> List<T>.takeLast(n: Int): List<T>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  */
-public header inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T>
+public expect inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  */
-public header inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T>
+public expect inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Reverses elements in the list in-place.
  */
-public header fun <T> MutableList<T>.reverse(): Unit
+public expect fun <T> MutableList<T>.reverse(): Unit
 
 /**
  * Returns a list with elements in reversed order.
  */
-public header fun <T> Iterable<T>.reversed(): List<T>
+public expect fun <T> Iterable<T>.reversed(): List<T>
 
 /**
  * Sorts elements in the list in-place according to natural sort order of the value returned by specified [selector] function.
  */
-public header inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit
+public expect inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit
 
 /**
  * Sorts elements in the list in-place descending according to natural sort order of the value returned by specified [selector] function.
  */
-public header inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit
+public expect inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit
 
 /**
  * Sorts elements in the list in-place descending according to their natural sort order.
  */
-public header fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit
+public expect fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public header fun <T : Comparable<T>> Iterable<T>.sorted(): List<T>
+public expect fun <T : Comparable<T>> Iterable<T>.sorted(): List<T>
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public header inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(crossinline selector: (T) -> R?): List<T>
+public expect inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(crossinline selector: (T) -> R?): List<T>
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public header inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinline selector: (T) -> R?): List<T>
+public expect inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinline selector: (T) -> R?): List<T>
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public header fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T>
+public expect fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T>
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public header fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T>
+public expect fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T>
 
 /**
  * Returns an array of Boolean containing all of the elements of this collection.
  */
-public header fun Collection<Boolean>.toBooleanArray(): BooleanArray
+public expect fun Collection<Boolean>.toBooleanArray(): BooleanArray
 
 /**
  * Returns an array of Byte containing all of the elements of this collection.
  */
-public header fun Collection<Byte>.toByteArray(): ByteArray
+public expect fun Collection<Byte>.toByteArray(): ByteArray
 
 /**
  * Returns an array of Char containing all of the elements of this collection.
  */
-public header fun Collection<Char>.toCharArray(): CharArray
+public expect fun Collection<Char>.toCharArray(): CharArray
 
 /**
  * Returns an array of Double containing all of the elements of this collection.
  */
-public header fun Collection<Double>.toDoubleArray(): DoubleArray
+public expect fun Collection<Double>.toDoubleArray(): DoubleArray
 
 /**
  * Returns an array of Float containing all of the elements of this collection.
  */
-public header fun Collection<Float>.toFloatArray(): FloatArray
+public expect fun Collection<Float>.toFloatArray(): FloatArray
 
 /**
  * Returns an array of Int containing all of the elements of this collection.
  */
-public header fun Collection<Int>.toIntArray(): IntArray
+public expect fun Collection<Int>.toIntArray(): IntArray
 
 /**
  * Returns an array of Long containing all of the elements of this collection.
  */
-public header fun Collection<Long>.toLongArray(): LongArray
+public expect fun Collection<Long>.toLongArray(): LongArray
 
 /**
  * Returns an array of Short containing all of the elements of this collection.
  */
-public header fun Collection<Short>.toShortArray(): ShortArray
+public expect fun Collection<Short>.toShortArray(): ShortArray
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -458,7 +458,7 @@ public header fun Collection<Short>.toShortArray(): ShortArray
  * 
  * The returned map preserves the entry iteration order of the original collection.
  */
-public header inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V>
+public expect inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V>
 
 /**
  * Returns a [Map] containing the elements from the given collection indexed by the key
@@ -468,7 +468,7 @@ public header inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<
  * 
  * The returned map preserves the entry iteration order of the original collection.
  */
-public header inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T>
+public expect inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T>
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given collection.
@@ -477,7 +477,7 @@ public header inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): 
  * 
  * The returned map preserves the entry iteration order of the original collection.
  */
-public header inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V>
+public expect inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V>
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -486,7 +486,7 @@ public header inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public header inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K): M
+public expect inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K): M
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -495,7 +495,7 @@ public header inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associat
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public header inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
+public expect inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -503,49 +503,49 @@ public header inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.assoc
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public header inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M
+public expect inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public header fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination: C): C
+public expect fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination: C): C
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public header fun <T> Iterable<T>.toHashSet(): HashSet<T>
+public expect fun <T> Iterable<T>.toHashSet(): HashSet<T>
 
 /**
  * Returns a [List] containing all elements.
  */
-public header fun <T> Iterable<T>.toList(): List<T>
+public expect fun <T> Iterable<T>.toList(): List<T>
 
 /**
  * Returns a [MutableList] filled with all elements of this collection.
  */
-public header fun <T> Iterable<T>.toMutableList(): MutableList<T>
+public expect fun <T> Iterable<T>.toMutableList(): MutableList<T>
 
 /**
  * Returns a [MutableList] filled with all elements of this collection.
  */
-public header fun <T> Collection<T>.toMutableList(): MutableList<T>
+public expect fun <T> Collection<T>.toMutableList(): MutableList<T>
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original collection.
  */
-public header fun <T> Iterable<T>.toSet(): Set<T>
+public expect fun <T> Iterable<T>.toSet(): Set<T>
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
  */
-public header inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Iterable<R>): List<R>
+public expect inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Iterable<R>): List<R>
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
  */
-public header inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C
+public expect inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C
 
 /**
  * Groups elements of the original collection by the key returned by the given [keySelector] function
@@ -555,7 +555,7 @@ public header inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMap
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public header inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>
+public expect inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original collection
@@ -566,7 +566,7 @@ public header inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public header inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>>
+public expect inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>>
 
 /**
  * Groups elements of the original collection by the key returned by the given [keySelector] function
@@ -576,7 +576,7 @@ public header inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, va
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public header inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K): M
+public expect inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K): M
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original collection
@@ -587,7 +587,7 @@ public header inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public header inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
+public expect inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
 
 /**
  * Creates a [Grouping] source from a collection to be used later with one of group-and-fold operations
@@ -596,13 +596,13 @@ public header inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterabl
  * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
-public header inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K>
+public expect inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
  */
-public header inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R>
+public expect inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -610,7 +610,7 @@ public header inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R>
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R>
+public expect inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R>
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
@@ -618,7 +618,7 @@ public header inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R>
+public expect inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R>
 
 /**
  * Applies the given [transform] function to each element and its index in the original collection
@@ -626,7 +626,7 @@ public header inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
+public expect inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original collection
@@ -634,37 +634,37 @@ public header inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.m
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C
+public expect inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element in the original collection.
  */
-public header inline fun <T, R : Any> Iterable<T>.mapNotNull(transform: (T) -> R?): List<R>
+public expect inline fun <T, R : Any> Iterable<T>.mapNotNull(transform: (T) -> R?): List<R>
 
 /**
  * Applies the given [transform] function to each element in the original collection
  * and appends only the non-null results to the given [destination].
  */
-public header inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapNotNullTo(destination: C, transform: (T) -> R?): C
+public expect inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapNotNullTo(destination: C, transform: (T) -> R?): C
 
 /**
  * Applies the given [transform] function to each element of the original collection
  * and appends the results to the given [destination].
  */
-public header inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C
+public expect inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection.
  */
-public header fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>>
+public expect fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>>
 
 /**
  * Returns a list containing only distinct elements from the given collection.
  * 
  * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public header fun <T> Iterable<T>.distinct(): List<T>
+public expect fun <T> Iterable<T>.distinct(): List<T>
 
 /**
  * Returns a list containing only elements from the given collection
@@ -672,28 +672,28 @@ public header fun <T> Iterable<T>.distinct(): List<T>
  * 
  * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public header inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T>
+public expect inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T>
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
  */
-public header infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T>
+public expect infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T>
 
 /**
  * Returns a set containing all elements that are contained by this collection and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
  */
-public header infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T>
+public expect infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T>
 
 /**
  * Returns a mutable set containing all distinct elements from the given collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
  */
-public header fun <T> Iterable<T>.toMutableSet(): MutableSet<T>
+public expect fun <T> Iterable<T>.toMutableSet(): MutableSet<T>
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -702,43 +702,43 @@ public header fun <T> Iterable<T>.toMutableSet(): MutableSet<T>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public header infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T>
+public expect infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T>
 
 /**
  * Returns `true` if all elements match the given [predicate].
  */
-public header inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean
+public expect inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns `true` if collection has at least one element.
  */
-public header fun <T> Iterable<T>.any(): Boolean
+public expect fun <T> Iterable<T>.any(): Boolean
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  */
-public header inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean
+public expect inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean
 
 /**
  * Returns the number of elements in this collection.
  */
-public header fun <T> Iterable<T>.count(): Int
+public expect fun <T> Iterable<T>.count(): Int
 
 /**
  * Returns the number of elements in this collection.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> Collection<T>.count(): Int
+public expect inline fun <T> Collection<T>.count(): Int
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public header inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int
+public expect inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R
+public expect inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -746,12 +746,12 @@ public header inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R,
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R
+public expect inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) -> R): R
+public expect inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -759,20 +759,20 @@ public header inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R
+public expect inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R
 
 /**
  * Performs the given [action] on each element.
  */
 @kotlin.internal.HidesMembers
-public header inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit
+public expect inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit
+public expect inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit
 
 /**
  * Returns the largest element or `null` if there are no elements.
@@ -780,7 +780,7 @@ public header inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) 
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public header fun Iterable<Double>.max(): Double?
+public expect fun Iterable<Double>.max(): Double?
 
 /**
  * Returns the largest element or `null` if there are no elements.
@@ -788,22 +788,22 @@ public header fun Iterable<Double>.max(): Double?
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public header fun Iterable<Float>.max(): Float?
+public expect fun Iterable<Float>.max(): Float?
 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
-public header fun <T : Comparable<T>> Iterable<T>.max(): T?
+public expect fun <T : Comparable<T>> Iterable<T>.max(): T?
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public header inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T?
+public expect inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T?
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public header fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T?
+public expect fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
@@ -811,7 +811,7 @@ public header fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T?
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public header fun Iterable<Double>.min(): Double?
+public expect fun Iterable<Double>.min(): Double?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
@@ -819,43 +819,43 @@ public header fun Iterable<Double>.min(): Double?
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public header fun Iterable<Float>.min(): Float?
+public expect fun Iterable<Float>.min(): Float?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  */
-public header fun <T : Comparable<T>> Iterable<T>.min(): T?
+public expect fun <T : Comparable<T>> Iterable<T>.min(): T?
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public header inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T?
+public expect inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T?
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public header fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T?
+public expect fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T?
 
 /**
  * Returns `true` if the collection has no elements.
  */
-public header fun <T> Iterable<T>.none(): Boolean
+public expect fun <T> Iterable<T>.none(): Boolean
 
 /**
  * Returns `true` if no elements match the given [predicate].
  */
-public header inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean
+public expect inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean
 
 /**
  * Performs the given [action] on each element and returns the collection itself afterwards.
  */
 @SinceKotlin("1.1")
-public header inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C
+public expect inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S
+public expect inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -863,12 +863,12 @@ public header inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S
+public expect inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) -> S): S
+public expect inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) -> S): S
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -876,132 +876,132 @@ public header inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) ->
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S
+public expect inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-public header inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int
+public expect inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-public header inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double
+public expect inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double
 
 /**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
-public header fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T>
+public expect fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T>
 
 /**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
-public header fun <T : Any> List<T?>.requireNoNulls(): List<T>
+public expect fun <T : Any> List<T?>.requireNoNulls(): List<T>
 
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
-public header operator fun <T> Iterable<T>.minus(element: T): List<T>
+public expect operator fun <T> Iterable<T>.minus(element: T): List<T>
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
  */
-public header operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T>
+public expect operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
  */
-public header operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T>
+public expect operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
  */
-public header operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T>
+public expect operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> Iterable<T>.minusElement(element: T): List<T>
+public expect inline fun <T> Iterable<T>.minusElement(element: T): List<T>
 
 /**
  * Splits the original collection into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public header inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>>
+public expect inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>>
 
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public header operator fun <T> Iterable<T>.plus(element: T): List<T>
+public expect operator fun <T> Iterable<T>.plus(element: T): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public header operator fun <T> Collection<T>.plus(element: T): List<T>
+public expect operator fun <T> Collection<T>.plus(element: T): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public header operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>
+public expect operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public header operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T>
+public expect operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
  */
-public header operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>
+public expect operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
  */
-public header operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>
+public expect operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
  */
-public header operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>
+public expect operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
  */
-public header operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>
+public expect operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> Iterable<T>.plusElement(element: T): List<T>
+public expect inline fun <T> Iterable<T>.plusElement(element: T): List<T>
 
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> Collection<T>.plusElement(element: T): List<T>
+public expect inline fun <T> Collection<T>.plusElement(element: T): List<T>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public header infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>>
+public expect infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V>
+public expect inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public header infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>>
+public expect infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V>
+public expect inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V>
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -1037,84 +1037,84 @@ public fun <T> Iterable<T>.joinToString(separator: CharSequence = ", ", prefix: 
  * Returns this collection as an [Iterable].
  */
 @kotlin.internal.InlineOnly
-public header inline fun <T> Iterable<T>.asIterable(): Iterable<T>
+public expect inline fun <T> Iterable<T>.asIterable(): Iterable<T>
 
 /**
  * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromCollection
  */
-public header fun <T> Iterable<T>.asSequence(): Sequence<T>
+public expect fun <T> Iterable<T>.asSequence(): Sequence<T>
 
 /**
  * Returns an average value of elements in the collection.
  */
 @kotlin.jvm.JvmName("averageOfByte")
-public header fun Iterable<Byte>.average(): Double
+public expect fun Iterable<Byte>.average(): Double
 
 /**
  * Returns an average value of elements in the collection.
  */
 @kotlin.jvm.JvmName("averageOfShort")
-public header fun Iterable<Short>.average(): Double
+public expect fun Iterable<Short>.average(): Double
 
 /**
  * Returns an average value of elements in the collection.
  */
 @kotlin.jvm.JvmName("averageOfInt")
-public header fun Iterable<Int>.average(): Double
+public expect fun Iterable<Int>.average(): Double
 
 /**
  * Returns an average value of elements in the collection.
  */
 @kotlin.jvm.JvmName("averageOfLong")
-public header fun Iterable<Long>.average(): Double
+public expect fun Iterable<Long>.average(): Double
 
 /**
  * Returns an average value of elements in the collection.
  */
 @kotlin.jvm.JvmName("averageOfFloat")
-public header fun Iterable<Float>.average(): Double
+public expect fun Iterable<Float>.average(): Double
 
 /**
  * Returns an average value of elements in the collection.
  */
 @kotlin.jvm.JvmName("averageOfDouble")
-public header fun Iterable<Double>.average(): Double
+public expect fun Iterable<Double>.average(): Double
 
 /**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfByte")
-public header fun Iterable<Byte>.sum(): Int
+public expect fun Iterable<Byte>.sum(): Int
 
 /**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfShort")
-public header fun Iterable<Short>.sum(): Int
+public expect fun Iterable<Short>.sum(): Int
 
 /**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfInt")
-public header fun Iterable<Int>.sum(): Int
+public expect fun Iterable<Int>.sum(): Int
 
 /**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfLong")
-public header fun Iterable<Long>.sum(): Long
+public expect fun Iterable<Long>.sum(): Long
 
 /**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfFloat")
-public header fun Iterable<Float>.sum(): Float
+public expect fun Iterable<Float>.sum(): Float
 
 /**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfDouble")
-public header fun Iterable<Double>.sum(): Double
+public expect fun Iterable<Double>.sum(): Double
 
