@@ -156,10 +156,26 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                         KotlinUClass.create(lightClass, givenParent)
                     }
                 }
-                is KtFunction -> el<UMethod> {
-                    val lightMethod = LightClassUtil.getLightClassMethod(original) ?: return null
-                    convertDeclaration(lightMethod, givenParent, requiredType)
-                }
+                is KtFunction ->
+                    if (original.isLocal) {
+                        el<ULambdaExpression> {
+                            if (original.name.isNullOrEmpty()) {
+                                createLocalFunctionLambdaExpression(original, givenParent)
+                            }
+                            else {
+                                val uDeclarationsExpression = createLocalFunctionDeclaration(original, givenParent)
+                                val localFunctionVar = uDeclarationsExpression.declarations.single() as KotlinLocalFunctionUVariable
+                                localFunctionVar.uastInitializer
+                            }
+                        }
+                    }
+                    else {
+                        el<UMethod> {
+                            val lightMethod = LightClassUtil.getLightClassMethod(original) ?: return null
+                            convertDeclaration(lightMethod, givenParent, requiredType)
+                        }
+                    }
+
                 is KtPropertyAccessor -> el<UMethod> {
                     val lightMethod = LightClassUtil.getLightClassAccessorMethod(original) ?: return null
                     convertDeclaration(lightMethod, givenParent, requiredType)

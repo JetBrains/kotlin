@@ -60,7 +60,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                 if (expectedParents != null) {
                     assertNotNull("Expected to be able to convert PSI element $element", uElement)
                     val parents = generateSequence(uElement!!.uastParent) { it.uastParent }.joinToString { it.asLogString() }
-                    assertEquals("Inconsistent parents for $uElement", expectedParents, parents)
+                    assertEquals("Inconsistent parents for $uElement (converted from $element)", expectedParents, parents)
                 }
                 super.visitElement(element)
             }

@@ -9,7 +9,7 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 
-private class KotlinLocalFunctionUVariable(
+internal class KotlinLocalFunctionUVariable(
         val function: KtFunction,
         override val psi: PsiVariable,
         givenParent: UElement?
@@ -50,7 +50,7 @@ private class KotlinLocalFunctionULambdaExpression(
 
 
 fun createLocalFunctionDeclaration(function: KtFunction, parent: UElement?): UDeclarationsExpression {
-    return KotlinUDeclarationsExpression(parent).apply {
+    return KotlinUDeclarationsExpression(null, parent, function).apply {
         val functionVariable = UastKotlinPsiVariable.create(function.name.orAnonymous(), function, this)
         declarations = listOf(KotlinLocalFunctionUVariable(function, functionVariable, this))
     }
