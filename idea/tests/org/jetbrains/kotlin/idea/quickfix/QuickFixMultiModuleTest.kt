@@ -60,7 +60,17 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testDeprecatedHeaderImpl() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testDeprecatedImpl() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testDeprecatedImplHeader() {
         doMultiPlatformTest()
     }
 
