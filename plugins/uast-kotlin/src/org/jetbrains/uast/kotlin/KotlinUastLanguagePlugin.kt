@@ -174,6 +174,12 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                         }
                     }
                 }
+                is KtParameter -> el<UParameter> {
+                    val ownerFunction = original.ownerFunction as? KtFunction ?: return null
+                    val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return null
+                    val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return null
+                    KotlinUParameter(lightParameter, givenParent)
+                }
 
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
@@ -221,6 +227,7 @@ internal object KotlinConverter {
         is KtDeclarationModifierList -> unwrapElements(element.parent)
         is KtContainerNode -> unwrapElements(element.parent)
         is KtSimpleNameStringTemplateEntry -> unwrapElements(element.parent)
+        is KtLightParameterList -> unwrapElements(element.parent)
         else -> element
     }
 
