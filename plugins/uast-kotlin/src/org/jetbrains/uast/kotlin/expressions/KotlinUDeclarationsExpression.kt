@@ -19,7 +19,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 import org.jetbrains.uast.kotlin.doConvertParent
 
-class KotlinUDeclarationsExpression(
+open class KotlinUDeclarationsExpression(
         override val psi: PsiElement?,
         givenParent: UElement?,
         val psiAnchor: PsiElement? = null
@@ -32,4 +32,12 @@ class KotlinUDeclarationsExpression(
 
     override lateinit var declarations: List<UDeclaration>
         internal set
+}
+
+class KotlinUDestructuringDeclarationExpression(
+    givenParent: UElement?,
+    psiAnchor: PsiElement
+) : KotlinUDeclarationsExpression(null, givenParent, psiAnchor) {
+
+    val tempVarAssignment get() = declarations.first()
 }

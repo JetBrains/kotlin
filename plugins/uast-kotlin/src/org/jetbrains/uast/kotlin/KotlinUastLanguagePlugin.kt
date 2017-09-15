@@ -356,7 +356,7 @@ internal object KotlinConverter {
                 }
             }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
-                val declarationsExpression = KotlinUDeclarationsExpression(givenParent)
+                val declarationsExpression = KotlinUDestructuringDeclarationExpression(givenParent, expression)
                 declarationsExpression.apply {
                     val tempAssignment = KotlinULocalVariable(UastKotlinPsiVariable.create(expression, declarationsExpression), declarationsExpression)
                     val destructuringAssignments = expression.entries.mapIndexed { i, entry ->
