@@ -1,5 +1,5 @@
 package foo
 
-impl class PlatformTest {
-    impl val value: PlatformClass = PlatformClass()
+actual class PlatformTest {
+    actual val value: PlatformClass = PlatformClass()
 }
