@@ -91,6 +91,11 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         return result.body
     }
 
+    if (result is KotlinUDestructuringDeclarationExpression &&
+        element.psi == (parent as KtDestructuringDeclaration).initializer) {
+        return result.tempVarAssignment
+    }
+
     return result
 }
 
