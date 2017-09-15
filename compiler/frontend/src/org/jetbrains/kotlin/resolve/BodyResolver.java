@@ -167,7 +167,7 @@ public class BodyResolver {
             @NotNull ClassConstructorDescriptor descriptor
     ) {
         if (descriptor.isExpect() || isEffectivelyExternal(descriptor)) {
-            // For header and external classes, we do not resolve constructor delegation calls because they are prohibited
+            // For expected and external classes, we do not resolve constructor delegation calls because they are prohibited
             return DataFlowInfo.Companion.getEMPTY();
         }
 

@@ -194,7 +194,7 @@ public class RecursiveDescriptorComparator {
             }
         }
 
-        // 'header' declarations do not belong to the platform-specific module, even though they participate in the analysis
+        // 'expected' declarations do not belong to the platform-specific module, even though they participate in the analysis
         if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isExpect() &&
             module.getCapability(MultiTargetPlatform.CAPABILITY) != MultiTargetPlatform.Common.INSTANCE) return false;
 
