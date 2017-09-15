@@ -319,6 +319,9 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 text = text.replace("\\\\([0-3]?[0-7]{1,2})".toRegex()) {
                     String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))
                 }
+                if (expression.parent is PsiBinaryExpression) {
+                    text += ".${Char::toInt.name}()"
+                }
             }
 
             if (typeStr == "java.lang.String") {

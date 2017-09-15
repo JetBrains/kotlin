@@ -43,6 +43,69 @@ class Test {
         i(c >>> i);
     }
 
+    public void operationsWithCharLiteral() {
+        int i = 1;
+
+        b(i > '0');
+        b(i >= '0');
+        b(i < '0');
+        b(i <= '0');
+
+        b('0' > i);
+        b('0' >= i);
+        b('0' < i);
+        b('0' <= i);
+
+        b('0' == i);
+        b('0' != i);
+
+        b(i == '0');
+        b(i != '0');
+
+        i(i + '0');
+        i(i - '0');
+        i(i / '0');
+        i(i * '0');
+        i(i % '0');
+        i(i | '0');
+        i(i & '0');
+        i(i << '0');
+        i(i >> '0');
+        i(i >>> '0');
+
+        i('0' + i);
+        i('0' - i);
+        i('0' / i);
+        i('0' * i);
+        i('0' % i);
+        i('0' | i);
+        i('0' & i);
+        i('0' << i);
+        i('0' >> i);
+        i('0' >>> i);
+    }
+
+    public void operationsWithCharLiterals() {
+        b('A' > '0');
+        b('A' >= '0');
+        b('A' < '0');
+        b('A' <= '0');
+
+        b('0' == 'A');
+        b('0' != 'A');
+
+        i('A' + '0');
+        i('A' - '0');
+        i('A' / '0');
+        i('A' * '0');
+        i('A' % '0');
+        i('A' | '0');
+        i('A' & '0');
+        i('A' << '0');
+        i('A' >> '0');
+        i('A' >>> '0');
+    }
+
     public void b(boolean b) {}
     public void i(int i) {}
 }

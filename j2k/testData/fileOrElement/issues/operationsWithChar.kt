@@ -42,6 +42,69 @@ internal class Test {
         i(c.toInt() ushr i)
     }
 
+    fun operationsWithCharLiteral() {
+        val i = 1
+
+        b(i > '0'.toInt())
+        b(i >= '0'.toInt())
+        b(i < '0'.toInt())
+        b(i <= '0'.toInt())
+
+        b('0'.toInt() > i)
+        b('0'.toInt() >= i)
+        b('0'.toInt() < i)
+        b('0'.toInt() <= i)
+
+        b('0'.toInt() == i)
+        b('0'.toInt() != i)
+
+        b(i == '0'.toInt())
+        b(i != '0'.toInt())
+
+        i(i + '0'.toInt())
+        i(i - '0'.toInt())
+        i(i / '0'.toInt())
+        i(i * '0'.toInt())
+        i(i % '0'.toInt())
+        i(i or '0'.toInt())
+        i(i and '0'.toInt())
+        i(i shl '0'.toInt())
+        i(i shr '0'.toInt())
+        i(i ushr '0'.toInt())
+
+        i('0'.toInt() + i)
+        i('0'.toInt() - i)
+        i('0'.toInt() / i)
+        i('0'.toInt() * i)
+        i('0'.toInt() % i)
+        i('0'.toInt() or i)
+        i('0'.toInt() and i)
+        i('0'.toInt() shl i)
+        i('0'.toInt() shr i)
+        i('0'.toInt() ushr i)
+    }
+
+    fun operationsWithCharLiterals() {
+        b('A'.toInt() > '0'.toInt())
+        b('A'.toInt() >= '0'.toInt())
+        b('A'.toInt() < '0'.toInt())
+        b('A'.toInt() <= '0'.toInt())
+
+        b('0'.toInt() == 'A'.toInt())
+        b('0'.toInt() != 'A'.toInt())
+
+        i('A'.toInt() + '0'.toInt())
+        i('A'.toInt() - '0'.toInt())
+        i('A'.toInt() / '0'.toInt())
+        i('A'.toInt() * '0'.toInt())
+        i('A'.toInt() % '0'.toInt())
+        i('A'.toInt() or '0'.toInt())
+        i('A'.toInt() and '0'.toInt())
+        i('A'.toInt() shl '0'.toInt())
+        i('A'.toInt() shr '0'.toInt())
+        i('A'.toInt() ushr '0'.toInt())
+    }
+
     fun b(b: Boolean) {}
     fun i(i: Int) {}
 }
