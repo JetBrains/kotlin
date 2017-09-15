@@ -67,6 +67,15 @@ internal annotation class InlineOnly
 internal annotation class DynamicExtension
 
 /**
+ * The value of this parameter should be a property reference expression (`this::foo`), referencing a `lateinit` property,
+ * the backing field of which is accessible at the point where the corresponding argument is passed.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("1.2")
+internal annotation class AccessibleLateinitPropertyLiteral
+
+/**
  * Specifies that this declaration is only completely supported since the specified version.
  *
  * The Kotlin compiler of an earlier version is going to report a diagnostic on usages of this declaration.
