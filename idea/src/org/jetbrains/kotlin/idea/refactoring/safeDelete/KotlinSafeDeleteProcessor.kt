@@ -64,10 +64,10 @@ import java.util.*
 class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     companion object {
         @set:TestOnly
-        internal var Project.ALLOW_LIFTING_IMPL_PARAMETER_TO_HEADER
-                by NotNullableUserDataProperty(Key.create("ALLOW_LIFTING_IMPL_PARAMETER_TO_HEADER"), true)
+        internal var Project.ALLOW_LIFTING_ACTUAL_PARAMETER_TO_EXPECTED
+                by NotNullableUserDataProperty(Key.create("ALLOW_LIFTING_ACTUAL_PARAMETER_TO_EXPECTED"), true)
 
-        private var KtDeclaration.dropImplModifier: Boolean? by UserDataProperty(Key.create("DROP_IMPL_MODIFIER"))
+        private var KtDeclaration.dropActualModifier: Boolean? by UserDataProperty(Key.create("DROP_ACTUAL_MODIFIER"))
     }
 
     override fun handlesElement(element: PsiElement): Boolean = element.canDeleteElement()
@@ -391,10 +391,10 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
             is KtParameter -> {
                 element.ownerFunction?.let {
-                    if (it.dropImplModifier == true) {
+                    if (it.dropActualModifier == true) {
                         it.removeModifier(KtTokens.IMPL_KEYWORD)
                         it.removeModifier(KtTokens.ACTUAL_KEYWORD)
-                        it.dropImplModifier = null
+                        it.dropActualModifier = null
                     }
                 }
                 (element.parent as KtParameterList).removeParameter(element)
@@ -403,7 +403,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     }
 
     private fun shouldAllowPropagationToExpected(parameter: KtParameter): Boolean {
-        if (ApplicationManager.getApplication().isUnitTestMode) return parameter.project.ALLOW_LIFTING_IMPL_PARAMETER_TO_HEADER
+        if (ApplicationManager.getApplication().isUnitTestMode) return parameter.project.ALLOW_LIFTING_ACTUAL_PARAMETER_TO_EXPECTED
 
         return Messages.showYesNoDialog(
                 "Do you want to delete this parameter in expected declaration and all related actual ones?",
@@ -422,7 +422,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     if (shouldAllowPropagationToExpected(element)) {
                         return listOf(headerParameter)
                     } else {
-                        element.ownerFunction?.dropImplModifier = true
+                        element.ownerFunction?.dropActualModifier = true
                         return listOf(element)
                     }
                 }
