@@ -41,6 +41,8 @@ var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = n
 
 var JsInvocation.isCallableReference by MetadataProperty(default = false)
 
+var JsInvocation.callableReferenceReceiver: JsExpression? by MetadataProperty(default = null)
+
 var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)
 
 var JsInvocation.psiElement: PsiElement? by MetadataProperty(default = null)
