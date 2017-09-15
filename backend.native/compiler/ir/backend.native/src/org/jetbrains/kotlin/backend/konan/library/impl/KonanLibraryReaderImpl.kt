@@ -18,13 +18,16 @@ package org.jetbrains.kotlin.backend.konan.library.impl
 
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.createInteropLibrary
+import org.jetbrains.kotlin.backend.konan.serialization.emptyPackages
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int, val target: KonanTarget? = null) : KonanLibraryReader {
+class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
+    val target: KonanTarget? = null, override val isDefaultLink: Boolean = false)
+    : KonanLibraryReader {
 
     // For the zipped libraries inPlace gives files from zip file system
     // whereas realFiles extracts them to /tmp.
@@ -66,8 +69,22 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int, val t
         reader.loadSerializedModule()
     }
 
-    fun packageMetadata(fqName: String): ByteArray =
-        reader.loadSerializedPackageFragment(fqName)
+    override val isNeededForLink: Boolean
+        get() {
+            packagesAccessed.forEach {
+                if (!emptyPackages(moduleHeaderData).contains(it)) {
+                    return true
+                }
+            }
+            return false
+        }
+
+    val packagesAccessed = mutableSetOf<String>()
+
+    fun packageMetadata(fqName: String): ByteArray {
+        packagesAccessed.add(fqName)
+        return reader.loadSerializedPackageFragment(fqName)
+    }
 
     override fun moduleDescriptor(specifics: LanguageVersionSettings) 
         = deserializeModule(specifics, {packageMetadata(it)}, moduleHeaderData, createInteropLibrary(this))

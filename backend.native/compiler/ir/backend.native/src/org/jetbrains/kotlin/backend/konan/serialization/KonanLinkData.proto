@@ -76,6 +76,7 @@ message PackageFragment {
     required string fq_name = 1;
     required Package package = 4;
     required Classes classes = 5;
+    required bool is_empty = 6;
 
     // To construct name resolver
     required QualifiedNameTable name_table = 2;
@@ -91,5 +92,6 @@ message Classes {
 message Library {
     required string module_name = 1;
     repeated string package_fragment_name = 2;
+    repeated string empty_package = 3;
 }
 

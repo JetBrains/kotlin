@@ -119,6 +119,9 @@ public fun parseModuleHeader(libraryData: ByteArray): Library =
     Library.parseFrom(libraryData, 
         KonanSerializerProtocol.extensionRegistry)
 
+public fun emptyPackages(libraryData: ByteArray) 
+    = parseModuleHeader(libraryData).emptyPackageList
+
 internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
                                packageLoader:(String)->ByteArray, library: ByteArray,
                                interopLibrary: InteropLibrary?): ModuleDescriptorImpl {
@@ -220,6 +223,7 @@ internal class KonanSerializationUtil(val context: Context) {
         val strings = serializerExtension.stringTable
         val (stringTableProto, nameTableProto) = strings.buildProto()
 
+        val isEmpty = members.isEmpty() && classifierDescriptors.isEmpty()
         val fragmentBuilder = KonanLinkData.PackageFragment.newBuilder()
 
         val fragmentProto = fragmentBuilder
@@ -228,6 +232,7 @@ internal class KonanSerializationUtil(val context: Context) {
             .setClasses(classesProto)
             .setStringTable(stringTableProto)
             .setNameTable(nameTableProto)
+            .setIsEmpty(isEmpty)
             .build()
 
         return fragmentProto
@@ -251,6 +256,7 @@ internal class KonanSerializationUtil(val context: Context) {
             }
         }
     }
+
     internal fun serializeModule(moduleDescriptor: ModuleDescriptor): LinkData {
         val libraryProto = KonanLinkData.Library.newBuilder()
         libraryProto.moduleName = moduleDescriptor.name.asString()
@@ -262,6 +268,9 @@ internal class KonanSerializationUtil(val context: Context) {
             if (packageProto == null) return@iteration
 
             libraryProto.addPackageFragmentName(it.asString())
+            if (packageProto.isEmpty) {
+                libraryProto.addEmptyPackage(it.asString())
+            }
             fragments.add(packageProto.toByteArray())
             fragmentNames.add(it.asString())
         }

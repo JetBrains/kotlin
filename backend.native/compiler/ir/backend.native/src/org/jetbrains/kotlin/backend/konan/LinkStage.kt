@@ -231,7 +231,15 @@ internal class LinkStage(val context: Context) {
     private val debug = config.get(KonanConfigKeys.DEBUG) ?: false
     private val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     private val emitted = context.bitcodeFileName
-    private val libraries = context.config.libraries
+    private val libraries = context.config.libraries 
+        .map { 
+            if (!it.isNeededForLink) { 
+                if (!it.isDefaultLink) {
+                    context.reportCompilationWarning("The '${it.libraryName}' library has not been referenced. Omitted from the final link.")
+                }
+                null
+            } else it
+        }.filterNotNull()
 
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { !it.isEmpty() })

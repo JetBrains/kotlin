@@ -78,6 +78,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         with(KonanConfigKeys) {
             with(configuration) {
 
+                put(NODEFAULTLIBS, arguments.nodefaultlibs)
                 put(NOSTDLIB, arguments.nostdlib)
                 put(NOPACK, arguments.nopack)
                 put(NOMAIN, arguments.nomain)
