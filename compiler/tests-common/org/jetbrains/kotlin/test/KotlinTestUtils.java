@@ -342,8 +342,15 @@ public class KotlinTestUtils {
         return getHomeDirectory() + "/compiler/testData";
     }
 
+    private static String homeDir = computeHomeDirectory();
+
     @NotNull
     public static String getHomeDirectory() {
+        return homeDir;
+    }
+
+    @NotNull
+    private static String computeHomeDirectory() {
         String userDir = System.getProperty("user.dir");
         File dir = new File(userDir == null ? "." : userDir);
         return FileUtil.toCanonicalPath(dir.getAbsolutePath());
