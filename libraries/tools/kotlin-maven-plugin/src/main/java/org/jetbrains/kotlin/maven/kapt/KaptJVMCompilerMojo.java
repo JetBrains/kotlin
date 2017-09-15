@@ -31,6 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.maven.Util.joinArrays;
 import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
 
 /** @noinspection UnusedDeclaration */
@@ -179,23 +180,6 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         for (KaptOption option : options) {
             result[i++] = option.toString();
         }
-        return result;
-    }
-
-    @NotNull
-    private String[] joinArrays(@Nullable String[] first, @Nullable String[] second) {
-        if (first == null) {
-            first = new String[0];
-        }
-        if (second == null) {
-            second = new String[0];
-        }
-
-        String[] result = new String[first.length + second.length];
-
-        System.arraycopy(first, 0, result, 0, first.length);
-        System.arraycopy(second, 0, result, first.length, second.length);
-
         return result;
     }
 

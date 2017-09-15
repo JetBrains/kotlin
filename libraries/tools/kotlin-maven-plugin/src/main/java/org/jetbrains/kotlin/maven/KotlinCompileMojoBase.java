@@ -51,6 +51,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.maven.Util.joinArrays;
+
 public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> extends AbstractMojo {
     @Component
     protected PlexusContainer container;
@@ -494,7 +496,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 getLog().debug("Plugin options are: " + Joiner.on(", ").join(pluginArguments));
             }
 
-            arguments.setPluginOptions(pluginArguments.toArray(new String[pluginArguments.size()]));
+            arguments.setPluginOptions(joinArrays(
+                    arguments.getPluginOptions(),
+                    pluginArguments.toArray(new String[pluginArguments.size()])));
         }
     }
 
