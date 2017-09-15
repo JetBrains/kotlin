@@ -23,18 +23,18 @@ import org.junit.Test
 
 class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     private fun doMultiPlatformTest(
-            headerName: String = "header",
+            expectName: String = "header", // todo: change dir name
             vararg impls: Pair<String, TargetPlatformKind<*>> = arrayOf("jvm" to TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]),
             withTests: Boolean = false
     ) {
-        val header = module(headerName, hasTestRoot = withTests)
-        header.createFacet(TargetPlatformKind.Common)
+        val commonModule = module(expectName, hasTestRoot = withTests)
+        commonModule.createFacet(TargetPlatformKind.Common)
 
         impls.forEach { (implName, implKind) ->
             val implModule = module(implName, hasTestRoot = withTests)
             implModule.createFacet(implKind)
             implModule.enableMultiPlatform()
-            implModule.addDependency(header)
+            implModule.addDependency(commonModule)
         }
 
         doQuickFixTest()
@@ -136,7 +136,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testWithTest() {
-        doMultiPlatformTest(headerName = "common", withTests = true)
+        doMultiPlatformTest(expectName = "common", withTests = true)
     }
 
     @Test

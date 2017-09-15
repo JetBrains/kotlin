@@ -26,13 +26,13 @@ class FindUsagesMultiModuleTest : AbstractFindUsagesMultiModuleTest() {
     private fun doMultiPlatformTest(commonName: String = "common",
                                     implName: String = "jvm",
                                     implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]) {
-        val header = module(commonName)
-        header.createFacet(TargetPlatformKind.Common)
+        val commonModule = module(commonName)
+        commonModule.createFacet(TargetPlatformKind.Common)
 
         val jvm = module(implName)
         jvm.createFacet(implKind)
         jvm.enableMultiPlatform()
-        jvm.addDependency(header)
+        jvm.addDependency(commonModule)
 
         doFindUsagesTest()
     }
