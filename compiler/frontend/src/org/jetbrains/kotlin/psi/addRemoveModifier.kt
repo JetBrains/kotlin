@@ -83,10 +83,11 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
         }
         return
     }
-    if (modifierToReplace != null) {
+    if (modifierToReplace != null && modifierList.firstChild == modifierList.lastChild) {
         modifierToReplace.replace(newModifier)
     }
     else {
+        modifierToReplace?.delete()
         val newModifierOrder = MODIFIERS_ORDER.indexOf(modifier)
 
         fun placeAfter(child: PsiElement): Boolean {

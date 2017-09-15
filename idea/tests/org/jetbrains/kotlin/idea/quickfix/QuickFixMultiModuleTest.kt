@@ -95,6 +95,16 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testOrderHeader() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testOrderImpl() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testPackage() {
         doMultiPlatformTest()
     }
