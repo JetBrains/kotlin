@@ -41,6 +41,10 @@ class Test {
         i(c << i);
         i(c >> i);
         i(c >>> i);
+
+        // TODO i(~c);
+        // TODO i(-c);
+        // TODO i(+c);
     }
 
     public void operationsWithCharLiteral() {
@@ -83,6 +87,10 @@ class Test {
         i('0' << i);
         i('0' >> i);
         i('0' >>> i);
+
+        // TODO i(~'0');
+        // TODO i(-'0');
+        // TODO i(+'0');
     }
 
     public void operationsWithCharLiterals() {

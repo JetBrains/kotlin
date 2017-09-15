@@ -40,6 +40,10 @@ internal class Test {
         i(c.toInt() shl i)
         i(c.toInt() shr i)
         i(c.toInt() ushr i)
+
+        // TODO i(~c);
+        // TODO i(-c);
+        // TODO i(+c);
     }
 
     fun operationsWithCharLiteral() {
@@ -82,6 +86,10 @@ internal class Test {
         i('0'.toInt() shl i)
         i('0'.toInt() shr i)
         i('0'.toInt() ushr i)
+
+        // TODO i(~'0');
+        // TODO i(-'0');
+        // TODO i(+'0');
     }
 
     fun operationsWithCharLiterals() {
