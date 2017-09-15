@@ -2,4 +2,4 @@
 
 package test
 
-header fun <caret>testHelper()
+expect fun <caret>testHelper()

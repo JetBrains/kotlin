@@ -1,6 +1,6 @@
 // "Convert member to extension" "true"
 
-header class Foo {
+expect class Foo {
 }
 
 expect val Foo.foo: Int

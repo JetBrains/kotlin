@@ -1,3 +1,3 @@
-header abstract class Bar {
+expect abstract class Bar {
     abstract fun foo()
 }

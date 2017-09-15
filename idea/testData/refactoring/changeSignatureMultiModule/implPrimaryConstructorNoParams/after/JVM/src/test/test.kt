@@ -1,6 +1,6 @@
 package test
 
-impl class C(n: Int)
+actual class C(n: Int)
 
 fun test() {
     C(1)

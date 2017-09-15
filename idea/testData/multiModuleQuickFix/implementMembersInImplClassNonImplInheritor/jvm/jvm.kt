@@ -1,8 +1,8 @@
 // "Implement members" "true"
 // DISABLE-ERRORS
 
-abstract impl class Bar {
-    abstract impl fun foo()
+abstract actual class Bar {
+    abstract actual fun foo()
 }
 
 class <caret>X : Bar()

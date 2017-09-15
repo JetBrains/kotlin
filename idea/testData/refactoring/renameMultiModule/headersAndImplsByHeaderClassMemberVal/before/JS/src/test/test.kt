@@ -1,11 +1,11 @@
 package test
 
-impl class C {
-    impl var foo: Int
+actual class C {
+    actual var foo: Int
         get() = 1
         set(value) {}
 
-    impl var bar: Int
+    actual var bar: Int
         get() = 1
         set(value) {}
 }

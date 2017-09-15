@@ -1,6 +1,6 @@
 package test
 
-impl fun <caret>foo(n: Int) {
+actual fun <caret>foo(n: Int) {
 
 }
 

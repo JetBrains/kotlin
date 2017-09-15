@@ -1,6 +1,6 @@
 // "Create actual class for platform JS" "true"
 
-header enum class MyEnum {
+expect enum class MyEnum {
     FIRST,
     SECOND,
     LAST;

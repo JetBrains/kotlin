@@ -3,4 +3,4 @@
 
 package test.inner
 
-header class My
+expect class My

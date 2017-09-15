@@ -1,6 +1,6 @@
 // "Create actual class for platform JVM" "true"
 
-header class WithNested {
+expect class WithNested {
     fun foo(): Int
 
     class Nested {

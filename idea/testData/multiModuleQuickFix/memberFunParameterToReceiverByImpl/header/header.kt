@@ -1,4 +1,4 @@
-header class Foo {
+expect class Foo {
     fun foo(n: Int, s: String)
 }
 

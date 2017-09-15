@@ -1,3 +1,3 @@
 // "Create actual function for platform JVM" "true"
 
-header fun <caret>foo(arg: Int): String
+expect fun <caret>foo(arg: Int): String

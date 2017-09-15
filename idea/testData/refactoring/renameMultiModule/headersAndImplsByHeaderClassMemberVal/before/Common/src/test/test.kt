@@ -1,6 +1,6 @@
 package test
 
-header class C {
+expect class C {
     var /*rename*/foo: Int
     var bar: Int
 }

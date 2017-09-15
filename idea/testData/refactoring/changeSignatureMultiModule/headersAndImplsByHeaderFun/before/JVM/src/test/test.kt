@@ -1,8 +1,8 @@
 package test
 
-impl fun foo() { }
-impl fun foo(n: Int) { }
-impl fun bar(n: Int) { }
+actual fun foo() { }
+actual fun foo(n: Int) { }
+actual fun bar(n: Int) { }
 
 fun test() {
     foo()

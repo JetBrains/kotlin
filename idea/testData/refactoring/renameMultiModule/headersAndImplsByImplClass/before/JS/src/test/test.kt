@@ -1,7 +1,7 @@
 package test
 
-impl class /*rename*/Foo
-impl class Bar
+actual class /*rename*/Foo
+actual class Bar
 
 fun test() {
     val foo: Foo = Foo()

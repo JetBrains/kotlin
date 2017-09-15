@@ -1,7 +1,7 @@
 package test
 
-impl open class Foo {
-    impl constructor(n: Int)
+actual open class Foo {
+    actual constructor(n: Int)
 }
 
 fun test() = Foo(1)

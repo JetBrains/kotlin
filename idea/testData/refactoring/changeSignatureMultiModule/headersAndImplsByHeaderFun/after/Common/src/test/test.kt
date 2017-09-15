@@ -1,8 +1,8 @@
 package test
 
-header fun foo()
-header fun baz(n: Int)
-header fun bar(n: Int)
+expect fun foo()
+expect fun baz(n: Int)
+expect fun bar(n: Int)
 
 fun test() {
     foo()

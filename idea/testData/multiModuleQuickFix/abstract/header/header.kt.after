@@ -1,6 +1,6 @@
 // "Create actual class for platform JS" "true"
 
-header abstract class Abstract {
+expect abstract class Abstract {
     fun foo(param: String): Int
 
     abstract fun String.bar(y: Double): Boolean

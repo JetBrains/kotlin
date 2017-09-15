@@ -1,7 +1,7 @@
 package test
 
-header var baz: Int
-header var bar: Int
+expect var baz: Int
+expect var bar: Int
 
 fun test() {
     baz

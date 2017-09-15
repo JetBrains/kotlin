@@ -1,7 +1,7 @@
 // "Add 'operator' modifier" "true"
 
-impl class Foo {
-    impl operator fun unaryMinus() {
+actual class Foo {
+    actual operator fun unaryMinus() {
 
     }
 }

@@ -1,6 +1,6 @@
 package test
 
-impl class <caret>C
+actual class <caret>C
 
 fun test() {
     C()

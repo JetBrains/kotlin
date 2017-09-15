@@ -1,5 +1,5 @@
 // "Create actual class for platform JVM" "true"
 
-header object Object {
+expect object Object {
     fun foo(): String
 }

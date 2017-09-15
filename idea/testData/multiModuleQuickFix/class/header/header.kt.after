@@ -1,6 +1,6 @@
 // "Create actual class for platform JVM" "true"
 
-header class My {
+expect class My {
     fun foo(param: String): Int
 
     fun String.bar(y: Double): Boolean

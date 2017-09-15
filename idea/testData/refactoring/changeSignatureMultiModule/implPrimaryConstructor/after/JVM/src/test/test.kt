@@ -1,6 +1,6 @@
 package test
 
-impl class C(n: Int, b: Boolean) {
+actual class C(n: Int, b: Boolean) {
     constructor(s: String): this(1, false)
 }
 

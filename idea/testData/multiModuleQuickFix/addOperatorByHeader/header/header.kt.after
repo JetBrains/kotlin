@@ -1,5 +1,5 @@
 // "Add 'operator' modifier" "true"
 
-header class Foo {
+expect class Foo {
     operator fun unaryMinus()
 }

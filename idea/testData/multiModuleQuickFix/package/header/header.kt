@@ -3,4 +3,4 @@
 
 package test.inner
 
-header class <caret>My
+expect class <caret>My

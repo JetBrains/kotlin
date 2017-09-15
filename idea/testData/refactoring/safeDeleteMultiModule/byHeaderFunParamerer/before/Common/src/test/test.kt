@@ -1,6 +1,6 @@
 package test
 
-header fun foo(<caret>n: Int)
+expect fun foo(<caret>n: Int)
 
 fun test() {
     foo(1)

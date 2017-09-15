@@ -1,5 +1,5 @@
 package test
 
-impl val foo get() = 2
+actual val foo get() = 2
 
 fun test() = foo

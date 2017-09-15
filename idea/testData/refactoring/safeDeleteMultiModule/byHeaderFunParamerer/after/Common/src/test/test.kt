@@ -1,6 +1,6 @@
 package test
 
-header fun foo()
+expect fun foo()
 
 fun test() {
     foo()

@@ -1,1 +1,1 @@
-header class My
+expect class My
