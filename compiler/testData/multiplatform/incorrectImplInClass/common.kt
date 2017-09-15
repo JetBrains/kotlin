@@ -1,1 +1,1 @@
-header class Foo
+expect class Foo

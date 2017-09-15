@@ -1,7 +1,7 @@
-impl open class Base {
-    impl fun base() {}
+actual open class Base {
+    actual fun base() {}
 }
 
-impl class Derived : Base() {
-    impl fun derived() {}
+actual class Derived : Base() {
+    actual fun derived() {}
 }

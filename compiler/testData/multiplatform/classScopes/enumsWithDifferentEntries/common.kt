@@ -1,3 +1,3 @@
-header enum class AB { A, B }
+expect enum class AB { A, B }
 
-header enum class CD { C, D }
+expect enum class CD { C, D }

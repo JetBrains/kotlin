@@ -1,7 +1,7 @@
-header open class Base {
+expect open class Base {
     fun base()
 }
 
-header class Derived : Base {
+expect class Derived : Base {
     fun derived()
 }

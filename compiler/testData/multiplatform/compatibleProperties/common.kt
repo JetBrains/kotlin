@@ -1,2 +1,2 @@
-header val bar: String
+expect val bar: String
 

@@ -1,19 +1,19 @@
-impl class O1 {
-    impl interface N1
-    impl object N2
-    impl class N3
+actual class O1 {
+    actual interface N1
+    actual object N2
+    actual class N3
 }
 
-impl class O2 {
-    impl inner class N2
-    impl class I2
+actual class O2 {
+    actual inner class N2
+    actual class I2
 }
 
-impl class O3 {
-    impl companion object {}
-    impl object Factory
+actual class O3 {
+    actual companion object {}
+    actual object Factory
 }
 
-impl class O4 {
-    impl object Companion
+actual class O4 {
+    actual object Companion
 }

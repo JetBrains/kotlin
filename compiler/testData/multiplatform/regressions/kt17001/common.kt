@@ -1,7 +1,7 @@
 package test
 
-header fun stringToByteArray(str: String): ByteArray
+expect fun stringToByteArray(str: String): ByteArray
 
-header var prop: String
+expect var prop: String
 
 fun ttt() {}

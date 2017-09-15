@@ -1,22 +1,22 @@
-header class PClass
-header interface PInterface
-header object PObject
-header enum class PEnumClass
-header annotation class PAnnotationClass
+expect class PClass
+expect interface PInterface
+expect object PObject
+expect enum class PEnumClass
+expect annotation class PAnnotationClass
 
-internal header object InternalObject
-public header object PublicObject
-private header object PrivateObject
+internal expect object InternalObject
+public expect object PublicObject
+private expect object PrivateObject
 
-open header class OpenClass
-abstract header class AbstractClass
-final header class FinalClass
+open expect class OpenClass
+abstract expect class AbstractClass
+final expect class FinalClass
 
-header class C1<A>
-header class C2<B>
-header class C3<D, E : D>
+expect class C1<A>
+expect class C2<B>
+expect class C3<D, E : D>
 
-header class C4<F>
+expect class C4<F>
 
 
-header abstract class ExtendsNumber : Number
+expect abstract class ExtendsNumber : Number

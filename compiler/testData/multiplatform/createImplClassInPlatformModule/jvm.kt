@@ -1,5 +1,5 @@
-impl class Foo(x: Int) {
-    impl constructor() : this(0)
+actual class Foo(x: Int) {
+    actual constructor() : this(0)
 
     val x: Int = x
 }

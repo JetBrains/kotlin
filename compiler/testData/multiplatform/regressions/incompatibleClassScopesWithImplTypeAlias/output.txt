@@ -14,5 +14,5 @@ compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeA
     The following declaration is incompatible because number of value parameters is different:
         protected/*protected and package*/ constructor Writer(p0: Any!)
 
-impl typealias Writer = java.io.Writer
+actual typealias Writer = java.io.Writer
 ^

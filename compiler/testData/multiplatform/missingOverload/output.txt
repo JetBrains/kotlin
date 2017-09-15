@@ -7,16 +7,16 @@ Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/missingOverload/common.kt:7:1: error: 'header' function 'g' has no implementation in module
 The following declaration is incompatible because parameter types are different:
-    public impl fun g(a: Any): Unit
+    public actual fun g(a: Any): Unit
 
-header fun g(s: String)
+expect fun g(s: String)
 ^
-compiler/testData/multiplatform/missingOverload/jvm.kt:1:12: error: 'impl' class 'Foo' has no implementation of 'header' class members:
+compiler/testData/multiplatform/missingOverload/jvm.kt:1:14: error: 'impl' class 'Foo' has no implementation of 'header' class members:
 
-    public final header fun f(a: Any): Unit
+    public final expect fun f(a: Any): Unit
 
     The following declaration is incompatible because parameter types are different:
-        public final impl fun f(s: String): Unit
+        public final actual fun f(s: String): Unit
 
-impl class Foo {
-           ^
+actual class Foo {
+             ^

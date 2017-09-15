@@ -5,12 +5,12 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/missingConstructor/jvm.kt:1:12: error: 'impl' class 'Foo' has no implementation of 'header' class members:
+compiler/testData/multiplatform/classScopes/missingConstructor/jvm.kt:1:14: error: 'impl' class 'Foo' has no implementation of 'header' class members:
 
     public constructor Foo(s: String)
 
     The following declaration is incompatible because number of value parameters is different:
         public constructor Foo()
 
-impl class Foo
-           ^
+actual class Foo
+             ^

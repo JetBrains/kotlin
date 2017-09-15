@@ -1,9 +1,9 @@
-header class Foo {
+expect class Foo {
     fun f(s: String)
 
     fun f(a: Any)
 }
 
-header fun g(s: String)
+expect fun g(s: String)
 
-header fun g(a: Any)
+expect fun g(a: Any)

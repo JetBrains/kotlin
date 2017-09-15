@@ -5,15 +5,15 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:17: error: 'impl' enum class 'AB' has no corresponding 'header' declaration
-The following declaration is incompatible because some entries from header enum are missing in the impl enum:
-    public final header enum class AB : Enum<AB>
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:19: error: 'impl' enum class 'AB' has no corresponding 'header' declaration
+The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
+    public final expect enum class AB : Enum<AB>
 
-impl enum class AB { A, C }
-                ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:17: error: 'impl' enum class 'CD' has no corresponding 'header' declaration
-The following declaration is incompatible because some entries from header enum are missing in the impl enum:
-    public final header enum class CD : Enum<CD>
+actual enum class AB { A, C }
+                  ^
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:19: error: 'impl' enum class 'CD' has no corresponding 'header' declaration
+The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
+    public final expect enum class CD : Enum<CD>
 
-impl enum class CD { C }
-                ^
+actual enum class CD { C }
+                  ^

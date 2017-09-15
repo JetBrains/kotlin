@@ -5,51 +5,51 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:2:20: error: 'impl' interface 'N1' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:2:22: error: 'impl' interface 'N1' has no corresponding 'header' declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final header class N1
+    public final expect class N1
 
-    impl interface N1
-                   ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:10: error: 'impl' object 'N2' has no corresponding 'header' declaration
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public header interface N2
-
-    impl object N2
-         ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:16: error: 'impl' class 'N3' has no corresponding 'header' declaration
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public header object N3
-
-    impl class N3
-               ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:22: error: 'impl' class 'N2' has no corresponding 'header' declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
-    public final header class N2
-
-    impl inner class N2
+    actual interface N1
                      ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:16: error: 'impl' class 'I2' has no corresponding 'header' declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
-    public final header inner class I2
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:12: error: 'impl' object 'N2' has no corresponding 'header' declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public expect interface N2
 
-    impl class I2
-               ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:20: error: 'impl' companion object 'Companion' has no corresponding 'header' declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
-    public header object Companion
+    actual object N2
+           ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:18: error: 'impl' class 'N3' has no corresponding 'header' declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public expect object N3
 
-    impl companion object {}
-                   ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:10: error: 'impl' object 'Factory' has no corresponding 'header' declaration
+    actual class N3
+                 ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:24: error: 'impl' class 'N2' has no corresponding 'header' declaration
 The following declaration is incompatible because modifiers are different (companion, inner):
-    public header companion object Factory
+    public final expect class N2
 
-    impl object Factory
-         ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:10: error: 'impl' object 'Companion' has no corresponding 'header' declaration
+    actual inner class N2
+                       ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:18: error: 'impl' class 'I2' has no corresponding 'header' declaration
 The following declaration is incompatible because modifiers are different (companion, inner):
-    public header companion object
+    public final expect inner class I2
 
-    impl object Companion
-         ^
+    actual class I2
+                 ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:22: error: 'impl' companion object 'Companion' has no corresponding 'header' declaration
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public expect object Companion
+
+    actual companion object {}
+                     ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:12: error: 'impl' object 'Factory' has no corresponding 'header' declaration
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public expect companion object Factory
+
+    actual object Factory
+           ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:12: error: 'impl' object 'Companion' has no corresponding 'header' declaration
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public expect companion object
+
+    actual object Companion
+           ^

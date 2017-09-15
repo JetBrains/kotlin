@@ -5,9 +5,9 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:12: error: 'impl' class 'Foo' has no implementation of 'header' class members:
+compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:14: error: 'impl' class 'Foo' has no implementation of 'header' class members:
 
-    public final header fun function(s: String): Unit
+    public final expect fun function(s: String): Unit
 
-impl class Foo
-           ^
+actual class Foo
+             ^

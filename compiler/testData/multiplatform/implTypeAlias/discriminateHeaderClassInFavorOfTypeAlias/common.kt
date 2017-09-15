@@ -1,3 +1,3 @@
 class Foo(val a: A? = null)
 
-header class A
+expect class A

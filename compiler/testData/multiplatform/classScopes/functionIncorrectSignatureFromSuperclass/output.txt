@@ -5,12 +5,12 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:12: error: 'impl' class 'Foo' has no implementation of 'header' class members:
+compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: 'impl' class 'Foo' has no implementation of 'header' class members:
 
-    public final header fun function(b: ByteArray): Int
+    public final expect fun function(b: ByteArray): Int
 
     The following declaration is incompatible because return type is different:
         public final fun function(b: ByteArray): Long
 
-impl class Foo : Base()
-           ^
+actual class Foo : Base()
+             ^

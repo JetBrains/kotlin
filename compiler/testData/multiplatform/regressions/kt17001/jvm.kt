@@ -1,5 +1,5 @@
 package test
 
-impl fun stringToByteArray(str: String): ByteArray = byteArrayOf()
+actual fun stringToByteArray(str: String): ByteArray = byteArrayOf()
 
-impl var prop: String = ""
+actual var prop: String = ""

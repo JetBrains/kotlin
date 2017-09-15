@@ -6,32 +6,32 @@ Output:
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:1: error: 'impl' function 'plus' has no corresponding 'header' declaration
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public infix header fun Int.plus(s: CharSequence): Int
+The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec):
+    public infix expect fun Int.plus(s: CharSequence): Int
 
-impl fun Int.plus(s: CharSequence): Int = 0
+actual fun Int.plus(s: CharSequence): Int = 0
 ^
 compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:1: error: 'impl' function 'times' has no corresponding 'header' declaration
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public operator header fun Double.times(x: CharArray): Unit
+The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec):
+    public operator expect fun Double.times(x: CharArray): Unit
 
-impl fun Double.times(x: CharArray) {}
+actual fun Double.times(x: CharArray) {}
 ^
 compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:1: error: 'impl' function 'f1' has no corresponding 'header' declaration
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public external header fun f1(): Unit
+The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec):
+    public external expect fun f1(): Unit
 
-impl fun f1() {}
+actual fun f1() {}
 ^
 compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:7:1: error: 'impl' function 'f2' has no corresponding 'header' declaration
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public header inline fun f2(): Unit
+The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec):
+    public expect inline fun f2(): Unit
 
-impl fun f2() {}
+actual fun f2() {}
 ^
 compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:9:1: error: 'impl' function 'f3' has no corresponding 'header' declaration
-The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
-    public header tailrec fun f3(): Unit
+The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec):
+    public expect tailrec fun f3(): Unit
 
-impl fun f3() {}
+actual fun f3() {}
 ^

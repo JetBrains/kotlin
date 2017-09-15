@@ -1,3 +1,3 @@
 package test
 
-header abstract class Writer protected constructor()
+expect abstract class Writer protected constructor()

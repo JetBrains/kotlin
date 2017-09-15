@@ -7,7 +7,7 @@ Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:5: error: 'impl' function 'function' has no corresponding 'header' declaration
 The following declaration is incompatible because return type is different:
-    public final header fun function(b: ByteArray): Int
+    public final expect fun function(b: ByteArray): Int
 
-    impl fun function(b: ByteArray): Long = b.size.toLong()
+    actual fun function(b: ByteArray): Long = b.size.toLong()
     ^

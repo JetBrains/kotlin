@@ -1,2 +1,2 @@
-header val pval: String
-header var pvar: String
+expect val pval: String
+expect var pvar: String

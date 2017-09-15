@@ -1,34 +1,34 @@
-header fun f1()
+expect fun f1()
 
-header fun f2(name: String)
+expect fun f2(name: String)
 
-header fun f3(name: String)
-header fun String.f3ext()
+expect fun f3(name: String)
+expect fun String.f3ext()
 
-header fun f4(name: String)
+expect fun f4(name: String)
 
-header fun String.f5()
+expect fun String.f5()
 
-header fun f6(p1: String, p2: Int)
+expect fun f6(p1: String, p2: Int)
 
-header fun <T> f7()
+expect fun <T> f7()
 
-internal header fun f8()
-private header fun f9()
-public header fun f10()
+internal expect fun f8()
+private expect fun f9()
+public expect fun f10()
 
-header fun <T : Number> f11()
-header fun <U : MutableList<String>> f12()
-header fun <A, B : Comparable<A>> f13()
+expect fun <T : Number> f11()
+expect fun <U : MutableList<String>> f12()
+expect fun <A, B : Comparable<A>> f13()
 
-header inline fun <X> f14()
-header inline fun <reified Y> f15()
+expect inline fun <X> f14()
+expect inline fun <reified Y> f15()
 
-header fun f16(s: String)
+expect fun f16(s: String)
 
-header fun f17(vararg s: String)
-header fun f18(s: Array<out String>)
-header inline fun f19(s: () -> Unit)
-header inline fun f20(s: () -> Unit)
-header fun f21(c: suspend Unit.() -> Unit)
-header fun f22(c: Unit.() -> Unit)
+expect fun f17(vararg s: String)
+expect fun f18(s: Array<out String>)
+expect inline fun f19(s: () -> Unit)
+expect inline fun f20(s: () -> Unit)
+expect fun f21(c: suspend Unit.() -> Unit)
+expect fun f22(c: Unit.() -> Unit)

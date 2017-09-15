@@ -1,3 +1,3 @@
-impl class Foo {
-    impl constructor(s: Array<String>)
+actual class Foo {
+    actual constructor(s: Array<String>)
 }
