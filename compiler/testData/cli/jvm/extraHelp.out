@@ -30,7 +30,7 @@ where advanced options include:
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xmulti-platform           Enable experimental language support for multi-platform projects
-  -Xno-check-actual            Do not check presence of 'impl' modifier in multi-platform projects
+  -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xplugin=<path>            Load plugins from the given classpath
   -Xrepeat=<count>           Repeat compilation (for performance analysis)
