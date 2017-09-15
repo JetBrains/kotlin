@@ -5,7 +5,7 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:12: error: 'impl' constructor of 'Foo' has no corresponding 'header' declaration
+compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:12: error: actual constructor of 'Foo' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
     public constructor Foo(s: String)
 

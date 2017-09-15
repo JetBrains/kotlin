@@ -195,7 +195,7 @@ public class DefaultErrorMessages {
                 case INVOKE_ON_FUNCTION_TYPE:
                     return "function types";
                 case EXPECTED_CLASS_MEMBER:
-                    return "members of header classes";
+                    return "members of expected classes";
                 default:
                     throw new AssertionError(target);
             }
@@ -262,26 +262,26 @@ public class DefaultErrorMessages {
         MAP.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited");
         MAP.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: {0}", RENDER_TYPE);
 
-        MAP.put(EXPECTED_DECLARATION_WITH_BODY, "Header declaration must not have a body");
-        MAP.put(EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER, "Header declaration cannot have parameters with default values");
-        MAP.put(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of a header class is not allowed");
-        MAP.put(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Header class constructor cannot have a property parameter");
-        MAP.put(EXPECTED_ENUM_CONSTRUCTOR, "Header enum class cannot have a constructor");
-        MAP.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "Header enum entry cannot have a body");
-        MAP.put(EXPECTED_PROPERTY_INITIALIZER, "Header property cannot have an initializer");
+        MAP.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body");
+        MAP.put(EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER, "Expected declaration cannot have parameters with default values");
+        MAP.put(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of an expected class is not allowed");
+        MAP.put(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Expected class constructor cannot have a property parameter");
+        MAP.put(EXPECTED_ENUM_CONSTRUCTOR, "Expected enum class cannot have a constructor");
+        MAP.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "Expected enum entry cannot have a body");
+        MAP.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer");
 
-        MAP.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of 'impl' type alias should be a class, not another type alias");
+        MAP.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias");
         MAP.put(ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, "Aliased class should not have type parameters with declaration-site variance");
-        MAP.put(ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, "Right-hand side of 'impl' type alias cannot contain use-site variance or star projections");
-        MAP.put(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, "Type arguments in the right-hand side of 'impl' type alias should be its type parameters in the same order, e.g. 'impl typealias Foo<A, B> = Bar<A, B>'");
+        MAP.put(ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, "Right-hand side of actual type alias cannot contain use-site variance or star projections");
+        MAP.put(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, "Type arguments in the right-hand side of actual type alias should be its type parameters in the same order, e.g. 'impl typealias Foo<A, B> = Bar<A, B>'");
 
-        MAP.put(NO_ACTUAL_FOR_EXPECT, "''header'' {0} has no implementation in module{1}{2}", DECLARATION_NAME_WITH_KIND,
+        MAP.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual in module{1}{2}", DECLARATION_NAME_WITH_KIND,
                 PLATFORM, PlatformIncompatibilityDiagnosticRenderer.TEXT);
-        MAP.put(ACTUAL_WITHOUT_EXPECT, "''impl'' {0} has no corresponding ''header'' declaration{1}", DECLARATION_NAME_WITH_KIND,
+        MAP.put(ACTUAL_WITHOUT_EXPECT, "Actual {0} has no corresponding expected declaration{1}", DECLARATION_NAME_WITH_KIND,
                 PlatformIncompatibilityDiagnosticRenderer.TEXT);
 
-        MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "''impl'' class ''{0}'' has no implementation of ''header'' class members:{1}",
-                NAME, IncompatibleHeaderImplClassScopesRenderer.TEXT);
+        MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "In class ''{0}'' expected members have no actual ones:{1}",
+                NAME, IncompatibleExpectedActualClassScopesRenderer.TEXT);
         MAP.put(ACTUAL_MISSING, "Declaration should be marked with 'actual' (suppress with -Xno-check-actual)");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");

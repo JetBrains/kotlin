@@ -5,13 +5,13 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/missingOverload/common.kt:7:1: error: 'header' function 'g' has no implementation in module
+compiler/testData/multiplatform/missingOverload/common.kt:7:1: error: expected function 'g' has no actual in module
 The following declaration is incompatible because parameter types are different:
     public actual fun g(a: Any): Unit
 
 expect fun g(s: String)
 ^
-compiler/testData/multiplatform/missingOverload/jvm.kt:1:14: error: 'impl' class 'Foo' has no implementation of 'header' class members:
+compiler/testData/multiplatform/missingOverload/jvm.kt:1:14: error: in class 'Foo' expected members have no actual ones:
 
     public final expect fun f(a: Any): Unit
 

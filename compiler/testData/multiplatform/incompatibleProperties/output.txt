@@ -5,13 +5,13 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:1: error: 'impl' property 'pval' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:1: error: actual property 'pval' has no corresponding expected declaration
 The following declaration is incompatible because property kinds are different (val vs var):
     public expect val pval: String
 
 actual var pval: String = ""
 ^
-compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:1: error: 'impl' property 'pvar' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:1: error: actual property 'pvar' has no corresponding expected declaration
 The following declaration is incompatible because property kinds are different (val vs var):
     public expect var pvar: String
 

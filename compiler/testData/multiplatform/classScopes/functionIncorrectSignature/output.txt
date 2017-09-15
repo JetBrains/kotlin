@@ -5,7 +5,7 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:5: error: 'impl' function 'function' has no corresponding 'header' declaration
+compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:5: error: actual function 'function' has no corresponding expected declaration
 The following declaration is incompatible because return type is different:
     public final expect fun function(b: ByteArray): Int
 

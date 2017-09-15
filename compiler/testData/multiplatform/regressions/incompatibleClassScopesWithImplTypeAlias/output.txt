@@ -5,7 +5,7 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:1: error: 'impl' class 'Writer' has no implementation of 'header' class members:
+compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:1: error: in class 'Writer' expected members have no actual ones:
 
     protected constructor Writer()
 

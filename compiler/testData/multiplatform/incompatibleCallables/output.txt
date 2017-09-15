@@ -8,115 +8,115 @@ expect fun f21(c: suspend Unit.() -> Unit)
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:1:1: error: 'impl' function 'f1' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:1:1: error: actual function 'f1' has no corresponding expected declaration
 The following declaration is incompatible because return type is different:
     public expect fun f1(): Unit
 
 actual fun f1(): String = ""
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:3:1: error: 'impl' function 'f2' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:3:1: error: actual function 'f2' has no corresponding expected declaration
 The following declaration is incompatible because parameter names are different:
     public expect fun f2(name: String): Unit
 
 actual fun f2(otherName: String) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:5:1: error: 'impl' function 'f3' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:5:1: error: actual function 'f3' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
     public expect fun f3(name: String): Unit
 
 actual fun f3(name: Double) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:6:1: error: 'impl' function 'f3ext' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:6:1: error: actual function 'f3ext' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
     public expect fun String.f3ext(): Unit
 
 actual fun Double.f3ext() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:8:1: error: 'impl' function 'f4' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:8:1: error: actual function 'f4' has no corresponding expected declaration
 The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
     public expect fun f4(name: String): Unit
 
 actual fun String.f4() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:10:1: error: 'impl' function 'f5' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:10:1: error: actual function 'f5' has no corresponding expected declaration
 The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
     public expect fun String.f5(): Unit
 
 actual fun f5(name: String) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:12:1: error: 'impl' function 'f6' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:12:1: error: actual function 'f6' has no corresponding expected declaration
 The following declaration is incompatible because number of value parameters is different:
     public expect fun f6(p1: String, p2: Int): Unit
 
 actual fun f6(p2: Int) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:14:1: error: 'impl' function 'f7' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:14:1: error: actual function 'f7' has no corresponding expected declaration
 The following declaration is incompatible because number of type parameters is different:
     public expect fun <T> f7(): Unit
 
 actual fun <K, V> f7() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:16:1: error: 'impl' function 'f8' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:16:1: error: actual function 'f8' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     internal expect fun f8(): Unit
 
 public actual fun f8() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:1: error: 'impl' function 'f9' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:1: error: actual function 'f9' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     private expect fun f9(): Unit
 
 internal actual fun f9() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:18:1: error: 'impl' function 'f10' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:18:1: error: actual function 'f10' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     public expect fun f10(): Unit
 
 private actual fun f10() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:24:1: error: 'impl' function 'f14' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:24:1: error: actual function 'f14' has no corresponding expected declaration
 The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
     public expect inline fun <X> f14(): Unit
 
 actual inline fun <reified X> f14() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:27:1: error: 'impl' function 'f16' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:27:1: error: actual function 'f16' has no corresponding expected declaration
 The following declaration is incompatible because some parameters have default values:
     public expect fun f16(s: String): Unit
 
 actual fun f16(s: String = "") {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:1: error: 'impl' function 'f17' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:1: error: actual function 'f17' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
     public expect fun f17(vararg s: String): Unit
 
 actual fun f17(s: Array<out String>) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:30:1: error: 'impl' function 'f18' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:30:1: error: actual function 'f18' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
     public expect fun f18(s: Array<out String>): Unit
 
 actual fun f18(vararg s: String) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:1: error: 'impl' function 'f19' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:1: error: actual function 'f19' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is crossinline in one declaration and not crossinline in the other:
     public expect inline fun f19(s: () -> Unit): Unit
 
 actual inline fun f19(crossinline s: () -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:1: error: 'impl' function 'f20' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:1: error: actual function 'f20' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is noinline in one declaration and not noinline in the other:
     public expect inline fun f20(s: () -> Unit): Unit
 
 actual inline fun f20(noinline s: () -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:1: error: 'impl' function 'f21' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:1: error: actual function 'f21' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
     public expect fun f21(c: suspend Unit.() -> Unit): Unit
 
 actual fun f21(c: Unit.() -> Unit) {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:34:1: error: 'impl' function 'f22' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:34:1: error: actual function 'f22' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
     public expect fun f22(c: Unit.() -> Unit): Unit
 

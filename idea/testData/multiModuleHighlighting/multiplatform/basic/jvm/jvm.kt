@@ -1,8 +1,8 @@
-actual class <error descr="[ACTUAL_WITHOUT_EXPECT] 'impl' class 'Your' has no corresponding 'header' declaration">Your</error> {
+actual class <error descr="[ACTUAL_WITHOUT_EXPECT] Actual class 'Your' has no corresponding expected declaration">Your</error> {
 
 }
 
-expect class <error descr="[NO_ACTUAL_FOR_EXPECT] 'header' class 'His' has no implementation in module jvm for JVM">His</error> {
+expect class <error descr="[NO_ACTUAL_FOR_EXPECT] Expected class 'His' has no actual in module jvm for JVM">His</error> {
 
 }
 

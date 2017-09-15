@@ -5,15 +5,15 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:12: error: 'impl' constructor of 'Foo' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:12: error: actual constructor of 'Foo' has no corresponding expected declaration
 The following declaration is incompatible because number of value parameters is different:
     public constructor Foo()
 
     actual constructor(s: String) : this()
            ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:5: error: 'impl' function 'nonPlatformFun' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:5: error: actual function 'nonPlatformFun' has no corresponding expected declaration
     actual fun nonPlatformFun() {}
     ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:5: error: 'impl' property 'nonPlatformVal' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:5: error: actual property 'nonPlatformVal' has no corresponding expected declaration
     actual val nonPlatformVal = ""
     ^

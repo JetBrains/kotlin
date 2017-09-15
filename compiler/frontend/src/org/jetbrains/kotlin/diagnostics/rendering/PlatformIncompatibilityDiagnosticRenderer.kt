@@ -41,7 +41,7 @@ class PlatformIncompatibilityDiagnosticRenderer(
     }
 }
 
-class IncompatibleHeaderImplClassScopesRenderer(
+class IncompatibleExpectedActualClassScopesRenderer(
         private val mode: MultiplatformDiagnosticRenderingMode
 ) : DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> {
     override fun render(
@@ -58,7 +58,7 @@ class IncompatibleHeaderImplClassScopesRenderer(
 
     companion object {
         @JvmField
-        val TEXT = IncompatibleHeaderImplClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
+        val TEXT = IncompatibleExpectedActualClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
     }
 }
 
@@ -101,7 +101,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
 
         if (incompatibility is Incompatible.ClassScopes) {
             append(indent)
-            append("No implementations are found for members listed below:")
+            append("No actuals are found for expected members listed below:")
             mode.newLine(this)
             renderIncompatibleClassScopes(incompatibility.unfulfilled, indent, context, mode)
         }
@@ -109,20 +109,20 @@ private fun StringBuilder.renderIncompatibilityInformation(
 }
 
 private fun StringBuilder.renderIncompatibleClassScopes(
-        unimplemented: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
+        unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
         indent: String,
         context: RenderingContext,
         mode: MultiplatformDiagnosticRenderingMode
 ) {
-    mode.renderList(this, unimplemented.indices.map { index ->
+    mode.renderList(this, unfulfilled.indices.map { index ->
         {
-            val (descriptor, mapping) = unimplemented[index]
+            val (descriptor, mapping) = unfulfilled[index]
             mode.renderDescriptor(this, descriptor, context, indent)
             if (mapping.isNotEmpty()) {
                 mode.newLine(this)
                 renderIncompatibilityInformation(mapping, indent + INDENTATION_UNIT, context, mode)
             }
-            if (index != unimplemented.lastIndex) {
+            if (index != unfulfilled.lastIndex) {
                 mode.newLine(this)
             }
         }

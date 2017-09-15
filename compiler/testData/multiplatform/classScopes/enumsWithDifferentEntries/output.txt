@@ -5,13 +5,13 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:19: error: 'impl' enum class 'AB' has no corresponding 'header' declaration
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:19: error: actual enum class 'AB' has no corresponding expected declaration
 The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
     public final expect enum class AB : Enum<AB>
 
 actual enum class AB { A, C }
                   ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:19: error: 'impl' enum class 'CD' has no corresponding 'header' declaration
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:19: error: actual enum class 'CD' has no corresponding expected declaration
 The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
     public final expect enum class CD : Enum<CD>
 

@@ -5,85 +5,85 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: 'impl' interface 'PClass' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: actual interface 'PClass' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final expect class PClass
 
 actual interface PClass
                  ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:8: error: 'impl' object 'PInterface' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:8: error: actual object 'PInterface' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public expect interface PInterface
 
 actual object PInterface
        ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:19: error: 'impl' enum class 'PObject' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:19: error: actual enum class 'PObject' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public expect object PObject
 
 actual enum class PObject
                   ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:25: error: 'impl' annotation class 'PEnumClass' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:25: error: actual annotation class 'PEnumClass' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final expect enum class PEnumClass : Enum<PEnumClass>
 
 actual annotation class PEnumClass
                         ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:14: error: 'impl' class 'PAnnotationClass' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:14: error: actual class 'PAnnotationClass' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final expect annotation class PAnnotationClass : Annotation
 
 actual class PAnnotationClass
              ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:16: error: 'impl' object 'InternalObject' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:16: error: actual object 'InternalObject' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     internal expect object InternalObject
 
 private actual object InternalObject
                ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:8:17: error: 'impl' object 'PublicObject' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:8:17: error: actual object 'PublicObject' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     public expect object PublicObject
 
 internal actual object PublicObject
                 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:9:15: error: 'impl' object 'PrivateObject' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:9:15: error: actual object 'PrivateObject' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     private expect object PrivateObject
 
 public actual object PrivateObject
               ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:20: error: 'impl' class 'OpenClass' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:20: error: actual class 'OpenClass' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     public open expect class OpenClass
 
 final actual class OpenClass
                    ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:19: error: 'impl' class 'AbstractClass' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:19: error: actual class 'AbstractClass' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     public abstract expect class AbstractClass
 
 open actual class AbstractClass
                   ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:13:23: error: 'impl' class 'FinalClass' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:13:23: error: actual class 'FinalClass' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     public final expect class FinalClass
 
 abstract actual class FinalClass
                       ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:14: error: 'impl' class 'C1' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:14: error: actual class 'C1' has no corresponding expected declaration
 The following declaration is incompatible because number of type parameters is different:
     public final expect class C1<A>
 
 actual class C1<A, Extra>
              ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:14: error: 'impl' class 'C2' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:14: error: actual class 'C2' has no corresponding expected declaration
 The following declaration is incompatible because declaration-site variances of type parameters are different:
     public final expect class C2<B>
 
 actual class C2<out B>
              ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:22:23: error: 'impl' class 'ExtendsNumber' has no corresponding 'header' declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:22:23: error: actual class 'ExtendsNumber' has no corresponding expected declaration
 The following declaration is incompatible because some supertypes are missing in the actual declaration:
     public abstract expect class ExtendsNumber : Number
 
