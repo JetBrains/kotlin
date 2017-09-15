@@ -30,7 +30,7 @@ internal class Kotlin2JvmCompilerArgumentsSerializer : JpsProjectExtensionSerial
                                                                                      KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION) {
 
     override fun loadExtension(project: JpsProject, componentTag: Element) {
-        val settings = XmlSerializer.deserialize(componentTag, K2JVMCompilerArguments::class.java)
+        val settings = XmlSerializer.deserialize(componentTag, K2JVMCompilerArguments::class.java)!!
         JpsKotlinCompilerSettings.setK2JvmCompilerArguments(project, settings)
     }
 
