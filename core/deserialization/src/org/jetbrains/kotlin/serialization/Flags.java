@@ -39,7 +39,7 @@ public class Flags {
     public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
     public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
     public static final BooleanFlagField IS_EXTERNAL_CLASS = FlagField.booleanAfter(IS_DATA);
-    public static final BooleanFlagField IS_HEADER_CLASS = FlagField.booleanAfter(IS_EXTERNAL_CLASS);
+    public static final BooleanFlagField IS_EXPECT_CLASS = FlagField.booleanAfter(IS_EXTERNAL_CLASS);
 
     // Constructors
 
@@ -57,7 +57,7 @@ public class Flags {
     public static final BooleanFlagField IS_TAILREC = FlagField.booleanAfter(IS_INLINE);
     public static final BooleanFlagField IS_EXTERNAL_FUNCTION = FlagField.booleanAfter(IS_TAILREC);
     public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
-    public static final BooleanFlagField IS_HEADER_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
+    public static final BooleanFlagField IS_EXPECT_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
 
     // Properties
 
@@ -69,7 +69,7 @@ public class Flags {
     public static final BooleanFlagField HAS_CONSTANT = FlagField.booleanAfter(IS_LATEINIT);
     public static final BooleanFlagField IS_EXTERNAL_PROPERTY = FlagField.booleanAfter(HAS_CONSTANT);
     public static final BooleanFlagField IS_DELEGATED = FlagField.booleanAfter(IS_EXTERNAL_PROPERTY);
-    public static final BooleanFlagField IS_HEADER_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
+    public static final BooleanFlagField IS_EXPECT_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
 
     // Parameters
 
@@ -107,7 +107,7 @@ public class Flags {
                | IS_INNER.toFlags(inner)
                | IS_DATA.toFlags(isData)
                | IS_EXTERNAL_CLASS.toFlags(isExternal)
-               | IS_HEADER_CLASS.toFlags(isExpect)
+               | IS_EXPECT_CLASS.toFlags(isExpect)
                ;
     }
 
@@ -165,7 +165,7 @@ public class Flags {
                | IS_TAILREC.toFlags(isTailrec)
                | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
                | IS_SUSPEND.toFlags(isSuspend)
-               | IS_HEADER_FUNCTION.toFlags(isExpect)
+               | IS_EXPECT_FUNCTION.toFlags(isExpect)
                 ;
     }
 
@@ -196,7 +196,7 @@ public class Flags {
                | HAS_CONSTANT.toFlags(hasConstant)
                | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
                | IS_DELEGATED.toFlags(isDelegated)
-               | IS_HEADER_PROPERTY.toFlags(isExpect)
+               | IS_EXPECT_PROPERTY.toFlags(isExpect)
                 ;
     }
 
