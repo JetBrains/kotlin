@@ -111,7 +111,6 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitBinaryExpression(expression: PsiBinaryExpression) {
-
         val left = expression.lOperand
         val right = expression.rOperand
 
@@ -121,31 +120,28 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         val leftOperandExpectedType = getOperandExpectedType(left, right, operationTokenType)
         val leftConverted = codeConverter.convertExpression(left, leftOperandExpectedType, expectedNullability)
-        val rightConverted = codeConverter.convertExpression(
-                right,
-                if (leftOperandExpectedType == null)
-                    getOperandExpectedType(right, left, operationTokenType)
-                else
-                    null,
-                expectedNullability
-        )
+        val expectedType = if (leftOperandExpectedType == null) getOperandExpectedType(right, left, operationTokenType) else null
+        val rightConverted = codeConverter.convertExpression(right, expectedType, expectedNullability)
 
         if (operationTokenType == JavaTokenType.GTGTGT) {
             result = MethodCallExpression.buildNonNull(leftConverted, "ushr", ArgumentList.withNoPrototype(rightConverted))
         }
         else {
-            var operator = Operator(operationTokenType)
-            if (operationTokenType == JavaTokenType.EQEQ || operationTokenType == JavaTokenType.NE) {
-                if (!canKeepEqEq(left, right)) {
-                    operator = if (operationTokenType == JavaTokenType.EQEQ) Operator(KtTokens.EQEQEQ) else Operator(KtTokens.EXCLEQEQEQ)
-                }
-            }
-            result = BinaryExpression(leftConverted, rightConverted, operator.assignPrototype(expression.operationSign))
+            val op = operator(left, operationTokenType, right).assignPrototype(expression.operationSign)
+            result = BinaryExpression(leftConverted, rightConverted, op)
             if (!expression.isInSingleLine()) {
                 result = ParenthesizedExpression(result.assignNoPrototype())
             }
         }
     }
+
+    private fun operator(left: PsiExpression, op: IElementType, right: PsiExpression?): Operator =
+            if ((op != JavaTokenType.EQEQ && op != JavaTokenType.NE) || canKeepEqEq(left, right))
+                Operator(op)
+            else if (op == JavaTokenType.EQEQ)
+                Operator(KtTokens.EQEQEQ)
+            else
+                Operator(KtTokens.EXCLEQEQEQ)
 
     private fun getOperandExpectedType(current: PsiExpression?, other: PsiExpression?, operationTokenType: IElementType): PsiType? {
         val currentType = current?.type
