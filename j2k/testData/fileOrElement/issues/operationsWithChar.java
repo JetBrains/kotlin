@@ -16,6 +16,7 @@ class Test {
 
         b(c == i);
         b(c != i);
+
         b(i == c);
         b(i != c);
 
@@ -28,6 +29,7 @@ class Test {
         i(i & c);
         i(i << c);
         i(i >> c);
+        i(i >>> c);
 
         i(c + i);
         i(c - i);
@@ -38,6 +40,7 @@ class Test {
         i(c & i);
         i(c << i);
         i(c >> i);
+        i(c >>> i);
     }
 
     public void b(boolean b) {}

@@ -15,6 +15,7 @@ internal class Test {
 
         b(c.toInt() == i)
         b(c.toInt() != i)
+
         b(i == c.toInt())
         b(i != c.toInt())
 
@@ -27,6 +28,7 @@ internal class Test {
         i(i and c.toInt())
         i(i shl c.toInt())
         i(i shr c.toInt())
+        i(i ushr c.toInt())
 
         i(c.toInt() + i)
         i(c.toInt() - i)
@@ -37,6 +39,7 @@ internal class Test {
         i(c.toInt() and i)
         i(c.toInt() shl i)
         i(c.toInt() shr i)
+        i(c.toInt() ushr i)
     }
 
     fun b(b: Boolean) {}

@@ -1,1 +1,1 @@
-x.ushr(2)
+x ushr 2

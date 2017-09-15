@@ -123,15 +123,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val expectedType = if (leftOperandExpectedType == null) getOperandExpectedType(right, left, operationTokenType) else null
         val rightConverted = codeConverter.convertExpression(right, expectedType, expectedNullability)
 
-        if (operationTokenType == JavaTokenType.GTGTGT) {
-            result = MethodCallExpression.buildNonNull(leftConverted, "ushr", ArgumentList.withNoPrototype(rightConverted))
-        }
-        else {
-            val op = operator(left, operationTokenType, right).assignPrototype(expression.operationSign)
-            result = BinaryExpression(leftConverted, rightConverted, op)
-            if (!expression.isInSingleLine()) {
-                result = ParenthesizedExpression(result.assignNoPrototype())
-            }
+        val op = operator(left, operationTokenType, right).assignPrototype(expression.operationSign)
+        result = BinaryExpression(leftConverted, rightConverted, op)
+        if (!expression.isInSingleLine()) {
+            result = ParenthesizedExpression(result.assignNoPrototype())
         }
     }
 
