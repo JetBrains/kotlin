@@ -138,6 +138,24 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("jvmPackageName.kt")
+    public void testJvmPackageName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmPackageNameInRootPackage.kt")
+    public void testJvmPackageNameInRootPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmPackageNameWithJvmName.kt")
+    public void testJvmPackageNameWithJvmName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmStaticInObject.kt")
     public void testJvmStaticInObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
