@@ -9,7 +9,7 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:idea-gradle"))
     compile(project(":idea:idea-maven"))
-    compileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
+    //compileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
     compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
     compileOnly(ideaSdkDeps("openapi", "idea"))
 }
