@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.kapt.idea
 
 import com.android.tools.idea.gradle.project.model.AndroidModuleModel
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
@@ -66,6 +67,10 @@ class KaptGradleModelImpl(
 
 @Suppress("unused")
 class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
+    private companion object {
+        private val LOG = Logger.getInstance(KaptProjectResolverExtension::class.java)
+    }
+
     override fun getExtraProjectModelClasses() = setOf(KaptGradleModel::class.java)
     override fun getToolingExtensionsClasses() = setOf(KaptModelBuilderService::class.java)
 
@@ -103,17 +108,17 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
     }
 
     private fun populateAndroidModuleModelIfNeeded(ideModule: DataNode<ModuleData>, sourceSet: KaptSourceSetModel) {
-        if (true) return
-
         ideModule.findAndroidModuleModel()?.let { androidModelAny ->
             // We can cast to AndroidModuleModel cause we already checked in findAndroidModuleModel() that the class exists
 
-            val androidModel = androidModelAny.data as? AndroidModuleModel
-            val generatedKotlinSources = sourceSet.generatedKotlinSourcesDirFile
+            val androidModel = androidModelAny.data as? AndroidModuleModel ?: return
+            val variant = androidModel.findVariantByName(sourceSet.sourceSetName) ?: return
 
-            if (androidModel != null && generatedKotlinSources != null) {
-                // Looks like we can't add generated class root as a library dependency
-                androidModel.registerExtraGeneratedSourceFolder(generatedKotlinSources)
+            try {
+                sourceSet.generatedKotlinSourcesDirFile?.let { variant.mainArtifact.generatedSourceFolders += it }
+            } catch (e: Throwable) {
+                LOG.error(RuntimeException(
+                        "Kapt importer for generated source roots failed, source root name: ${sourceSet.sourceSetName}", e))
             }
         }
     }
