@@ -111,3 +111,7 @@ object X {
         `yield`::toInt
     }
 }
+
+expect class Expected
+
+actual class Actual

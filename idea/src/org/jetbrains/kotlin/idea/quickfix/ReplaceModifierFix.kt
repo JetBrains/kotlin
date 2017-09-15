@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 class ReplaceModifierFix(
         element: KtModifierListOwner,
         private val modifier: KtModifierKeywordToken
-) : KotlinQuickFixAction<KtModifierListOwner>(element) {
+) : KotlinQuickFixAction<KtModifierListOwner>(element), CleanupFix {
 
     private val text = when (modifier) {
         KtTokens.HEADER_KEYWORD -> "Replace with 'expect'"
