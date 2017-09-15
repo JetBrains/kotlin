@@ -31,7 +31,7 @@ dependencies {
 
     compile(ideaSdkCoreDeps("intellij-core", "util"))
 
-    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
+    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", /*"jsr305",*/ "forms_rt"))
 
     compile(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
     compile(ideaPluginDeps("copyright", plugin = "copyright"))
@@ -50,18 +50,18 @@ dependencies {
 
     testCompileOnly(ideaPluginDeps("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", plugin = "gradle"))
     testCompileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
-    testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
+    //testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
-    testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson", "jsr305"))
+    testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson"/*, "jsr305"*/))
 
     testRuntime(ideaSdkDeps("*.jar"))
 
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
-    testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
+    //testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
+    //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
 
