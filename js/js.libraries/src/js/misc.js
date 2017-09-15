@@ -104,7 +104,7 @@ function imul(a, b) {
         }
         else {
             bufFloat64[0] = obj;
-            return (bufInt32[lowIndex] * 31 | 0) + bufInt32[highIndex] | 0;
+            return (bufInt32[highIndex] * 31 | 0) + bufInt32[lowIndex] | 0;
         }
     }
 })();
