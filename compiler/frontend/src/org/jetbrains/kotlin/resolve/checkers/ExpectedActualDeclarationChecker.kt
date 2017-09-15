@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,9 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (!hasExpectedModifier) {
             if (Compatible !in compatibility) return
 
-            if (checkExpected) {
+            // we suppress error, because annotation classes can only have one constructor and it's a 100% boilerplate
+            // to require every annotation constructor with additional parameters with default values be marked with the `actual` modifier
+            if (checkExpected && !descriptor.isAnnotationConstructor()) {
                 diagnosticHolder.report(Errors.ACTUAL_MISSING.on(reportOn))
             }
         }
@@ -362,7 +364,9 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
         val aParams = a.valueParameters
         val bParams = b.valueParameters
-        if (aParams.size != bParams.size) return Incompatible.ParameterCount
+        if (!valueParametersCountCompatible(a, b, aParams, bParams)) {
+            return Incompatible.ParameterCount
+        }
 
         val aTypeParams = a.typeParameters
         val bTypeParams = b.typeParameters
@@ -400,6 +404,23 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
         return Compatible
     }
+
+    private fun valueParametersCountCompatible(
+            a: CallableMemberDescriptor,
+            b: CallableMemberDescriptor,
+            aParams: List<ValueParameterDescriptor>,
+            bParams: List<ValueParameterDescriptor>
+    ): Boolean {
+        if (aParams.size == bParams.size) return true
+
+        return if (a.isAnnotationConstructor() && b.isAnnotationConstructor())
+            aParams.isEmpty() && bParams.all { it.declaresDefaultValue() }
+        else
+            false
+    }
+
+    private fun MemberDescriptor.isAnnotationConstructor(): Boolean =
+            this is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(this.constructedClass)
 
     private fun areCompatibleTypes(a: KotlinType?, b: KotlinType?, platformModule: ModuleDescriptor): Boolean {
         if (a == null) return b == null

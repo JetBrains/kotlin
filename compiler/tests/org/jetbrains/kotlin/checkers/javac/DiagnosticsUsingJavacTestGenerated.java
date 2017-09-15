@@ -13934,6 +13934,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class HeaderClass extends AbstractDiagnosticsUsingJavacTest {
+                @TestMetadata("actualClassWithDefaultValuesInAnnotationViaTypealias.kt")
+                public void testActualClassWithDefaultValuesInAnnotationViaTypealias() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualClassWithDefaultValuesInAnnotationViaTypealias.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("actualMissing.kt")
                 public void testActualMissing() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualMissing.kt");
