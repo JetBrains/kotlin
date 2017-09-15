@@ -64,11 +64,11 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     ) {
         if (isArrayOrArrayLiteral(argument, context)) {
             if (argument.hasSpread()) {
-                context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM.on(argumentExpression))
+                context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION.on(argumentExpression))
             }
         }
         else {
-            context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM.on(argumentExpression))
+            context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION.on(argumentExpression))
         }
     }
 
@@ -78,7 +78,7 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
             context: ResolutionContext<*>
     ) {
         if (!argument.hasSpread()) {
-            context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM.on(argumentExpression))
+            context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.on(argumentExpression))
         }
     }
 
