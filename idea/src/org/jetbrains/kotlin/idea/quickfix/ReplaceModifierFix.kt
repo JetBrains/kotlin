@@ -47,11 +47,9 @@ class ReplaceModifierFix(
         when (modifier) {
             KtTokens.HEADER_KEYWORD -> {
                 element.addModifier(KtTokens.EXPECT_KEYWORD)
-                element.removeModifier(KtTokens.HEADER_KEYWORD)
             }
             KtTokens.IMPL_KEYWORD -> {
                 element.addModifier(KtTokens.ACTUAL_KEYWORD)
-                element.removeModifier(KtTokens.IMPL_KEYWORD)
             }
         }
     }
