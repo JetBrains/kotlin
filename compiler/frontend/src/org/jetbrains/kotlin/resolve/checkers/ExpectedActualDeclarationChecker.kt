@@ -76,7 +76,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             platformModule: ModuleDescriptor
     ) {
-        // Only look for implementations of top level members; class members will be handled as a part of that header class
+        // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
 
         val compatibility = findActualForExpected(descriptor, platformModule) ?: return
@@ -123,7 +123,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkExpected: Boolean
     ) {
         // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
-        // However, it would be clearer to find the common module this platform module implements and look for headers there instead.
+        // However, it would be clearer to find the common module this platform module implements and look for expected there instead.
         // TODO: use common module here
         val compatibility = findExpectedForActual(descriptor, descriptor.module) ?: return
 
@@ -144,8 +144,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 "Incompatible.ClassScopes is only possible for a class or a typealias: $descriptor"
             }
 
-            // Do not report "header members are not implemented" for those header members, for which there's a clear
-            // (albeit maybe incompatible) single implementation suspect, declared in the impl class.
+            // Do not report "expected members have no actual ones" for those expected members, for which there's a clear
+            // (albeit maybe incompatible) single actual suspect, declared in the actual class.
             // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
             // later when this checker is called for them
             fun hasSingleActualSuspect(
@@ -158,14 +158,14 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                        findExpectedForActual(actualMember, expectedMember.module)?.values?.singleOrNull()?.singleOrNull() == expectedMember
             }
 
-            val nonTrivialUnimplemented = singleIncompatibility.unimplemented.filterNot(::hasSingleActualSuspect)
+            val nonTrivialUnfulfilled = singleIncompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
 
-            if (nonTrivialUnimplemented.isNotEmpty()) {
+            if (nonTrivialUnfulfilled.isNotEmpty()) {
                 val classDescriptor =
                         (descriptor as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor as? ClassDescriptor
                         ?: (descriptor as ClassDescriptor)
                 diagnosticHolder.report(Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.on(
-                        reportOn, classDescriptor, nonTrivialUnimplemented
+                        reportOn, classDescriptor, nonTrivialUnfulfilled
                 ))
             }
         }
@@ -197,13 +197,13 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                         expectedClass?.getMembers(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
                     is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule)
-                    else -> return null // do not report anything for incorrect code, e.g. 'impl' local function
+                    else -> return null // do not report anything for incorrect code, e.g. 'actual' local function
                 }
 
                 candidates.filter { declaration ->
                     actual != declaration && declaration.isExpect
                 }.groupBy { declaration ->
-                    // TODO: optimize by caching this per impl-header class pair, do not create a new substitutor for each impl member
+                    // TODO: optimize by caching this per actual-expected class pair, do not create a new substitutor for each actual member
                     val substitutor =
                             if (container is ClassDescriptor) {
                                 val expectedClass = declaration.containingDeclaration as ClassDescriptor
@@ -324,8 +324,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             object Supertypes : Incompatible("some supertypes are missing in the actual declaration")
 
             class ClassScopes(
-                    val unimplemented: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>
-            ) : Incompatible("some members are not implemented")
+                    val unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>
+            ) : Incompatible("some expected members have no actual ones")
 
             object EnumEntries : Incompatible("some entries from expected enum are missing in the actual enum")
 
@@ -386,7 +386,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (!equalsBy(aParams, bParams, ValueParameterDescriptor::declaresDefaultValue)) return Incompatible.ValueParameterHasDefault
         if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null) })) return Incompatible.ValueParameterVararg
 
-        // Adding noinline/crossinline to parameters is disallowed, except if the header declaration was not inline at all
+        // Adding noinline/crossinline to parameters is disallowed, except if the expected declaration was not inline at all
         if (a is FunctionDescriptor && a.isInline) {
             if (aParams.indices.any { i -> !aParams[i].isNoinline && bParams[i].isNoinline }) return Incompatible.ValueParameterNoinline
             if (aParams.indices.any { i -> !aParams[i].isCrossinline && bParams[i].isCrossinline }) return Incompatible.ValueParameterCrossinline
@@ -417,10 +417,10 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         }
     }
 
-    // For example, headerTypeConstructor may be the header class kotlin.text.StringBuilder, while implTypeConstructor
+    // For example, expectedTypeConstructor may be the expected class kotlin.text.StringBuilder, while actualTypeConstructor
     // is java.lang.StringBuilder. For the purposes of type compatibility checking, we must consider these types equal here.
-    // Note that the case of an "impl class" works as expected though, because the impl class by definition has the same FQ name
-    // as the corresponding header class, so their type constructors are equal as per AbstractClassTypeConstructor#equals
+    // Note that the case of an "actual class" works as expected though, because the actual class by definition has the same FQ name
+    // as the corresponding expected class, so their type constructors are equal as per AbstractClassTypeConstructor#equals
     private fun isExpectedClassAndActualTypeAlias(
             expectedTypeConstructor: TypeConstructor,
             actualTypeConstructor: TypeConstructor,
@@ -432,9 +432,9 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                expected.isExpect &&
                actual is ClassifierDescriptorWithTypeParameters &&
                expected.findClassifiersFromModule(platformModule).any { classifier ->
-                   // Note that it's fine to only check that this "impl typealias" expands to the expected class, without checking
+                   // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
                    // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
-                   // allow simple cases like "impl typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkImplTypeAlias
+                   // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
                    (classifier as? TypeAliasDescriptor)?.classDescriptor == actual
                }
     }
@@ -456,7 +456,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             return Incompatible.TypeParameterUpperBounds
         if (!equalsBy(a, b, TypeParameterDescriptor::getVariance)) return Incompatible.TypeParameterVariance
 
-        // Removing "reified" from a header function's type parameter is fine
+        // Removing "reified" from an expected function's type parameter is fine
         if (a.indices.any { i -> !a[i].isReified && b[i].isReified }) return Incompatible.TypeParameterReified
 
         return Compatible
@@ -482,7 +482,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): Compatibility {
-        // Can't check FQ names here because nested header class may be implemented via impl typealias's expansion with the other FQ name
+        // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         assert(a.name == other.name) { "This function should be invoked only for declarations with the same name: $a, $other" }
 
         val b = when (other) {
@@ -527,7 +527,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             platformModule: ModuleDescriptor,
             substitutor: Substitutor
     ): Compatibility {
-        val unimplemented = arrayListOf<Pair<MemberDescriptor, Map<Incompatible, MutableCollection<MemberDescriptor>>>>()
+        val unfulfilled = arrayListOf<Pair<MemberDescriptor, Map<Incompatible, MutableCollection<MemberDescriptor>>>>()
 
         val bMembersByName = b.getMembers().groupBy { it.name }
 
@@ -558,7 +558,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 }
             }
 
-            unimplemented.add(aMember to incompatibilityMap)
+            unfulfilled.add(aMember to incompatibilityMap)
         }
 
         if (a.kind == ClassKind.ENUM_CLASS) {
@@ -572,9 +572,9 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
         // TODO: check static scope?
 
-        if (unimplemented.isEmpty()) return Compatible
+        if (unfulfilled.isEmpty()) return Compatible
 
-        return Incompatible.ClassScopes(unimplemented)
+        return Incompatible.ClassScopes(unfulfilled)
     }
 
     private fun ClassDescriptor.getMembers(name: Name? = null): Collection<MemberDescriptor> {

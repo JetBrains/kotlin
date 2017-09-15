@@ -103,7 +103,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
             append(indent)
             append("No implementations are found for members listed below:")
             mode.newLine(this)
-            renderIncompatibleClassScopes(incompatibility.unimplemented, indent, context, mode)
+            renderIncompatibleClassScopes(incompatibility.unfulfilled, indent, context, mode)
         }
     }
 }
