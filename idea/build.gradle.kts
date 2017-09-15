@@ -54,6 +54,8 @@ dependencies {
 
     testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson"/*, "jsr305"*/))
 
+    testCompileOnly(ideaPluginDeps("jsr305", plugin = "android"))
+
     testRuntime(ideaSdkDeps("*.jar"))
 
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
