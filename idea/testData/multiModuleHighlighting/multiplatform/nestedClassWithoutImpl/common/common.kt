@@ -1,15 +1,15 @@
 package a
 
-header class A {
+expect class A {
     class Nested
 }
 
-header class B {
+expect class B {
     class Nested {
         fun foo(s: String)
     }
 }
 
-header class C {
+expect class C {
     <error>header</error> inner class Inner
 }

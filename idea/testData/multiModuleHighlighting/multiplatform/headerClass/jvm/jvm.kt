@@ -1,3 +1,3 @@
-impl class My {
+actual class My {
 
 }

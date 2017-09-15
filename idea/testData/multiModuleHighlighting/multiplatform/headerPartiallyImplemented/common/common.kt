@@ -1,4 +1,4 @@
-header class My {
+expect class My {
 
     fun foo(): Int
 
@@ -6,7 +6,7 @@ header class My {
 
 }
 
-header class Your {
+expect class Your {
 
     fun foo(): Int
 
@@ -14,7 +14,7 @@ header class Your {
 
 }
 
-header class His {
+expect class His {
 
     fun foo(): Int
 

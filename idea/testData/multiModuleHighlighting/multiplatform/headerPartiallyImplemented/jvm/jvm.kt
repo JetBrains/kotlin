@@ -1,20 +1,20 @@
-impl class <error>My</error> {
+actual class <error>My</error> {
 
-    impl fun foo() = 42
+    actual fun foo() = 42
 }
 
-impl class Your {
+actual class Your {
 
-    impl fun foo() = 13
+    actual fun foo() = 13
 
-    <error>impl fun bar(arg: Int)</error> = arg
+    <error>actual fun bar(arg: Int)</error> = arg
 
 }
 
-impl class His {
+actual class His {
 
-    impl fun foo() = 7
+    actual fun foo() = 7
 
-    impl fun bar(arg: Int) = arg == foo()
+    actual fun bar(arg: Int) = arg == foo()
 
 }
