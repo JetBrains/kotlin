@@ -167,11 +167,11 @@ class DeclarationsChecker(
         }
 
         if (declaration.hasActualModifier()) {
-            checkImplTypeAlias(declaration, typeAliasDescriptor)
+            checkActualTypeAlias(declaration, typeAliasDescriptor)
         }
     }
 
-    private fun checkImplTypeAlias(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
+    private fun checkActualTypeAlias(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
         val rhs = typeAliasDescriptor.underlyingType
         val classDescriptor = rhs.constructor.declarationDescriptor
         if (classDescriptor !is ClassDescriptor) {
@@ -246,10 +246,10 @@ class DeclarationsChecker(
         identifierChecker.checkDeclaration(declaration, trace)
         checkVarargParameters(trace, constructorDescriptor)
         checkConstructorVisibility(constructorDescriptor, declaration)
-        checkHeaderClassConstructor(constructorDescriptor, declaration)
+        checkExpectedClassConstructor(constructorDescriptor, declaration)
     }
 
-    private fun checkHeaderClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
+    private fun checkExpectedClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
         if (!constructorDescriptor.isExpect) return
 
         if (declaration.hasBody()) {
@@ -723,13 +723,13 @@ class DeclarationsChecker(
         }
 
         if (functionDescriptor.isExpect) {
-            checkHeaderFunction(function)
+            checkExpectedFunction(function)
         }
 
         shadowedExtensionChecker.checkDeclaration(function, functionDescriptor)
     }
 
-    private fun checkHeaderFunction(function: KtNamedFunction) {
+    private fun checkExpectedFunction(function: KtNamedFunction) {
         if (function.hasBody()) {
             trace.report(EXPECTED_DECLARATION_WITH_BODY.on(function))
         }
