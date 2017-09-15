@@ -1,5 +1,4 @@
 @file:kotlin.jvm.JvmName("LateinitKt")
-@file:kotlin.jvm.JvmVersion
 @file:Suppress("unused")
 
 package kotlin

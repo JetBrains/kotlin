@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.js.translate.reference
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
-import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
-import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
-import org.jetbrains.kotlin.js.backend.ast.metadata.type
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -135,7 +132,7 @@ object CallableReferenceTranslator {
         function.body.statements += JsReturn(TranslationUtils.coerce(context, invocation, context.currentModule.builtIns.anyType))
 
         val rawCallableRef = bindIfNecessary(function, receiver)
-        return wrapFunctionCallableRef(expression.callableReference.getReferencedName(), rawCallableRef)
+        return wrapFunctionCallableRef(receiver, expression.callableReference.getReferencedName(), rawCallableRef)
     }
 
     private fun translateForProperty(
@@ -243,10 +240,12 @@ object CallableReferenceTranslator {
         if (setter != null) {
             invocation.arguments += setter
         }
+        invocation.callableReferenceReceiver = receiver
         return invocation
     }
 
     private fun wrapFunctionCallableRef(
+            receiver: JsExpression?,
             name: String,
             function: JsExpression
     ): JsExpression {
@@ -257,6 +256,7 @@ object CallableReferenceTranslator {
         val invocation = JsInvocation(invokeFun, nameLiteral, function)
         invocation.isCallableReference = true
         invocation.sideEffects = SideEffectKind.PURE
+        invocation.callableReferenceReceiver = receiver
         return invocation
     }
 }

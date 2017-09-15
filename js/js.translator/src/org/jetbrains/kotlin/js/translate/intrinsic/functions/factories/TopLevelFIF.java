@@ -20,10 +20,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
+import org.jetbrains.kotlin.js.backend.ast.JsName;
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo;
@@ -32,10 +35,15 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression;
+import org.jetbrains.kotlin.psi.KtPsiUtil;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
@@ -150,13 +158,39 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    private static final FunctionIntrinsic LATEINIT_KPROPERTY_ISINITIALIZED_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallInfo callInfo,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            ResolvedCall<? extends CallableDescriptor> call = callInfo.getResolvedCall();
+            ExpressionReceiver receiver = (ExpressionReceiver) call.getExtensionReceiver();
+
+            KtCallableReferenceExpression expression =
+                    (KtCallableReferenceExpression) KtPsiUtil.safeDeparenthesize(receiver.getExpression());
+            ResolvedCall<? extends CallableDescriptor> referencedProperty =
+                    CallUtilKt.getResolvedCall(expression.getCallableReference(), context.bindingContext());
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) referencedProperty.getResultingDescriptor();
+
+            JsExpression receiverExpression =
+                    MetadataProperties.getCallableReferenceReceiver((JsInvocation) callInfo.getExtensionReceiver());
+            JsName backingFieldName = TranslationUtils.getNameForBackingField(
+                    context, (PropertyDescriptor) JsDescriptorUtils.findRealDeclaration(propertyDescriptor));
+            JsNameRef backingFieldRef = new JsNameRef(backingFieldName, receiverExpression);
+            return TranslationUtils.nullCheck(backingFieldRef, true);
+        }
+    };
+
     private static final FunctionIntrinsic STRING_SUBSTRING = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-               @NotNull List<? extends JsExpression> arguments,
-               @NotNull TranslationContext context
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
         ) {
             return new JsInvocation(new JsNameRef("substring", receiver), arguments);
         }
@@ -202,6 +236,9 @@ public final class TopLevelFIF extends CompositeFIF {
 
         add(pattern("kotlin", "enumValues"), ENUM_VALUES_INTRINSIC);
         add(pattern("kotlin", "enumValueOf"), ENUM_VALUE_OF_INTRINSIC);
+
+        add(pattern("kotlin", "<get-isInitialized>").isExtensionOf("kotlin.reflect.KProperty0"),
+            LATEINIT_KPROPERTY_ISINITIALIZED_INTRINSIC);
     }
 
 }
