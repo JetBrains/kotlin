@@ -126,7 +126,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return UastLanguagePlugin.ResolvedConstructor(uExpression, method, containingClass)
     }
 
-    private fun convertDeclaration(element: PsiElement,
+    internal fun convertDeclaration(element: PsiElement,
                                    givenParent: UElement?,
                                    requiredType: Class<out UElement>?): UElement? {
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? {
@@ -180,14 +180,12 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                     val lightMethod = LightClassUtil.getLightClassAccessorMethod(original) ?: return null
                     convertDeclaration(lightMethod, givenParent, requiredType)
                 }
-                is KtProperty -> el<UVariable> {
+                is KtProperty -> el<UDeclaration> {
                     if (original.isLocal) {
                         KotlinConverter.convertPsiElement(element, givenParent,  requiredType)
                     }
                     else {
-                        LightClassUtil.getLightClassBackingField(original)?.let {
-                            KotlinUField(it, givenParent)
-                        }
+                        convertNonLocalProperty(original, givenParent, requiredType)
                     }
                 }
                 is KtParameter -> el<UParameter> {
@@ -236,6 +234,17 @@ internal inline fun <reified ActualT : UElement> Class<out UElement>?.expr(f: ()
     return if (this == null || isAssignableFrom(ActualT::class.java)) f() else null
 }
 
+private fun convertNonLocalProperty(property: KtProperty,
+                                    givenParent: UElement?,
+                                    requiredType: Class<out UElement>?): UElement? {
+    val methods = LightClassUtil.getLightClassPropertyMethods(property)
+    return methods.backingField?.let { backingField ->
+        KotlinUField(backingField, givenParent)
+    } ?: methods.getter?.let { getter ->
+        KotlinUastLanguagePlugin().convertDeclaration(getter, givenParent, requiredType)
+    }
+}
+
 internal object KotlinConverter {
     internal tailrec fun unwrapElements(element: PsiElement?): PsiElement? = when (element) {
         is KtValueArgumentList -> unwrapElements(element.parent)
@@ -265,9 +274,20 @@ internal object KotlinConverter {
             }
             is KtClassBody -> el<UExpressionList>(build(KotlinUExpressionList.Companion::createClassBody))
             is KtCatchClause -> el<UCatchClause>(build(::KotlinUCatchClause))
-            is KtVariableDeclaration -> el<UVariable> {
-                convertVariablesDeclaration(element, givenParent).declarations.singleOrNull()
-            }
+            is KtVariableDeclaration ->
+                if (element is KtProperty && !element.isLocal) {
+                    el<UField> {
+                        LightClassUtil.getLightClassBackingField(element)?.let {
+                            KotlinUField(it, givenParent)
+                        }
+                    }
+                }
+                else {
+                    el<UVariable> {
+                        convertVariablesDeclaration(element, givenParent).declarations.singleOrNull()
+                    }
+                }
+
             is KtExpression -> KotlinConverter.convertExpression(element, givenParent, requiredType)
             is KtLambdaArgument -> KotlinConverter.convertExpression(element.getLambdaExpression(), givenParent, requiredType)
             is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> {
