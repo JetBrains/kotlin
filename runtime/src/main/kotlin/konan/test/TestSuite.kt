@@ -29,7 +29,7 @@ abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String): 
             override val suite: AbstractTestSuite<F>,
             val testFunction: F
     ) : TestCase {
-        override fun toString(): String = "$suite.$name"
+        override fun toString(): String = "$name ($suite)"
     }
 
     private val _testCases = mutableMapOf<String, BasicTestCase<F>>()
@@ -53,13 +53,11 @@ abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String): 
         doBeforeClass()
         testCases.values.forEach {
             try {
+                listener.start(it)
                 doTest(it)
                 listener.pass(it)
-                // TODO: merge catches?
-            } catch (e: AssertionError) {
-                listener.fail(it, e)
             } catch (e: Throwable) {
-                listener.error(it, e)
+                listener.fail(it, e)
             }
 
         }

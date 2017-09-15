@@ -1,7 +1,5 @@
 package kotlin.test
 
-// TODO: Move test code in a separate library.
-
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
 annotation class Test
@@ -14,6 +12,7 @@ annotation class BeforeClass
 @Target(AnnotationTarget.FUNCTION)
 annotation class AfterClass
 
+// TODO: Rename Before -> BeforeEach, After -> AfterEach
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
 annotation class Before

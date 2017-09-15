@@ -1,20 +1,21 @@
 package konan.test
 
-import kotlin.AssertionError
-
 object TestRunner {
 
     object SimpleTestListener: TestListener {
-        override fun startTesting(runner: TestRunner) = println("Starting testing\n")
-        override fun endTesting(runner: TestRunner) = println("Testing finished\n")
+        override fun startTesting(runner: TestRunner) = println("Starting testing")
+        override fun endTesting(runner: TestRunner) = println("Testing finished")
 
-        override fun startSuite(suite: TestSuite) = println("Starting test suite: $suite\n")
-        override fun endSuite(suite: TestSuite) = println("Test suite finished: $suite\n")
+        override fun startSuite(suite: TestSuite) = println("Starting test suite: $suite")
+        override fun endSuite(suite: TestSuite) = println("Test suite finished: $suite")
 
-        override fun pass(testCase: TestCase) = println("Pass: $testCase\n")
-        override fun fail(testCase: TestCase, e: AssertionError) = println("Fail: $testCase (Exception: ${e.message})\n")
-        override fun error(testCase: TestCase, e: Throwable) = println("Error: $testCase (Exception: ${e.message})\n")
-        override fun ignore(testCase: TestCase) = println("Ignore: $testCase\n")
+        override fun start(testCase: TestCase) = println("Start test case: $testCase")
+        override fun pass(testCase: TestCase) = println("Pass: $testCase")
+        override fun fail(testCase: TestCase, e: Throwable) {
+            println("Fail: $testCase. Exception:")
+            e.printStackTrace()
+        }
+        override fun ignore(testCase: TestCase) = println("Ignore: $testCase")
     }
 
     private val _suites = mutableListOf<TestSuite>()

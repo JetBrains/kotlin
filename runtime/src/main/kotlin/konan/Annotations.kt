@@ -93,3 +93,8 @@ public annotation class Fixme
 public annotation class Escapes(val who: Int)
 
 public annotation class PointsTo(vararg val onWhom: Int)
+
+/**
+ * Need to be fixed because of header/impl notation
+ */
+public annotation class FixmeMultiplatform

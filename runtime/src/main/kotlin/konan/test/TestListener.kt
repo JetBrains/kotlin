@@ -9,8 +9,8 @@ interface TestListener {
     fun startSuite(suite: TestSuite)
     fun endSuite(suite: TestSuite)
 
+    fun start(testCase: TestCase)
     fun pass(testCase: TestCase)
-    fun fail(testCase: TestCase, e: AssertionError)
-    fun error(testCase: TestCase, e: Throwable)
+    fun fail(testCase: TestCase, e: Throwable)
     fun ignore(testCase: TestCase)
 }

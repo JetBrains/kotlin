@@ -532,9 +532,9 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
         })
     }
 
-
+    // TODO: Get tests from Kotlin/JVM
     // TODO: Support tests in objects
-    // TODO: Support beforeTest/afterTest for companions.
+    // TODO: Check beforeTest/afterTest for companions.
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {
         annotationCollector.testClasses.filter {
             it.value.functions.any { it.kind == FunctionKind.TEST }
