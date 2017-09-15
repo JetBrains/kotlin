@@ -71,9 +71,9 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
 
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration
         if (declaration != null) {
-            declaration.liftToExpected()?.let { headerDeclaration ->
-                allRenames[headerDeclaration] = safeNewName
-                headerDeclaration.actualsForExpected().forEach { allRenames[it] = safeNewName }
+            declaration.liftToExpected()?.let { expectDeclaration ->
+                allRenames[expectDeclaration] = safeNewName
+                expectDeclaration.actualsForExpected().forEach { allRenames[it] = safeNewName }
             }
         }
     }

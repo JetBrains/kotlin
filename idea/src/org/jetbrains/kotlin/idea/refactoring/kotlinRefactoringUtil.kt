@@ -968,9 +968,9 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
 }
 
 internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
-    val header = liftToExpected() ?: return listOf(this)
-    val implementations = header.actualsForExpected()
-    return listOf(header) + implementations
+    val expect = liftToExpected() ?: return listOf(this)
+    val actuals = expect.actualsForExpected()
+    return listOf(expect) + actuals
 }
 
 internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {

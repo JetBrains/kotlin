@@ -108,10 +108,10 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             get() = originalDeclaration
     }
 
-    private fun substituteForHeaderOrImpl(element: PsiElement?) = (element?.namedUnwrappedElement as? KtNamedDeclaration)?.liftToExpected()
+    private fun substituteForExpectOrActual(element: PsiElement?) = (element?.namedUnwrappedElement as? KtNamedDeclaration)?.liftToExpected()
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
-        substituteForHeaderOrImpl(element)?.let { return it }
+        substituteForExpectOrActual(element)?.let { return it }
 
         val wrappedMethod = wrapPsiMethod(element) ?: return element
 
@@ -145,7 +145,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             renameCallback.pass(elementToProcess)
         }
 
-        substituteForHeaderOrImpl(element)?.let { return preprocessAndPass(it) }
+        substituteForExpectOrActual(element)?.let { return preprocessAndPass(it) }
 
         val wrappedMethod = wrapPsiMethod(element) ?: return
 

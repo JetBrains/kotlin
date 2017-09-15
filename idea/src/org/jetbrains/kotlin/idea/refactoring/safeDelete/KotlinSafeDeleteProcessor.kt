@@ -417,10 +417,10 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     ): Collection<PsiElement>? {
         when (element) {
             is KtParameter -> {
-                val headerParameter = element.liftToExpected() as? KtParameter
-                if (headerParameter != null && headerParameter != element) {
+                val expectParameter = element.liftToExpected() as? KtParameter
+                if (expectParameter != null && expectParameter != element) {
                     if (shouldAllowPropagationToExpected(element)) {
-                        return listOf(headerParameter)
+                        return listOf(expectParameter)
                     } else {
                         element.ownerFunction?.dropActualModifier = true
                         return listOf(element)
