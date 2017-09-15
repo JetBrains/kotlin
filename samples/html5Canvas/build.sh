@@ -17,18 +17,19 @@ var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
 mkdir -p $DIR/build/bin
+mkdir -p $DIR/build/klib
 
 konanc $DIR/src/jsinterop/kotlin \
         -includeBinary $DIR/src/jsinterop/js/jsinterop.js \
-        -p library -o $DIR/build/jsinterop -target wasm32 || exit 1
+        -p library -o $DIR/build/klib/jsinterop -target wasm32 || exit 1
 
 konanc $DIR/src/canvas/kotlin \
         -includeBinary $DIR/src/canvas/js/canvas.js \
-        -l $DIR/build/jsinterop \
-        -p library -o $DIR/build/canvas -target wasm32 || exit 1
+        -l $DIR/build/klib/jsinterop \
+        -p library -o $DIR/build/klib/canvas -target wasm32 || exit 1
 
 konanc $DIR/src/main/kotlin \
-        -l $DIR/build/jsinterop -l $DIR/build/canvas \
+        -r $DIR/build -l jsinterop -l canvas \
         -o $DIR/build/bin/html5Canvas -target wasm32 || exit 1
 
 echo "Artifact path is $DIR/build/bin/html5Canvas.wasm"
