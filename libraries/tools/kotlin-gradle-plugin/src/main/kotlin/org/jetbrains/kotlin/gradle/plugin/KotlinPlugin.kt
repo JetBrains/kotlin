@@ -10,6 +10,7 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.InvalidPluginException
@@ -86,9 +87,28 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     private fun addKotlinDirSetToSources() {
         val kotlinDirSet = kotlinSourceSet.kotlin
-        sourceSet.allJava.source(kotlinDirSet)
-        sourceSet.allSource.source(kotlinDirSet)
+
+        // Try to avoid duplicate Java sources in allSource:
+        val kotlinSrcDirsToAdd = filterOutJavaSrcDirsIfPossible(kotlinDirSet)
+
+        sourceSet.allJava.srcDirs(kotlinSrcDirsToAdd)
+        sourceSet.allSource.srcDirs(kotlinSrcDirsToAdd)
         sourceSet.resources.filter.exclude { it.file in kotlinDirSet }
+    }
+
+    private fun filterOutJavaSrcDirsIfPossible(sourceDirectorySet: SourceDirectorySet): FileCollection {
+        // If the API used below is not available, fall back to not filtering the Java sources.
+        if (SourceDirectorySet::class.java.methods.none { it.name == "getSourceDirectories" }) {
+            return sourceDirectorySet
+        }
+
+        fun getSourceDirectories(sourceDirectorySet: SourceDirectorySet): FileCollection {
+            val method = SourceDirectorySet::class.java.getMethod("getSourceDirectories")
+            return method(sourceDirectorySet) as FileCollection
+        }
+
+        // Build a lazily-resolved file collection that filters out Java sources from sources of this sourceDirectorySet
+        return getSourceDirectories(sourceDirectorySet).minus(getSourceDirectories(sourceSet.java))
     }
 
     private fun createKotlinCompileTask(): T {
@@ -129,6 +149,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
     override fun doTargetSpecificProcessing() {
         val aptConfiguration = project.createAptConfiguration(sourceSet.name, kotlinPluginVersion)
+        kotlinSourceSet.kotlin.source(sourceSet.java)
 
         project.afterEvaluate { project ->
             if (project != null) {
@@ -153,8 +174,6 @@ internal class Kotlin2JvmSourceSetProcessor(
                 } else {
                     removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
                 }
-
-                sourceSet.java.srcDirs.forEach { kotlinSourceSet.kotlin.srcDir(it) }
 
                 // KotlinCompile.source(kotlinDirSet) should be called only after all java roots are added to kotlinDirSet
                 // otherwise some java roots can be ignored
