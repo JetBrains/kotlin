@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,23 +24,20 @@ import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
+import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
+import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -68,8 +65,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
 
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        configureJdkHome(arguments, configuration, messageCollector).let {
+        setupJdkClasspathRoots(arguments, configuration, messageCollector).let {
             if (it != OK) return it
         }
 
@@ -402,31 +398,42 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        private fun configureJdkHome(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {
-            if (arguments.noJdk) {
-                configuration.put(JVMConfigurationKeys.NO_JDK, true)
-
-                if (arguments.jdkHome != null) {
-                    messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
-                }
-                return OK
-            }
-
-            if (arguments.jdkHome != null) {
-                val jdkHome = File(arguments.jdkHome)
-                if (!jdkHome.exists()) {
-                    messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
-                    return COMPILATION_ERROR
+        private fun setupJdkClasspathRoots(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {
+            try {
+                if (arguments.noJdk) {
+                    if (arguments.jdkHome != null) {
+                        messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
+                    }
+                    return OK
                 }
 
-                messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
+                val (jdkHome, classesRoots) = if (arguments.jdkHome != null) {
+                    val jdkHome = File(arguments.jdkHome)
+                    if (!jdkHome.exists()) {
+                        messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
+                        return COMPILATION_ERROR
+                    }
+                    messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
+                    jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
+                }
+                else {
+                    File(System.getProperty("java.home")) to PathUtil.getJdkClassesRootsFromCurrentJre()
+                }
 
                 configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
-            }
-            else {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, PathUtil.getJavaHome())
-            }
 
+                if (!CoreJrtFileSystem.isModularJdk(jdkHome)) {
+                    configuration.addJvmClasspathRoots(classesRoots)
+                    if (classesRoots.isEmpty()) {
+                        messageCollector.report(ERROR, "No class roots are found in the JDK path: $jdkHome")
+                        return COMPILATION_ERROR
+                    }
+                }
+            }
+            catch (t: Throwable) {
+                MessageCollectorUtil.reportException(messageCollector, t)
+                return INTERNAL_ERROR
+            }
             return OK
         }
 
