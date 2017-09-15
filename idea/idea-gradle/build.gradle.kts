@@ -35,11 +35,11 @@ dependencies {
 
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
     testRuntime(ideaPluginDeps("jcommander", "resources_en", plugin = "testng"))
-    testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
+    //testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
     testRuntime(ideaPluginDeps("jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
+    //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 }
 

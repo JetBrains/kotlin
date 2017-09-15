@@ -38,13 +38,13 @@ dependencies {
     testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
     testRuntime(ideaPluginDeps("jcommander", "testng", "testng-plugin", "resources_en", plugin = "testng"))
     testRuntime(ideaPluginDeps("copyright", plugin = "copyright"))
-    testRuntime(ideaPluginDeps("properties", "resources_en", plugin = "properties"))
+    testRuntime(ideaPluginDeps("properties", /*"resources_en",*/ plugin = "properties"))
     testRuntime(ideaPluginDeps("java-i18n", plugin = "java-i18n"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
     testRuntime(ideaPluginDeps("coverage", "jacocoant", plugin = "coverage"))
     testRuntime(ideaPluginDeps("java-decompiler", plugin = "java-decompiler"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
+    //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 }
 
