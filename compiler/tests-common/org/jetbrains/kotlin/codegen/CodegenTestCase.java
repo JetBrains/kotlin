@@ -92,6 +92,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
     protected File javaClassesOutputDirectory = null;
+    protected List<File> additionalDependencies = null;
 
     protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
     private final String defaultJvmTarget = System.getProperty(DEFAULT_JVM_TARGET_FOR_TEST);
@@ -359,6 +360,9 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         List<File> files = new ArrayList<>();
         if (javaClassesOutputDirectory != null) {
             files.add(javaClassesOutputDirectory);
+        }
+        if (additionalDependencies != null) {
+            files.addAll(additionalDependencies);
         }
 
         ScriptDependenciesProvider externalImportsProvider =
