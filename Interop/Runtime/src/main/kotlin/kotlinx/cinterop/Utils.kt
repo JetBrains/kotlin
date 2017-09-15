@@ -379,3 +379,9 @@ inline fun <R> memScoped(block: MemScope.()->R): R {
         memScope.clear()
     }
 }
+
+fun COpaquePointer.readBytes(count: Int): ByteArray {
+    val result = ByteArray(count)
+    nativeMemUtils.getByteArray(this.reinterpret<ByteVar>().pointed, result, count)
+    return result
+}

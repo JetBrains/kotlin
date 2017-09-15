@@ -34,9 +34,11 @@ private val dataModel: DataModel = when (System.getProperty("sun.arch.data.model
 }
 
 // Must be only used in interop, contains host pointer size, not target!
-val pointerSize: Int = dataModel.pointerSize.toInt()
+@PublishedApi
+internal val pointerSize: Int = dataModel.pointerSize.toInt()
 
-object nativeMemUtils {
+@PublishedApi
+internal object nativeMemUtils {
     fun getByte(mem: NativePointed) = unsafe.getByte(mem.address)
     fun putByte(mem: NativePointed, value: Byte) = unsafe.putByte(mem.address, value)
 

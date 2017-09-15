@@ -2,13 +2,16 @@ package kotlinx.cinterop
 
 import konan.internal.Intrinsic
 
-inline val pointerSize: Int
+@PublishedApi
+internal inline val pointerSize: Int
     get() = getPointerSize()
 
-@Intrinsic external fun getPointerSize(): Int
+@PublishedApi
+@Intrinsic internal external fun getPointerSize(): Int
 
 // TODO: do not use singleton because it leads to init-check on any access.
-object nativeMemUtils {
+@PublishedApi
+internal object nativeMemUtils {
     @Intrinsic external fun getByte(mem: NativePointed): Byte
     @Intrinsic external fun putByte(mem: NativePointed, value: Byte)
 
