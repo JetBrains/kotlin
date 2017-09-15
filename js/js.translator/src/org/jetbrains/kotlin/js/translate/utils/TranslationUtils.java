@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -227,17 +228,6 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression translateLeftExpression(
-            @NotNull TranslationContext context,
-            @NotNull KtBinaryExpression expression,
-            @NotNull JsBlock block
-    ) {
-        KtExpression left = expression.getLeft();
-        assert left != null : "Binary expression should have a left expression: " + expression.getText();
-        return Translation.translateAsExpression(left, context, block);
-    }
-
-    @NotNull
     public static JsExpression translateRightExpression(
             @NotNull TranslationContext context,
             @NotNull KtBinaryExpression expression,
@@ -305,7 +295,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
-        JsInvocation throwNPE = new JsInvocation(Namer.throwNPEFunctionRef());
+        JsInvocation throwNPE = new JsInvocation(context.getReferenceToIntrinsic(Namer.THROW_NPE_FUN_NAME));
         JsConditional ensureNotNull = notNullConditional(expression, throwNPE, context);
 
         JsExpression thenExpression = ensureNotNull.getThenExpression();
@@ -547,5 +537,14 @@ public final class TranslationUtils {
     @NotNull
     public static String getTagForSpecialFunction(@NotNull SpecialFunction specialFunction) {
         return "special:" + specialFunction.name();
+    }
+
+    @NotNull
+    public static JsExpression getIntrinsicFqn(@NotNull String name) {
+        JsExpression fqn = pureFqn(Namer.KOTLIN_NAME, null);
+        for (String part : StringUtil.split(name, ".")) {
+            fqn = pureFqn(part, fqn);
+        }
+        return fqn;
     }
 }

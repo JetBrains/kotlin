@@ -47,7 +47,7 @@ import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 public final class TopLevelFIF extends CompositeFIF {
     public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
     @NotNull
-    private static final KotlinFunctionIntrinsic KOTLIN_ANY_EQUALS = new KotlinFunctionIntrinsic("equals") {
+    private static final KotlinAliasedFunctionIntrinsic KOTLIN_ANY_EQUALS = new KotlinAliasedFunctionIntrinsic("equals") {
         @NotNull
         @Override
         public JsExpression apply(
@@ -65,7 +65,7 @@ public final class TopLevelFIF extends CompositeFIF {
     };
 
     @NotNull
-    public static final KotlinFunctionIntrinsic KOTLIN_EQUALS = new KotlinFunctionIntrinsic("equals");
+    public static final KotlinAliasedFunctionIntrinsic KOTLIN_EQUALS = new KotlinAliasedFunctionIntrinsic("equals");
 
     @NotNull
     private static final KotlinFunctionIntrinsic KOTLIN_SUBSEQUENCE = new KotlinFunctionIntrinsic("subSequence");
@@ -73,7 +73,7 @@ public final class TopLevelFIF extends CompositeFIF {
     @NotNull
     private static final DescriptorPredicate HASH_CODE_IN_ANY = pattern("kotlin", "Any", "hashCode");
     @NotNull
-    private static final KotlinFunctionIntrinsic KOTLIN_HASH_CODE = new KotlinFunctionIntrinsic("hashCode");
+    private static final KotlinAliasedFunctionIntrinsic KOTLIN_HASH_CODE = new KotlinAliasedFunctionIntrinsic("hashCode");
 
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
@@ -164,7 +164,7 @@ public final class TopLevelFIF extends CompositeFIF {
 
 
     @NotNull
-    public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
+    public static final KotlinAliasedFunctionIntrinsic TO_STRING = new KotlinAliasedFunctionIntrinsic("toString");
 
     @NotNull
     private static final FunctionIntrinsic CHAR_TO_STRING = new FunctionIntrinsicWithReceiverComputed() {

@@ -20,25 +20,16 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsName
-import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.context.StaticContext
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-class DefaultClassObjectIntrinsic(val staticContext: StaticContext, val tag: String, val fqName: FqName): ObjectIntrinsic {
-    private val innerName: JsName by lazy {
-        val declaration = JsAstUtils.replaceRootReference(staticContext.getQualifiedReference(fqName), Namer.kotlinObject())
-        staticContext.importDeclaration(fqName.shortName().asString(), tag, declaration)
-    }
-
-    override fun apply(context: TranslationContext) = JsAstUtils.pureFqn(innerName, null)
+class DefaultClassObjectIntrinsic( val fqName: FqName): ObjectIntrinsic {
+    override fun apply(context: TranslationContext) = context.getReferenceToIntrinsic(fqName.asString())
 }
 
-class ObjectIntrinsics(private val staticContext: StaticContext) {
+class ObjectIntrinsics {
     private val cache = mutableMapOf<ClassDescriptor, ObjectIntrinsic>()
 
     fun getIntrinsic(classDescriptor: ClassDescriptor) = cache.getOrPut(classDescriptor) { createIntrinsic(classDescriptor) }
@@ -53,8 +44,7 @@ class ObjectIntrinsics(private val staticContext: StaticContext) {
         val containingDeclaration = classDescriptor.containingDeclaration
         val name = Name.identifier(containingDeclaration.name.asString() + "CompanionObject")
 
-        return DefaultClassObjectIntrinsic(
-                staticContext, "intrinsic:kotlin.js.internal.${name.asString()}", FqName("kotlin.js.internal").child(name))
+        return DefaultClassObjectIntrinsic(FqName("kotlin.js.internal").child(name))
     }
 }
 

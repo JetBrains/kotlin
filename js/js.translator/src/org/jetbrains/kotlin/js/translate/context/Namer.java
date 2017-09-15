@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -87,16 +86,16 @@ public final class Namer {
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     public static final String ANOTHER_THIS_PARAMETER_NAME = "$this";
 
-    private static final String THROW_NPE_FUN_NAME = "throwNPE";
-    private static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
-    private static final String THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE";
-    private static final String THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION = "throwUPAE";
+    public static final String THROW_NPE_FUN_NAME = "throwNPE";
+    public static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
+    public static final String THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE";
+    public static final String THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION = "throwUPAE";
     private static final String PROTOTYPE_NAME = "prototype";
     private static final String CAPTURED_VAR_FIELD = "v";
 
     public static final JsNameRef IS_ARRAY_FUN_REF = new JsNameRef("isArray", "Array");
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
-    public static final String WRAP_FUNCTION = "wrapFunction";
+    private static final String WRAP_FUNCTION = "wrapFunction";
     public static final String DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "$default";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
@@ -222,26 +221,6 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsExpression throwNPEFunctionRef() {
-        return new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject());
-    }
-
-    @NotNull
-    public static JsExpression throwClassCastExceptionFunRef() {
-        return new JsNameRef(THROW_CLASS_CAST_EXCEPTION_FUN_NAME, kotlinObject());
-    }
-
-    @NotNull
-    public static JsExpression throwIllegalStateExceptionFunRef() {
-        return new JsNameRef(THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME, kotlinObject());
-    }
-
-    @NotNull
-    public static JsExpression throwUninitializedPropertyAccessExceptionFunRef() {
-        return new JsNameRef(THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION, kotlinObject());
-    }
-
-    @NotNull
     public static JsNameRef kotlin(@NotNull JsName name) {
         return pureFqn(name, kotlinObject());
     }
@@ -324,11 +303,6 @@ public final class Namer {
         JsInvocation result = new JsInvocation(new JsNameRef("isType", KOTLIN_NAME), instance, type);
         MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
         return result;
-    }
-
-    @NotNull
-    static String generatePackageName(@NotNull FqName packageFqName) {
-        return packageFqName.isRoot() ? getRootPackageName() : packageFqName.shortName().asString();
     }
 
     @NotNull

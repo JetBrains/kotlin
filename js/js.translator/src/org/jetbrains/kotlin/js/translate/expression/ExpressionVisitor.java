@@ -263,7 +263,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), receiver);
         }
 
-        return new JsInvocation(context.namer().kotlin(GET_KCLASS), UtilsKt.getReferenceToJsClass(lhs.getType(), context));
+        return new JsInvocation(context.getReferenceToIntrinsic(GET_KCLASS), UtilsKt.getReferenceToJsClass(lhs.getType(), context));
     }
 
 

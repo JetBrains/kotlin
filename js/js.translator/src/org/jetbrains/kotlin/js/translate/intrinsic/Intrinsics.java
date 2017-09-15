@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.intrinsic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.FunctionIntrinsics;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
@@ -37,8 +36,8 @@ public final class Intrinsics {
     private final BinaryOperationIntrinsics binaryOperationIntrinsics = new BinaryOperationIntrinsics();
     private final ObjectIntrinsics objectIntrinsics;
 
-    public Intrinsics(@NotNull StaticContext staticContext) {
-        objectIntrinsics = new ObjectIntrinsics(staticContext);
+    public Intrinsics() {
+        objectIntrinsics = new ObjectIntrinsics();
     }
 
     @NotNull
