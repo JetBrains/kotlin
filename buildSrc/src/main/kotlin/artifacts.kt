@@ -84,7 +84,7 @@ fun Project.runtimeJar(taskName: String = "jar", body: Jar.() -> Unit = {}): Jar
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): Jar =
         getOrCreateTask("sourcesJar") {
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            setupPublicJar("Sources")
+            classifier = "sources"
             try {
                 project.pluginManager.withPlugin("java-base") {
                     from(project.the<JavaPluginConvention>().sourceSets["main"].allSource)
@@ -100,7 +100,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): Jar =
 fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar =
         getOrCreateTask("javadocJar") {
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            setupPublicJar("JavaDoc")
+            classifier = "javadoc"
             tasks.findByName("javadoc")?.let{ it as Javadoc }?.takeIf { it.enabled }?.let {
                 dependsOn(it)
                 from(it.destinationDir)
@@ -180,16 +180,14 @@ private fun Project.runtimeJarTaskIfExists(): Task? =
 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
 
-fun Jar.setupPublicJar(classifier: String = "", classifierDescr: String? = null) {
-    this.classifier = classifier.toLowerCase()
-    dependsOn(":prepare:build.version:prepare")
+fun Jar.setupPublicJar(classifier: String = "") {
+    this.classifier = classifier
     manifest.attributes.apply {
-        put("Built-By", project.rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Vendor", project.rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Title", "${project.description} ${classifierDescr ?: classifier}".trim())
+        put("Implementation-Vendor", "JetBrains")
+        put("Implementation-Title", project.the<BasePluginConvention>().archivesBaseName)
         put("Implementation-Version", project.rootProject.extra["buildNumber"])
+        put("Build-Jdk", System.getProperty("java.version"))
     }
-//    from(project.configurations.getByName("build-version").files, action = { into("META-INF/") })
 }
 
 

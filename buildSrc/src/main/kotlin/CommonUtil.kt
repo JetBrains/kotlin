@@ -32,28 +32,6 @@ fun AbstractTask.dependsOnTaskIfExistsRec(task: String, project: Project? = null
     }
 }
 
-fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
-    dependsOn(":prepare:build.version:prepare")
-    manifest.attributes.apply {
-        put("Built-By", project.rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Vendor", project.rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Title", implementationTitle)
-        put("Implementation-Version", project.rootProject.extra["buildNumber"])
-    }
-//    from(project.configurations.getByName("build-version").files, action = { into("META-INF/") })
-}
-
-fun Jar.setupSourceJar(implementationTitle: String): Unit {
-    dependsOn("classes")
-    setupRuntimeJar(implementationTitle + " Sources")
-    project.pluginManager.withPlugin("java-base") {
-        from(project.the<JavaPluginConvention>().sourceSets["main"].allSource)
-    }
-    classifier = "sources"
-    project.artifacts.add("archives", this)
-}
-
-
 inline fun<T: Any> Project.withJavaPlugin(crossinline body: () -> T?): T? {
     var res: T? = null
     pluginManager.withPlugin("java") {

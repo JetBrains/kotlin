@@ -88,7 +88,7 @@ val packCompiler by task<ShadowJar> {
     destinationDir = File(buildDir, "libs")
     dependsOn(protobufFullTask)
 
-    setupPublicJar("before-proguard", "")
+    setupPublicJar("before-proguard")
     from(fatJarContents)
     ideaSdkDeps("jps-model.jar", subdir = "jps").forEach { from(zipTree(it)) { exclude("META-INF/services/**") } }
     ideaSdkDeps("oromatcher").forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }

@@ -74,10 +74,8 @@ open class PublishedKotlinModule : Plugin<Project> {
                         "developers" {
                             "developer" {
                                 "name"("Kotlin Team")
-                                "organization" {
-                                    "name"("JetBrains")
-                                    "url"("https://www.jetbrains.com")
-                                }
+                                setProperty("organization", "JetBrains")
+                                "organizationUrl"("https://www.jetbrains.com")
                             }
                         }
                     }
