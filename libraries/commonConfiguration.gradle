@@ -105,7 +105,7 @@ task preparePublication {
 
     String sonatypeSnapshotsUrl = (isSonatypePublish && !isRelease) ? "https://oss.sonatype.org/content/repositories/snapshots/" : null
 
-    ext.repoUrl = properties["deployRepoUrl"] ?: sonatypeSnapshotsUrl ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/repo"
+    ext.repoUrl = properties["deployRepoUrl"] ?: sonatypeSnapshotsUrl ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/repo".toString()
     ext.username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
     ext.password = properties["deployRepoPassword"] ?: properties["kotlin.${repoProvider}.password"]
 

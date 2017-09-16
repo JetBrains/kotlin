@@ -7,10 +7,12 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.maven.MavenResolver
 
 import org.gradle.api.plugins.MavenRepositoryHandlerConvention
+import org.gradle.api.publication.maven.internal.deployer.MavenRemoteRepository
 import org.gradle.api.tasks.Upload
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
+import kotlin.properties.Delegates
 
 
 /**
@@ -18,6 +20,8 @@ import org.gradle.plugins.signing.SigningExtension
  *
  */
 open class PublishedKotlinModule : Plugin<Project> {
+
+    private fun String.toBooleanOrNull() = listOf(true, false).firstOrNull { it.toString().equals(this, ignoreCase = true) }
 
     override fun apply(project: Project) {
 
@@ -28,12 +32,8 @@ open class PublishedKotlinModule : Plugin<Project> {
             if (!project.hasProperty("prebuiltJar")) {
                 plugins.apply("signing")
 
-                val signingProp = project.rootProject.properties["signingRequired"]
-                val signingRequired = when (signingProp) {
-                    is Boolean -> signingProp == true
-                    is String -> listOf("true", "yes").contains(signingProp.toLowerCase().trim())
-                    else -> project.rootProject.extra["isSonatypeRelease"] as? Boolean == true
-                }
+                val signingRequired = project.findProperty("signingRequired")?.toString()?.toBooleanOrNull()
+                                      ?: project.property("isSonatypeRelease") as Boolean
 
                 configure<SigningExtension> {
                     isRequired = signingRequired
@@ -95,22 +95,29 @@ open class PublishedKotlinModule : Plugin<Project> {
 
                 val username: String? by preparePublication.extra
                 val password: String? by preparePublication.extra
+                val repoUrl: String by preparePublication.extra
+
+                var repository: MavenRemoteRepository by Delegates.notNull()
 
                 repositories {
                     withConvention(MavenRepositoryHandlerConvention::class) {
 
                         mavenDeployer {
                             withGroovyBuilder {
-                                "repository"("url" to uri(preparePublication.extra["repoUrl"]))
-
-                                if (username != null && password != null) {
-                                    "authentication"("userName" to username, "password" to password)
+                                "repository"("url" to repoUrl)!!.also { repository = it as MavenRemoteRepository }.withGroovyBuilder {
+                                    if (username != null && password != null) {
+                                        "authentication"("userName" to username, "password" to password)
+                                    }
                                 }
                             }
 
                             configurePom()
                         }
                     }
+                }
+
+                doFirst {
+                    repository.url = repoUrl
                 }
             }
 
