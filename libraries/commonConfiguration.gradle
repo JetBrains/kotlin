@@ -77,13 +77,13 @@ ext.manifestAttributes = { Manifest manifest, Project project, String component 
         attributes \
                 'Implementation-Vendor': 'JetBrains',
                 'Implementation-Title': project.archivesBaseName,
-                'Implementation-Version': project.version,
+                'Implementation-Version': project.buildNumber,
                 'Build-Jdk': System.getProperty('java.version')
 
         if (component != null) {
             attributes \
                 'Kotlin-Runtime-Component': component,
-                'Kotlin-Version': project.kotlin_language_version
+                'Kotlin-Version': project.kotlinLanguageVersion
         }
     }
 }

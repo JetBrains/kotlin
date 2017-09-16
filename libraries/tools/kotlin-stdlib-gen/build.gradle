@@ -5,7 +5,7 @@ sourceSets {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
 }
 
 compileKotlin {

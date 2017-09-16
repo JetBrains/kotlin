@@ -20,7 +20,7 @@ configure([project(':kotlin-gradle-plugin'), project(':kotlin-allopen'), project
     }
 
     publishPlugins.doFirst {
-        assert !kotlin_version.contains('SNAPSHOT')
+        assert !kotlinVersion.contains('SNAPSHOT')
     }
 
     pluginBundle {

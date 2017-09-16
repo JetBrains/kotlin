@@ -38,7 +38,7 @@ fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
         put("Built-By", project.rootProject.extra["manifest.impl.vendor"])
         put("Implementation-Vendor", project.rootProject.extra["manifest.impl.vendor"])
         put("Implementation-Title", implementationTitle)
-        put("Implementation-Version", project.rootProject.extra["build.number"])
+        put("Implementation-Version", project.rootProject.extra["buildNumber"])
     }
 //    from(project.configurations.getByName("build-version").files, action = { into("META-INF/") })
 }

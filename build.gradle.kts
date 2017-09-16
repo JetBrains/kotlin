@@ -12,9 +12,8 @@ buildscript {
             "https://plugins.gradle.org/m2",
             "http://repository.jetbrains.com/utils/").filterNotNull()
 
-    extra["kotlin_version"] = bootstrapKotlinVersion
-    extra["kotlinVersion"] = bootstrapKotlinVersion
-    extra["kotlin_language_version"] = "1.1"
+    extra["bootstrapKotlinVersion"] = bootstrapKotlinVersion
+
     extra["repos"] = repos
 
     extra["versions.shadow"] = "2.0.1"
@@ -47,8 +46,16 @@ val configuredJdks: List<JdkId> =
             }
         }
 
-val buildNumber = "1.1-SNAPSHOT"
-extra["build.number"] = buildNumber
+val defaultSnapshotVersion = "1.1-SNAPSHOT"
+val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
+val kotlinVersion by extra(findProperty("deployVersion")?.toString() ?: buildNumber)
+
+val kotlinLanguageVersion by extra("1.1")
+
+allprojects {
+    group = "org.jetbrains.kotlin"
+    version = kotlinVersion
+}
 
 extra["kotlin_root"] = rootDir
 
@@ -165,11 +172,6 @@ val gradlePluginProjects = listOf(
         ":kotlin-sam-with-receiver"
 )
 
-allprojects {
-    group = "org.jetbrains.kotlin"
-    version = buildNumber
-}
-
 apply {
     from("libraries/commonConfiguration.gradle")
     from("libraries/gradlePluginsConfiguration.gradle")
@@ -230,12 +232,12 @@ allprojects {
     }
     configureJvmProject(javaHome!!, jvmTarget!!)
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
-    }
-
-    tasks.withType<Kotlin2JsCompile> {
-        kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+        kotlinOptions {
+            languageVersion = kotlinLanguageVersion
+            apiVersion = kotlinLanguageVersion
+            freeCompilerArgs = listOf("-Xallow-kotlin-package")
+        }
     }
 
     tasks.withType<Javadoc> {
