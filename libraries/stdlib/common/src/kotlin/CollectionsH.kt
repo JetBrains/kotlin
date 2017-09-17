@@ -149,10 +149,12 @@ expect inline fun <reified T> Array<out T>?.orEmpty(): Array<out T>
 
 expect inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
 
-@SinceKotlin("1.2")
-expect fun <T> MutableList<T>.fill(value: T): Unit
-expect fun <T : Comparable<T>> MutableList<T>.sort(): Unit
-expect fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit
+@SinceKotlin("1.2") header fun <T> MutableList<T>.fill(value: T): Unit
+@SinceKotlin("1.2") header fun <T> MutableList<T>.shuffle(): Unit
+@SinceKotlin("1.2") header fun <T> Iterable<T>.shuffled(): List<T>
+
+header fun <T : Comparable<T>> MutableList<T>.sort(): Unit
+header fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit
 
 
 // from Grouping.kt
