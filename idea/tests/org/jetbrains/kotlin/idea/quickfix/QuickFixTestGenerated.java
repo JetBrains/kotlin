@@ -6717,29 +6717,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/MakeTypeParameterReifiedAndFunctionInline")
+    @TestMetadata("idea/testData/quickfix/makeTypeParameterReifiedAndFunctionInline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MakeTypeParameterReifiedAndFunctionInline extends AbstractQuickFixTest {
         public void testAllFilesPresentInMakeTypeParameterReifiedAndFunctionInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/MakeTypeParameterReifiedAndFunctionInline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makeTypeParameterReifiedAndFunctionInline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("notTypeParameter.kt")
-        public void testNotTypeParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/MakeTypeParameterReifiedAndFunctionInline/notTypeParameter.kt");
+        @TestMetadata("noTypeParameter.kt")
+        public void testNoTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeTypeParameterReifiedAndFunctionInline/noTypeParameter.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("notTypeParameter2.kt")
-        public void testNotTypeParameter2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/MakeTypeParameterReifiedAndFunctionInline/notTypeParameter2.kt");
+        @TestMetadata("noTypeParameter2.kt")
+        public void testNoTypeParameter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeTypeParameterReifiedAndFunctionInline/noTypeParameter2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("typeParameter.kt")
         public void testTypeParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/MakeTypeParameterReifiedAndFunctionInline/typeParameter.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeTypeParameterReifiedAndFunctionInline/typeParameter.kt");
             doTest(fileName);
         }
     }

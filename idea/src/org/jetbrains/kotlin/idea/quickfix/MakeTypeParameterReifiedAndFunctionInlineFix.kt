@@ -20,17 +20,18 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.addTypeParameter
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class MakeTypeParameterReifiedAndFunctionInlineFix(
         typeReference: KtTypeReference,
-        private val function: KtNamedFunction,
-        private val typeParameter: KtTypeParameter?
+        function: KtNamedFunction,
+        private val typeParameter: KtTypeParameter
 ) : KotlinQuickFixAction<KtTypeReference>(typeReference) {
 
     private val inlineFix = AddInlineToFunctionWithReifiedFix(function)
@@ -40,21 +41,8 @@ class MakeTypeParameterReifiedAndFunctionInlineFix(
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val element = element ?: return
-
-        if (typeParameter != null) {
-            inlineFix.invoke(project, editor, file)
-            AddModifierFix(typeParameter, KtTokens.REIFIED_KEYWORD).invoke(project, editor, file)
-        }
-        else {
-            inlineFix.invoke(project, editor, file)
-            val psiFactory = KtPsiFactory(project)
-            val typeParameterName = KotlinNameSuggester.suggestNameByName("T") { name ->
-                function.typeParameters.none { it.name == name }
-            }
-            function.addTypeParameter(psiFactory.createTypeParameter("reified $typeParameterName"))
-            element.replace(psiFactory.createExpression(typeParameterName))
-        }
+        inlineFix.invoke(project, editor, file)
+        AddModifierFix(typeParameter, KtTokens.REIFIED_KEYWORD).invoke(project, editor, file)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -64,7 +52,7 @@ class MakeTypeParameterReifiedAndFunctionInlineFix(
             val function = typeReference.getStrictParentOfType<KtNamedFunction>() ?: return null
             val typeParameter = function.typeParameterList?.parameters?.firstOrNull {
                 it.descriptor == element.a.constructor.declarationDescriptor
-            }
+            } ?: return null
             return MakeTypeParameterReifiedAndFunctionInlineFix(typeReference, function, typeParameter)
         }
     }

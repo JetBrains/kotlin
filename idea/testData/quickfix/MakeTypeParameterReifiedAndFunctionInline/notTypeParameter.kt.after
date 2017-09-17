@@ -1,2 +1,0 @@
-// "Make type parameter reified and function inline" "true"
-inline fun <reified T> test(a: List<Any>) = a is T
