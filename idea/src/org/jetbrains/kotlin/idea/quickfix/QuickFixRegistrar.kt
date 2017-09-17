@@ -459,6 +459,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         TYPE_PARAMETER_AS_REIFIED.registerFactory(AddReifiedToTypeParameterOfFunctionFix)
 
+        CANNOT_CHECK_FOR_ERASED.registerFactory(MakeTypeParameterReifiedAndFunctionInlineFix)
+
         TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.registerFactory(TooLongCharLiteralToStringFix)
 
         UNUSED_VALUE.registerFactory(RemoveUnusedValueFix)
