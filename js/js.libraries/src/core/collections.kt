@@ -17,6 +17,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
+import kotlin.js.Math
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 @kotlin.internal.InlineOnly
@@ -90,6 +91,32 @@ public fun <T> MutableList<T>.fill(value: T): Unit {
         this[index] = value
     }
 }
+
+/**
+ * Randomly shuffles elements in this list.
+ *
+ * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ */
+@SinceKotlin("1.2")
+public fun <T> MutableList<T>.shuffle(): Unit {
+    for (i in lastIndex downTo 1) {
+        rand(i + 1).let { j ->
+            swap(this, i, j)
+        }
+}
+private fun rand(upperBound: Int) = Math.floor(Math.random() * upperBound)
+private fun swap(list: MutableList<T>, i: Int, j: Int): Unit {
+    val copy = list[i]
+    list[i] = list[j]
+    list[j] = copy
+}
+
+
+/**
+ * Returns a new list with the elements of this list randomly shuffled.
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
 /**
  * Sorts elements in the list in-place according to their natural sort order.

@@ -101,7 +101,6 @@ class MutableCollectionTest {
         assertEquals(listOf(42, 42, 42), list)
     }
 
-    @JvmVersion
     @Test fun shuffled() {
         val list = MutableList(100) { it }
         val shuffled = list.shuffled()
