@@ -127,6 +127,4 @@ class MutableCollectionTest {
 
         assertEquals(shuffled1, shuffled2)
     }
-
-
 }

@@ -85,7 +85,7 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
  * Each element in the list gets replaced with the [value].
  */
 @SinceKotlin("1.2")
-public fun <T> MutableList<T>.fill(value: T) {
+public fun <T> MutableList<T>.fill(value: T): Unit {
     for (index in 0..lastIndex) {
         this[index] = value
     }
@@ -112,7 +112,7 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
 
     array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
 
-    for (i in 0..array.size - 1) {
+    for (i in 0..array.lastIndex) {
         list[i] = array[i]
     }
 }
