@@ -16,6 +16,7 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(project(":plugins:kapt3-idea"))
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-android"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
