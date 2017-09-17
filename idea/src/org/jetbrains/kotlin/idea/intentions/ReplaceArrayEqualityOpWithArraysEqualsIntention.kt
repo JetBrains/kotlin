@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class ReplaceArrayEqualityOpWithArraysEqualsInspection :
@@ -44,12 +45,18 @@ class ReplaceArrayEqualityOpWithArraysEqualsIntention : SelfTargetingOffsetIndep
         ktFile.resolveImportReference(FqName("java.util.Arrays")).firstOrNull()?.let {
             ImportInsertHelper.getInstance(project).importDescriptor(ktFile, it)
         }
-        val expression = factory.createExpression("Arrays.equals(${left.text}, ${right.text})")
+        val template = buildString {
+            if (element.operationToken == KtTokens.EXCLEQ) append("!")
+            append("Arrays.equals($0, $1)")
+        }
+        val expression = factory.createExpressionByPattern(template, left, right)
         element.replace(expression)
     }
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
-        if (element.operationToken != KtTokens.EQEQ) return false
+        val operationToken = element.operationToken
+        if (operationToken != KtTokens.EQEQ && operationToken != KtTokens.EXCLEQ) return false
+        if (operationToken == KtTokens.EXCLEQ) text = "Replace '!=' with 'Arrays.equals'"
         val right = element.right ?: return false
         val left = element.left ?: return false
         val rightResolvedCall = right.getResolvedCall(right.analyze()) ?: return false

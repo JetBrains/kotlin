@@ -13562,6 +13562,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("arrayEXCLEQ.kt")
+        public void testArrayEXCLEQ() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceArrayEqualityOpWithArraysEquals/arrayEXCLEQ.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primitiveArrayEQEQ.kt")
         public void testPrimitiveArrayEQEQ() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceArrayEqualityOpWithArraysEquals/primitiveArrayEQEQ.kt");
