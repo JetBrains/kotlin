@@ -35,7 +35,13 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             LONG -> "0L"
             else -> "0"
         }
-        val checkZero = "if (step == $zero) throw kotlin.IllegalArgumentException(\"Step must be non-zero\")"
+        val checkZero = """if (step == $zero) throw kotlin.IllegalArgumentException("Step must be non-zero")"""
+
+        val minValue = when (kind) {
+            LONG -> "Long.MIN_VALUE"
+            else -> "Int.MIN_VALUE"
+        }
+        val checkMin = """else if (step == $minValue) throw kotlin.IllegalArgumentException("Step must have an inverse")"""
 
         val hashCode = "=\n" + when (kind) {
             CHAR ->
@@ -47,6 +53,10 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             else -> throw IllegalArgumentException()
         }
 
+        val cast = when (kind) {
+            CHAR -> ".toInt()"
+            else -> ""
+        }
         out.println(
                 """/**
  * A progression of values of type `$t`.
@@ -60,6 +70,7 @@ public open class $progression
     ) : Iterable<$t> {
     init {
         $checkZero
+        $checkMin
     }
 
     /**
@@ -70,7 +81,7 @@ public open class $progression
     /**
      * The last element in the progression.
      */
-    public val last: $t = getProgressionLastElement(start.to$incrementType(), endInclusive.to$incrementType(), step).to$t()
+    public val last: $t = getProgressionLastElement(start$cast, endInclusive$cast, step).to$t()
 
     /**
      * The step of the progression.
