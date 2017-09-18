@@ -18,7 +18,7 @@ public class RangeTest {
 
         assertFalse(10 in range)
         assertFalse(9000 in range)
-        
+
         assertFalse(range.isEmpty())
 
         assertTrue(9 in (range as ClosedRange<Int>))
@@ -88,7 +88,7 @@ public class RangeTest {
 
         assertFalse(10.toShort() in range)
         assertFalse(239.toShort() in range)
-        
+
         assertFalse(range.isEmpty())
 
         assertTrue(1.toByte() in range)
@@ -121,7 +121,7 @@ public class RangeTest {
 
         assertFalse(10L in range)
         assertFalse(10000000L in range)
-        
+
         assertFalse(range.isEmpty())
 
         assertTrue(9 in (range as ClosedRange<Long>))
@@ -158,7 +158,7 @@ public class RangeTest {
 
         assertFalse('z' in range)
         assertFalse('\u1000' in range)
-        
+
         assertFalse(range.isEmpty())
 
         assertTrue('v' in (range as ClosedRange<Char>))
@@ -376,4 +376,3 @@ public class RangeTest {
         assertFailsWithIllegalArgument { 0L downTo -5L step -2L }
         assertFailsWithIllegalArgument { 'z' downTo 'a' step -2 }
     }
-}
