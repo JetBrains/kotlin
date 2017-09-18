@@ -498,7 +498,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
             return super.visitWhileLoop(loop)
         }
 
-        with(context.createIrBuilder(scopeOwnerSymbol)) {
+        with(context.createIrBuilder(scopeOwnerSymbol, loop.startOffset, loop.endOffset)) {
             // Transform accesses to the old iterator (see visitVariable method). Store loopVariable in loopInfo.
             // Replace not transparent containers with transparent ones (IrComposite)
             val newBody = loop.body?.transform(this@ForLoopsTransformer, null)?.let {
