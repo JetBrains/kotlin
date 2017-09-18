@@ -380,4 +380,10 @@ public class RangeTest {
         assertFailsWithIllegalArgument { 0L downTo -5L step -2L }
         assertFailsWithIllegalArgument { 'z' downTo 'a' step -2 }
     }
+
+    @Test fun stepSizeIsTooLow() {
+        assertFailsWithIllegalArgument { CharProgression.fromClosedRange('a', 'b', Int.MIN_VALUE) }
+        assertFailsWithIllegalArgument { IntProgression.fromClosedRange(0, 1, Int.MIN_VALUE) }
+        assertFailsWithIllegalArgument { LongProgression.fromClosedRange(0, 1, Long.MIN_VALUE) }
+    }
 }
