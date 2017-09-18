@@ -154,21 +154,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         )
     }
 
-    @Deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages")
-    fun <T : Any> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
-        val settings = PlatformAnalysisSettings(platform, ideaModuleInfo.sdk, ideaModuleInfo.supportsAdditionalBuiltInsMembers())
-        return globalFacade(settings).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
-    }
-
     private fun IdeaModuleInfo.supportsAdditionalBuiltInsMembers(): Boolean {
         return IDELanguageSettingsProvider
                 .getLanguageVersionSettings(this, project)
                 .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
-    }
-
-    fun <T : Any> tryGetProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T? {
-        val settings = PlatformAnalysisSettings(platform, ideaModuleInfo.sdk, ideaModuleInfo.supportsAdditionalBuiltInsMembers())
-        return globalFacade(settings).tryGetResolverForModuleInfo(ideaModuleInfo)?.componentProvider?.tryGetService(serviceClass)
     }
 
     private fun globalFacade(settings: PlatformAnalysisSettings) =

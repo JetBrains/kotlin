@@ -17,17 +17,20 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
+import org.jetbrains.kotlin.analyzer.ResolverForModule
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ProjectResolutionFacade(
         private val debugString: String,
@@ -70,12 +73,20 @@ internal class ProjectResolutionFacade(
     private val moduleResolverProvider: ModuleResolverProvider
         get() = globalContext.storageManager.compute { cachedValue.value }
 
-    fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)
-    fun tryGetResolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.tryGetResolverForModule(moduleInfo)
-    fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = moduleResolverProvider.resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
+    private val resolverForProject get() = moduleResolverProvider.resolverForProject
+
+    fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = resolverForProject.resolverForModule(moduleInfo)
+
+    fun resolverForElement(element: PsiElement): ResolverForModule {
+        val infos = element.getModuleInfos()
+        return infos.firstNotNullResult { resolverForProject.tryGetResolverForModule(it) }
+               ?: resolverForProject.diagnoseUnknownModuleInfo(infos)
+    }
+
+    fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
 
     fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
-        return moduleResolverProvider.resolverForProject.descriptorForModule(ideaModuleInfo)
+        return resolverForProject.descriptorForModule(ideaModuleInfo)
     }
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(

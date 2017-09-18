@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.javaResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -66,7 +67,7 @@ fun KotlinMemberInfo.getChildrenToAnalyze(): List<PsiElement> {
 }
 
 internal fun KtNamedDeclaration.resolveToDescriptorWrapperAware(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor {
-    if (this is KtPsiClassWrapper) return psiClass.getJavaClassDescriptor(resolutionFacade)!!
+    if (this is KtPsiClassWrapper) return psiClass.getJavaClassDescriptor(resolutionFacade ?: javaResolutionFacade())!!
     return (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this)
 }
 

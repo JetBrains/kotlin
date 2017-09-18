@@ -69,7 +69,7 @@ internal class ResolutionFacadeImpl(
             ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
         }
         else {
-            val resolveSession = projectFacade.resolverForModuleInfo(declaration.getModuleInfo()).componentProvider.get<ResolveSession>()
+            val resolveSession = projectFacade.resolverForElement(declaration).componentProvider.get<ResolveSession>()
             resolveSession.resolveToDescriptor(declaration)
         }
     }
@@ -85,7 +85,7 @@ internal class ResolutionFacadeImpl(
     }
 
     override fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T? {
-        return element.getModuleInfos().firstNotNullResult { projectFacade.tryGetResolverForModuleInfo(it)?.componentProvider?.tryGetService(serviceClass) }
+        return projectFacade.resolverForElement(element).componentProvider.tryGetService(serviceClass)
     }
 
     fun <T : Any> getFrontendService(ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {

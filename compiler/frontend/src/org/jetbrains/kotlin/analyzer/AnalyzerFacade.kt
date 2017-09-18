@@ -57,6 +57,7 @@ abstract class ResolverForProject<M : ModuleInfo> {
     abstract fun tryGetResolverForModule(moduleInfo: M): ResolverForModule?
     abstract fun descriptorForModule(moduleInfo: M): ModuleDescriptor
     abstract fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule
+    abstract fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>): Nothing
 
     abstract val name: String
     abstract val allModules: Collection<M>
@@ -70,8 +71,9 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? = null
     override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule = throw IllegalStateException("$descriptor is not contained in this resolver")
-    override fun descriptorForModule(moduleInfo: M) = throw IllegalStateException("Should not be called for $moduleInfo")
+    override fun descriptorForModule(moduleInfo: M) = diagnoseUnknownModuleInfo(listOf(moduleInfo))
     override val allModules: Collection<M> = listOf()
+    override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>)  = throw IllegalStateException("Should not be called for $infos")
 }
 
 class ResolverForProjectImpl<M : ModuleInfo>(
@@ -164,10 +166,13 @@ class ResolverForProjectImpl<M : ModuleInfo>(
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
         if (!isCorrectModuleInfo(moduleInfo)) {
-            throw AssertionError("$name does not know how to resolve $moduleInfo")
+            diagnoseUnknownModuleInfo(listOf(moduleInfo))
         }
         return doGetDescriptorForModule(moduleInfo)
     }
+
+    override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) =
+            throw AssertionError("$name does not know how to resolve $infos")
 
     private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
         if (module in modules) {
