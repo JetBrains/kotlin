@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.modules
 //import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaModule
+//import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 //import com.intellij.psi.impl.light.LightJavaModule
 import org.jetbrains.annotations.NotNull
@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
-    private fun findJavaModule(file: VirtualFile): PsiJavaModule? =
-            ModuleHighlightUtil2.getModuleDescriptor(file, project)
+    /*private fun findJavaModule(file: VirtualFile): PsiJavaModule? =
+            ModuleHighlightUtil2.getModuleDescriptor(file, project)*/
     /*private val psiManager = PsiManager.getInstance(project)
 
     private fun findJavaModule(file: VirtualFile): PsiJavaModule? {
