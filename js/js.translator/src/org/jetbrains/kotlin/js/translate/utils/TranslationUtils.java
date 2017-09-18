@@ -54,9 +54,7 @@ import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
 
 public final class TranslationUtils {
 
@@ -172,15 +170,21 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef backingFieldReference(@NotNull TranslationContext context, @NotNull PropertyDescriptor descriptor) {
+    public static JsName getNameForBackingField(@NotNull TranslationContext context, @NotNull PropertyDescriptor descriptor) {
         DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
-        JsName backingFieldName = containingDescriptor instanceof PackageFragmentDescriptor ?
-                                  context.getInnerNameForDescriptor(descriptor) :
-                                  context.getNameForDescriptor(descriptor);
 
         if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor) && !(containingDescriptor instanceof PackageFragmentDescriptor)) {
-            backingFieldName = context.getNameForBackingField(descriptor);
+            return context.getNameForBackingField(descriptor);
         }
+
+        return containingDescriptor instanceof PackageFragmentDescriptor ?
+                                  context.getInnerNameForDescriptor(descriptor) :
+                                  context.getNameForDescriptor(descriptor);
+    }
+
+    @NotNull
+    public static JsNameRef backingFieldReference(@NotNull TranslationContext context, @NotNull PropertyDescriptor descriptor) {
+        DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
 
         JsExpression receiver;
         if (containingDescriptor instanceof PackageFragmentDescriptor) {
@@ -190,7 +194,7 @@ public final class TranslationUtils {
             receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(containingDescriptor));
         }
 
-        JsNameRef result = new JsNameRef(backingFieldName, receiver);
+        JsNameRef result = new JsNameRef(getNameForBackingField(context, descriptor), receiver);
         MetadataProperties.setType(result, getReturnTypeForCoercion(descriptor));
 
         return result;

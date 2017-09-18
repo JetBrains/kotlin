@@ -50,23 +50,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 object CallableReferenceTranslator {
 
     fun translate(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression {
-        val referencedFunction = expression.callableReference.getResolvedCallWithAssert(context.bindingContext())
-        val descriptor = referencedFunction.getResultingDescriptor()
-
-        val extensionReceiver = referencedFunction.extensionReceiver
-        val dispatchReceiver = referencedFunction.dispatchReceiver
-        assert(dispatchReceiver == null || extensionReceiver == null) { "Cannot generate reference with both receivers: " + descriptor }
-
-        val receiver = (dispatchReceiver ?: extensionReceiver)?.let {
-            when (it) {
-                is TransientReceiver -> null
-                is ImplicitClassReceiver -> context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForReceiver(it))
-                is ExtensionReceiver -> JsThisRef()
-                is ExpressionReceiver -> Translation.translateAsExpression(it.expression, context)
-                else -> throw UnsupportedOperationException("Unsupported receiver value: " + it)
-            }
-        }
-
+        val receiver = calculateReceiver(expression, context)
+        val descriptor = referencedDescriptor(expression, context)
         return when (descriptor) {
             is PropertyDescriptor ->
                 translateForProperty(descriptor, context, expression, receiver)
@@ -76,6 +61,28 @@ object CallableReferenceTranslator {
                 throw IllegalArgumentException("Expected property or function: $descriptor, expression=${expression.text}")
         }
     }
+
+    fun calculateReceiver(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression? {
+        val referencedFunction = expression.callableReference.getResolvedCallWithAssert(context.bindingContext())
+        val descriptor = referencedFunction.getResultingDescriptor()
+
+        val extensionReceiver = referencedFunction.extensionReceiver
+        val dispatchReceiver = referencedFunction.dispatchReceiver
+        assert(dispatchReceiver == null || extensionReceiver == null) { "Cannot generate reference with both receivers: " + descriptor }
+
+        return (dispatchReceiver ?: extensionReceiver)?.let {
+            when (it) {
+                is TransientReceiver -> null
+                is ImplicitClassReceiver -> context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForReceiver(it))
+                is ExtensionReceiver -> JsThisRef()
+                is ExpressionReceiver -> Translation.translateAsExpression(it.expression, context)
+                else -> throw UnsupportedOperationException("Unsupported receiver value: " + it)
+            }
+        }
+    }
+
+    fun referencedDescriptor(expression: KtCallableReferenceExpression, context: TranslationContext)
+        = expression.callableReference.getResolvedCallWithAssert(context.bindingContext()).getResultingDescriptor()
 
     private fun translateForFunction(
             descriptor: FunctionDescriptor,
