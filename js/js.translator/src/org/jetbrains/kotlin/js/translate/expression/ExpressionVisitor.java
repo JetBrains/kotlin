@@ -122,7 +122,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         assert jetInitializer != null : "Initializer for multi declaration must be not null";
         JsExpression initializer = Translation.translateAsExpression(jetInitializer, context);
         JsName parameterName = JsScope.declareTemporary();
-        context.addStatementToCurrentBlock(JsAstUtils.newVar(parameterName, initializer));
+        JsVars tempVarDeclaration = JsAstUtils.newVar(parameterName, initializer);
+        MetadataProperties.setSynthetic(tempVarDeclaration, true);
+        context.addStatementToCurrentBlock(tempVarDeclaration);
         return DestructuringDeclarationTranslator.translate(multiDeclaration, JsAstUtils.pureFqn(parameterName, null), context);
     }
 
