@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.kapt.idea
 
-import com.android.tools.idea.gradle.project.model.AndroidModuleModel
+import com.android.tools.idea.gradle.AndroidGradleModel
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -110,7 +110,7 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
         ideModule.findAndroidModuleModel()?.let { androidModelAny ->
             // We can cast to AndroidModuleModel cause we already checked in findAndroidModuleModel() that the class exists
 
-            val androidModel = androidModelAny.data as? AndroidModuleModel ?: return
+            val androidModel = androidModelAny.data as? AndroidGradleModel ?: return
             val variant = androidModel.findVariantByName(sourceSet.sourceSetName) ?: return
 
             try {
