@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.*
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
@@ -50,8 +51,12 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val isNegated = expression.isNegated()
+            val anyType = context.currentModule.builtIns.anyType
             if (right is JsNullLiteral || left is JsNullLiteral) {
-                return TranslationUtils.nullCheck(if (right is JsNullLiteral) left else right, isNegated)
+                val (subject, ktSubject) = if (right is JsNullLiteral) Pair(left, expression.left!!) else Pair(right, expression.right!!)
+                val type = context.bindingContext().getType(ktSubject) ?: anyType
+                val coercedSubject = TranslationUtils.coerce(context, subject, type.makeNullable())
+                return TranslationUtils.nullCheck(coercedSubject, isNegated)
             }
 
             val ktLeft = checkNotNull(expression.left) { "No left-hand side: " + expression.text }
@@ -78,7 +83,6 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.NEQ else JsBinaryOperator.EQ, left, right)
             }
 
-            val anyType = context.currentModule.builtIns.anyType
             val coercedLeft = TranslationUtils.coerce(context, left, anyType)
             val coercedRight = TranslationUtils.coerce(context, right, anyType)
             val result = TopLevelFIF.KOTLIN_EQUALS.apply(coercedLeft, listOf(coercedRight), context)

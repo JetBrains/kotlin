@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Collections;
 
@@ -129,7 +130,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         assert expressionType != null;
 
         JsExpression leftExpression = TranslationUtils.coerce(
-                context(), Translation.translateAsExpression(leftKtExpression, context()), expressionType);
+                context(), Translation.translateAsExpression(leftKtExpression, context()), TypeUtilsKt.makeNullable(expressionType));
 
         JsBlock rightBlock = new JsBlock();
         JsExpression rightExpression = TranslationUtils.coerce(

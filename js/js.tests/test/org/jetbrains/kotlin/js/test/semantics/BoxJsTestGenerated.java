@@ -893,6 +893,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unitNullCheck.kt")
+        public void testUnitNullCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/unitNullCheck.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unitSafeCall.kt")
         public void testUnitSafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/unitSafeCall.kt");
