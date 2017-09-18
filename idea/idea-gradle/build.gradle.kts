@@ -3,7 +3,7 @@ apply { plugin("kotlin") }
 dependencies {
 
     compileOnly(ideaSdkDeps("openapi", "idea", "external-system-rt"))
-    compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
+    compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", "gradle-base-services", plugin = "gradle"))
     compileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
 
     compileOnly(project(":idea"))
@@ -43,7 +43,10 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        resources.srcDir("res").apply { include("**") }
+    }
     "test" { projectDefault() }
 }
 
