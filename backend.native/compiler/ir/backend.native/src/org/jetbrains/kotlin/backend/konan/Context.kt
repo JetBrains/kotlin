@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.endOffsetOrUndefined
 import org.jetbrains.kotlin.ir.util.startOffsetOrUndefined
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -262,17 +263,13 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
             override fun visitFile(declaration: IrFile) {
                 val fileEntry = declaration.fileEntry
-                declaration.acceptChildrenVoid(object:IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        element.acceptChildrenVoid(this)
+                declaration.acceptChildren(object: IrElementVisitor<Unit, Int> {
+                    override fun visitElement(element: IrElement, data: Int) {
+                        for (i in 0..data) print("  ")
+                        println("${element.javaClass.name}: ${fileEntry.range(element)}")
+                        element.acceptChildren(this, data + 1)
                     }
-
-                    override fun visitFunction(declaration: IrFunction) {
-                        super.visitFunction(declaration)
-                        val descriptor = declaration.descriptor
-                        println("${descriptor.fqNameOrNull()?: descriptor.name}: ${fileEntry.range(declaration)}")
-                    }
-                })
+                }, 0)
             }
 
             fun SourceManager.FileEntry.range(element:IrElement):String {
