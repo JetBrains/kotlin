@@ -28,7 +28,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
             withTests: Boolean = false
     ) {
         val commonModule = module(expectName, hasTestRoot = withTests)
-        commonModule.createFacet(TargetPlatformKind.Common)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
 
         impls.forEach { (implName, implKind) ->
             val implModule = module(implName, hasTestRoot = withTests)

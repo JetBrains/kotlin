@@ -27,7 +27,7 @@ class FindUsagesMultiModuleTest : AbstractFindUsagesMultiModuleTest() {
                                     implName: String = "jvm",
                                     implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]) {
         val commonModule = module(commonName)
-        commonModule.createFacet(TargetPlatformKind.Common)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
 
         val jvm = module(implName)
         jvm.createFacet(implKind)
