@@ -145,7 +145,7 @@ dependencies {
 }
 
 
-build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
+classes.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 
 
 // These are just a couple of aliases
@@ -210,14 +210,14 @@ task run {
     }
 }
 
-task jars(type: Jar) {
+jar {
     from 'build/classes/cli_bc', 
          'build/classes/compiler', 
          'build/classes/hashInteropStubs', 
          'build/classes/llvmInteropStubs',
          'build/resources/compiler'
 
-    dependsOn 'build', ':runtime:hostRuntime', 'external_jars'
+    dependsOn ':runtime:hostRuntime', 'external_jars'
 }
 
 task external_jars(type: Copy) {
