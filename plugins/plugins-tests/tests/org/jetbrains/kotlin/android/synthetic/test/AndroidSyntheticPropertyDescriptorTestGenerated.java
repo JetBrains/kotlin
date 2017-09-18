@@ -72,6 +72,12 @@ public class AndroidSyntheticPropertyDescriptorTestGenerated extends AbstractAnd
         doTest(fileName);
     }
 
+    @TestMetadata("nonLatinNames")
+    public void testNonLatinNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/descriptors/nonLatinNames/");
+        doTest(fileName);
+    }
+
     @TestMetadata("sameIds")
     public void testSameIds() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/descriptors/sameIds/");
