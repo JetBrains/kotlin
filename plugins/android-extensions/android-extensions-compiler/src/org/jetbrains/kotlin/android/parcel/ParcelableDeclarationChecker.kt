@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.parcel
 
+import kotlinx.android.parcel.IgnoredOnParcel
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelSerializer
 import org.jetbrains.kotlin.android.parcel.serializers.isParcelable
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
@@ -46,7 +47,7 @@ val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
 class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     private companion object {
-        private val TRANSIENT_FQNAME = FqName(Transient::class.java.canonicalName)
+        private val IGNORED_ON_PARCEL_FQNAME = FqName(IgnoredOnParcel::class.java.canonicalName)
     }
 
     override fun check(
@@ -97,7 +98,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     ) {
         if (containingClass.isParcelize
                 && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
-                && !property.annotations.hasAnnotation(TRANSIENT_FQNAME)
+                && !property.annotations.hasAnnotation(IGNORED_ON_PARCEL_FQNAME)
         ) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(reportElement), DefaultErrorMessagesAndroid)

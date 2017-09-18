@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.android.parcel.quickfixes
 
+import kotlinx.android.parcel.IgnoredOnParcel
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-class ParcelableAddTransientAnnotationQuickfix(property: KtProperty) : AbstractParcelableQuickFix<KtProperty>(property) {
-    object Factory : AbstractFactory({ findElement<KtProperty>()?.let(::ParcelableAddTransientAnnotationQuickfix) })
-    override fun getText() = "Add ''@Transient'' annotation"
+class ParcelableAddIgnoreOnParcelAnnotationQuickfix(property: KtProperty) : AbstractParcelableQuickFix<KtProperty>(property) {
+    object Factory : AbstractFactory({ findElement<KtProperty>()?.let(::ParcelableAddIgnoreOnParcelAnnotationQuickfix) })
+    override fun getText() = "Add ''@IgnoredOnParcel'' annotation"
 
     override fun invoke(ktPsiFactory: KtPsiFactory, element: KtProperty) {
-        element.addAnnotationEntry(ktPsiFactory.createAnnotationEntry("@" + Transient::class.java.name)).shortenReferences()
+        element.addAnnotationEntry(ktPsiFactory.createAnnotationEntry("@" + IgnoredOnParcel::class.java.name)).shortenReferences()
     }
 }

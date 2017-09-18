@@ -1,5 +1,5 @@
 // "Annotate containing class with ''@Parcelize''" "true"
-// ERROR: Class 'Foo' should be annotated with ''@Parcelize''
+// ERROR: Class 'Foo' should be annotated with '@Parcelize'
 // WITH_RUNTIME
 
 package com.myapp.activity

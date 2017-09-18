@@ -1,5 +1,5 @@
-// "Annotate with ''@Parcelize''" "true"
-// ERROR: Class 'Foo' should be annotated with ''@Parcelize''
+// "Annotate containing class with ''@Parcelize''" "true"
+// ERROR: Class 'Foo' should be annotated with '@Parcelize'
 // WITH_RUNTIME
 
 package com.myapp.activity
@@ -13,5 +13,4 @@ object StringParceler : Parceler<String> {
 }
 
 @Parcelize
-@TypeParceler<String, StringParceler>
-class Foo(<caret>val a: String) : Parcelable
+class Foo(@<caret>TypeParceler<String, StringParceler> val a: String)
