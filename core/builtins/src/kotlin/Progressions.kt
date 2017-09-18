@@ -21,6 +21,7 @@ public open class CharProgression
     ) : Iterable<Char> {
     init {
         if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        else if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must have an inverse")
     }
 
     /**
@@ -75,6 +76,7 @@ public open class IntProgression
     ) : Iterable<Int> {
     init {
         if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        else if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must have an inverse")
     }
 
     /**
@@ -129,6 +131,7 @@ public open class LongProgression
     ) : Iterable<Long> {
     init {
         if (step == 0L) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        else if (step == Long.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must have an inverse")
     }
 
     /**
