@@ -13412,6 +13412,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("elvisRhs.kt")
+        public void testElvisRhs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/elvisRhs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("elvisRhsEmptyReturn.kt")
+        public void testElvisRhsEmptyReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/elvisRhsEmptyReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("necessaryParentheses1.kt")
         public void testNecessaryParentheses1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/necessaryParentheses1.kt");

@@ -530,11 +530,19 @@ public class KtPsiUtil {
             return false;
         }
 
-        // '(x operator y)' case
-        if (innerExpression instanceof KtBinaryExpression &&
-            innerOperation != KtTokens.ELVIS &&
-            isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
-            return true;
+        if (innerExpression instanceof KtBinaryExpression) {
+            // '(x operator return [...]) operator ...' case
+            if (parentElement instanceof KtBinaryExpression) {
+                KtBinaryExpression innerBinary = (KtBinaryExpression) innerExpression;
+                if (innerBinary.getRight() instanceof KtReturnExpression) {
+                    return true;
+                }
+            }
+            // '(x operator y)' case
+            if (innerOperation != KtTokens.ELVIS &&
+                isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
+                return true;
+            }
         }
 
         int innerPriority = getPriority(innerExpression);
