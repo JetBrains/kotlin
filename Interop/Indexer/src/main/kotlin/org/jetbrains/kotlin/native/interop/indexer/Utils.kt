@@ -138,16 +138,15 @@ internal fun CXTranslationUnit.ensureNoCompileErrors(): CXTranslationUnit {
 internal typealias CursorVisitor = (cursor: CValue<CXCursor>, parent: CValue<CXCursor>) -> CXChildVisitResult
 
 internal fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
-    val visitorPtr = StableObjPtr.create(visitor)
+    val visitorStableRef = StableObjPtr.create(visitor)
     try {
-        val clientData = visitorPtr.value
+        val clientData = visitorStableRef.asCPointer()
         clang_visitChildren(parent, staticCFunction { cursorIt, parentIt, clientDataIt ->
-            @Suppress("UNCHECKED_CAST")
-            val visitorIt = StableObjPtr.fromValue(clientDataIt!!).get() as CursorVisitor
+            val visitorIt = clientDataIt!!.asStableRef<CursorVisitor>().get()
             visitorIt(cursorIt, parentIt)
         }, clientData)
     } finally {
-        visitorPtr.dispose()
+        visitorStableRef.dispose()
     }
 }
 
@@ -156,19 +155,19 @@ internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVi
 
 internal fun getFields(type: CValue<CXType>): List<CValue<CXCursor>> {
     val result = mutableListOf<CValue<CXCursor>>()
-    val resultPtr = StableObjPtr.create(result)
+    val resultStableRef = StableRef.create(result)
     try {
-        val clientData = resultPtr.value
+        val clientData = resultStableRef.asCPointer()
 
-        @Suppress("NAME_SHADOWING", "UNCHECKED_CAST")
+        @Suppress("NAME_SHADOWING")
         clang_Type_visitFields(type, staticCFunction { cursor, clientData ->
-            val result = StableObjPtr.fromValue(clientData!!).get() as MutableList<CValue<CXCursor>>
+            val result = clientData!!.asStableRef<MutableList<CValue<CXCursor>>>().get()
             result.add(cursor)
             CXVisitorResult.CXVisit_Continue
         }, clientData)
 
     } finally {
-        resultPtr.dispose()
+        resultStableRef.dispose()
     }
 
     return result
@@ -340,16 +339,16 @@ internal interface Indexer {
 }
 
 internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslationUnit, options: Int, indexer: Indexer) {
-    val indexerStablePtr = StableObjPtr.create(indexer)
+    val indexerStableRef = StableObjPtr.create(indexer)
     try {
-        val clientData = indexerStablePtr.value
+        val clientData = indexerStableRef.asCPointer()
         memScoped {
             val indexerCallbacks = alloc<IndexerCallbacks>().apply {
                 abortQuery = null
                 diagnostic = null
                 enteredMainFile = staticCFunction { clientData, mainFile, _ ->
                     @Suppress("NAME_SHADOWING")
-                    val indexer = StableObjPtr.fromValue(clientData!!).get() as Indexer
+                    val indexer = clientData!!.asStableRef<Indexer>().get()
                     indexer.enteredMainFile(mainFile!!)
                     // We must ensure only interop types exist in function signature.
                     @Suppress("USELESS_CAST")
@@ -357,7 +356,7 @@ internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslation
                 }
                 ppIncludedFile = staticCFunction { clientData, info ->
                     @Suppress("NAME_SHADOWING")
-                    val indexer = StableObjPtr.fromValue(clientData!!).get() as Indexer
+                    val indexer = clientData!!.asStableRef<Indexer>().get()
                     indexer.ppIncludedFile(info!!.pointed)
                     // We must ensure only interop types exist in function signature.
                     @Suppress("USELESS_CAST")
@@ -367,7 +366,7 @@ internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslation
                 startedTranslationUnit = null
                 indexDeclaration = staticCFunction { clientData, info ->
                     @Suppress("NAME_SHADOWING")
-                    val nativeIndex = StableObjPtr.fromValue(clientData!!).get() as Indexer
+                    val nativeIndex = clientData!!.asStableRef<Indexer>().get()
                     nativeIndex.indexDeclaration(info!!.pointed)
                 }
                 indexEntityReference = null
@@ -386,7 +385,7 @@ internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslation
             }
         }
     } finally {
-        indexerStablePtr.dispose()
+        indexerStableRef.dispose()
     }
 }
 

@@ -4,7 +4,7 @@ import kotlinx.cinterop.*
 import libcurl.*
 
 class CUrl(val url: String)  {
-    val stablePtr = StableObjPtr.create(this)
+    val stableRef = StableRef.create(this)
 
     val curl = curl_easy_init();
 
@@ -12,7 +12,7 @@ class CUrl(val url: String)  {
         curl_easy_setopt(curl, CURLOPT_URL, url)
         val header = staticCFunction(::header_callback)
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header)
-        curl_easy_setopt(curl, CURLOPT_HEADERDATA, stablePtr.value)
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, stableRef.asCPointer())
     }
 
     val header = Event<String>()
@@ -26,7 +26,7 @@ class CUrl(val url: String)  {
 
     fun close() {
         curl_easy_cleanup(curl)
-        stablePtr.dispose()
+        stableRef.dispose()
     }
 }
 
@@ -39,7 +39,7 @@ fun header_callback(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, us
     if (buffer == null) return 0
     val header = buffer.toKString((size * nitems).toInt()).trim()
     if (userdata != null) {
-        val curl = StableObjPtr.fromValue(userdata).get() as CUrl
+        val curl = userdata.asStableRef<CUrl>().get()
         curl.header(header)
     }
     return size * nitems
@@ -49,7 +49,7 @@ fun header_callback(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, us
 fun write_callback(buffer: COpaquePointer?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
     if (buffer == null) return 0
     if (userdata != null) {
-        val curl = StableObjPtr.fromValue(userdata).get() as CUrl
+        val curl = userdata.asStableRef<CUrl>().get()
         curl.data(buffer.)
     }
     return size * nitems

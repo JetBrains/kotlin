@@ -25,48 +25,12 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.reflect
 
-/**
- * This class provides a way to create a stable handle to any Kotlin object.
- * Its [value] can be safely passed to native code e.g. to be received in a Kotlin callback.
- *
- * Any [StableObjPtr] should be manually [disposed][dispose]
- */
-data class StableObjPtr private constructor(val value: COpaquePointer) {
+internal fun createStablePointer(any: Any): COpaquePointer = newGlobalRef(any).toCPointer()!!
 
-    companion object {
+internal fun disposeStablePointer(pointer: COpaquePointer) = deleteGlobalRef(pointer.toLong())
 
-        /**
-         * Creates a handle for given object.
-         */
-        fun create(any: Any) = fromValue(newGlobalRef(any))
-
-        private fun fromValue(value: NativePtr) = fromValue(interpretCPointer(value)!!)
-
-        /**
-         * Creates [StableObjPtr] from given raw value.
-         *
-         * @param value must be a [value] of some [StableObjPtr]
-         */
-        fun fromValue(value: COpaquePointer) = StableObjPtr(value)
-
-        init {
-            loadCallbacksLibrary()
-        }
-    }
-
-    /**
-     * Disposes the handle. It must not be [used][get] after that.
-     */
-    fun dispose() {
-        deleteGlobalRef(value.rawValue)
-    }
-
-    /**
-     * Returns the object this handle was [created][create] for.
-     */
-    fun get(): Any = derefGlobalRef(value.rawValue)
-
-}
+@PublishedApi
+internal fun derefStablePointer(pointer: COpaquePointer): Any = derefGlobalRef(pointer.toLong())
 
 private fun getFieldCType(type: KType): CType<*> {
     val classifier = type.classifier
@@ -399,6 +363,8 @@ private typealias UserData = FfiClosureImpl
 private fun loadCallbacksLibrary() {
     System.loadLibrary("callbacks")
 }
+
+private val topLevelInitializer = loadCallbacksLibrary()
 
 
 /**
