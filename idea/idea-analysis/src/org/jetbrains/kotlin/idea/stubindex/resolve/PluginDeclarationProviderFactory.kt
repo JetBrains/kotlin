@@ -70,11 +70,15 @@ class PluginDeclarationProviderFactory(
     override fun diagnoseMissingPackageFragment(file: KtFile) {
         val packageFqName = file.packageFqName
         val subpackagesIndex = SubpackagesIndexService.getInstance(project)
-        throw IllegalStateException("Cannot find package fragment for file ${file.name} with package $packageFqName, " +
+        throw IllegalStateException("Cannot find package fragment for file ${file.name} with package '$packageFqName', " +
                                     "vFile ${file.virtualFile}, nonIndexed ${file in nonIndexedFiles} " +
-                                    "packageExists=${PackageIndexUtil.packageExists(packageFqName, indexedFilesScope, project)} in $indexedFilesScope," +
+                                    "in scope = $indexedFilesScope\n" +
+                                    "packageExists=${PackageIndexUtil.packageExists(packageFqName, indexedFilesScope, project)}," +
+                                    "cachedPackageExists=${(moduleInfo as? ModuleSourceInfo)?.let { project.service<PerModulePackageCacheService>().packageExists(packageFqName, it) }}" +
                                     "SPI.packageExists=${subpackagesIndex.packageExists(packageFqName)} SPI=$subpackagesIndex " +
-                                    "OOCB count ${file.manager.modificationTracker.outOfCodeBlockModificationCount}}")
+                                    "OOCB count ${file.manager.modificationTracker.outOfCodeBlockModificationCount}}\n" +
+                                    "packageFqNameByTree='${file.packageFqNameByTree}'," +
+                                    "packageDirectiveText='${file.packageDirective?.text}'")
     }
 
     // trying to diagnose org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException in completion
