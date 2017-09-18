@@ -270,6 +270,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPECTED_ENUM_CONSTRUCTOR, "Expected enum class cannot have a constructor");
         MAP.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "Expected enum entry cannot have a body");
         MAP.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer");
+        MAP.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated");
 
         MAP.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias");
         MAP.put(ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, "Aliased class should not have type parameters with declaration-site variance");

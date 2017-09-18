@@ -646,6 +646,9 @@ class DeclarationsChecker(
             if (inInterface) {
                 trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate))
             }
+            else if (isExpect) {
+                trace.report(EXPECTED_DELEGATED_PROPERTY.on(delegate))
+            }
         }
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false

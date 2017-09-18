@@ -30,7 +30,7 @@ expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
 <!INCOMPATIBLE_MODIFIERS!>expect<!> <!INCOMPATIBLE_MODIFIERS!>lateinit<!> var lateinitVar: String
 
-<!WRONG_MODIFIER_TARGET!>expect<!> val delegated: String by Delegate
+expect val delegated: String <!EXPECTED_DELEGATED_PROPERTY!>by Delegate<!>
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 fun test(): String {
