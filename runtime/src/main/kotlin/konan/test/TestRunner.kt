@@ -9,10 +9,10 @@ object TestRunner {
         override fun startSuite(suite: TestSuite) = println("Starting test suite: $suite")
         override fun endSuite(suite: TestSuite) = println("Test suite finished: $suite")
 
-        override fun start(testCase: TestCase) = println("Start test case: $testCase")
-        override fun pass(testCase: TestCase) = println("Pass: $testCase")
+        override fun start(testCase: TestCase) = println("Starting test case: $testCase")
+        override fun pass(testCase: TestCase) = println("Passed: $testCase")
         override fun fail(testCase: TestCase, e: Throwable) {
-            println("Fail: $testCase. Exception:")
+            println("Failed: $testCase. Exception:")
             e.printStackTrace()
         }
         override fun ignore(testCase: TestCase) = println("Ignore: $testCase")

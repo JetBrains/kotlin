@@ -123,8 +123,8 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
             override val runtimeKindName: Name  get() = throw NotImplementedError()
         },
 
-        BEFORE("kotlin.test.Before", "BEFORE"),
-        AFTER("kotlin.test.After", "AFTER"),
+        BEFORE_EACH("kotlin.test.BeforeEach", "BEFORE_EACH"),
+        AFTER_EACH("kotlin.test.AfterEach", "AFTER_EACH"),
         BEFORE_CLASS("kotlin.test.BeforeClass", "BEFORE_CLASS"),
         AFTER_CLASS("kotlin.test.AfterClass", "AFTER_CLASS");
 
@@ -132,7 +132,7 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
         open val runtimeKindName = Name.identifier(runtimeKindString)
 
         companion object {
-            val INSTANCE_KINDS = listOf(TEST, BEFORE, AFTER)
+            val INSTANCE_KINDS = listOf(TEST, BEFORE_EACH, AFTER_EACH)
             val COMPANION_KINDS = listOf(BEFORE_CLASS, AFTER_CLASS)
         }
     }
