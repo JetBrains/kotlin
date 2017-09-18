@@ -438,7 +438,10 @@ class TypeConverter(val converter: Converter) {
         private fun isMutableFromUsage(usage: PsiExpression): Boolean {
             val parent = usage.parent
             if (parent is PsiReferenceExpression && usage == parent.qualifierExpression && parent.parent is PsiMethodCallExpression) {
-                return modificationMethodNames.contains(parent.referenceName as Any?)
+                return if (possibleModificationMethodNames.contains(parent.referenceName))
+                    isMutableFromUsage(parent.parent as PsiExpression)
+                else
+                    modificationMethodNames.contains(parent.referenceName)
             }
             else if (parent is PsiExpressionList) {
                 val call = parent.parent as? PsiCall ?: return false
@@ -472,7 +475,12 @@ class TypeConverter(val converter: Converter) {
         )
 
         private val modificationMethodNames = setOf(
-                "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll", "putIfAbsent", "replace", "replaceAll", "merge", "compute", "computeIfAbsent", "computeIfPresent"
+                "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll", "putIfAbsent", "replace",
+                "replaceAll", "merge", "compute", "computeIfAbsent", "computeIfPresent", "removeIf"
+        )
+
+        private val possibleModificationMethodNames = setOf(
+                "iterator", "listIterator", "spliterator", "keySet", "entrySet", "values"
         )
 
         private val mutableKotlinClasses = toKotlinMutableTypesMap.values.toSet()
