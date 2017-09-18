@@ -33,7 +33,6 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
     maxHeapSize = "1100m"
     systemProperty("idea.is.unit.test", "true")
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
-    environment("KOTLIN_HOME", rootProject.extra["distKotlinHomeDir"])
     environment("PROJECT_CLASSES_DIRS", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.asPath)
     environment("PROJECT_BUILD_DIR", buildDir)
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"])
