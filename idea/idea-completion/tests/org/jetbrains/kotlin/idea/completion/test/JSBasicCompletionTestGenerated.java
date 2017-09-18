@@ -1825,6 +1825,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("StringTemplateDot2.kt")
+            public void testStringTemplateDot2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplateDot2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("StringTemplateDotSomething.kt")
             public void testStringTemplateDotSomething() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplateDotSomething.kt");
