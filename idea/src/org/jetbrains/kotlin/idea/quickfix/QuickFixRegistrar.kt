@@ -130,7 +130,7 @@ class QuickFixRegistrar : QuickFixContributor {
                                                          removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
-        DEPRECATED_MODIFIER_FOR_TARGET.registerFactory(ReplaceModifierFix)
+        DEPRECATED_MODIFIER.registerFactory(ReplaceModifierFix)
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)

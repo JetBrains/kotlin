@@ -142,6 +142,7 @@ public class DefaultErrorMessages {
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
         MAP.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(DEPRECATED_MODIFIER, "Modifier ''{0}'' is deprecated, use ''{1}'' instead", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''", TO_STRING, TO_STRING);

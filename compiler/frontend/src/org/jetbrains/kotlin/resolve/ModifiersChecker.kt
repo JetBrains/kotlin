@@ -109,9 +109,11 @@ object ModifierCheckerCore {
     )
 
     // NOTE: deprecated targets must be possible!
-    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
-            IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
+    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+
+    private val deprecatedModifierMap = mapOf(
+            HEADER_KEYWORD to EXPECT_KEYWORD,
+            IMPL_KEYWORD to ACTUAL_KEYWORD
     )
 
     // NOTE: redundant targets must be possible!
@@ -279,13 +281,16 @@ object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
+        val deprecatedModifierReplacement = deprecatedModifierMap[modifier]
         val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
-        if (actualTargets.any { it in deprecatedTargets }) {
-            trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
-        }
-        else if (actualTargets.any { it in redundantTargets }) {
-            trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+        when {
+            deprecatedModifierReplacement != null ->
+                trace.report(Errors.DEPRECATED_MODIFIER.on(node.psi, modifier, deprecatedModifierReplacement))
+            actualTargets.any { it in deprecatedTargets } ->
+                trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+            actualTargets.any { it in redundantTargets } ->
+                trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
         }
         return true
     }

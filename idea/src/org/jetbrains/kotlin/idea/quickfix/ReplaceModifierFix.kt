@@ -29,38 +29,27 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class ReplaceModifierFix(
         element: KtModifierListOwner,
-        private val modifier: KtModifierKeywordToken
+        private val replacement: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtModifierListOwner>(element), CleanupFix {
 
-    private val text = when (modifier) {
-        KtTokens.HEADER_KEYWORD -> "Replace with 'expect'"
-        KtTokens.IMPL_KEYWORD -> "Replace with 'actual'"
-        else -> "Replace modifier (?)"
-    }
+    private val text = "Replace with '${replacement.value}'"
 
     override fun getText() = text
 
     override fun getFamilyName() = "Replace modifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val element = element ?: return
-        when (modifier) {
-            KtTokens.HEADER_KEYWORD -> {
-                element.addModifier(KtTokens.EXPECT_KEYWORD)
-            }
-            KtTokens.IMPL_KEYWORD -> {
-                element.addModifier(KtTokens.ACTUAL_KEYWORD)
-            }
-        }
+        element?.addModifier(replacement)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val deprecatedModifier = Errors.DEPRECATED_MODIFIER_FOR_TARGET.cast(diagnostic)
+            val deprecatedModifier = Errors.DEPRECATED_MODIFIER.cast(diagnostic)
             val modifier = deprecatedModifier.a
+            val replacement = deprecatedModifier.b
             val modifierListOwner = deprecatedModifier.psiElement.getParentOfType<KtModifierListOwner>(strict = true) ?: return null
             return when (modifier) {
-                KtTokens.HEADER_KEYWORD, KtTokens.IMPL_KEYWORD -> ReplaceModifierFix(modifierListOwner, modifier)
+                KtTokens.HEADER_KEYWORD, KtTokens.IMPL_KEYWORD -> ReplaceModifierFix(modifierListOwner, replacement)
                 else -> null
             }
         }
