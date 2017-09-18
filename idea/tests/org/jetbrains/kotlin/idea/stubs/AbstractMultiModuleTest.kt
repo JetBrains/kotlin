@@ -118,11 +118,11 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 }
 
-fun Module.createFacet(platformKind: TargetPlatformKind<*>? = null) {
+fun Module.createFacet(platformKind: TargetPlatformKind<*>? = null, useProjectSettings: Boolean = true) {
     val accessToken = WriteAction.start()
     try {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
-        getOrCreateFacet(modelsProvider, true).configuration.settings.initializeIfNeeded(
+        getOrCreateFacet(modelsProvider, useProjectSettings).configuration.settings.initializeIfNeeded(
                 this,
                 modelsProvider.getModifiableRootModel(this),
                 platformKind
