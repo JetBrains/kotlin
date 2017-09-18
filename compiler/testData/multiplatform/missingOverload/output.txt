@@ -11,7 +11,7 @@ The following declaration is incompatible because parameter types are different:
 
 expect fun g(s: String)
 ^
-compiler/testData/multiplatform/missingOverload/jvm.kt:1:14: error: in class 'Foo' expected members have no actual ones:
+compiler/testData/multiplatform/missingOverload/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
 
     public final expect fun f(a: Any): Unit
 
