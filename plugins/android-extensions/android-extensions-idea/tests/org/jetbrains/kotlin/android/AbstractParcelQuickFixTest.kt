@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTes
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import java.io.File
 
-open class AbstractParcelQuickFixTest : AbstractAndroidQuickFixMultiFileTest() {
+abstract class AbstractParcelQuickFixTest : AbstractAndroidQuickFixMultiFileTest() {
     override fun setUp() {
         super.setUp()
 
