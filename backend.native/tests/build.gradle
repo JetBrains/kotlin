@@ -1950,9 +1950,29 @@ task deserialized_members(type: LinkKonanTest) {
     source = "serialization/deserialize_members.kt"
 }
 
-task testing_smoke(type: RunKonanTest) {
-    source = "testing/smoke.kt"
-    flags = ['-tr'] // TODO: Add flag to generate test-runner
+task testing_annotations(type: RunKonanTest) {
+    source = "testing/annotations.kt"
+    flags = ['-tr']
+    goldValue = "Starting testing\nTest suite ignored: IgnoredClass.IgnoredObject\n" +
+            "Test suite ignored: IgnoredClass\nTest suite ignored: IgnoredObject\nStarting test suite: A\n" +
+            "beforeClass (A.companion)\nStarting test case: test1 (A)\nbefore (A)\ntest1 (A)\nafter (A)\n" +
+            "Passed: test1 (A)\nIgnore: ignoredTest (A)\nafterClass (A.companion)\nTest suite finished: A\n" +
+            "Starting test suite: A.O\nbeforeClass (A.object)\nStarting test case: test1 (A.O)\n" +
+            "before (A.object)\ntest1 (A.object)\nafter (A.object)\nPassed: test1 (A.O)\n" +
+            "Ignore: ignoredTest (A.O)\nafterClass (A.object)\nTest suite finished: A.O\n" +
+            "Starting test suite: O\nbeforeClass (object)\nStarting test case: test1 (O)\n" +
+            "before (object)\ntest1 (object)\nafter (object)\nPassed: test1 (O)\n" +
+            "Ignore: ignoredTest (O)\nafterClass (object)\nTest suite finished: O\n" +
+            "Starting test suite: Tests in file: annotations.kt\nbeforeClass (file)\n" +
+            "Starting test case: test1 (Tests in file: annotations.kt)\nbefore (file)\ntest1 (file)\nafter (file)\n" +
+            "Passed: test1 (Tests in file: annotations.kt)\nIgnore: ignoredTest (Tests in file: annotations.kt)\n" +
+            "afterClass (file)\nTest suite finished: Tests in file: annotations.kt\nTesting finished\n"
+}
+
+task testing_assertions(type: RunKonanTest) {
+    source = "testing/assertions.kt"
+    flags = ['-tr']
+    expectedExitStatus = 0
 }
 
 // Just check that the driver is able to produce runnable binaries.
