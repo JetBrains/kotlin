@@ -331,8 +331,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
                 psiDocumentManager.commitAllDocuments()
 
-                assert(startOffset > 1 && document.charsSequence[startOffset - 1] == '.')
-                val token = context.file.findElementAt(startOffset - 2)!!
+                val token = getToken(context.file, document, startOffset)
                 assert(token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
                 val nameRef = token.parent as KtNameReferenceExpression
 
@@ -343,6 +342,15 @@ class KotlinCompletionContributor : CompletionContributor() {
                 context.tailOffset = tailOffset
 
                 super.handleInsert(context)
+            }
+
+            private fun getToken(file: PsiFile, document: Document, startOffset: Int): PsiElement {
+                assert(startOffset > 1 && document.charsSequence[startOffset - 1] == '.')
+                val token = file.findElementAt(startOffset - 2)!!
+                return if (token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
+                    token
+                else
+                    getToken(file, document, token.startOffset + 1)
             }
         }
     }
