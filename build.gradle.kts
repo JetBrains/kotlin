@@ -175,7 +175,9 @@ val gradlePluginProjects = listOf(
 apply {
     from("libraries/commonConfiguration.gradle")
     from("libraries/configureGradleTools.gradle")
+}
 
+apply {
     if (extra["isSonatypeRelease"] as? Boolean == true) {
         logger.info("Applying configuration for sonatype release")
         from("libraries/prepareSonatypeStaging.gradle")

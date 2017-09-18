@@ -109,8 +109,10 @@ task preparePublication {
     ext.username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
     ext.password = properties["deployRepoPassword"] ?: properties["kotlin.${repoProvider}.password"]
 
+    logger.info("Deployment repository preliminary url: $repoUrl ($repoProvider)")
+
     doLast {
-        println("Deployment respository url: $repoUrl")
+        println("Deployment repository url: $repoUrl")
     }
 }
 
