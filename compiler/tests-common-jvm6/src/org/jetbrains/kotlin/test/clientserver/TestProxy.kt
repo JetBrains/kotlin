@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.test.clientserver
 
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream

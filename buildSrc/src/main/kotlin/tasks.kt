@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
 
-fun Project.projectTest(body: Test.() -> Unit = {}): Test = (tasks.findByName("test") as Test).apply {
+fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
         val patterns = filter.includePatterns + ((filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet())
         if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst

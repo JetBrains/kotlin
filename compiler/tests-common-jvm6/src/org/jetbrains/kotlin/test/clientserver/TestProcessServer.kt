@@ -16,16 +16,33 @@
 
 package org.jetbrains.kotlin.test.clientserver
 
-import org.jetbrains.kotlin.codegen.getBoxMethodOrNull
-import org.jetbrains.kotlin.codegen.getGeneratedClass
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.lang.reflect.Method
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.Executors
+
+fun getGeneratedClass(classLoader: ClassLoader, className: String): Class<*> {
+    try {
+        return classLoader.loadClass(className)
+    }
+    catch (e: ClassNotFoundException) {
+        error("No class file was generated for: " + className)
+    }
+}
+
+fun getBoxMethodOrNull(aClass: Class<*>): Method? {
+    try {
+        return aClass.getMethod("box")
+    }
+    catch (e: NoSuchMethodException) {
+        return null
+    }
+}
 
 //Use only JDK 1.6 compatible api
 object TestProcessServer {

@@ -80,6 +80,8 @@ import static org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt.w
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
 public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";

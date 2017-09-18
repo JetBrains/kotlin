@@ -93,6 +93,7 @@ Properties().apply {
 extra["JDK_16"] = jdkPath("1.6")
 extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
+extra["JDK_9"] = jdkPathIfFound("9")
 
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
@@ -421,12 +422,14 @@ tasks {
     "check" { dependsOn("test") }
 }
 
-fun jdkPath(version: String): String {
+fun jdkPathIfFound(version: String): String? {
     val jdkName = "JDK_${version.replace(".", "")}"
     val jdkMajorVersion = JdkMajorVersion.valueOf(jdkName)
     return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath
-        ?: throw GradleException ("Please set environment variable $jdkName to point to JDK $version installation")
 }
+
+fun jdkPath(version: String): String = jdkPathIfFound(version)
+        ?: throw GradleException ("Please set environment variable JDK_${version.replace(".", "")} to point to JDK $version installation")
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
 
