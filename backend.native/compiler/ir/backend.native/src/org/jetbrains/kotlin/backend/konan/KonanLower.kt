@@ -40,11 +40,8 @@ internal class KonanLower(val context: Context) {
     fun lowerModule(irModule: IrModuleFragment) {
         val phaser = PhaseManager(context)
 
-        // TODO: Find a place for the phase
-        if (context.shouldGenerateTestRunner()) {
-            phaser.phase(KonanPhase.TEST_PROCESSOR) {
-                irModule.files.forEach(TestProcessor(context)::lower)
-            }
+        phaser.phase(KonanPhase.TEST_PROCESSOR) {
+            irModule.files.forEach(TestProcessor(context)::lower)
         }
 
         phaser.phase(KonanPhase.LOWER_SPECIAL_CALLS) {

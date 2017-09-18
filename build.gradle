@@ -258,10 +258,6 @@ targetList.each { target ->
             rename("${target}Start.bc", 'start.bc')
             into("klib/stdlib/targets/$target/native")
         }
-        from(project(':runtime').file("build/${target}Test.bc")) {
-            rename("${target}Test.bc", 'test.bc')
-            into("klib/stdlib/targets/$target/native")
-        }
         if (target == 'wasm32') {
             from(project(':runtime').file('src/launcher/js')) {
                 into('klib/stdlib/targets/wasm32/included')

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.*
 private val konanInternalPackageName = FqName("konan.internal")
 private val fakeCapturedTypeClassName = Name.identifier("FAKE_CAPTURED_TYPE_CLASS")
 
-internal fun   createFakeClass(packageName: FqName, className: Name)
+internal fun createFakeClass(packageName: FqName, className: Name)
     = MutableClassDescriptor(
         EmptyPackageFragmentDescriptor(
             ErrorUtils.getErrorModule(), 

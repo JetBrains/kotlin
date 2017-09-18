@@ -23,4 +23,3 @@ object TestRunner {
         endTesting(this@TestRunner)
     }
 }
-
