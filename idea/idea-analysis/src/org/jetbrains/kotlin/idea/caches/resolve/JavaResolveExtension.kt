@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 @JvmOverloads
-fun PsiMethod.getJavaMethodDescriptor(resolutionFacade: ResolutionFacade? = null): FunctionDescriptor? {
+fun PsiMethod.getJavaMethodDescriptor(resolutionFacade: ResolutionFacade = javaResolutionFacade()): FunctionDescriptor? {
     val method = originalElement as? PsiMethod ?: return null
     if (method.containingClass == null || !Name.isValidIdentifier(method.name)) return null
     val resolver = method.getJavaDescriptorResolver(resolutionFacade)
@@ -50,19 +50,19 @@ fun PsiMethod.getJavaMethodDescriptor(resolutionFacade: ResolutionFacade? = null
 }
 
 @JvmOverloads
-fun PsiClass.getJavaClassDescriptor(resolutionFacade: ResolutionFacade? = null): ClassDescriptor? {
+fun PsiClass.getJavaClassDescriptor(resolutionFacade: ResolutionFacade = javaResolutionFacade()): ClassDescriptor? {
     val psiClass = originalElement as? PsiClass ?: return null
     return psiClass.getJavaDescriptorResolver(resolutionFacade)?.resolveClass(JavaClassImpl(psiClass))
 }
 
 @JvmOverloads
-fun PsiField.getJavaFieldDescriptor(resolutionFacade: ResolutionFacade? = null): PropertyDescriptor? {
+fun PsiField.getJavaFieldDescriptor(resolutionFacade: ResolutionFacade = javaResolutionFacade()): PropertyDescriptor? {
     val field = originalElement as? PsiField ?: return null
     return field.getJavaDescriptorResolver(resolutionFacade)?.resolveField(JavaFieldImpl(field))
 }
 
 @JvmOverloads
-fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor? {
+fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade = javaResolutionFacade()): DeclarationDescriptor? {
     return when (this) {
         is PsiClass -> getJavaClassDescriptor(resolutionFacade)
         is PsiMethod -> getJavaMethodDescriptor(resolutionFacade)
@@ -72,19 +72,19 @@ fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade? = null
 }
 
 @JvmOverloads
-fun PsiMember.getJavaOrKotlinMemberDescriptor(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor? {
+fun PsiMember.getJavaOrKotlinMemberDescriptor(resolutionFacade: ResolutionFacade = javaResolutionFacade()): DeclarationDescriptor? {
     val callable = unwrapped
     return when (callable) {
         is PsiMember -> getJavaMemberDescriptor(resolutionFacade)
         is KtDeclaration -> {
-            val descriptor = resolutionFacade?.resolveToDescriptor(callable) ?: callable.unsafeResolveToDescriptor()
+            val descriptor = resolutionFacade.resolveToDescriptor(callable)
             if (descriptor is ClassDescriptor && this is PsiMethod) descriptor.unsubstitutedPrimaryConstructor else descriptor
         }
         else -> null
     }
 }
 
-fun PsiParameter.getParameterDescriptor(resolutionFacade: ResolutionFacade? = null): ValueParameterDescriptor? {
+fun PsiParameter.getParameterDescriptor(resolutionFacade: ResolutionFacade = javaResolutionFacade()): ValueParameterDescriptor? {
     val method = declarationScope as? PsiMethod ?: return null
     val methodDescriptor = method.getJavaMethodDescriptor(resolutionFacade) ?: return null
     return methodDescriptor.valueParameters[parameterIndex()]
@@ -104,19 +104,8 @@ fun PsiClass.resolveToDescriptor(
     } as? ClassDescriptor
 }
 
-private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade?): JavaDescriptorResolver? {
-    if (resolutionFacade != null) {
-        return resolutionFacade.tryGetFrontendService(this, JavaDescriptorResolver::class.java)
-    }
-    else {
-        //TODO_R: should this work in scripts?
-        if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
-
-        val cacheService = KotlinCacheService.getInstance(project)
-        val moduleInfo = this.getNullableModuleInfo() ?: return null
-        @Suppress("DEPRECATION")
-        return (cacheService as? KotlinCacheServiceImpl)?.tryGetProjectService(JvmPlatform, moduleInfo, JavaDescriptorResolver::class.java)
-    }
+private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade): JavaDescriptorResolver? {
+    return resolutionFacade.tryGetFrontendService(this, JavaDescriptorResolver::class.java)
 }
 
 private fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
@@ -152,3 +141,6 @@ private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElemen
         }
     }
 }
+
+fun PsiElement.javaResolutionFacade() =
+        KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.containingFile, JvmPlatform)
