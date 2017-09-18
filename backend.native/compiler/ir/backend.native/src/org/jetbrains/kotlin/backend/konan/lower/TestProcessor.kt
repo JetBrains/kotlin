@@ -48,8 +48,10 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
     object TEST_SUITE_GENERATED_MEMBER: IrDeclarationOriginImpl("TEST_SUITE_GENERATED_MEMBER")
 
     companion object {
-        val companionGetterName = Name.identifier("getCompanion")
-        val instanceGetterName = Name.identifier("createInstance")
+        val COMPANION_GETTER_NAME = Name.identifier("getCompanion")
+        val INSTANCE_GETTER_NAME = Name.identifier("createInstance")
+
+        val IGNORE_FQ_NAME = FqName.fromSegments(listOf("kotlin", "test" , "Ignore"))
     }
 
     val symbols = context.ir.symbols
@@ -89,11 +91,18 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
                             context.builtIns.stringType,
                             it.function.descriptor.name.identifier)
                     )
-                    putValueArgument(1, IrFunctionReferenceImpl(UNDEFINED_OFFSET,
+                    putValueArgument(1, IrFunctionReferenceImpl(
+                            UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
                             descriptor.valueParameters[1].type,
                             it.function,
                             it.function.descriptor, emptyMap()))
+                    putValueArgument(2, IrConstImpl.boolean(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            context.builtIns.booleanType,
+                            it.ignored
+                    ))
                 }
             } else {
                 // Call registerFunction(kind: TestFunctionKind, () -> Unit) method.
@@ -140,7 +149,10 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
     private val FunctionKind.runtimeKind: IrEnumEntrySymbol
         get() = symbols.getTestFunctionKind(this)
 
-    private data class TestFunction(val function: IrFunctionSymbol, val kind: FunctionKind)
+    private data class TestFunction(val function: IrFunctionSymbol, val kind: FunctionKind) {
+        val ignored: Boolean
+            get() = function.descriptor.annotations.hasAnnotation(IGNORE_FQ_NAME)
+    }
 
     private inner class TestClass(val ownerClass: IrClassSymbol) {
         var companion: IrClassSymbol? = null
@@ -322,7 +334,8 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
                                                      val testClassType: KotlinType,
                                                      val testCompanionType: KotlinType,
                                                      val testSuite: IrClassSymbol,
-                                                     val functions: Collection<TestFunction>)
+                                                     val functions: Collection<TestFunction>,
+                                                     val ignored: Boolean)
         : SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>() {
 
         private fun IrClassSymbol.getFunction(name: String, predicate: (FunctionDescriptor) -> Boolean) =
@@ -338,14 +351,15 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
             createParameterDeclarations()
 
             val registerTestCase = testSuite.getFunction("registerTestCase") {
-                it.valueParameters.size == 2 &&
-                KotlinBuiltIns.isString(it.valueParameters[0].type) &&
-                it.valueParameters[1].type.isFunctionType
+                it.valueParameters.size == 3 &&
+                KotlinBuiltIns.isString(it.valueParameters[0].type) && // name: String
+                it.valueParameters[1].type.isFunctionType &&           // function: testClassType.() -> Unit
+                KotlinBuiltIns.isBoolean(it.valueParameters[2].type)   // ignored: Boolean
             }
             val registerFunction = testSuite.getFunction("registerFunction") {
                 it.valueParameters.size == 2 &&
-                it.valueParameters[0].type == symbols.testFunctionKind.descriptor.defaultType &&
-                it.valueParameters[1].type.isFunctionType
+                it.valueParameters[0].type == symbols.testFunctionKind.descriptor.defaultType && // kind: TestFunctionKind
+                it.valueParameters[1].type.isFunctionType                                        // function: () -> Unit
             }
 
             body = context.createIrBuilder(symbol).irBlockBody {
@@ -364,6 +378,12 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
                             context.builtIns.stringType,
                             suiteName)
                     )
+                    putValueArgument(1, IrConstImpl.boolean(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            context.builtIns.booleanType,
+                            ignored
+                    ))
                 }
                 generateFunctionRegistration(testSuite.owner.thisReceiver!!.symbol,
                         registerTestCase, registerFunction, functions)
@@ -397,7 +417,8 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
                                           val functions: Collection<TestFunction>)
         : SymbolWithIrBuilder<IrClassSymbol, IrClass>() {
 
-        private val IrClassSymbol.isObject: Boolean  get() = descriptor.kind == ClassKind.OBJECT
+        private val IrClassSymbol.ignored: Boolean  get() = descriptor.annotations.hasAnnotation(IGNORE_FQ_NAME)
+        private val IrClassSymbol.isObject: Boolean get() = descriptor.kind == ClassKind.OBJECT
 
         val suiteName = testClass.descriptor.fqNameSafe.toString()
         val suiteClassName = testClass.descriptor.name.synthesizeSuiteClassName()
@@ -412,19 +433,20 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
         val superType = baseClassSuiteDescriptor.defaultType.replace(listOf(testClassType, testCompanionType))
 
         val constructorBuilder = ClassSuiteConstructorBuilder(
-            suiteName, testClassType, testCompanionType, symbol, functions
+            suiteName, testClassType, testCompanionType, symbol, functions, testClass.ignored
         )
+
         val instanceGetterBuilder: GetterBuilder
         val companionGetterBuilder: GetterBuilder?
 
         init {
             if (testClass.isObject) {
-                instanceGetterBuilder = ObjectGetterBuilder(testClass, symbol, instanceGetterName)
-                companionGetterBuilder = ObjectGetterBuilder(testClass, symbol, companionGetterName)
+                instanceGetterBuilder = ObjectGetterBuilder(testClass, symbol, INSTANCE_GETTER_NAME)
+                companionGetterBuilder = ObjectGetterBuilder(testClass, symbol, COMPANION_GETTER_NAME)
             } else {
-                instanceGetterBuilder = InstanceGetterBuilder(testClass, symbol, instanceGetterName)
+                instanceGetterBuilder = InstanceGetterBuilder(testClass, symbol, INSTANCE_GETTER_NAME)
                 companionGetterBuilder = testCompanion?.let {
-                    ObjectGetterBuilder(it, symbol, companionGetterName)
+                    ObjectGetterBuilder(it, symbol, COMPANION_GETTER_NAME)
                 }
             }
         }

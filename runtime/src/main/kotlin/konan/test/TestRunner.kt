@@ -8,6 +8,7 @@ object TestRunner {
 
         override fun startSuite(suite: TestSuite) = println("Starting test suite: $suite")
         override fun endSuite(suite: TestSuite) = println("Test suite finished: $suite")
+        override fun ignoreSuite(suite: TestSuite) = println("Test suite ignored: $suite")
 
         override fun start(testCase: TestCase) = println("Starting test case: $testCase")
         override fun pass(testCase: TestCase) = println("Passed: $testCase")
@@ -28,9 +29,13 @@ object TestRunner {
     fun run() {
         SimpleTestListener.startTesting(this)
         suites.forEach {
-            SimpleTestListener.startSuite(it)
-            it.run(SimpleTestListener)
-            SimpleTestListener.endSuite(it)
+            if (it.ignored) {
+                SimpleTestListener.ignoreSuite(it)
+            } else {
+                SimpleTestListener.startSuite(it)
+                it.run(SimpleTestListener)
+                SimpleTestListener.endSuite(it)
+            }
         }
         SimpleTestListener.endTesting(this)
     }

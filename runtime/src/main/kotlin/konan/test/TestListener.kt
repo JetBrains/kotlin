@@ -8,6 +8,7 @@ interface TestListener {
 
     fun startSuite(suite: TestSuite)
     fun endSuite(suite: TestSuite)
+    fun ignoreSuite(suite: TestSuite)
 
     fun start(testCase: TestCase)
     fun pass(testCase: TestCase)

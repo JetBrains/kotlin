@@ -192,25 +192,29 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val testFunctionKind = getKonanTestClass("TestFunctionKind")
 
     val baseClassSuiteConstructor = baseClassSuite.descriptor.constructors.single {
-        it.valueParameters.size == 1 && KotlinBuiltIns.isString(it.valueParameters[0].type)
+        it.valueParameters.size == 2 &&
+        KotlinBuiltIns.isString(it.valueParameters[0].type) && // name: String
+        KotlinBuiltIns.isBoolean(it.valueParameters[1].type)   // ignored: Boolean
     }
 
     val topLevelSuiteConstructor = symbolTable.referenceConstructor(topLevelSuite.descriptor.constructors.single {
-        it.valueParameters.size == 1 && KotlinBuiltIns.isString(it.valueParameters[0].type)
+        it.valueParameters.size == 1 &&
+        KotlinBuiltIns.isString(it.valueParameters[0].type) // name: String
     })
 
     val topLevelSuiteRegisterFunction =
             getFunction(Name.identifier("registerFunction"), topLevelSuite.descriptor.defaultType) {
                 it.valueParameters.size == 2 &&
-                it.valueParameters[0].type == testFunctionKind.descriptor.defaultType &&
-                it.valueParameters[1].type.isFunctionType
+                it.valueParameters[0].type == testFunctionKind.descriptor.defaultType && // kind: TestFunctionKind
+                it.valueParameters[1].type.isFunctionType                                // function: () -> Unit
             }
 
     val topLevelSuiteRegisterTestCase =
             getFunction(Name.identifier("registerTestCase"), topLevelSuite.descriptor.defaultType) {
-                it.valueParameters.size == 2 &&
-                KotlinBuiltIns.isString(it.valueParameters[0].type) &&
-                it.valueParameters[1].type.isFunctionType
+                it.valueParameters.size == 3 &&
+                KotlinBuiltIns.isString(it.valueParameters[0].type) &&  // name: String
+                it.valueParameters[1].type.isFunctionType &&            // function: () -> Unit
+                KotlinBuiltIns.isBoolean(it.valueParameters[2].type)    // ignored: Boolean
             }
 
     private val testFunctionKindCache = mutableMapOf<TestProcessor.FunctionKind, IrEnumEntrySymbol>()
