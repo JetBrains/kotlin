@@ -30,16 +30,21 @@ import com.intellij.util.Processor
 import com.intellij.util.Query
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.excludeKotlinSources
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -163,4 +168,16 @@ fun PsiClass.forEachDeclaredMemberOverride(processor: (superMember: PsiElement, 
     val members = ktClass.declarations.filterIsInstance<KtNamedDeclaration>() +
                   ktClass.primaryConstructorParameters.filter { it.hasValOrVar() }
     forEachKotlinOverride(ktClass, members, scope, processor)
+}
+
+fun findDeepestSuperMethodsKotlinAware(method: PsiElement): List<PsiMethod> {
+    val element = method.unwrapped
+    return when (element) {
+        is PsiMethod -> element.findDeepestSuperMethods().toList()
+        is KtCallableDeclaration -> {
+            val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return emptyList()
+            descriptor.getDeepestSuperDeclarations(false).mapNotNull { it.source.getPsi()?.getRepresentativeLightMethod() }
+        }
+        else -> emptyList()
+    }
 }

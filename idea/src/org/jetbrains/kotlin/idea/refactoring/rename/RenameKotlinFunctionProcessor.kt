@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.listeners.RefactoringElementListener
@@ -30,6 +27,7 @@ import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenameUtil
+import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -45,6 +43,8 @@ import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsKotlinAware
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -115,7 +115,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
         val wrappedMethod = wrapPsiMethod(element) ?: return element
 
-        val deepestSuperMethods = wrappedMethod.findDeepestSuperMethods()
+        val deepestSuperMethods = findDeepestSuperMethodsKotlinAware(wrappedMethod)
         val substitutedJavaElement = when {
             deepestSuperMethods.isEmpty() -> return element
             wrappedMethod.isConstructor || deepestSuperMethods.size == 1 || element !is KtNamedFunction -> {
@@ -149,7 +149,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
         val wrappedMethod = wrapPsiMethod(element) ?: return
 
-        val deepestSuperMethods = wrappedMethod.findDeepestSuperMethods()
+        val deepestSuperMethods = findDeepestSuperMethodsKotlinAware(wrappedMethod)
         when {
             deepestSuperMethods.isEmpty() -> preprocessAndPass(element)
             wrappedMethod.isConstructor || element !is KtNamedFunction -> {
@@ -186,6 +186,20 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             val psiMethod = wrapPsiMethod(declaration) ?: continue
             allRenames[declaration] = newName
             if (psiMethod.containingClass != null) {
+                psiMethod.forEachOverridingMethod { it ->
+                    val overrider = (it as? PsiMirrorElement)?.prototype as? PsiMethod ?: it
+
+                    if (overrider is SyntheticElement) return@forEachOverridingMethod true
+
+                    val overriderName = overrider.name
+                    val baseName = psiMethod.name
+                    val newOverriderName = RefactoringUtil.suggestNewOverriderName(overriderName, baseName, newName)
+                    if (newOverriderName != null) {
+                        RenameProcessor.assertNonCompileElement(overrider)
+                        allRenames.put(overrider, newOverriderName)
+                    }
+                    return@forEachOverridingMethod true
+                }
                 javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
             }
         }
