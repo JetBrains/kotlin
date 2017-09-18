@@ -435,7 +435,10 @@ public class KotlinTestUtils {
             return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
         }
         catch (FileNotFoundException fileNotFoundException) {
-            // Display the absolute path of the file that wasn't loaded
+            /*
+             * Unfortunately, the FileNotFoundException will only show the relative path in it's exception message.
+             * This clarifies the exception by showing the full path.
+             */
             String messageWithFullPath = file.getAbsolutePath() + " (No such file or directory)";
             throw new IOException(
                     "Ensure you have your 'Working Directory' configured correctly as the root " +

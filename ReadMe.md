@@ -150,8 +150,8 @@ You can now run the various Run/Debug Configurations such as
 
 ### Running specific generated tests
 
-If you need to debug a specific generated test ensure that you have the `Working directory` your IntellJ run configuration set
-to the root directory of this project. If you don't every test you try to run will fail with a `No such file or directory` exception.
+If you need to debug a specific generated test, ensure that you have the `Working directory` in your IntelliJ run configuration set
+to the root directory of this project. If you don't, every test you try to run will fail with a `No such file or directory` exception.
 
 ## If you want to work on the Kotlin libraries
 
