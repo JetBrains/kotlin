@@ -4232,7 +4232,7 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":prepare:kotlin-plugin": {
+    ":prepare:idea-plugin": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"

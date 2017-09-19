@@ -92,7 +92,7 @@ dependencies {
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "java-decompiler"))
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
-    ideaCommunityPlugin(projectRuntimeJar(":prepare:kotlin-plugin"))
+    ideaCommunityPlugin(projectRuntimeJar(":prepare:idea-plugin"))
 }
 
 val preparedResources = File(buildDir, "prepResources")
@@ -133,7 +133,7 @@ val preparePluginXml by task<Copy> {
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(preparePluginXml)
-    project(":prepare:kotlin-plugin").afterEvaluate {
+    project(":prepare:idea-plugin").afterEvaluate {
         ideaCommunityPlugin.files.forEach {
             from(zipTree(it), { exclude("META-INF/plugin.xml") })
         }

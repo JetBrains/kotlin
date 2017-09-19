@@ -266,7 +266,7 @@ val compilerCopyTask = task<Copy>("idea-plugin-copy-compiler") {
 task<Copy>("ideaPlugin") {
     dependsOn(compilerCopyTask)
     dependsOnTaskIfExistsRec("idea-plugin")
-    shouldRunAfter(":prepare:kotlin-plugin:idea-plugin")
+    shouldRunAfter(":prepare:idea-plugin:idea-plugin")
     into("$ideaPluginDir/lib")
 }
 

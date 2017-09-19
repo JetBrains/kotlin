@@ -15,7 +15,7 @@ dependencies {
 
 
 val runIde by task<JavaExec> {
-    dependsOn(":dist", ":prepare:kotlin-plugin:idea-plugin", ":dist-plugin")
+    dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":dist-plugin")
 
     classpath = the<JavaPluginConvention>().sourceSets["main"].runtimeClasspath
 
