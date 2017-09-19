@@ -17,22 +17,23 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.InspectionEP
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.VfsTestUtil
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
@@ -155,7 +156,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
                 }
 
-                doAction(text, actionShouldBeAvailable, getTestName(false))
+                doAction(text, file, editor, actionShouldBeAvailable, getTestName(false), this::availableActions, myFixture::doHighlighting)
 
                 val actualText = file.text
                 val afterText = StringBuilder(actualText).insert(editor.caretModel.offset, "<caret>").toString()
@@ -218,7 +219,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
                 }
 
-                doAction(text, actionShouldBeAvailable, beforeFileName)
+                doAction(text, file, editor, actionShouldBeAvailable, beforeFileName, this::availableActions, myFixture::doHighlighting)
 
                 if (actionShouldBeAvailable) {
                     val afterFilePath = beforeFileName.replace(".before.Main.", ".after.")
@@ -257,50 +258,6 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         }, "", "")
     }
 
-    @Throws(Exception::class)
-    fun doAction(text: String, actionShouldBeAvailable: Boolean, testFilePath: String) {
-        val pattern = if (text.startsWith("/"))
-            Pattern.compile(text.substring(1, text.length - 1))
-        else
-            Pattern.compile(StringUtil.escapeToRegexp(text))
-
-        val availableActions = availableActions
-        val action = findActionByPattern(pattern, availableActions)
-
-        if (action == null) {
-            if (actionShouldBeAvailable) {
-                val texts = getActionsTexts(availableActions)
-                val infos = myFixture.doHighlighting()
-                TestCase.fail("Action with text '" + text + "' is not available in test " + testFilePath + "\n" +
-                              "Available actions (" + texts.size + "): \n" +
-                              StringUtil.join(texts, "\n") +
-                              "\nActions:\n" +
-                              StringUtil.join(availableActions, "\n") +
-                              "\nInfos:\n" +
-                              StringUtil.join(infos, "\n"))
-            }
-            else {
-                DirectiveBasedActionUtils.checkAvailableActionsAreExpected(file, availableActions)
-            }
-        }
-        else {
-            if (!actionShouldBeAvailable) {
-                TestCase.fail("Action '$text' is available (but must not) in test $testFilePath")
-            }
-
-            CodeInsightTestFixtureImpl.invokeIntention(action, file, editor, action.text)
-
-            if (!shouldBeAvailableAfterExecution()) {
-                val afterAction = findActionByPattern(pattern, this.availableActions)
-
-                if (afterAction != null) {
-                    TestCase.fail("Action '$text' is still available after its invocation in test $testFilePath")
-                }
-            }
-        }
-    }
-
-
     private val availableActions: List<IntentionAction>
         get() {
             myFixture.doHighlighting()
@@ -310,42 +267,70 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     class TestFile internal constructor(val path: String, val content: String)
 
     companion object {
+        private fun getActionsTexts(availableActions: List<IntentionAction>): List<String> =
+                availableActions.map(IntentionAction::getText)
 
-        protected fun shouldBeAvailableAfterExecution(): Boolean {
-            return false
+        private fun extraFileNamePrefix(mainFileName: String): String =
+                mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".")
+
+        protected fun guessFileType(file: TestFile): FileType = when {
+            file.path.contains("." + KotlinFileType.EXTENSION) -> KotlinFileType.INSTANCE
+            file.path.contains("." + JavaFileType.DEFAULT_EXTENSION) -> JavaFileType.INSTANCE
+            else -> PlainTextFileType.INSTANCE
         }
 
-        private fun getActionsTexts(availableActions: List<IntentionAction>): List<String> {
-            val texts = ArrayList<String>()
-            for (intentionAction in availableActions) {
-                texts.add(intentionAction.text)
-            }
-            return texts
-        }
+        private fun findActionByPattern(pattern: Pattern, availableActions: List<IntentionAction>): IntentionAction? =
+                availableActions.firstOrNull { pattern.matcher(it.text).matches() }
 
-        private fun extraFileNamePrefix(mainFileName: String): String {
-            return mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".")
-        }
+        fun doAction(
+                text: String,
+                file: PsiFile,
+                editor: Editor,
+                actionShouldBeAvailable: Boolean,
+                testFilePath: String,
+                getAvailableActions: () -> List<IntentionAction>,
+                doHighlighting: () -> List<HighlightInfo>,
+                shouldBeAvailableAfterExecution: Boolean = false
+        ) {
+            val pattern = if (text.startsWith("/"))
+                Pattern.compile(text.substring(1, text.length - 1))
+            else
+                Pattern.compile(StringUtil.escapeToRegexp(text))
 
-        protected fun guessFileType(file: TestFile): FileType {
-            if (file.path.contains("." + KotlinFileType.EXTENSION)) {
-                return KotlinFileType.INSTANCE
-            }
-            else if (file.path.contains("." + JavaFileType.DEFAULT_EXTENSION)) {
-                return JavaFileType.INSTANCE
-            }
-            else {
-                return PlainTextFileType.INSTANCE
-            }
-        }
+            val availableActions = getAvailableActions()
+            val action = findActionByPattern(pattern, availableActions)
 
-        private fun findActionByPattern(pattern: Pattern, availableActions: List<IntentionAction>): IntentionAction? {
-            for (availableAction in availableActions) {
-                if (pattern.matcher(availableAction.text).matches()) {
-                    return availableAction
+            if (action == null) {
+                if (actionShouldBeAvailable) {
+                    val texts = getActionsTexts(availableActions)
+                    val infos = doHighlighting()
+                    TestCase.fail("Action with text '" + text + "' is not available in test " + testFilePath + "\n" +
+                                  "Available actions (" + texts.size + "): \n" +
+                                  StringUtil.join(texts, "\n") +
+                                  "\nActions:\n" +
+                                  StringUtil.join(availableActions, "\n") +
+                                  "\nInfos:\n" +
+                                  StringUtil.join(infos, "\n"))
+                }
+                else {
+                    DirectiveBasedActionUtils.checkAvailableActionsAreExpected(file, availableActions)
                 }
             }
-            return null
+            else {
+                if (!actionShouldBeAvailable) {
+                    TestCase.fail("Action '$text' is available (but must not) in test $testFilePath")
+                }
+
+                CodeInsightTestFixtureImpl.invokeIntention(action, file, editor, action.text)
+
+                if (!shouldBeAvailableAfterExecution) {
+                    val afterAction = findActionByPattern(pattern, getAvailableActions())
+
+                    if (afterAction != null) {
+                        TestCase.fail("Action '$text' is still available after its invocation in test $testFilePath")
+                    }
+                }
+            }
         }
     }
 }
