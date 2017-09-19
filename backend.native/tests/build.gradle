@@ -1972,6 +1972,7 @@ task testing_annotations(type: RunKonanTest) {
 task testing_assertions(type: RunKonanTest) {
     source = "testing/assertions.kt"
     flags = ['-tr']
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     expectedExitStatus = 0
 }
 
