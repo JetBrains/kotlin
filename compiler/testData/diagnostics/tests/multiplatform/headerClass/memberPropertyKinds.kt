@@ -23,6 +23,8 @@ expect class Foo {
     <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
     <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
+    <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
+
     val delegated: String <!EXPECTED_DELEGATED_PROPERTY!>by Delegate<!>
 }
 

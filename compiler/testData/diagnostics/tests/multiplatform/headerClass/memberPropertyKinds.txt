@@ -17,6 +17,7 @@ public final expect class Foo {
     public expect final val delegated: kotlin.String
     public expect final val justVal: kotlin.String
     public expect final var justVar: kotlin.String
+    public expect final lateinit var lateinitVar: kotlin.String
     public expect final val valWithGet: kotlin.String
     public expect final var varWithGetSet: kotlin.String
     public expect final val kotlin.String.extensionVal: kotlin.Unit

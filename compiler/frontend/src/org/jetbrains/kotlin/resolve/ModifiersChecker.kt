@@ -191,9 +191,6 @@ object ModifierCheckerCore {
         // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
         result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
 
-        // lateinit is incompatible with header / expect
-        result += incompatibilityRegister(LATEINIT_KEYWORD, HEADER_KEYWORD, EXPECT_KEYWORD)
-
         // header / expect / impl / actual are all incompatible
         result += incompatibilityRegister(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD, ACTUAL_KEYWORD)
 

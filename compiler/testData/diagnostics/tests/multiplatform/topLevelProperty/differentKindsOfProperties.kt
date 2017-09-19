@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// !LANGUAGE: +MultiPlatformProjects +LateinitTopLevelProperties
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -28,7 +28,7 @@ expect var customAccessorVar: String
 
 expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
-<!INCOMPATIBLE_MODIFIERS!>expect<!> <!INCOMPATIBLE_MODIFIERS!>lateinit<!> var lateinitVar: String
+expect <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
 expect val delegated: String <!EXPECTED_DELEGATED_PROPERTY!>by Delegate<!>
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
