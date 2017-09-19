@@ -473,4 +473,19 @@ public class ForeignAnnotationsNoAnnotationInClasspathTestGenerated extends Abst
             }
         }
     }
+
+    @TestMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathTest {
+        public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("defaultAndNicknameMigrationPolicy.kt")
+        public void testDefaultAndNicknameMigrationPolicy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault/defaultAndNicknameMigrationPolicy.kt");
+            doTest(fileName);
+        }
+    }
 }

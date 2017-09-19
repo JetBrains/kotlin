@@ -138,11 +138,13 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     fun resolveJsr305AnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
-        jsr305State.user[annotationDescriptor.fqName?.asString()]?.let { return it }
-
-        annotationDescriptor.annotationClass?.migrationAnnotationStatus()?.let { return it }
-
+        resolveJsr305CustomState(annotationDescriptor)?.let { return it }
         return jsr305State.global
+    }
+
+    fun resolveJsr305CustomState(annotationDescriptor: AnnotationDescriptor): ReportLevel? {
+        jsr305State.user[annotationDescriptor.fqName?.asString()]?.let { return it }
+        return annotationDescriptor.annotationClass?.migrationAnnotationStatus()
     }
 
     private fun ClassDescriptor.migrationAnnotationStatus(): ReportLevel? {

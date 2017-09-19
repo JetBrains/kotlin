@@ -147,7 +147,12 @@ private fun LazyJavaResolverContext.extractDefaultNullabilityQualifier(
             typeQualifierResolver.resolveTypeQualifierDefaultAnnotation(annotationDescriptor)
             ?: return null
 
-    val jsr305State = typeQualifierResolver.resolveJsr305AnnotationState(typeQualifier).takeIf { it != ReportLevel.IGNORE } ?: return null
+    val jsr305State = typeQualifierResolver.resolveJsr305CustomState(annotationDescriptor)
+                      ?: typeQualifierResolver.resolveJsr305AnnotationState(typeQualifier)
+
+    if (jsr305State.isIgnore) {
+        return null
+    }
 
     val nullabilityQualifier =
             components
