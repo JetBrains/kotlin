@@ -1,6 +1,6 @@
-// "Add data modifier to Foo" "true"
-data class Foo(val bar: String, val baz: Int)
+// "Make 'Foo' data class" "true"
+data class Foo(val bar: String, var baz: Int)
 
-fun test1() {
+fun test() {
     var (bar, baz) = Foo("A", 1)<caret>
 }

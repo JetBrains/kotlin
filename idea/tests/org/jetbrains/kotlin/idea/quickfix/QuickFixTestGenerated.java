@@ -272,6 +272,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("invisibleParameter.kt")
+        public void testInvisibleParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/invisibleParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invisibleParameter2.kt")
+        public void testInvisibleParameter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/invisibleParameter2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noParameter.kt")
         public void testNoParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/noParameter.kt");
@@ -317,6 +329,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("test4.kt")
         public void testTest4() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/test4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("test5.kt")
+        public void testTest5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/test5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("test6.kt")
+        public void testTest6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/test6.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("test7.kt")
+        public void testTest7() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/test7.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addDataModifier/vararg.kt");
             doTest(fileName);
         }
     }

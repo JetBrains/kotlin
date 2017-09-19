@@ -18,18 +18,21 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isAbstract
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModifierFix(element, KtTokens.DATA_KEYWORD) {
 
-    override fun getText() = "Add data modifier to $fqName"
+    override fun getText() = "Make '$fqName' data class"
 
     override fun getFamilyName() = text
 
@@ -48,12 +51,29 @@ class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModi
 
             val classDescriptor = constructor?.declarationDescriptor as? ClassDescriptor ?: return null
 
+            val modality = classDescriptor.modality
+            if (modality == Modality.ABSTRACT || modality == Modality.SEALED || modality == Modality.OPEN) return null
+            if (classDescriptor.isInner) return null
+            val ctorParams = classDescriptor.constructors.firstOrNull { it.isPrimary }?.valueParameters ?: return null
+            if (ctorParams.isEmpty()) return null
+
+            val isSameContainingClass by lazy {
+                classDescriptor ==  element.getTopmostParentOfType<KtClass>()?.descriptor
+            }
+            val isSameModule by lazy {
+                classDescriptor.module == element.findModuleDescriptor()
+            }
+            if (!ctorParams.all {
+                val param = DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtParameter ?: return@all false
+                val isVisible = when {
+                    param.hasModifier(KtTokens.PRIVATE_KEYWORD) || param.hasModifier(KtTokens.PROTECTED_KEYWORD) -> isSameContainingClass
+                    param.hasModifier(KtTokens.INTERNAL_KEYWORD) -> isSameModule
+                    else -> true
+                }
+                param.hasValOrVar() && !param.isVarArg && isVisible
+            }) return null
+
             val klass = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
-
-            val ctorParams = klass.primaryConstructor?.valueParameters?.takeIf { it.isNotEmpty() } ?: return null
-            if (!ctorParams.all { it.hasValOrVar() }) return null
-            if (klass.isAbstract() || klass.isSealed() || klass.isInner() || klass.isOpen()) return null
-
             val fqName = DescriptorUtils.getFqName(classDescriptor).asString()
             return AddDataModifierFix(klass, fqName)
         }
