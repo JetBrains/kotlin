@@ -120,38 +120,13 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   @NotNull
   @Override
   public Module createModule(@NotNull ModifiableModuleModel moduleModel)
-    throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
+          throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
     LOG.assertTrue(getName() != null);
     final String originModuleFilePath = getModuleFilePath();
     LOG.assertTrue(originModuleFilePath != null);
 
-    String moduleName;
-    if (myProjectId == null) {
-      moduleName = getName();
-    }
-    else {
-      moduleName = ModuleGrouperKt.isQualifiedModuleNamesEnabled() && StringUtil.isNotEmpty(myProjectId.getGroupId())
-                   ? (myProjectId.getGroupId() + '.' + myProjectId.getArtifactId())
-                   : myProjectId.getArtifactId();
-    }
-    Project contextProject = myWizardContext.getProject();
-    String projectFileDirectory = null;
-    if (myWizardContext.isCreatingNewProject() || contextProject == null || contextProject.getBasePath() == null) {
-      projectFileDirectory = myWizardContext.getProjectFileDirectory();
-    }
-    else if (myWizardContext.getProjectStorageFormat() == StorageScheme.DEFAULT) {
-      String moduleFileDirectory = getModuleFileDirectory();
-      if (moduleFileDirectory != null) {
-        projectFileDirectory = moduleFileDirectory;
-      }
-    }
-    if (projectFileDirectory == null) {
-      projectFileDirectory = contextProject.getBasePath();
-    }
-    if (myWizardContext.getProjectStorageFormat() == StorageScheme.DIRECTORY_BASED) {
-      projectFileDirectory += "/.idea/modules";
-    }
-    String moduleFilePath = projectFileDirectory + "/" + moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION;
+    String moduleName = myProjectId == null ? getName() : myProjectId.getArtifactId();
+    String moduleFilePath = myWizardContext.getProjectFileDirectory() + "/.idea/modules/" + moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION;
     deleteModuleFile(moduleFilePath);
     final ModuleType moduleType = getModuleType();
     final Module module = moduleModel.newModule(moduleFilePath, moduleType.getId());

@@ -248,10 +248,5 @@ public class GradleModuleWizardStep extends ModuleWizardStep {
   public String getHelpId() {
     return "Gradle_Archetype_Dialog";
   }
-
-  @Override
-  public void disposeUIResources() {
-    Disposer.dispose(myParentProjectForm);
-  }
 }
 
