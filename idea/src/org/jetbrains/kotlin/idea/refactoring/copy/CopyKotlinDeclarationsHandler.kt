@@ -313,7 +313,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
         if (!(isUnitTestMode && BaseRefactoringProcessor.ConflictsInTestsException.isTestIgnore())) {
             val targetSourceRootPsi = targetSourceRoot?.toPsiDirectory(project)
-            if (targetSourceRootPsi != null) {
+            if (targetSourceRootPsi != null && project == originalFile.project) {
                 val conflictChecker = MoveConflictChecker(
                         project,
                         elementsToCopy,
