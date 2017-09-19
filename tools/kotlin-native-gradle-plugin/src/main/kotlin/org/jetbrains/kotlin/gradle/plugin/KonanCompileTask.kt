@@ -163,7 +163,7 @@ open class KonanCompileConfig(
         val generateStubsTask = interop.interopProcessingTask
 
         dependsOn(generateStubsTask)
-        library(project.files(generateStubsTask.kLib))
+        library(project.files(generateStubsTask.klib))
 
         interops.add(interop)
     }

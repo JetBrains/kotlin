@@ -1,5 +1,8 @@
 # Kotlin/Native Gradle plugin
 
+__Note__: The new __process*InteropName*Interop__ task is used for interop processing instead of the old ones
+(__gen*InteropName*InteropStubs__ and __compile*InteropName*InteropStubs__, see [Tasks](#tasks))
+
 ## Overview
 
 You may use the Gradle plugin to build _Kotlin/Native_ projects. To use it you need to include the following snippet in
@@ -165,7 +168,7 @@ You may get this task using `interopProcessingTask` property of an interop objec
     |Property       |Type                        |Description                                             |
     |-------------- |----------------------------|--------------------------------------------------------|
     |`outputDir    `|`File`                      |An output directory for the *.klib built                |
-    |`kLib         `|`File`                      |The *.klib built                                        |
+    |`klib         `|`File`                      |The *.klib built                                        |
     |`defFile      `|`File`                      |Def-file used by the interop                            |
     |`compilerOpts `|`List<String>`              |Additional options passed to clang                      |
     |`linkerOpts   `|`List<String>`              |Additional options passed to a linker                   |
@@ -173,7 +176,7 @@ You may get this task using `interopProcessingTask` property of an interop objec
     |`linkFiles    `|`Collection<FileCollection>`|Additional files linked with the stubs                  |
     |`measureTime  `|`boolean`                   |Does the compiler print phase time for stubs compilation|
 
-	_Note_: In versions before 0.4 two tasks for each an interop were used: __gen*InteropName*InteropStubs__ and
+	_Note_: In versions before 0.3.4 two tasks for each an interop were used: __gen*InteropName*InteropStubs__ and
 	__compile*InteropName*InteropStubs__. Now actions of both of them are performed by the
 	__process*InteropName*Interop__ task described above.
     

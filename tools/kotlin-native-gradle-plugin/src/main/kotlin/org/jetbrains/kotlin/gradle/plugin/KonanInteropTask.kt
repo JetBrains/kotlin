@@ -33,14 +33,14 @@ open class KonanInteropTask: KonanTargetableTask() {
         dependsOn(project.konanCompilerDownloadTask)
         this.libName = libName
         this.defFile = project.konanDefaultDefFile(libName)
-        this.kLib = outputDir.resolve("$libName.klib")
+        this.klib = outputDir.resolve("$libName.klib")
     }
 
     // Output directories -----------------------------------------------------
 
     @Internal val outputDir = project.file(project.konanInteropOutputDir)
 
-    lateinit var kLib: File
+    lateinit var klib: File
         @OutputFile get
 
     // Interop stub generator parameters -------------------------------------
@@ -80,7 +80,7 @@ open class KonanInteropTask: KonanTargetableTask() {
     protected fun buildArgs() = mutableListOf<String>().apply {
         addArg("-properties", "${project.konanHome}/konan/konan.properties")
 
-        addArg("-o", kLib.canonicalPath)
+        addArg("-o", klib.canonicalPath)
 
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-def", defFile.canonicalPath)

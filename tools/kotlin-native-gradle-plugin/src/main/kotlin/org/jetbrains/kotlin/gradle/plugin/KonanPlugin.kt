@@ -175,7 +175,7 @@ internal fun dumpProperties(task: Task) {
             println()
             println("Stub generation task: ${task.name}")
             println("outputDir          : ${task.outputDir}")
-            println("kLib               : ${task.kLib}")
+            println("klib               : ${task.klib}")
             println("defFile            : ${task.defFile}")
             println("target             : ${task.target}")
             println("pkg                : ${task.pkg}")
