@@ -71,6 +71,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("extensionForObject2.kt")
+    public void testExtensionForObject2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/extensionForObject2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("extensionFunctionVarInvokedWithQualifier.kt")
     public void testExtensionFunctionVarInvokedWithQualifier() throws Exception {
         runTest("idea/testData/shortenRefs/extensionFunctionVarInvokedWithQualifier.kt");
