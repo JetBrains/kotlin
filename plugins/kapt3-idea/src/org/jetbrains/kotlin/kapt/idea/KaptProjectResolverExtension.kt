@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.kapt.idea
 
-import com.android.tools.idea.gradle.AndroidGradleModel
+import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
@@ -63,6 +63,8 @@ class KaptGradleModelImpl(
         override val buildDirectory: File,
         override val sourceSets: List<KaptSourceSetModel>
 ) : KaptGradleModel
+
+internal typealias AndroidGradleModel = AndroidModuleModel
 
 @Suppress("unused")
 class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
