@@ -26,17 +26,21 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.j2k.ast.ParenthesizedExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import java.util.*
 
 class RedundantProgressionStepInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
+
             override fun visitBinaryExpression(expression: KtBinaryExpression) {
                 if (isStepOneCall(expression.left, expression.right, expression.operationReference)) {
                     holder.registerProblem(expression,
@@ -48,7 +52,18 @@ class RedundantProgressionStepInspection : AbstractKotlinInspection() {
             }
 
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-
+                val receiverExpression = expression.receiverExpression
+                val callExpression = expression.selectorExpression as? KtCallExpression ?: return
+                val callNameExpression = callExpression.getCallNameExpression() ?: return
+                val arguments = callExpression.valueArguments
+                val firstArgumentExpression =  arguments[0].getArgumentExpression()
+                if (isStepOneCall(receiverExpression, firstArgumentExpression, callNameExpression)) {
+                    holder.registerProblem(expression,
+                                           "Iteration step is redundant. Remove it.",
+                                           ProblemHighlightType.WEAK_WARNING,
+                                           TextRange(0 + receiverExpression.textLength, expression.textLength),
+                                           EliminateDotStepOneFix())
+                }
             }
         }
     }
@@ -64,6 +79,19 @@ class RedundantProgressionStepInspection : AbstractKotlinInspection() {
             val expression = descriptor.psiElement as? KtBinaryExpression ?: return
             if (!isStepOneCall(expression.left, expression.right, expression.operationReference)) return
             expression.replaced(expression.left!!)
+        }
+    }
+
+    class EliminateDotStepOneFix : LocalQuickFix {
+        override fun getName() = "Eliminate redundant iteration step size"
+
+        override fun getFamilyName() = name
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
+            val expression = descriptor.psiElement as? KtDotQualifiedExpression ?: return
+
+            expression.replaced(expression.receiverExpression)
         }
     }
 

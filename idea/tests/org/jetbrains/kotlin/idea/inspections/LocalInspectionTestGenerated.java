@@ -617,6 +617,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IntProgressionDot.kt")
+        public void testIntProgressionDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantProgressionStep/IntProgressionDot.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IntProgressionDotNotOne.kt")
+        public void testIntProgressionDotNotOne() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantProgressionStep/IntProgressionDotNotOne.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IntProgressionNotOne.kt")
         public void testIntProgressionNotOne() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantProgressionStep/IntProgressionNotOne.kt");
@@ -626,6 +638,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("LongProgression.kt")
         public void testLongProgression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantProgressionStep/LongProgression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LongProgressionDot.kt")
+        public void testLongProgressionDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantProgressionStep/LongProgressionDot.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LongProgressionDotNotOne.kt")
+        public void testLongProgressionDotNotOne() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantProgressionStep/LongProgressionDotNotOne.kt");
             doTest(fileName);
         }
 
