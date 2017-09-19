@@ -70,26 +70,7 @@ abstract class CValuesRef<T : CPointed> {
      * If this reference is [CPointer], returns this pointer.
      * Otherwise copies the referenced values to [placement] and returns the pointer to the copy.
      */
-    abstract fun getPointer(placement: NativePlacement): CPointer<T>
-}
-
-inline fun <T : CPointed, R> CValuesRef<T>?.usePointer(block: (CPointer<T>?) -> R): R {
-    val allocated: Boolean
-    val pointer: CPointer<T>? = if (this is CPointer<T>?) {
-        allocated = false
-        this
-    } else {
-        allocated = true
-        this!!.getPointer(nativeHeap)
-    }
-
-    return try {
-        block(pointer)
-    } finally {
-        if (allocated) {
-            nativeHeap.free(pointer.rawValue)
-        }
-    }
+    abstract fun getPointer(scope: AutofreeScope): CPointer<T>
 }
 
 /**
@@ -100,7 +81,7 @@ abstract class CValues<T : CVariable> : CValuesRef<T>() {
     /**
      * Copies the values to [placement] and returns the pointer to the copy.
      */
-    override abstract fun getPointer(placement: NativePlacement): CPointer<T>
+    override abstract fun getPointer(scope: AutofreeScope): CPointer<T>
 
     // TODO: optimize
     override fun equals(other: Any?): Boolean {
@@ -134,7 +115,7 @@ abstract class CValues<T : CVariable> : CValuesRef<T>() {
     abstract val size: Int
 }
 
-fun <T : CVariable> CValues<T>.placeTo(placement: NativePlacement) = this.getPointer(placement)
+fun <T : CVariable> CValues<T>.placeTo(scope: AutofreeScope) = this.getPointer(scope)
 
 /**
  * The single immutable C value.
@@ -163,7 +144,7 @@ class CPointer<T : CPointed> internal constructor(val rawValue: NativePtr) : CVa
 
     override fun toString() = this.cPointerToString()
 
-    override fun getPointer(placement: NativePlacement) = this
+    override fun getPointer(scope: AutofreeScope) = this
 }
 
 /**

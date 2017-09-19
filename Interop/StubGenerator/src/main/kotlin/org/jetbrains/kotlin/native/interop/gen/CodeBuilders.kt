@@ -40,6 +40,14 @@ class KotlinCodeBuilder {
         lines.add("    ".repeat(nesting) + line)
     }
 
+    private var memScoped = false
+    fun pushMemScoped() {
+        if (!memScoped) {
+            memScoped = true
+            pushBlock("memScoped {")
+        }
+    }
+
     fun pushBlock(line: String, free: String = "") {
         out(line)
         freeStack.add(free)

@@ -65,7 +65,11 @@ open class DeferScope {
     }
 }
 
-open class ArenaBase(private val parent: NativeFreeablePlacement = nativeHeap) : NativePlacement, DeferScope() {
+abstract class AutofreeScope : DeferScope(), NativePlacement {
+    override abstract fun alloc(size: Long, align: Int): NativePointed
+}
+
+open class ArenaBase(private val parent: NativeFreeablePlacement = nativeHeap) : AutofreeScope() {
 
     private var lastChunk: NativePointed? = null
 
@@ -209,8 +213,8 @@ fun NativePlacement.allocArrayOf(vararg elements: Float): CArrayPointer<FloatVar
 fun <T : CPointed> NativePlacement.allocPointerTo() = alloc<CPointerVar<T>>()
 
 fun <T : CVariable> zeroValue(size: Int, align: Int): CValue<T> = object : CValue<T>() {
-    override fun getPointer(placement: NativePlacement): CPointer<T> {
-        val result = placement.alloc(size, align)
+    override fun getPointer(scope: AutofreeScope): CPointer<T> {
+        val result = scope.alloc(size, align)
         nativeMemUtils.zeroMemory(result, size)
         return interpretCPointer(result.rawPtr)!!
     }
@@ -232,7 +236,7 @@ fun <T : CVariable> CPointed.readValues(size: Int, align: Int): CValues<T> {
     nativeMemUtils.getByteArray(this, bytes, size)
 
     return object : CValues<T>() {
-        override fun getPointer(placement: NativePlacement): CPointer<T> = placement.placeBytes(bytes, align)
+        override fun getPointer(scope: AutofreeScope): CPointer<T> = scope.placeBytes(bytes, align)
         override val size get() = bytes.size
     }
 }
@@ -244,7 +248,7 @@ fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T> {
     val bytes = ByteArray(size.toInt())
     nativeMemUtils.getByteArray(this, bytes, size.toInt())
     return object : CValue<T>() {
-        override fun getPointer(placement: NativePlacement): CPointer<T> = placement.placeBytes(bytes, align)
+        override fun getPointer(scope: AutofreeScope): CPointer<T> = scope.placeBytes(bytes, align)
         override val size get() = bytes.size
     }
 }
@@ -255,7 +259,7 @@ inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(si
 
 fun CValue<*>.write(location: NativePtr) {
     // TODO: probably CValue must be redesigned.
-    val fakePlacement = object : NativePlacement {
+    val fakeScope = object : AutofreeScope() {
         var used = false
         override fun alloc(size: Long, align: Int): NativePointed {
             assert(!used)
@@ -264,8 +268,8 @@ fun CValue<*>.write(location: NativePtr) {
         }
     }
 
-    this.getPointer(fakePlacement)
-    assert(fakePlacement.used)
+    this.getPointer(fakeScope)
+    assert(fakeScope.used)
 }
 
 // TODO: optimize
@@ -302,7 +306,7 @@ inline fun <reified T : CVariable> createValues(count: Int, initializer: T.(inde
 }
 
 fun cValuesOf(vararg elements: Byte): CValues<ByteVar> = object : CValues<ByteVar>() {
-    override fun getPointer(placement: NativePlacement) = placement.allocArrayOf(elements)
+    override fun getPointer(scope: AutofreeScope) = scope.allocArrayOf(elements)
     override val size get() = 1 * elements.size
 }
 
@@ -318,7 +322,7 @@ fun cValuesOf(vararg elements: Long): CValues<LongVar> =
         createValues(elements.size) { index -> this.value = elements[index] }
 
 fun cValuesOf(vararg elements: Float): CValues<FloatVar> = object : CValues<FloatVar>() {
-    override fun getPointer(placement: NativePlacement) = placement.allocArrayOf(*elements)
+    override fun getPointer(scope: AutofreeScope) = scope.allocArrayOf(*elements)
     override val size get() = 4 * elements.size
 }
 
@@ -348,8 +352,8 @@ val String.cstr: CValues<ByteVar>
         return object : CValues<ByteVar>() {
             override val size get() = bytes.size + 1
 
-            override fun getPointer(placement: NativePlacement): CPointer<ByteVar> {
-                val result = placement.allocArray<ByteVar>(bytes.size + 1)
+            override fun getPointer(scope: AutofreeScope): CPointer<ByteVar> {
+                val result = scope.allocArray<ByteVar>(bytes.size + 1)
                 nativeMemUtils.putByteArray(bytes, result.pointed, bytes.size)
                 result[bytes.size] = 0.toByte()
                 return result
@@ -363,8 +367,8 @@ val String.wcstr: CValues<ShortVar>
         return object : CValues<ShortVar>() {
             override val size get() = 2 * (chars.size + 1)
 
-            override fun getPointer(placement: NativePlacement): CPointer<ShortVar> {
-                val result = placement.allocArray<ShortVar>(chars.size + 1)
+            override fun getPointer(scope: AutofreeScope): CPointer<ShortVar> {
+                val result = scope.allocArray<ShortVar>(chars.size + 1)
                 nativeMemUtils.putCharArray(chars, result.pointed, chars.size)
                 result[chars.size] = 0.toShort()
                 return result

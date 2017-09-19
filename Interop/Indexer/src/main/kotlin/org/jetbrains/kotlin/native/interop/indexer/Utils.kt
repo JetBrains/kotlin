@@ -184,9 +184,9 @@ internal fun CValue<CXCursor>.isLeaf(): Boolean {
     return !hasChildren
 }
 
-internal fun List<String>.toNativeStringArray(placement: NativePlacement): CArrayPointer<CPointerVar<ByteVar>> {
-    return placement.allocArray(this.size) { index ->
-        this.value = this@toNativeStringArray[index].cstr.getPointer(placement)
+internal fun List<String>.toNativeStringArray(scope: AutofreeScope): CArrayPointer<CPointerVar<ByteVar>> {
+    return scope.allocArray(this.size) { index ->
+        this.value = this@toNativeStringArray[index].cstr.getPointer(scope)
     }
 }
 

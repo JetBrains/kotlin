@@ -599,24 +599,22 @@ class StubGenerator(
                     }
                 }
 
-                val tmpVarName = "kniTmp$index"
-
                 val representAsValuesRef = representCFunctionParameterAsValuesRef(parameter.type)
 
                 val bridgeArgument = if (representCFunctionParameterAsString(parameter.type)) {
                     kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
-                    bodyGenerator.pushBlock("$parameterName?.cstr.usePointer { $tmpVarName ->")
-                    tmpVarName
+                    bodyGenerator.pushMemScoped()
+                    "$parameterName?.cstr?.getPointer(memScope)"
                 } else if (representCFunctionParameterAsWString(parameter.type)) {
                     kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
-                    bodyGenerator.pushBlock("$parameterName?.wcstr.usePointer { $tmpVarName ->")
-                    tmpVarName
+                    bodyGenerator.pushMemScoped()
+                    "$parameterName?.wcstr?.getPointer(memScope)"
                 } else if (representAsValuesRef != null) {
                     val pointedType = mirror(representAsValuesRef).pointedType
                     val parameterType = KotlinTypes.cValuesRef.typeWith(pointedType).makeNullable()
                     kotlinParameters.add(parameterName to parameterType)
-                    bodyGenerator.pushBlock("$parameterName.usePointer { $tmpVarName ->")
-                    tmpVarName
+                    bodyGenerator.pushMemScoped()
+                    "$parameterName?.getPointer(memScope)"
                 } else {
                     val mirror = mirror(parameter.type)
                     kotlinParameters.add(parameterName to mirror.argType)
@@ -640,7 +638,7 @@ class StubGenerator(
                 val returnTypeKind = getFfiTypeKind(func.returnType)
 
                 kotlinParameters.add("vararg variadicArguments" to KotlinTypes.any.makeNullable())
-                bodyGenerator.pushBlock("memScoped {")
+                bodyGenerator.pushMemScoped()
 
                 val resultVar = "kniResult"
 

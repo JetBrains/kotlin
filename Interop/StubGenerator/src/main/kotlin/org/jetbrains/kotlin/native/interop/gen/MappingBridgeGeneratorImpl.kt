@@ -41,9 +41,9 @@ class MappingBridgeGeneratorImpl(
 
         kotlinValues.forEachIndexed { index, (type, value) ->
             if (type.unwrapTypedefs() is RecordType) {
-                val tmpVarName = "kni$index"
-                builder.pushBlock("$value.usePointer { $tmpVarName ->")
-                bridgeArguments.add(BridgeTypedKotlinValue(BridgedType.NATIVE_PTR, "$tmpVarName.rawValue"))
+                builder.pushMemScoped()
+                val bridgeArgument = "$value.getPointer(memScope).rawValue"
+                bridgeArguments.add(BridgeTypedKotlinValue(BridgedType.NATIVE_PTR, bridgeArgument))
             } else {
                 val info = mirror(declarationMapper, type).info
                 bridgeArguments.add(BridgeTypedKotlinValue(info.bridgedType, info.argToBridged(value)))
