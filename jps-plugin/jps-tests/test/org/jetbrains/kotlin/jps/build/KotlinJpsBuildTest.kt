@@ -24,7 +24,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.ArrayUtil
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
@@ -43,6 +42,7 @@ import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
+import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -510,7 +510,14 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class")
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        }
+        else {
+            val allClasses = myProject.outputPaths()
+            checkWhen(touch("src/foo.kt"), null, allClasses)
+        }
+
         checkWhen(touch("src/Excluded.kt"), null, NOTHING)
         checkWhen(touch("src/dir/YetAnotherExcluded.kt"), null, NOTHING)
     }
@@ -522,8 +529,15 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class")
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
-        checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(klass("kotlinProject", "Bar")))
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+            checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(klass("kotlinProject", "Bar")))
+        }
+        else {
+            val allClasses = myProject.outputPaths()
+            checkWhen(touch("src/foo.kt"), null, allClasses)
+            checkWhen(touch("src/dir/subdir/bar.kt"), null, allClasses)
+        }
 
         checkWhen(touch("src/dir/Excluded.kt"), null, NOTHING)
         checkWhen(touch("src/dir/subdir/YetAnotherExcluded.kt"), null, NOTHING)
@@ -536,7 +550,13 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class")
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        }
+        else {
+            val allClasses = myProject.outputPaths()
+            checkWhen(touch("src/foo.kt"), null, allClasses)
+        }
 
         checkWhen(touch("src/exclude/Excluded.kt"), null, NOTHING)
         checkWhen(touch("src/exclude/YetAnotherExcluded.kt"), null, NOTHING)
@@ -547,8 +567,15 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     fun testKotlinProjectTwoFilesInOnePackage() {
         doTest()
 
-        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
-        checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
+            checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
+        }
+        else {
+            val allClasses = myProject.outputPaths()
+            checkWhen(touch("src/test1.kt"), null, allClasses)
+            checkWhen(touch("src/test2.kt"), null, allClasses)
+        }
 
         checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
                   arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
@@ -596,8 +623,15 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         result.assertSuccessful()
 
-        checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
-        checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
+            checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
+        }
+        else {
+            val allClasses = myProject.outputPaths()
+            checkWhen(touch("src/kt2.kt"), null, allClasses)
+            checkWhen(touch("module2/src/kt1.kt"), null, allClasses)
+        }
     }
 
     fun testCircularDependenciesSamePackage() {
@@ -611,8 +645,16 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
 
-        checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
-        checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
+            checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+        }
+        else {
+            val allClasses = myProject.outputPaths()
+            checkWhen(touch("module1/src/a.kt"), null, allClasses)
+            checkWhen(touch("module2/src/b.kt"), null, allClasses)
+        }
     }
 
     fun testCircularDependenciesSamePackageWithTests() {
@@ -626,8 +668,15 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
 
-        checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
-        checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
+            checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+        }
+        else {
+            val allProductionClasses = myProject.outputPaths(tests = false)
+            checkWhen(touch("module1/src/a.kt"), null, allProductionClasses)
+            checkWhen(touch("module2/src/b.kt"), null, allProductionClasses)
+        }
     }
 
     fun testInternalFromAnotherModule() {
@@ -849,7 +898,13 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
 
-        checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
+        if (IncrementalCompilation.isEnabled()) {
+            checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
+        }
+        else {
+            val allClasses = findModule("kotlinProject").outputFilesPaths()
+            checkWhen(touch("src/utils.kt"), null, allClasses.toTypedArray())
+        }
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
         assertTrue(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
@@ -1073,6 +1128,29 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val packagePartFqName = PackagePartClassUtils.getDefaultPartFqName(FqName(packageClassFqName), fakeVirtualFile)
         return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName))
     }
+
+    private fun JpsProject.outputPaths(production: Boolean = true, tests: Boolean = true) =
+            modules.flatMap { it.outputFilesPaths(production = production, tests = tests) }.toTypedArray()
+
+    private fun JpsModule.outputFilesPaths(production: Boolean = true, tests: Boolean = true): List<String> {
+        val outputFiles = arrayListOf<File>()
+        if (production) {
+            prodOut.walk().filterTo(outputFiles) { it.isFile }
+        }
+        if (tests) {
+            testsOut.walk().filterTo(outputFiles) { it.isFile }
+        }
+        return outputFiles.map { it.relativeTo(workDir).path }
+    }
+
+    private val JpsModule.prodOut: File
+        get() = outDir(forTests = false)
+
+    private val JpsModule.testsOut: File
+        get() = outDir(forTests = true)
+
+    private fun JpsModule.outDir(forTests: Boolean) =
+            JpsJavaExtensionService.getInstance().getOutputDirectory(this, forTests)!!
 
     protected enum class Operation {
         CHANGE,
