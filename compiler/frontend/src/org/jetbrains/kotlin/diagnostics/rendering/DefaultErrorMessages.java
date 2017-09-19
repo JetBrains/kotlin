@@ -272,6 +272,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer");
         MAP.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated");
         MAP.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be lateinit");
+        MAP.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes");
 
         MAP.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias");
         MAP.put(ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, "Aliased class should not have type parameters with declaration-site variance");
@@ -555,8 +556,8 @@ public class DefaultErrorMessages {
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
         MAP.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as supertypes");
-        MAP.put(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE, "Suspend function type is not allowed as supertypes");
         MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
+        MAP.put(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE, "Suspend function type is not allowed as supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
         MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'");
