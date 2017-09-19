@@ -368,7 +368,7 @@ class MultifileClassCodegenImpl(
         }
 
         private fun KtFile.hasDeclarationsForPartClass() =
-                CodegenUtil.getActualDeclarations(this).any { it is KtProperty || it is KtFunction }
+                CodegenUtil.getActualDeclarations(this).any { it is KtProperty || it is KtFunction || it is KtTypeAlias }
 
         private fun getCompiledPackageFragment(
                 facadeFqName: FqName, state: GenerationState

@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.util.ArrayUtil;
+import kotlin.Pair;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
@@ -25,9 +27,6 @@ import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
@@ -101,32 +100,40 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        List<DeclarationDescriptor> members = new ArrayList<>();
-        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(element)) {
-            if (declaration instanceof KtNamedFunction) {
-                SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
-                members.add(functionDescriptor);
-            }
-            else if (declaration instanceof KtProperty) {
-                VariableDescriptor property = bindingContext.get(BindingContext.VARIABLE, declaration);
-                members.add(property);
-            }
-            else if (declaration instanceof KtTypeAlias) {
-                TypeAliasDescriptor typeAlias = bindingContext.get(BindingContext.TYPE_ALIAS, declaration);
-                members.add(typeAlias);
-            }
-        }
-
-        JvmSerializerExtension extension = new JvmSerializerExtension(v.getSerializationBindings(), state);
-        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(extension);
-        ProtoBuf.Package.Builder builder = serializer.packagePartProto(element.getPackageFqName(), members);
-        extension.serializeJvmPackage(builder, packagePartType);
-        ProtoBuf.Package packageProto = builder.build();
+        Pair<DescriptorSerializer, ProtoBuf.Package> serializedPart = serializePackagePartMembers(this, packagePartType);
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, 0, av -> {
-            writeAnnotationData(av, serializer, packageProto);
+            writeAnnotationData(av, serializedPart.getFirst(), serializedPart.getSecond());
             return Unit.INSTANCE;
         });
+    }
+
+    @NotNull
+    protected static Pair<DescriptorSerializer, ProtoBuf.Package> serializePackagePartMembers(
+            @NotNull MemberCodegen<? extends KtFile> codegen,
+            @NotNull Type packagePartType
+    ) {
+        BindingContext bindingContext = codegen.bindingContext;
+        List<DeclarationDescriptor> members = CollectionsKt.mapNotNull(CodegenUtil.getActualDeclarations(codegen.element), declaration -> {
+            if (declaration instanceof KtNamedFunction) {
+                return bindingContext.get(BindingContext.FUNCTION, declaration);
+            }
+            else if (declaration instanceof KtProperty) {
+                return bindingContext.get(BindingContext.VARIABLE, declaration);
+            }
+            else if (declaration instanceof KtTypeAlias) {
+                return bindingContext.get(BindingContext.TYPE_ALIAS, declaration);
+            }
+
+            return null;
+        });
+
+        JvmSerializerExtension extension = new JvmSerializerExtension(codegen.v.getSerializationBindings(), codegen.state);
+        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(extension);
+        ProtoBuf.Package.Builder builder = serializer.packagePartProto(codegen.element.getPackageFqName(), members);
+        extension.serializeJvmPackage(builder, packagePartType);
+
+        return new Pair<>(serializer, builder.build());
     }
 
     @Override
