@@ -8,7 +8,7 @@ dependencies {
     compile(project(":core"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:cli-common"))
-    compile(projectDist(":kotlin-daemon-client"))
+    compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))

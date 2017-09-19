@@ -200,6 +200,12 @@ fun Project.allprojectsRecursive(body: Project.() -> Unit) {
     this.subprojects { allprojectsRecursive(body) }
 }
 
+fun Task.listConfigurationContents(configName: String) {
+    doFirst {
+        println("$configName configuration files:\n${project.configurations[configName].allArtifacts.files.files.joinToString("\n  ", "  ")}")
+    }
+}
+
 val defaultJvmTarget = "1.8"
 val defaultJavaHome = jdkPath(defaultJvmTarget!!)
 
@@ -243,11 +249,11 @@ allprojects {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
-    task("printArchives") {
-        doFirst {
-            println("Archives configuration files:\n${configurations["archives"].allArtifacts.files.files.joinToString("\n  ", "  ")}")
-        }
-    }
+    task("listArchives") { listConfigurationContents("archives") }
+
+    task("listRuntimeJar") { listConfigurationContents("runtimeJar") }
+
+    task("listDistJar") { listConfigurationContents("distJar") }
 
     afterEvaluate {
         logger.info("configuring project $name to compile to the target jvm version $jvmTarget using jdk: $javaHome")

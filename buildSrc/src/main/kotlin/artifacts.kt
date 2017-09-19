@@ -142,7 +142,9 @@ fun Project.ideaPlugin(subdir: String = "lib", body: AbstractCopyTask.() -> Unit
 }
 
 fun Project.ideaPlugin(subdir: String = "lib"): Copy = ideaPlugin(subdir) {
-    fromRuntimeJarIfExists(this)
+    runtimeJarTaskIfExists()?.let {
+        from(it)
+    }
 }
 
 fun Project.dist(targetDir: File? = null,
@@ -155,27 +157,22 @@ fun Project.dist(targetDir: File? = null,
 
     return task<Copy>("dist") {
         body()
-        when {
-            fromTask != null -> from(fromTask)
-            else -> project.fromRuntimeJarIfExists(this)
+        (fromTask ?: runtimeJarTaskIfExists())?.let {
+            from(it)
+            if (targetName != null) {
+                rename(it.outputs.files.singleFile.name, targetName)
+            }
         }
-        rename(".*", distJarName)
-//        rename("-${java.util.regex.Pattern.quote(rootProject.extra["build.number"].toString())}", "")
+        rename("-${java.util.regex.Pattern.quote(rootProject.extra["build.number"].toString())}", "")
         into(targetDir ?: distLibDir)
         project.addArtifact(distJarCfg, this, File(targetDir ?: distLibDir, distJarName))
     }
 }
 
-private fun<T: AbstractCopyTask> Project.fromRuntimeJarIfExists(task: T) {
-    if (extra.has("runtimeJarTask")) {
-        task.from(extra["runtimeJarTask"] as Task)
-    }
-    else {
-        tasks.findByName("jar")?.let {
-            task.from(it)
-        }
-    }
-}
+private fun Project.runtimeJarTaskIfExists(): Task? =
+    if (extra.has("runtimeJarTask")) extra["runtimeJarTask"] as Task
+    else tasks.findByName("jar")
+
 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
 

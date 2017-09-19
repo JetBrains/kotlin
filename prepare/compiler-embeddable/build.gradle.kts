@@ -37,7 +37,7 @@ val packagesToRelocate =
 dependencies {
     val compile by configurations
 
-    compilerJar(projectDist(":kotlin-compiler"))
+    compilerJar(projectRuntimeJar(":kotlin-compiler"))
 
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))

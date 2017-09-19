@@ -9,7 +9,7 @@ dependencies {
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
-    runtime(projectDist(":kotlin-compiler"))
+    runtime(projectRuntimeJar(":kotlin-compiler"))
     runtime(projectDist(":kotlin-stdlib"))
 }
 

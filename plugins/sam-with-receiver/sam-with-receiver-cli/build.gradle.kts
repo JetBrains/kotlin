@@ -7,7 +7,7 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
-    runtime(projectDist(":kotlin-compiler"))
+    runtime(projectRuntimeJar(":kotlin-compiler"))
     runtime(projectDist(":kotlin-stdlib"))
 }
 
@@ -24,7 +24,9 @@ javadocJar()
 
 publish()
 
-dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kotlin-") + ".jar")
+dist {
+    rename("kotlin-", "")
+}
 
 ideaPlugin {
     from(jar)

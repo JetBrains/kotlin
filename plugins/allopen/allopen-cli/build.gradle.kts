@@ -7,7 +7,7 @@ dependencies {
     compileOnly(ideaSdkCoreDeps("intellij-core"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
-    runtime(projectDist(":kotlin-compiler"))
+    runtime(projectRuntimeJar(":kotlin-compiler"))
     runtime(projectDist(":kotlin-stdlib"))
 }
 
