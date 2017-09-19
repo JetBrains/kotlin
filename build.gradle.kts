@@ -20,6 +20,8 @@ val ideaCommunityPlugin by configurations.creating
 
 val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
 
+evaluationDependsOn(":prepare:idea-plugin")
+
 dependencies {
     compile(projectDist(":kotlin-reflect"))
     compile(projectDist(":kotlin-stdlib"))
