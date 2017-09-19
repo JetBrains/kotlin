@@ -40,6 +40,11 @@ val NativePointed?.rawPtr: NativePtr
  */
 inline fun <reified T : NativePointed> interpretPointed(ptr: NativePtr): T = interpretNullablePointed<T>(ptr)!!
 
+private class OpaqueNativePointed(rawPtr: NativePtr) : NativePointed(rawPtr)
+
+fun interpretOpaquePointed(ptr: NativePtr): NativePointed = interpretPointed<OpaqueNativePointed>(ptr)
+fun interpretNullableOpaquePointed(ptr: NativePtr): NativePointed? = interpretNullablePointed<OpaqueNativePointed>(ptr)
+
 /**
  * Changes the interpretation of the pointed data or code.
  */

@@ -83,14 +83,12 @@ internal object nativeMemUtils {
         }
     }
 
-    private class NativeAllocated(rawPtr: NativePtr) : NativePointed(rawPtr)
-
     fun alloc(size: Long, align: Int): NativePointed {
         val ptr = malloc(size, align)
         if (ptr == nativeNullPtr) {
             throw OutOfMemoryError("unable to allocate native memory")
         }
-        return interpretPointed<NativeAllocated>(ptr)
+        return interpretOpaquePointed(ptr)
     }
 
     fun free(mem: NativePtr) {

@@ -98,15 +98,13 @@ internal object nativeMemUtils {
         return unsafe.allocateInstance(T::class.java) as T
     }
 
-    internal class NativeAllocated(rawPtr: NativePtr) : NativePointed(rawPtr)
-
     fun alloc(size: Long, align: Int): NativePointed {
         val address = unsafe.allocateMemory(
                 if (size == 0L) 1L else size // It is a hack: `sun.misc.Unsafe` can't allocate zero bytes
         )
 
         if (address % align != 0L) TODO(align.toString())
-        return interpretPointed<NativeAllocated>(address)
+        return interpretOpaquePointed(address)
     }
 
     fun free(mem: NativePtr) {

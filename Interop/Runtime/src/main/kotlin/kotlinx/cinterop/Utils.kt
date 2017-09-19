@@ -65,31 +65,30 @@ open class DeferScope {
     }
 }
 
-// TODO: implement optimally
 open class ArenaBase(private val parent: NativeFreeablePlacement = nativeHeap) : NativePlacement, DeferScope() {
 
-    private val allocatedChunks = ArrayList<NativePointed>()
+    private var lastChunk: NativePointed? = null
 
     final override fun alloc(size: Long, align: Int): NativePointed {
-        val res = parent.alloc(size, align)
-        try {
-            allocatedChunks.add(res)
-            return res
-        } catch (e: Throwable) {
-            parent.free(res)
-            throw e
-        }
+        // Reserve space for a pointer:
+        val gapForPointer = maxOf(pointerSize, align)
+
+        val chunk = parent.alloc(size = gapForPointer + size, align = gapForPointer)
+        nativeMemUtils.putNativePtr(chunk, lastChunk.rawPtr)
+        lastChunk = chunk
+        return interpretOpaquePointed(chunk.rawPtr + gapForPointer.toLong())
     }
 
     @PublishedApi
     internal fun clearImpl() {
         this.executeAllDeferred()
 
-        allocatedChunks.forEach {
-            parent.free(it)
+        var chunk = lastChunk
+        while (chunk != null) {
+            val nextChunk = nativeMemUtils.getNativePtr(chunk)
+            parent.free(chunk)
+            chunk = interpretNullableOpaquePointed(nextChunk)
         }
-
-        allocatedChunks.clear()
     }
 
 }
