@@ -1220,6 +1220,17 @@ task link(type: LinkKonanTest) {
 }
 */
 
+task link_omit_unused(type: LinkKonanTest) {
+    goldValue = "Hello\n"
+    source = "link/omit/hello.kt"
+    lib = "link/omit/lib.kt"
+}
+
+task link_default_libs(type: RunKonanTest) {
+    goldValue = "ptrdiff = 0\n"
+    source = "link/default/default.kt"
+}
+
 task for0(type: RunKonanTest) {
     goldValue = "2\n3\n4\n"
     source = "runtime/basic/for0.kt"
