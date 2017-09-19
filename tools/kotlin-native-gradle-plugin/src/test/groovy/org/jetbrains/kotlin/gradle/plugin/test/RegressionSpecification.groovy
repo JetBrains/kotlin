@@ -36,4 +36,22 @@ class RegressionSpecification extends BaseKonanSpecification {
         result.task(':tasks').outcome == TaskOutcome.SUCCESS
     }
 
+    // Ensure gradle plugin fails in case of linker errors.
+    def 'KT-20192'() {
+        when:
+        def project = KonanProject.createEmpty(getProjectDirectory()) { KonanProject prj ->
+            prj.generateSrcFile("main.kt", """
+                external fun foo()
+
+                fun main(args: Array<String>) {
+                    foo()
+                }
+            """)
+        }
+        def result = project.createRunner().withArguments('build').buildAndFail()
+
+        then:
+        result.taskPaths(TaskOutcome.FAILED).contains(project.defaultCompilationTask())
+    }
+
 }
