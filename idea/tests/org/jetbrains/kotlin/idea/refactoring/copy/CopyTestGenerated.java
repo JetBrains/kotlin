@@ -168,9 +168,21 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copySingleClass/copySingleClass.test")
+    public void testCopySingleClass_CopySingleClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copySingleClass/copySingleClass.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copySingleClassFile/copySingleClassFile.test")
     public void testCopySingleClassFile_CopySingleClassFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copySingleClassFile/copySingleClassFile.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copySingleClassWithRename/copySingleClassWithRename.test")
+    public void testCopySingleClassWithRename_CopySingleClassWithRename() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copySingleClassWithRename/copySingleClassWithRename.test");
         doTest(fileName);
     }
 
