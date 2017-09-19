@@ -3175,6 +3175,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/expression/stringTemplates"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("nonStrings.kt")
+            public void testNonStrings() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/stringTemplates/nonStrings.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("objectWithToString.kt")
             public void testObjectWithToString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/stringTemplates/objectWithToString.kt");

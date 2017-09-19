@@ -112,16 +112,11 @@ public final class StringTemplateTranslator extends AbstractTranslator {
 
         private boolean mustCallToString(@NotNull KotlinType type) {
             Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
-            if (typeName != null) {
-                //TODO: this is a hacky optimization, should use some generic approach
-                if (NamePredicate.STRING.test(typeName)) {
-                    return false;
-                }
-                else if (NamePredicate.PRIMITIVE_NUMBERS.test(typeName)) {
-                    return resultingExpression == null;
-                }
+            //TODO: this is a hacky optimization, should use some generic approach
+            if (typeName != null && NamePredicate.STRING.test(typeName)) {
+                return false;
             }
-            return expressionEntries.length == 1;
+            return resultingExpression == null;
         }
 
         @Override
