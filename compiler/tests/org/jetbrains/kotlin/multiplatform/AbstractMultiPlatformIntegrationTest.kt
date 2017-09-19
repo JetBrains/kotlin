@@ -70,8 +70,13 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
     }
 
     private fun CLICompiler<*>.compileBothWays(commonSource: File, platformSource: File, vararg mainArguments: String): String {
-        val platformFirst = compile(listOf(platformSource, commonSource), *mainArguments)
-        val commonFirst = compile(listOf(commonSource, platformSource), *mainArguments)
+        val configurations = listOf(
+                listOf(platformSource, commonSource),
+                listOf(commonSource, platformSource)
+        )
+
+        val (platformFirst, commonFirst) = configurations.map { compile(it, *mainArguments) }
+
         if (platformFirst != commonFirst) {
             assertEquals(
                     "Compilation results are different when compiling [platform-specific, common] compared to when compiling [common, platform-specific]",
