@@ -332,7 +332,6 @@ class KotlinCompletionContributor : CompletionContributor() {
                 psiDocumentManager.commitAllDocuments()
 
                 val token = getToken(context.file, document.charsSequence, startOffset)
-                assert(token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
                 val nameRef = token.parent as KtNameReferenceExpression
 
                 document.insertString(nameRef.startOffset, "{")
