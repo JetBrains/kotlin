@@ -31,8 +31,23 @@ class DependencyDownloader(
         RETURN_EXISTING
     }
 
+    class HTTPResponseException(val url: URL, val responseCode: Int)
+        : IOException("Server returned HTTP response code: $responseCode for URL: $url")
+
     class DownloadingProgress(@Volatile var currentBytes: Long) {
         fun update(readBytes: Int) { currentBytes += readBytes }
+    }
+
+    private fun HttpURLConnection.checkHTTPResponse(expected: Int, originalUrl: URL = url) {
+        if (responseCode != expected) {
+            throw HTTPResponseException(originalUrl, responseCode)
+        }
+    }
+
+    private fun HttpURLConnection.checkHTTPResponse(originalUrl: URL, predicate: (Int) -> Boolean) {
+        if (!predicate(responseCode)) {
+            throw HTTPResponseException(originalUrl, responseCode)
+        }
     }
 
     private fun doDownload(originalUrl: URL,
@@ -91,6 +106,9 @@ class DependencyDownloader(
             val rangeConnection = originalUrl.openConnection() as HttpURLConnection
             rangeConnection.setRequestProperty("range", "bytes=$currentBytes-")
             rangeConnection.connect()
+            rangeConnection.checkHTTPResponse(originalUrl) {
+                it == HttpURLConnection.HTTP_PARTIAL || it == HttpURLConnection.HTTP_OK
+            }
             doDownload(originalUrl, rangeConnection, tmpFile, currentBytes, totalBytes, true)
         }
     }
@@ -98,6 +116,9 @@ class DependencyDownloader(
     /** Performs an attempt to download a specified file into the specified location */
     private fun tryDownload(url: URL, tmpFile: File) {
         val connection = url.openConnection()
+
+        (connection as? HttpURLConnection)?.checkHTTPResponse(HttpURLConnection.HTTP_OK, url)
+
         if (connection is HttpURLConnection && tmpFile.exists()) {
             resumeDownload(url, connection, tmpFile)
         } else {
@@ -134,6 +155,8 @@ class DependencyDownloader(
             try {
                 tryDownload(source, tmpFile)
                 break
+            } catch (e: HTTPResponseException) {
+                throw e
             } catch (e: IOException) {
                 if (attempt >= maxAttempts) {
                     throw e
