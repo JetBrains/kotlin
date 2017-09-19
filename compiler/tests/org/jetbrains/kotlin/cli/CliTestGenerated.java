@@ -218,6 +218,18 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("jsr305AllIgnore.args")
+        public void testJsr305AllIgnore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305AllIgnore.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305DefaultMigration.args")
+        public void testJsr305DefaultMigration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305DefaultMigration.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("jsr305DeprecatedEnable.args")
         public void testJsr305DeprecatedEnable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305DeprecatedEnable.args");
@@ -236,9 +248,45 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("jsr305FqNameIgnore.args")
+        public void testJsr305FqNameIgnore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305FqNameIgnore.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305FqNameStrict.args")
+        public void testJsr305FqNameStrict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305FqNameStrict.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("jsr305Ignore.args")
         public void testJsr305Ignore() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305Ignore.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305MigrationDefault.args")
+        public void testJsr305MigrationDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305MigrationDefault.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305MigrationFqNameIgnore.args")
+        public void testJsr305MigrationFqNameIgnore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305MigrationFqNameIgnore.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305MigrationIgnore.args")
+        public void testJsr305MigrationIgnore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305MigrationIgnore.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("jsr305MigrationWarn.args")
+        public void testJsr305MigrationWarn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/jsr305MigrationWarn.args");
             doJvmTest(fileName);
         }
 
