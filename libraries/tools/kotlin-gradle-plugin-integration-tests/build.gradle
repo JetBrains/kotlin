@@ -19,7 +19,7 @@ dependencies {
     testCompile project(path: ':examples:annotation-processor-example')
     testCompile project(':kotlin-stdlib-jre8')
     testCompile project(':kotlin-reflect')
-    testCompile project(':android-extensions-compiler')
+    testCompile project(':kotlin-android-extensions')
     testCompile project(path: ':kotlin-build-common', configuration: 'tests-jar')
     testCompile project(path: ':compiler:incremental-compilation-impl', configuration: 'tests-jar')
 

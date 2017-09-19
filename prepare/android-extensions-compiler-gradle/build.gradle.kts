@@ -30,7 +30,7 @@ dependencies {
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
-    runtime("com.google.android:android:2.3.1")
+    runtime(commonDep("com.google.android", "android"))
 }
 
 //val originalSrc = "$projectDir/src"

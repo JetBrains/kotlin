@@ -71,7 +71,7 @@ include ":kotlin-build-common",
         ":plugins:lint",
         ":plugins:kapt3-idea",
         ":plugins:android-extensions-compiler",
-        ":android-extensions-compiler",
+        ":kotlin-android-extensions",
         ":kotlin-android-extensions-runtime",
         ":plugins:android-extensions-ide",
         ":plugins:android-extensions-jps",
@@ -171,7 +171,7 @@ project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as 
 project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
 project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
-project(':android-extensions-compiler').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
+project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File

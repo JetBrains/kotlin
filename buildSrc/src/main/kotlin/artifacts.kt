@@ -83,6 +83,7 @@ fun Project.runtimeJar(taskName: String = "jar", body: Jar.() -> Unit = {}): Jar
 
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): Jar =
         getOrCreateTask("sourcesJar") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             setupPublicJar("Sources")
             try {
                 project.pluginManager.withPlugin("java-base") {
@@ -98,6 +99,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): Jar =
 
 fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar =
         getOrCreateTask("javadocJar") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             setupPublicJar("JavaDoc")
             tasks.findByName("javadoc")?.let{ it as Javadoc }?.takeIf { it.enabled }?.let {
                 dependsOn(it)

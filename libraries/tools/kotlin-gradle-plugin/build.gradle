@@ -31,7 +31,7 @@ dependencies {
     compile project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
 
     compile project(':kotlin-stdlib')
-    compile project(':android-extensions-compiler')
+    compile project(':kotlin-android-extensions')
     compile project(':kotlin-build-common')
     compile project(':kotlin-compiler-runner')
 //    compileOnly project(":compiler:daemon")
@@ -81,6 +81,7 @@ jar.dependsOn agp25Classes
 jar {
     from compileGroovy.destinationDir
     from sourceSets.agp25.output.classesDir
+    manifestAttributes(manifest, project)
 }
 
 artifacts {

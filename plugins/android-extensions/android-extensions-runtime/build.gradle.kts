@@ -4,8 +4,9 @@ description = "Kotlin Android Extensions Runtime"
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compile(ideaPluginDeps("layoutlib", plugin = "android"))
+    runtime(commonDep("com.google.android", "android"))
 }
 
 sourceSets {

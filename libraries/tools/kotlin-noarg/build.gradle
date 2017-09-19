@@ -20,7 +20,7 @@ dependencies {
 
     compile project(':kotlin-stdlib')
     compileOnly project(':compiler')
-    compile project(':kotlin-noarg-compiler-plugin')
+    compileOnly project(':kotlin-noarg-compiler-plugin')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
@@ -38,8 +38,13 @@ def originalSrc = "$kotlin_root/plugins/noarg/noarg-cli/src"
 
 //compileKotlin.dependsOn preprocessSources
 
+evaluationDependsOn(":kotlin-noarg-compiler-plugin")
+
 jar {
-    from(originalSrc) { include("META-INF/**") }
+//    from(originalSrc) { include("META-INF/**") }
+    from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.classesDirs)
+    from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.resourcesDir)
+    manifestAttributes(manifest, project)
 }
 
 artifacts {

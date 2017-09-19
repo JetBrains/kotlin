@@ -50,7 +50,7 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":android-extensions-compiler": {
+    ":kotlin-android-extensions": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention",

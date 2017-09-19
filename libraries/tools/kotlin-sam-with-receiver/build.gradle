@@ -20,7 +20,7 @@ dependencies {
 
     compile project(':kotlin-stdlib')
     compileOnly project(':compiler')
-    compile project(':kotlin-sam-with-receiver-compiler-plugin')
+    compileOnly project(':kotlin-sam-with-receiver-compiler-plugin')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
@@ -38,8 +38,13 @@ def originalSrc = "$kotlin_root/plugins/sam-with-receiver/sam-with-receiver-cli/
 
 //compileKotlin.dependsOn preprocessSources
 
+evaluationDependsOn(":kotlin-sam-with-receiver-compiler-plugin")
+
 jar {
-    from(originalSrc) { include("META-INF/**") }
+//    from(originalSrc) { include("META-INF/**") }
+    from(project(":kotlin-sam-with-receiver-compiler-plugin").sourceSets.main.output.classesDirs)
+    from(project(":kotlin-sam-with-receiver-compiler-plugin").sourceSets.main.output.resourcesDir)
+    manifestAttributes(manifest, project)
 }
 
 artifacts {
