@@ -36,12 +36,41 @@ object nativeHeap : NativeFreeablePlacement {
     override fun free(mem: NativePtr) = nativeMemUtils.free(mem)
 }
 
+private typealias Deferred = () -> Unit
+
+open class DeferScope {
+
+    @PublishedApi
+    internal var topDeferred: Deferred? = null
+
+    internal fun executeAllDeferred() {
+        topDeferred?.let {
+            it.invoke()
+            topDeferred = null
+        }
+    }
+
+    inline fun defer(crossinline block: () -> Unit) {
+        val currentTop = topDeferred
+        topDeferred = {
+            try {
+                block()
+            } finally {
+                // TODO: it is possible to implement chaining without recursion,
+                // but it would require using an anonymous object here
+                // which is not yet supported in Kotlin Native inliner.
+                currentTop?.invoke()
+            }
+        }
+    }
+}
+
 // TODO: implement optimally
-class Arena(private val parent: NativeFreeablePlacement = nativeHeap) : NativePlacement {
+open class ArenaBase(private val parent: NativeFreeablePlacement = nativeHeap) : NativePlacement, DeferScope() {
 
     private val allocatedChunks = ArrayList<NativePointed>()
 
-    override fun alloc(size: Long, align: Int): NativePointed {
+    final override fun alloc(size: Long, align: Int): NativePointed {
         val res = parent.alloc(size, align)
         try {
             allocatedChunks.add(res)
@@ -52,7 +81,10 @@ class Arena(private val parent: NativeFreeablePlacement = nativeHeap) : NativePl
         }
     }
 
-    fun clear() {
+    @PublishedApi
+    internal fun clearImpl() {
+        this.executeAllDeferred()
+
         allocatedChunks.forEach {
             parent.free(it)
         }
@@ -60,6 +92,10 @@ class Arena(private val parent: NativeFreeablePlacement = nativeHeap) : NativePl
         allocatedChunks.clear()
     }
 
+}
+
+class Arena(parent: NativeFreeablePlacement = nativeHeap) : ArenaBase(parent) {
+    fun clear() = this.clearImpl()
 }
 
 /**
@@ -355,17 +391,13 @@ fun CPointer<ByteVar>.toKString(): String {
     return decodeFromUtf8(bytes)
 }
 
-class MemScope : NativePlacement {
+class MemScope : ArenaBase() {
 
-    private val arena = Arena()
-
-    override fun alloc(size: Long, align: Int) = arena.alloc(size, align)
-
-    fun clear() = arena.clear()
-
-    val memScope: NativePlacement
+    val memScope: MemScope
         get() = this
 }
+
+// TODO: consider renaming `memScoped` because it now supports `defer`.
 
 /**
  * Runs given [block] providing allocation of memory
@@ -376,7 +408,7 @@ inline fun <R> memScoped(block: MemScope.()->R): R {
     try {
         return memScope.block()
     } finally {
-        memScope.clear()
+        memScope.clearImpl()
     }
 }
 
