@@ -66,6 +66,8 @@ class KaptGradleModelImpl(
         override val sourceSets: List<KaptSourceSetModel>
 ) : KaptGradleModel
 
+internal typealias AndroidGradleModel = AndroidModuleModel
+
 @Suppress("unused")
 class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
     private companion object {
