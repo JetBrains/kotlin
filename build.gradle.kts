@@ -68,6 +68,7 @@ dependencies {
     testCompile(ideaUltimateSdkDeps("gson"))
     testCompile(preloadedDeps("kotlinx-coroutines-core"))
 
+    testRuntime(projectDist(":kotlin-script-runtime"))
     testRuntime(projectRuntimeJar(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
