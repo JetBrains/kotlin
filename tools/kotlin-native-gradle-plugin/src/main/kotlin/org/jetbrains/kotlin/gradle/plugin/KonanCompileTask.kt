@@ -96,8 +96,11 @@ open class KonanCompileTask: KonanTargetableTask() {
         internal set
 
     @Input var dumpParameters: Boolean = false
-    // TODO: Is there a better way to rerun tasks when the compiler version changes?
-    @Input val konanVersion = project.konanVersion
+
+    val konanVersion
+        @Input get() = project.konanVersion
+    val konanHome
+        @Input get() = project.konanHome
 
     // Task action ------------------------------------------------------------
 

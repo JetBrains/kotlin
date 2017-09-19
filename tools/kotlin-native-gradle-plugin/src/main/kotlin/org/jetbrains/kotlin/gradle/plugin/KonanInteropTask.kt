@@ -65,7 +65,10 @@ open class KonanInteropTask: KonanTargetableTask() {
     @InputFiles val headers   = mutableSetOf<FileCollection>()
     @InputFiles val linkFiles = mutableSetOf<FileCollection>()
 
-    @Input val konanVersion = project.konanVersion
+    val konanVersion
+        @Input get() = project.konanVersion
+    val konanHome
+        @Input get() = project.konanHome
 
     @TaskAction
     fun exec() {

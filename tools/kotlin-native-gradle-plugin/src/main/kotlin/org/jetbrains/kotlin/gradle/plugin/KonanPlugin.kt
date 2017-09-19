@@ -47,7 +47,7 @@ internal fun Project.setProperty(property: KonanPlugin.ProjectProperty, value: A
 internal val Project.konanHome: String
     get() {
         assert(hasProperty(KonanPlugin.ProjectProperty.KONAN_HOME))
-        return getProperty(KonanPlugin.ProjectProperty.KONAN_HOME).toString()
+        return project.file(getProperty(KonanPlugin.ProjectProperty.KONAN_HOME)).canonicalPath
     }
 
 internal val Project.konanBuildRoot               get() = "${buildDir.canonicalPath}/konan"
