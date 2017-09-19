@@ -259,7 +259,15 @@ class JDIEval(
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        return mayThrow { obj.getValue(field) }.ifFail(field, obj).asValue()
+        return mayThrow {
+            try {
+                obj.getValue(field)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Possibly incompatible types: " +
+                                               "field declaring type = ${field.declaringType()}, " +
+                                               "instance type = ${obj.referenceType()}")
+            }
+        }.ifFail(field, obj).asValue()
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
