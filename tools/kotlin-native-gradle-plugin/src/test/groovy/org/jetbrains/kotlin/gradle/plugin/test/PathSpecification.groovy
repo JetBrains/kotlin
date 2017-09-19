@@ -38,4 +38,21 @@ class PathSpecification extends BaseKonanSpecification {
         result.task(project.defaultInteropProcessingTask()).outcome == TaskOutcome.FAILED
     }
 
+    def 'Plugin should remove custom output directories'() {
+        when:
+        def customOutputDir = projectDirectory.toPath().resolve("foo").toFile()
+        def project = KonanInteropProject.create(projectDirectory) { KonanProject it ->
+            it.addCompilationSetting("outputDir", customOutputDir)
+        }
+        def res1 = project.createRunner().withArguments("build").build()
+        def customDirExistsAfterBuild = customOutputDir.exists()
+        def res2 = project.createRunner().withArguments("clean").build()
+        def customDirDoesntNotExistAfterClean = !customOutputDir.exists()
+
+        then:
+        res1.taskPaths(TaskOutcome.SUCCESS).containsAll(project.buildingTasks)
+        res2.taskPaths(TaskOutcome.SUCCESS).contains(":clean")
+        customDirExistsAfterBuild
+        customDirDoesntNotExistAfterClean
+    }
 }

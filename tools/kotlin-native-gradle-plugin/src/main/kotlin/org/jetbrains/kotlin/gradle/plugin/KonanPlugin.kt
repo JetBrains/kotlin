@@ -225,6 +225,10 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         findByPath(name) ?: create(name, DefaultTask::class.java)
     }
 
+    private fun Project.cleanKonan() = project.konanArtifactsContainer.forEach {
+        project.delete(it.compilationTask.outputDir)
+    }
+
     override fun apply(project: Project?) {
         if (project == null) { return }
         registry.register(KonanToolingModelBuilder)
@@ -253,6 +257,9 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         }
         project.getTask("build").apply {
             dependsOn(compileKonanTask)
+        }
+        project.getTask("clean").apply {
+            doLast { project.cleanKonan() }
         }
 
         // Create task to run supported executables.
