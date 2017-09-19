@@ -22,6 +22,7 @@ import com.intellij.execution.PsiLocation
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.JavaCommandLineState
+import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Test
+import kotlin.properties.Delegates
 
 class GradleMultiplatformRunTest : GradleImportingTestCase() {
     @Test
@@ -128,7 +130,8 @@ class GradleMultiplatformRunTest : GradleImportingTestCase() {
 
         importProject()
 
-        val javaParameters = invokeAndWaitIfNeed {
+        var javaParameters: JavaParameters by Delegates.notNull()
+        invokeAndWaitIfNeed {
             val psiFile = PsiManager.getInstance(myProject).findFile(virtualFile) as KtFile
             val function = psiFile.declarations.single()
             val dataContext = MapDataContext().apply {
@@ -150,8 +153,7 @@ class GradleMultiplatformRunTest : GradleImportingTestCase() {
                                              CompileStepBeforeRun.MakeBeforeRunTask())
 
             val state = configuration.configuration.getState(DefaultRunExecutor.getRunExecutorInstance(), executionEnvironment) as JavaCommandLineState
-            state.javaParameters
-
+            javaParameters = state.javaParameters
         }
 
         val p = javaParameters.classPath
