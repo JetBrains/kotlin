@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -135,7 +136,7 @@ class MultifileClassPartCodegen(
     }
 
     override fun generateBody() {
-        for (declaration in element.declarations) {
+        for (declaration in CodegenUtil.getActualDeclarations(element)) {
             if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
                 genSimpleMember(declaration)
             }
@@ -162,7 +163,7 @@ class MultifileClassPartCodegen(
 
     override fun generateKotlinMetadataAnnotation() {
         val members = ArrayList<DeclarationDescriptor>()
-        for (declaration in element.declarations) {
+        for (declaration in CodegenUtil.getActualDeclarations(element)) {
             when (declaration) {
                 is KtNamedFunction -> {
                     val functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration)

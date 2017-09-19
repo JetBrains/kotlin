@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
@@ -88,9 +88,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
 
     @Override
     protected void generateBody() {
-        for (KtDeclaration declaration : element.getDeclarations()) {
-            if (PsiUtilsKt.hasExpectModifier(declaration)) continue;
-
+        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(element)) {
             if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty || declaration instanceof KtTypeAlias) {
                 genSimpleMember(declaration);
             }
@@ -104,7 +102,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     @Override
     protected void generateKotlinMetadataAnnotation() {
         List<DeclarationDescriptor> members = new ArrayList<>();
-        for (KtDeclaration declaration : element.getDeclarations()) {
+        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(element)) {
             if (declaration instanceof KtNamedFunction) {
                 SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
                 members.add(functionDescriptor);
