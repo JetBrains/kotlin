@@ -59,6 +59,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         runTest("idea/testData/shortenRefs/descriptorsChangeAfterImportInsertion.kt");
     }
 
+    @TestMetadata("extensionForCompanionObject.kt")
+    public void testExtensionForCompanionObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/extensionForCompanionObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("extensionForObject.kt")
     public void testExtensionForObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/extensionForObject.kt");

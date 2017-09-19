@@ -538,13 +538,25 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         private fun canBePossibleToDropReceiver(element: KtDotQualifiedExpression, bindingContext: BindingContext): Boolean {
             val receiver = element.receiverExpression
-            if (receiver is KtThisExpression) return true
-            val qualifier = bindingContext[BindingContext.QUALIFIER, receiver] ?: return false
-            val classDescriptor = qualifier.descriptor as? ClassDescriptor ?: return true
-            if (classDescriptor.kind != ClassKind.OBJECT) return true
-            // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object)
-            val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
-            return resolvedCall.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER
+            val nameRef = when (receiver) {
+                is KtThisExpression -> return true
+                is KtNameReferenceExpression -> receiver
+                is KtDotQualifiedExpression -> receiver.selectorExpression as? KtNameReferenceExpression ?: return false
+                else -> return false
+            }
+            val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
+            when (targetDescriptor) {
+                is ClassDescriptor -> {
+                    if (targetDescriptor.kind != ClassKind.OBJECT) return true
+                    // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object)
+                    val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
+                    return resolvedCall.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER
+                }
+
+                is PackageViewDescriptor -> return true
+
+                else -> return false
+            }
         }
 
         private fun copyShortenAndAnalyze(
