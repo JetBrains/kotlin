@@ -72,6 +72,30 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyFIleFromDefaultPackage/copyFIleFromDefaultPackage.test")
+    public void testCopyFIleFromDefaultPackage_CopyFIleFromDefaultPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleFromDefaultPackage/copyFIleFromDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyFIleRetainContent/copyFIleRetainContent.test")
+    public void testCopyFIleRetainContent_CopyFIleRetainContent() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleRetainContent/copyFIleRetainContent.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyFIleToDefaultPackage/copyFIleToDefaultPackage.test")
+    public void testCopyFIleToDefaultPackage_CopyFIleToDefaultPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleToDefaultPackage/copyFIleToDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyFIleWithPackageAndDirUnmatched/copyFIleWithPackageAndDirUnmatched.test")
+    public void testCopyFIleWithPackageAndDirUnmatched_CopyFIleWithPackageAndDirUnmatched() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleWithPackageAndDirUnmatched/copyFIleWithPackageAndDirUnmatched.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyFunCallQualificationWithParentheses/copyFunCallQualificationWithParentheses.test")
     public void testCopyFunCallQualificationWithParentheses_CopyFunCallQualificationWithParentheses() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFunCallQualificationWithParentheses/copyFunCallQualificationWithParentheses.test");

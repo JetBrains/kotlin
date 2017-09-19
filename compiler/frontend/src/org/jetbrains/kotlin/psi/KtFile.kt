@@ -76,8 +76,18 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             return if (ast != null) ast.psi as KtPackageDirective else null
         }
 
-    val packageFqName: FqName
+    var packageFqName: FqName
         get() = stub?.getPackageFqName() ?: packageFqNameByTree
+        set(value) {
+            val packageDirective = packageDirective
+            if (packageDirective != null) {
+                packageDirective.fqName = value
+            }
+            else {
+                val newPackageDirective = KtPsiFactory(this).createPackageDirectiveIfNeeded(value) ?: return
+                addAfter(newPackageDirective, null)
+            }
+        }
 
     val packageFqNameByTree: FqName
         get() = packageDirectiveByTree?.fqName ?: FqName.ROOT
