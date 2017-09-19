@@ -20,7 +20,6 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.InspectionEP
-import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.command.CommandProcessor
@@ -47,12 +46,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
-import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
 abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTestCase() {
-    @Throws(Exception::class)
     protected open fun doTestWithExtraFile(beforeFileName: String) {
         enableInspections(beforeFileName)
 
@@ -64,7 +61,6 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         }
     }
 
-    @Throws(IOException::class, ClassNotFoundException::class)
     private fun enableInspections(beforeFileName: String) {
         val inspectionFile = findInspectionFile(File(beforeFileName).parentFile)
         if (inspectionFile != null) {
@@ -79,15 +75,10 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         ContainerUtil.addAll<InspectionEP, LocalInspectionEP, List<InspectionEP>>(eps, *Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION))
         ContainerUtil.addAll<InspectionEP, InspectionEP, List<InspectionEP>>(eps, *Extensions.getExtensions(InspectionEP.GLOBAL_INSPECTION))
 
-        var tool: InspectionProfileEntry? = null
-        for (ep in eps) {
-            if (klass.name == ep.implementationClass) {
-                tool = ep.instantiateTool()
-            }
-        }
-        assert(tool != null) { "Could not find inspection tool for class: " + klass }
+        val tool = eps.firstOrNull { it.implementationClass == klass.name }?.instantiateTool()
+                   ?: error("Could not find inspection tool for class: $klass")
 
-        myFixture.enableInspections(tool!!)
+        myFixture.enableInspections(tool)
     }
 
     override fun setUp() {
@@ -105,11 +96,8 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
      * *
      * @param beforeFile will be added last, as subFiles are dependencies of it
      */
-    protected fun configureMultiFileTest(subFiles: List<TestFile>, beforeFile: TestFile): List<VirtualFile> {
-        val vFiles = mutableListOf<VirtualFile>()
-        for (subFile in subFiles) {
-            vFiles.add(createTestFile(subFile))
-        }
+    private fun configureMultiFileTest(subFiles: List<TestFile>, beforeFile: TestFile): List<VirtualFile> {
+        val vFiles = subFiles.map(this::createTestFile).toMutableList()
         val beforeVFile = createTestFile(beforeFile)
         vFiles.add(beforeVFile)
         myFixture.configureFromExistingVirtualFile(beforeVFile)
@@ -122,14 +110,13 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     private fun createTestFile(testFile: TestFile): VirtualFile {
         return runWriteAction {
             val vFile = myFixture.tempDirFixture.createFile(testFile.path)
-            vFile.setCharset(CharsetToolkit.UTF8_CHARSET)
+            vFile.charset = CharsetToolkit.UTF8_CHARSET
             VfsUtil.saveText(vFile, testFile.content)
             vFile
         }
     }
 
-    @Throws(Exception::class)
-    protected fun doMultiFileTest(beforeFileName: String) {
+    private fun doMultiFileTest(beforeFileName: String) {
         val multifileText = FileUtil.loadFile(File(beforeFileName), true)
 
         val subFiles = KotlinTestUtils.createTestFiles(
@@ -137,11 +124,9 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                 multifileText,
                 object : KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
                     override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
-                        var text = text
                         if (text.startsWith("// FILE")) {
-                            val firstLineDropped = StringUtil.substringAfter(text, "\n")!!
-
-                            text = firstLineDropped
+                            // Drop the first line
+                            return TestFile(fileName, StringUtil.substringAfter(text, "\n")!!)
                         }
                         return TestFile(fileName, text)
                     }
@@ -205,7 +190,6 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         }, "", "")
     }
 
-    @Throws(Exception::class)
     private fun doTest(beforeFileName: String) {
         val mainFile = File(beforeFileName)
         val originalFileText = FileUtil.loadFile(mainFile, true)
@@ -213,7 +197,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         val mainFileDir = mainFile.parentFile!!
 
         val mainFileName = mainFile.name
-        val extraFiles = mainFileDir.listFiles { dir, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
+        val extraFiles = mainFileDir.listFiles { _, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
 
         val testFiles = ArrayList<String>()
         testFiles.add(mainFile.name)
@@ -245,13 +229,11 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                         KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
                     }
 
-                    val mainFile = myFixture.file
-                    val mainFileName = mainFile.name
-                    for (file in mainFile.containingDirectory.files) {
+                    for (file in myFixture.file.containingDirectory.files) {
                         val fileName = file.name
-                        if (fileName == mainFileName || !fileName.startsWith(extraFileNamePrefix(myFixture.file.name))) continue
+                        if (fileName == myFixture.file.name || !fileName.startsWith(extraFileNamePrefix(myFixture.file.name))) continue
 
-                        val extraFileFullPath = beforeFileName.replace(mainFileName, fileName)
+                        val extraFileFullPath = beforeFileName.replace(myFixture.file.name, fileName)
                         val afterFile = File(extraFileFullPath.replace(".before.", ".after."))
                         if (afterFile.exists()) {
                             KotlinTestUtils.assertEqualsToFile(afterFile, file.text)

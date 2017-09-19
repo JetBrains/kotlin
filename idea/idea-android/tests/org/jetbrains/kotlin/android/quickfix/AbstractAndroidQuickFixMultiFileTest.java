@@ -45,7 +45,7 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
     }
 
     @Override
-    protected void doTestWithExtraFile(@NotNull String beforeFileName) throws Exception {
+    protected void doTestWithExtraFile(@NotNull String beforeFileName) {
         addManifest();
         super.doTestWithExtraFile(beforeFileName);
     }
@@ -59,7 +59,7 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
         ApplicationManager.getApplication().runWriteAction(facetModel::commit);
     }
 
-    private void addManifest() throws Exception {
+    private void addManifest() {
         myFixture.configureByFile("idea/testData/android/AndroidManifest.xml");
     }
 }
