@@ -350,4 +350,13 @@ KNativePtr Kotlin_ImmutableBinaryBlob_asCPointerImpl(KRef thiz, KInt offset) {
   return PrimitiveArrayAddressOfElementAt<KByte>(array, offset);
 }
 
+KNativePtr Kotlin_Arrays_getAddressOfElement(KRef thiz, KInt index) {
+  ArrayHeader* array = thiz->array();
+  if (index < 0 || index >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+
+  return AddressOfElementAt(array, index);
+}
+
 }  // extern "C"

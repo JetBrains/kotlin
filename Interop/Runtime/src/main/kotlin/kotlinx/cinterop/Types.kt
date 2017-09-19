@@ -64,6 +64,8 @@ abstract class CPointed(rawPtr: NativePtr) : NativePointed(rawPtr)
  * Passing [CValues] has nearly the same semantics as passing by value: the C function receives
  * the pointer to the temporary copy of these values, and the caller can't observe the modifications to this copy.
  * The copy is valid until the C function returns.
+ * There are also other implementations of [CValuesRef] that provide temporary pointer,
+ * e.g. Kotlin Native specific [refTo] functions to pass primitive arrays directly to native.
  */
 abstract class CValuesRef<T : CPointed> {
     /**
