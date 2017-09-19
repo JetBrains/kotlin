@@ -265,6 +265,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                         runWriteAction {
                             val newElements = elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
                             elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
+                            oldToNewElementsMapping[originalFile] = targetFile
 
                             for (newElement in oldToNewElementsMapping.values) {
                                 restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, true)
@@ -275,7 +276,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                         }
                     }
 
-                    (oldToNewElementsMapping.values.singleOrNull() as? KtNamedDeclaration)?.let { newDeclaration ->
+                    (oldToNewElementsMapping.values.filterIsInstance<KtNamedDeclaration>().singleOrNull())?.let { newDeclaration ->
                         if (newName == newDeclaration.name) return@let
                         val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
                         runWriteAction {

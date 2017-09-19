@@ -198,6 +198,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyWithImportInsertion/copyWithImportInsertion.test")
+    public void testCopyWithImportInsertion_CopyWithImportInsertion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyWithImportInsertion/copyWithImportInsertion.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt18149/kt18149.test")
     public void testKt18149_Kt18149() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/kt18149/kt18149.test");
