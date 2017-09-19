@@ -71,6 +71,10 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         return constructedClass.isExported()
     }
 
+    if (this is PropertyAccessorDescriptor) {
+        return this.correspondingProperty.isExported()
+    }
+
     if (this is DeclarationDescriptorWithVisibility && !this.visibility.isPublicAPI) {
         // If the declaration is explicitly marked as non-public,
         // then it must not be accessible from other modules.
