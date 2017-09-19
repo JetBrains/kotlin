@@ -50,6 +50,11 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     }
 
     @Override
+    public void setupRawUIComponentPresentation(String htmlText) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean isUIComponentEnabled() {
         return false;
     }
