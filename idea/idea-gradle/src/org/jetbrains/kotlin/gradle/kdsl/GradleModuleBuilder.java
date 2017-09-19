@@ -28,13 +28,10 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.externalSystem.importing.ImportSpec;
-import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
-import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl;
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalModuleBuilder;
 import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
@@ -252,12 +249,9 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
           settings.linkProject(gradleProjectSettings);
         }
 
-        ImportSpec importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-          .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
-          .createDirectoriesForEmptyContentRoots()
-          .useDefaultCallback()
-          .build();
-        ExternalSystemUtil.refreshProject(rootProjectPath, importSpec);
+        ExternalSystemUtil.refreshProject(
+                project, GradleConstants.SYSTEM_ID, rootProjectPath, false,
+                ProgressExecutionMode.IN_BACKGROUND_ASYNC);
 
         final PsiFile psiFile;
         if (finalBuildScriptFile != null) {
@@ -476,16 +470,5 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   @Nullable
   public static BuildScriptDataBuilder getBuildScriptData(@Nullable Module module) {
     return module == null ? null : module.getUserData(BUILD_SCRIPT_DATA);
-  }
-
-  @Nullable
-  @Override
-  public Project createProject(String name, String path) {
-    Project project = super.createProject(name, path);
-    if (project != null) {
-      GradleProjectSettings settings = getExternalProjectSettings();
-      ExternalProjectsManagerImpl.getInstance(project).setStoreExternally(settings.isStoreProjectFilesExternally());
-    }
-    return project;
   }
 }
