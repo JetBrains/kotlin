@@ -119,6 +119,8 @@ val proguard by task<ProGuardTask> {
 
 noDefaultJar()
 
+cleanArtifacts()
+
 dist(targetName = compilerBaseName + ".jar",
      fromTask = if (shrink) proguard
                 else packCompiler)
@@ -133,3 +135,4 @@ sourcesJar {
 javadocJar()
 
 publish()
+

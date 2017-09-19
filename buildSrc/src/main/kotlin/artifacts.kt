@@ -195,3 +195,11 @@ fun<T> Project.addArtifact(configuration: Configuration, task: Task, artifactRef
 
 fun<T> Project.addArtifact(configurationName: String, task: Task, artifactRef: T, body: ConfigurablePublishArtifact.() -> Unit = {}) =
         addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
+
+fun Project.cleanArtifacts() {
+    configurations["archives"].artifacts.let { artifacts ->
+        artifacts.forEach {
+            artifacts.remove(it)
+        }
+    }
+}

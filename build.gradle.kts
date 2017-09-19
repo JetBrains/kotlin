@@ -243,6 +243,12 @@ allprojects {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
+    task("printArchives") {
+        doFirst {
+            println("Archives configuration files:\n${configurations["archives"].allArtifacts.files.files.joinToString("\n  ", "  ")}")
+        }
+    }
+
     afterEvaluate {
         logger.info("configuring project $name to compile to the target jvm version $jvmTarget using jdk: $javaHome")
         if (javaHome != defaultJavaHome || jvmTarget != defaultJvmTarget) {
