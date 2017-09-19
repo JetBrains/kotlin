@@ -7,6 +7,7 @@
       <root url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib" />
       <root url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib/jps" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/lib/android-base-common.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/smali/lib/smali.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
