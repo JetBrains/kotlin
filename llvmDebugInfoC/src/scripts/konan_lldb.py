@@ -18,18 +18,41 @@
 
 #
 # (lldb) command script import llvmDebugInfoC/src/scripts/konan_lldb.py
-# (lldb) show_variable
+# (lldb) p kotlin_variable
 #
 
 import lldb
-import commands
-import optparse
-import shlex
+import ctypes
 
-def show_variable(debugger, command, result, internal_dict):
-    debugger.GetCommandInterpreter().HandleCommand('expr -- Konan_DebugPrint(%s)' % command, result)
-    return result
+def kotlin_object_type_summary(lldb_val, internal_dict):
+    """Hook that is run by lldb to display a Kotlin object."""
+    fallback = lldb_val.GetValue()
+    if str(lldb_val.type) != "struct ObjHeader *":
+        return fallback
+
+    def evaluate(expr):
+        return lldb_val.GetTarget().EvaluateExpression(expr, lldb.SBExpressionOptions())
+
+    buff_len = evaluate(
+        "Konan_DebugObjectToUtf8Array((struct ObjHeader *) %s, Konan_DebugBuffer(), Konan_DebugBufferSize());" % lldb_val.GetValueAsUnsigned()
+    ).GetValueAsUnsigned()
+
+    if not buff_len:
+        return fallback
+
+    buff_addr = evaluate("Konan_DebugBuffer()").GetValueAsUnsigned()
+
+    error = lldb.SBError()
+    s = lldb_val.GetProcess().ReadCStringFromMemory(buff_addr, buff_len, error)
+    return s if error.Success() else fallback
+
 
 def __lldb_init_module(debugger, internal_dict):
-    debugger.HandleCommand('command script add -f konan_lldb.show_variable show_variable')
-
+    debugger.HandleCommand('\
+        type summary add \
+        --no-value \
+        --python-function konan_lldb.kotlin_object_type_summary \
+        -x "ObjHeader \*" \
+        --category Kotlin\
+    ')
+    debugger.HandleCommand('type category enable Kotlin')
