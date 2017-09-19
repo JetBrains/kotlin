@@ -38,7 +38,6 @@ import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -86,20 +85,9 @@ class KotlinLanguageInjector(
                 // Cache is up-to-date
                 kotlinCachedInjection.baseInjection
             else -> {
-                fun computeAndCache(): BaseInjection {
-                    val computedInjection = computeBaseInjection(ktHost, support, registrar) ?: ABSENT_KOTLIN_INJECTION
-                    ktHost.cachedInjectionWithModification = KotlinCachedInjection(modificationCount, computedInjection)
-                    return computedInjection
-                }
-
-                if (ApplicationManager.getApplication().isReadAccessAllowed && ProgressManager.getInstance().progressIndicator == null) {
-                    // The action cannot be canceled by caller and by internal checkCanceled() calls.
-                    // Force creating new indicator that is canceled on write action start, otherwise there might be lags in typing.
-                    runInReadActionWithWriteActionPriority(::computeAndCache) ?: kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
-                }
-                else {
-                    computeAndCache()
-                }
+                val computedInjection = computeBaseInjection(ktHost, support, registrar) ?: ABSENT_KOTLIN_INJECTION
+                ktHost.cachedInjectionWithModification = KotlinCachedInjection(modificationCount, computedInjection)
+                computedInjection
             }
         }
 
