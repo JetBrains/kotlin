@@ -1,2 +1,2 @@
-header class ClassWithImplByExtension
-header val ClassWithImplByExtension.extensionVal: Int
+expect class ClassWithImplByExtension
+expect val ClassWithImplByExtension.extensionVal: Int

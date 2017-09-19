@@ -1,3 +1,3 @@
-impl class ClassWithImplByExtension
-impl val ClassWithImplByExtension.extensionVal: Int
+actual class ClassWithImplByExtension
+actual val ClassWithImplByExtension.extensionVal: Int
     get() = 0
