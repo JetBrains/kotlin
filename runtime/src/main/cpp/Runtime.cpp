@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-
 #include "Alloc.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -82,8 +80,11 @@ void DeinitRuntime(RuntimeState* state) {
 }
 
 void Kotlin_initRuntimeIfNeeded() {
-  if (runtimeState == nullptr)
+  if (runtimeState == nullptr) {
     runtimeState = InitRuntime();
+    // Register runtime deinit function at thread cleanup.
+    konan::onThreadExit(Kotlin_deinitRuntimeIfNeeded);
+  }
 }
 
 void Kotlin_deinitRuntimeIfNeeded() {

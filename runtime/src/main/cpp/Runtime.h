@@ -26,6 +26,8 @@ extern "C" {
 
 RuntimeState* InitRuntime();
 void DeinitRuntime(RuntimeState* state);
+void Kotlin_initRuntimeIfNeeded();
+void Kotlin_deinitRuntimeIfNeeded();
 
 // Appends given node to an initializer list.
 void AppendToInitializersTail(struct InitNode*);

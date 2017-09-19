@@ -33,6 +33,9 @@ uint32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes);
 void abort();
 void exit(int32_t status);
 
+// Thread control.
+void onThreadExit(void (*destructor)());
+
 // String/byte operations.
 // memcpy/memmove/memcmp are not here intentionally, as frequently implemented/optimized
 // by C compiler.

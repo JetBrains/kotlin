@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#if !KONAN_NO_THREADS
+#include <pthread.h>
+#endif
 #include <unistd.h>
 #if KONAN_WINDOWS
 #include <windows.h>
@@ -89,6 +92,53 @@ void consolePrintf(const char* format, ...) {
   consoleWriteUtf8(buffer, rv);
 }
 
+
+// Thread execution.
+#if !KONAN_NO_THREADS
+
+pthread_key_t terminationKey;
+pthread_once_t terminationKeyOnceControl =  PTHREAD_ONCE_INIT;
+
+typedef void (*destructor_t)();
+
+struct DestructorRecord {
+  struct DestructorRecord* next;
+  destructor_t destructor;
+};
+
+static void onThreadExitCallback(void* value) {
+  DestructorRecord* record = reinterpret_cast<DestructorRecord*>(value);
+  while (record != nullptr) {
+    record->destructor();
+    auto next = record->next;
+    free(record);
+    record = next;
+  }
+}
+
+static void onThreadExitInit() {
+  pthread_key_create(&terminationKey, onThreadExitCallback);
+}
+
+#endif  // !KONAN_NO_THREADS
+
+void onThreadExit(void (*destructor)()) {
+#if KONAN_NO_THREADS
+#ifdef KONAN_WASM
+  // No way to do that.
+#else
+  ::atexit(destructor);
+#endif
+#else  // !KONAN_NO_THREADS
+  // We cannot use pthread_cleanup_push() as it is lexical scope bound.
+  pthread_once(&terminationKeyOnceControl, onThreadExitInit);
+  DestructorRecord* destructorRecord = (DestructorRecord*)calloc(1, sizeof(DestructorRecord));
+  destructorRecord->destructor = destructor;
+  destructorRecord->next =
+      reinterpret_cast<DestructorRecord*>(pthread_getspecific(terminationKey));
+  pthread_setspecific(terminationKey, destructorRecord);
+#endif  // !KONAN_NO_THREADS
+}
 
 // Process execution.
 void abort() {
