@@ -72,19 +72,25 @@ data class Classifier(
 val Classifier.type
     get() = KotlinClassifierType(this, arguments = emptyList(), nullable = false)
 
-fun Classifier.typeWith(vararg arguments: KotlinType) =
+fun Classifier.typeWith(vararg arguments: KotlinTypeArgument) =
         KotlinClassifierType(this, arguments.toList(), nullable = false)
 
-interface KotlinType {
+interface KotlinTypeArgument {
     /**
-     * @return the string to be used in the given scope to denote this type.
+     * @return the string to be used in the given scope to denote this.
      */
     fun render(scope: KotlinScope): String
 }
 
+object StarProjection : KotlinTypeArgument {
+    override fun render(scope: KotlinScope) = "*"
+}
+
+interface KotlinType : KotlinTypeArgument
+
 data class KotlinClassifierType(
         val classifier: Classifier,
-        val arguments: List<KotlinType>,
+        val arguments: List<KotlinTypeArgument>,
         val nullable: Boolean
 ) : KotlinType {
 

@@ -266,7 +266,7 @@ class StubGenerator(
         return res
     }
 
-    fun representCFunctionParameterAsValuesRef(type: Type): Type? {
+    fun representCFunctionParameterAsValuesRef(type: Type): KotlinType? {
         val pointeeType = when (type) {
             is PointerType -> type.pointeeType
             is ArrayType -> type.elemType
@@ -274,8 +274,14 @@ class StubGenerator(
         }
 
         val unwrappedPointeeType = pointeeType.unwrapTypedefs()
-        if (unwrappedPointeeType is VoidType || unwrappedPointeeType is FunctionType) {
-            // Passing `void`s or function by value is not very sane:
+
+        if (unwrappedPointeeType is VoidType) {
+            // Represent `void*` as `CValuesRef<*>?`:
+            return KotlinTypes.cValuesRef.typeWith(StarProjection).makeNullable()
+        }
+
+        if (unwrappedPointeeType is FunctionType) {
+            // Don't represent function pointer as `CValuesRef<T>?` currently:
             return null
         }
 
@@ -283,7 +289,8 @@ class StubGenerator(
             return representCFunctionParameterAsValuesRef(pointeeType)
         }
 
-        return pointeeType
+
+        return KotlinTypes.cValuesRef.typeWith(mirror(pointeeType).pointedType).makeNullable()
     }
 
     private fun Type.isAliasOf(names: Set<String>): Boolean {
@@ -610,9 +617,7 @@ class StubGenerator(
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.wcstr?.getPointer(memScope)"
                 } else if (representAsValuesRef != null) {
-                    val pointedType = mirror(representAsValuesRef).pointedType
-                    val parameterType = KotlinTypes.cValuesRef.typeWith(pointedType).makeNullable()
-                    kotlinParameters.add(parameterName to parameterType)
+                    kotlinParameters.add(parameterName to representAsValuesRef)
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.getPointer(memScope)"
                 } else {
