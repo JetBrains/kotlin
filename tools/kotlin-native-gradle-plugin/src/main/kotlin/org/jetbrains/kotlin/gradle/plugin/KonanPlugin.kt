@@ -144,6 +144,9 @@ internal fun MutableList<String>.addListArg(parameter: String, values: List<Stri
 }
 
 internal fun dumpProperties(task: Task) {
+    fun Collection<FileCollection>.dump() = flatMap { it.files }.joinToString(prefix = "[",
+            separator = ",\n${" ".repeat(22)}", postfix = "]")
+
     when (task) {
         is KonanCompileTask -> {
             println()
@@ -151,10 +154,10 @@ internal fun dumpProperties(task: Task) {
             println("outputDir          : ${task.outputDir}")
             println("artifact           : ${task.artifact}")
             println("artifactPath       : ${task.artifactPath}")
-            println("inputFiles         : ${task.inputFiles.joinToString(prefix = "[", separator = ", ", postfix = "]")}")
+            println("inputFiles         : ${task.inputFiles.dump()}")
             println("produce            : ${task.produce}")
-            println("libraries          : ${task.libraries}")
-            println("nativeLibraries    : ${task.nativeLibraries}")
+            println("libraries          : ${task.libraries.dump()}")
+            println("nativeLibraries    : ${task.nativeLibraries.dump()}")
             println("linkerOpts         : ${task.linkerOpts}")
             println("enableDebug        : ${task.enableDebug}")
             println("noStdLib           : ${task.noStdLib}")
@@ -164,6 +167,8 @@ internal fun dumpProperties(task: Task) {
             println("target             : ${task.target}")
             println("languageVersion    : ${task.languageVersion}")
             println("apiVersion         : ${task.apiVersion}")
+            println("konanVersion       : ${task.konanVersion}")
+            println("konanHome          : ${task.konanHome}")
             println()
         }
         is KonanInteropTask -> {
@@ -176,8 +181,10 @@ internal fun dumpProperties(task: Task) {
             println("pkg                : ${task.pkg}")
             println("compilerOpts       : ${task.compilerOpts}")
             println("linkerOpts         : ${task.linkerOpts}")
-            println("headers            : ${task.headers.joinToString(prefix = "[", separator = ", ", postfix = "]")}")
-            println("linkFiles          : ${task.linkFiles}")
+            println("headers            : ${task.headers.dump()}")
+            println("linkFiles          : ${task.linkFiles.dump()}")
+            println("konanVersion       : ${task.konanVersion}")
+            println("konanHome          : ${task.konanHome}")
             println()
         }
         else -> {
