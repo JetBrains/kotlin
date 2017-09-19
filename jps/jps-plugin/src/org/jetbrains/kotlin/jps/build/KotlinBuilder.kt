@@ -238,7 +238,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val isChunkRebuilding = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
                                 || targets.any { rebuildAfterCacheVersionChanged[it] == true }
 
-        if (!hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
+        if (hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
+            if (!isChunkRebuilding && !IncrementalCompilation.isEnabled()) {
+                targets.forEach { rebuildAfterCacheVersionChanged[it] = true }
+                return CHUNK_REBUILD_REQUIRED
+            }
+        }
+        else {
             if (isChunkRebuilding) {
                 targets.forEach { hasKotlin[it] = false }
             }
