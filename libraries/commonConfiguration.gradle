@@ -116,6 +116,13 @@ task preparePublication {
     }
 }
 
+ext.signPom = { Project project, MavenDeployer deployer ->
+    deployer.beforeDeployment { MavenDeployment deployment ->
+        if (project.signing.required)
+            project.signing.signPom(deployment)
+    }
+}
+
 ext.configurePublishing = { Project project ->
     project.configure(project) {
         apply plugin: 'maven'
@@ -157,10 +164,7 @@ ext.configurePublishing = { Project project ->
 
             repositories {
                 mavenDeployer {
-                    beforeDeployment { MavenDeployment deployment ->
-                        if (signing.required)
-                            signing.signPom(deployment)
-                    }
+                    signPom(project, it)
 
                     repository(url: prepareTask.repoUrl) {
                         authentication(userName: prepareTask.username, password: prepareTask.password)
