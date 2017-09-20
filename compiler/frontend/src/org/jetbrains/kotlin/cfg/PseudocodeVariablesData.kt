@@ -37,7 +37,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     private val declaredVariablesForDeclaration = hashMapOf<Pseudocode, Set<VariableDescriptor>>()
 
-    val variableInitializers: Map<Instruction, Edges<InitControlFlowInfo>> by lazy {
+    val variableInitializers: Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> by lazy {
         computeVariableInitializers()
     }
 
@@ -143,7 +143,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     // variable use
 
-    val variableUseStatusData: Map<Instruction, Edges<UseControlFlowInfo>>
+    val variableUseStatusData: Map<Instruction, Edges<ReadOnlyUseControlFlowInfo>>
         get() = pseudocodeVariableDataCollector.collectData(TraversalOrder.BACKWARD, UseControlFlowInfo()) {
             instruction: Instruction, incomingEdgesData: Collection<UseControlFlowInfo> ->
 

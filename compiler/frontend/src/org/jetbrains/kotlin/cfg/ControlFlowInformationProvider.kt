@@ -274,8 +274,8 @@ class ControlFlowInformationProvider private constructor(
 
         pseudocode.traverse(TraversalOrder.FORWARD, initializers) {
             instruction: Instruction,
-            enterData: ImmutableMap<VariableDescriptor, VariableControlFlowState>,
-            exitData: ImmutableMap<VariableDescriptor, VariableControlFlowState> ->
+            enterData: ReadOnlyInitControlFlowInfo,
+            exitData: ReadOnlyInitControlFlowInfo ->
 
             val ctxt = VariableInitContext(instruction, reportedDiagnosticMap, enterData, exitData, blockScopeVariableInfo)
             if (ctxt.variableDescriptor == null) return@traverse
@@ -532,7 +532,7 @@ class ControlFlowInformationProvider private constructor(
 
     private fun recordInitializedVariables(
             pseudocode: Pseudocode,
-            initializersMap: Map<Instruction, Edges<InitControlFlowInfo>>
+            initializersMap: Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>>
     ) {
         val initializers = initializersMap[pseudocode.exitInstruction] ?: return
         val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, false)
@@ -554,8 +554,8 @@ class ControlFlowInformationProvider private constructor(
         val usedValueExpressions = hashSetOf<KtExpression>()
         pseudocode.traverse(TraversalOrder.BACKWARD, variableStatusData) {
             instruction: Instruction,
-            enterData: ImmutableMap<VariableDescriptor, VariableUseState>,
-            _: ImmutableMap<VariableDescriptor, VariableUseState> ->
+            enterData: ReadOnlyUseControlFlowInfo,
+            _: ReadOnlyUseControlFlowInfo ->
 
             val ctxt = VariableUseContext(instruction, reportedDiagnosticMap)
             val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(instruction.owner, false)
@@ -1030,8 +1030,8 @@ class ControlFlowInformationProvider private constructor(
     private inner class VariableInitContext(
             instruction: Instruction,
             map: MutableMap<Instruction, DiagnosticFactory<*>>,
-            `in`: ImmutableMap<VariableDescriptor, VariableControlFlowState>,
-            out: ImmutableMap<VariableDescriptor, VariableControlFlowState>,
+            `in`: ReadOnlyInitControlFlowInfo,
+            out: ReadOnlyInitControlFlowInfo,
             blockScopeVariableInfo: BlockScopeVariableInfo
     ) : VariableContext(instruction, map) {
         internal val enterInitState = initialize(variableDescriptor, blockScopeVariableInfo, `in`)
@@ -1040,7 +1040,7 @@ class ControlFlowInformationProvider private constructor(
         private fun initialize(
                 variableDescriptor: VariableDescriptor?,
                 blockScopeVariableInfo: BlockScopeVariableInfo,
-                map: ImmutableMap<VariableDescriptor, VariableControlFlowState>
+                map: ReadOnlyInitControlFlowInfo
         ): VariableControlFlowState? {
             val state = map.getOrNull(variableDescriptor ?: return null)
             if (state != null) return state
