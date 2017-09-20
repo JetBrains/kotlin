@@ -99,24 +99,6 @@ open class LazyImportResolver<I : KtImportInfo>(
         }
     }
 
-    fun <D : DeclarationDescriptor> selectSingleFromImports(
-        name: Name,
-        descriptorSelector: (ImportingScope, Name) -> D?
-    ): D? {
-        fun compute(): D? {
-            val imports = indexedImports.importsForName(name)
-
-            var target: D? = null
-            for (directive in imports) {
-                val resolved = descriptorSelector(getImportScope(directive), name) ?: continue
-                if (target != null && target != resolved) return null // ambiguity
-                target = resolved
-            }
-            return target
-        }
-        return components.storageManager.compute(::compute)
-    }
-
     fun <D : DeclarationDescriptor> collectFromImports(
         name: Name,
         descriptorsSelector: (ImportingScope, Name) -> Collection<D>
@@ -255,15 +237,21 @@ class LazyImportScope(
         return importResolver.getClassifier(name, location) ?: secondaryImportResolver?.getClassifier(name, location)
     }
 
-    private fun LazyImportResolver<*>.getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        return selectSingleFromImports(name) { scope, _ ->
-            val descriptor = scope.getContributedClassifier(name, location)
-            if ((descriptor is ClassDescriptor || descriptor is TypeAliasDescriptor) && isClassifierVisible(descriptor))
-                descriptor
-            else
-                null /* type parameters can't be imported */
+    private fun LazyImportResolver<*>.getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+        components.storageManager.compute {
+            val imports = indexedImports.importsForName(name)
+
+            var target: ClassifierDescriptor? = null
+            for (directive in imports) {
+                val descriptor = getImportScope(directive).getContributedClassifier(name, location)
+                if (descriptor !is ClassDescriptor && descriptor !is TypeAliasDescriptor || !isClassifierVisible(descriptor))
+                    continue /* type parameters can't be imported */
+                if (target != null && target != descriptor) return@compute null // ambiguity
+                target = descriptor
+            }
+
+            target
         }
-    }
 
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
 
