@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Binary compatibility tests, overwrite results" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Test: public API binary compatibility validator, overwrite results" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/tools/binary-compatibility-validator" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/tools/binary-compatibility-validator" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value=" --tests * " />
       <option name="taskDescriptions">
@@ -10,6 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
+          <option value=":kotlin-runtime:clean" />
           <option value=":kotlin-stdlib:clean" />
           <option value=":kotlin-reflect:clean" />
           <option value=":tools:binary-compatibility-validator:cleanTest" />
