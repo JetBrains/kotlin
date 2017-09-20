@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Instrumentation">
-    <output-path>$PROJECT_DIR$/out/artifacts/Instrumentation</output-path>
-    <root id="archive" name="Instrumentation.jar">
-      <element id="module-output" name="instrumentation" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/ideaSDK/lib/asm-all.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>
