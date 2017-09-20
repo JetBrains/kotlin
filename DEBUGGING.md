@@ -134,7 +134,57 @@ struct ktype:Point {
 Unfortunately ``ptype`` is affected with ``:`` and unusable.
 
 ### (var) Variable inspection
-Getting representation of the object variable (var) could be done using builtin runtime function `Konan_DebugPrint`:
+
+Variable inspections for var variables works out of the box for primitive types.
+For non-primitive types there are custom pretty printers for lldb in
+`konan_lldb.py`:
+
+```
+λ cat main.kt | nl
+     1  fun main(args: Array<String>) {
+     2      var x = 1
+     3      var y = 2
+     4      var p = Point(x, y)
+     5      println("p = $p")
+     6  }
+       
+     7  data class Point(val x: Int, val y: Int)
+
+λ lldb ./program.kexe -o 'b main.kt:5' -o
+(lldb) target create "./program.kexe"
+Current executable set to './program.kexe' (x86_64).
+(lldb) b main.kt:5
+Breakpoint 1: where = program.kexe`kfun:main(kotlin.Array<kotlin.String>) + 289 at main.kt:5, address = 0x000000000040af11
+(lldb) r
+Process 4985 stopped
+* thread #1, name = 'program.kexe', stop reason = breakpoint 1.1
+    frame #0: program.kexe`kfun:main(kotlin.Array<kotlin.String>) at main.kt:5
+   2        var x = 1
+   3        var y = 2
+   4        var p = Point(x, y)
+-> 5        println("p = $p")
+   6    }
+   7   
+   8    data class Point(val x: Int, val y: Int)
+
+Process 4985 launched: './program.kexe' (x86_64)
+(lldb) fr var
+(int) x = 1
+(int) y = 2
+(ObjHeader *) p = 0x00000000007643d8
+(lldb) command script import dist/tools/konan_lldb.py
+(lldb) fr var
+(int) x = 1
+(int) y = 2
+(ObjHeader *) p = Point(x=1, y=2)
+(lldb) p p
+(ObjHeader *) $2 = Point(x=1, y=2)
+(lldb) 
+```
+
+Getting representation of the object variable (var) could also be done using
+builtin runtime function `Konan_DebugPrint` (this approach also works for gdb,
+by module of command syntax):
 
 ````
 0:b-debugger-fixes:minamoto@unit-703(0)# cat ../debugger-plugin/1.kt | nl -p
@@ -173,14 +223,7 @@ Process 80496 launched: './program.kexe' (x86_64)
 (a_variable) one is 1(KInt) $0 = 0
 (lldb)
 ````
-_Note:_ similar could be done in gdb by module of gdb command syntax.
 
-_Note:_ There is possibility to avoid using lldb casts and use provided lldb helper scripts:
-````
-(lldb) command script import dist/tools/konan_lldb.py
-(lldb) show_variable a_variable
-(a_variable) one is 1(KInt) $0 = 0
-````
 
 ### Known issues
 - stepping in imported inline functions 
