@@ -548,9 +548,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             when (targetDescriptor) {
                 is ClassDescriptor -> {
                     if (targetDescriptor.kind != ClassKind.OBJECT) return true
-                    // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object)
+                    // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object) or not a receiver at all
                     val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
-                    return resolvedCall.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER
+                    val receiverKind = resolvedCall.explicitReceiverKind
+                    return receiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER || receiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
                 }
 
                 is PackageViewDescriptor -> return true

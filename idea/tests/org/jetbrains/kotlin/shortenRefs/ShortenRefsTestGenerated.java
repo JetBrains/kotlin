@@ -39,6 +39,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         runTest("idea/testData/shortenRefs/callableRefsOnCompanion.kt");
     }
 
+    @TestMetadata("classInCompanionObject.kt")
+    public void testClassInCompanionObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/classInCompanionObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassNameConflict.kt")
     public void testClassNameConflict() throws Exception {
         runTest("idea/testData/shortenRefs/ClassNameConflict.kt");
