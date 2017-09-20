@@ -51,34 +51,44 @@ which will setup the dependencies on
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
 
-Then, you need to run
+Then, you may run gradle to build the project and run tests, using:
 
-    ant -f build.xml
+    ./gradlew <tasks-and-options>
+    
+command on unix/macOS, or
 
-which will build the binaries of the compiler and put them into the `dist` directory. You may need to increase the **heap size** for Ant using
-[ANT_OPTS](https://web.liferay.com/community/wiki/-/wiki/Main/Ant+opts).
+    gradlew.bat <tasks-and-options>
+    
+on windows.
 
-**OPTIONAL:** Maven artifact distribution is built separately, go into `libraries` directory after building the compiler and run:
+## Important gradle tasks
 
-    ./gradlew build install
+- `clean` - clean build results
+- `dist` - assembles the compiler distribution into `dist/kotlinc/` folder
+- `ideaPlugin` - assembles the Kotlin IDEA plugin distribution into `dist/artifacts/Kotlin` folder
+- `install` - build and install all public artifacts into local maven repository
+- `runIde` - build IDEA plugin and run IDEA with it
+- `coreLibsTest` - build and run stdlib, reflect and kotlin-test tests
+- `gradlePluginsTest` - build and run gradle plugin tests
+- `compilerTest` - build and run all compiler tests
+- `ideaPluginTest` - build and run all IDEA plugin tests
+
+**OPTIONAL:** Some artifacts, mainly maven plugin ones, are built separately by maven: go into `libraries` directory after building the compiler and run:
+
     mvn install
-
-> Note: on Windows type `gradlew` without the leading `./`
 
 Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 ## Working with the project in IntelliJ IDEA
 
-The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IntelliJ IDEA project, you can just open it in IntelliJ IDEA.
+The [root kotlin project](https://github.com/JetBrains/kotlin) should be imported into IDEA as gradle project.
 
-You may need to set the Project SDK (`File -> Project Structure -> Project`).
-You may also need to add `tools.jar` to your SDK: 
-    
-    File -> Project Structure -> SDKs -> <Your JDK> -> Classpath
+To import the project in Intellij choose project directory in Open project dialog. Then, after project opened, Select 
+`File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
 
-then choose the `tools.jar` in the JDK's `lib` directory.
+In the import dialog, select `use default gradle wrapper`.
 
-If you are not dealing with Android, you may need to disable the Android Plugin in order to compile the project.
+To be able to run tests from Intellij easily, check `Delegate IDE build/run actions to Gradle` in the gradle runner settings.
 
 ### <a name="installing-plugin"></a> Installing the latest Kotlin plugin
 
