@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.idea.nodejs
 import com.intellij.execution.RunManager
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.configuration.EnvironmentVariablesData
-import com.intellij.openapi.module.Module
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -11,18 +11,17 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.file.PsiJavaDirectoryImpl
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.jetbrains.nodejs.mocha.MochaUtil
 import com.jetbrains.nodejs.mocha.execution.*
+import com.jetbrains.nodejs.util.NodeJsCoffeeUtil
 import org.jetbrains.kotlin.idea.js.getJsClasspath
 import org.jetbrains.kotlin.idea.js.getJsOutputFilePath
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -34,10 +33,7 @@ import java.io.File
 
 class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
     private data class TestElementInfo(val runSettings: MochaRunSettings, val enclosingTestElement: PsiElement)
-    private sealed class TestElementPath {
-        data class BySuite(val suiteNames: List<String>, val testName: String?) : TestElementPath()
-        object BySingleFile : TestElementPath()
-    }
+    private data class TestElementPath(val suiteNames: List<String>, val testName: String?)
 
     // Copied from MochaRunConfigurationProducer.collectMochaTestRoots()
     private fun collectMochaTestRoots(project: Project): List<VirtualFile> {
@@ -79,11 +75,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
         return VfsUtilCore.isUnder(file, dirs)
     }
 
-    private fun createSuiteOrTestData(element: PsiElement, module: Module): TestElementPath? {
-        if (element is PsiDirectory && module.getModuleDir() == (element as PsiJavaDirectoryImpl).virtualFile.path) {
-            return TestElementPath.BySingleFile
-        }
-
+    private fun createSuiteOrTestData(element: PsiElement): TestElementPath? {
         val declaration = element.getNonStrictParentOfType<KtNamedDeclaration>() ?: return null
         val klass = when (declaration) {
             is KtClassOrObject -> declaration
@@ -96,7 +88,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
                 .toList()
                 .asReversed()
         val testName = (declaration as? KtNamedFunction)?.name
-        return TestElementPath.BySuite(suiteNames, testName)
+        return TestElementPath(suiteNames, testName)
     }
 
     private fun createTestElementRunInfo(element: PsiElement, originalSettings: MochaRunSettings): TestElementInfo? {
@@ -109,28 +101,19 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
             originalSettings.builder().setWorkingDir(workingDir).build()
         }
         else originalSettings
-        val testElementPath = createSuiteOrTestData(element, module) ?: return null
+        val (suiteNames, testName) = createSuiteOrTestData(element) ?: return null
         val builder = settings.builder()
         builder.setTestFilePath(testFilePath)
         if (settings.ui.isEmpty()) {
             builder.setUi(MochaUtil.UI_BDD)
         }
-        when (testElementPath) {
-            is TestElementPath.BySuite -> {
-                val (suiteNames, testName) = testElementPath
-                if (testName == null) {
-                    builder.setTestKind(MochaTestKind.SUITE)
-                    builder.setSuiteNames(suiteNames)
-                }
-                else {
-                    builder.setTestKind(MochaTestKind.TEST)
-                    builder.setTestNames(suiteNames + testName)
-                }
-            }
-
-            is TestElementPath.BySingleFile -> {
-                builder.setTestKind(MochaTestKind.TEST_FILE)
-            }
+        if (testName == null) {
+            builder.setTestKind(MochaTestKind.SUITE)
+            builder.setSuiteNames(suiteNames)
+        }
+        else {
+            builder.setTestKind(MochaTestKind.TEST)
+            builder.setTestNames(suiteNames + testName)
         }
 
         val nodeJsClasspath = getJsClasspath(module).joinToString(File.pathSeparator) {
