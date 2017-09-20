@@ -4,7 +4,7 @@ package kt897
 
 class A() {
     init {
-        <!INITIALIZATION_BEFORE_DECLARATION!>i<!> = 11
+        i = 11
     }
     val i : Int? = null // must be an error
 

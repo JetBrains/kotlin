@@ -51,7 +51,7 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
 
-fun canBe(i0: Int, j: Int) {
+fun canBe(i0: Int, <!UNUSED_PARAMETER!>j<!>: Int) {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = i0
     <!UNUSED_VALUE!>(label@ i) =<!> 34
 
@@ -61,7 +61,7 @@ fun canBe(i0: Int, j: Int) {
     (l@ a.a) = 3894
 }
 
-fun canBe2(j: Int) {
+fun canBe2(<!UNUSED_PARAMETER!>j<!>: Int) {
     <!UNUSED_VALUE!>(label@ <!VAL_REASSIGNMENT!>j<!>) =<!> 34
 }
 
