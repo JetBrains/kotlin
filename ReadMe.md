@@ -59,7 +59,7 @@ Then, you may run Gradle to build the project and run tests, using:
     
 command on Unix/macOS, or
 
-    gradlew.bat <tasks-and-options>
+    gradlew <tasks-and-options>
     
 on Windows.
 
@@ -101,7 +101,7 @@ At this time, you can use the latest released 1.1.x version of the Kotlin plugin
 From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
 
 * VCS -> Git -> Pull
-* Run IntelliJ IDEA
+* Run the "IDEA" run configuration in the project
 * a child IntelliJ IDEA with the Kotlin plugin will then startup
 
 # Contributing
