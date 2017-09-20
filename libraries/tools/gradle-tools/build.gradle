@@ -33,20 +33,24 @@ subprojects {
     }
     
     afterEvaluate {
-        jar {
-            manifestAttributes(manifest, project)
+        if (tasks.findByName('jar')) {
+            jar {
+                manifestAttributes(manifest, project)
+            }
         }
 
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all { task ->
             task.kotlinOptions.freeCompilerArgs += ["-module-name", "${project.name}"]
         }
 
-        artifacts {
-            if (tasks.findByName('javadocJar')) {
-                archives javadocJar
-            }
-            if (tasks.findByName('sourcesJar')) {
-                archives sourcesJar
+        if (configurations.findByName('archives')) {
+            artifacts {
+                if (tasks.findByName('javadocJar')) {
+                    archives javadocJar
+                }
+                if (tasks.findByName('sourcesJar')) {
+                    archives sourcesJar
+                }
             }
         }
     }
