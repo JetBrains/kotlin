@@ -109,7 +109,10 @@ class ClasspathRootsResolver(
 
         val psiFile = psiManager.findFile(moduleInfoFile) ?: return null
         val psiJavaModule = psiFile.children.singleOrNull { it is PsiJavaModule } as? PsiJavaModule ?: return null
-        return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), root, moduleInfoFile, isBinary = false)
+
+        val roots = listOf(JavaModule.Root(root, isBinary = false))
+
+        return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
     }
 
     private fun modularBinaryRoot(root: VirtualFile, originalFile: File): JavaModule? {
@@ -124,14 +127,16 @@ class ClasspathRootsResolver(
 
         if (moduleInfoFile != null) {
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
-            return JavaModule.Explicit(moduleInfo, root, moduleInfoFile, isBinary = true)
+            return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
 
         // Only .jar files can be automatic modules
         if (isJar) {
+            val moduleRoot = listOf(JavaModule.Root(root, isBinary = true))
+
             val automaticModuleName = manifest?.getValue(AUTOMATIC_MODULE_NAME)
             if (automaticModuleName != null) {
-                return JavaModule.Automatic(automaticModuleName, root)
+                return JavaModule.Automatic(automaticModuleName, moduleRoot)
             }
 
             val moduleName = LightJavaModule.moduleName(originalFile.nameWithoutExtension)
@@ -139,7 +144,7 @@ class ClasspathRootsResolver(
                 report(ERROR, "Cannot infer automatic module name for the file", VfsUtilCore.getVirtualFileForJar(root) ?: root)
                 return null
             }
-            return JavaModule.Automatic(moduleName, root)
+            return JavaModule.Automatic(moduleName, moduleRoot)
         }
 
         return null
@@ -169,11 +174,15 @@ class ClasspathRootsResolver(
             if (existing == null) {
                 javaModuleFinder.addUserModule(module)
             }
-            else if (module.moduleRoot != existing.moduleRoot) {
-                val jar = VfsUtilCore.getVirtualFileForJar(module.moduleRoot) ?: module.moduleRoot
-                val existingPath = (VfsUtilCore.getVirtualFileForJar(existing.moduleRoot) ?: existing.moduleRoot).path
+            else if (module.moduleRoots != existing.moduleRoots) {
+                fun JavaModule.getRootFile() =
+                        moduleRoots.firstOrNull()?.file?.let { VfsUtilCore.getVirtualFileForJar(it) ?: it }
+
+                val thisFile = module.getRootFile()
+                val existingFile = existing.getRootFile()
+                val atExistingPath = if (existingFile == null) "" else " at: ${existingFile.path}"
                 report(STRONG_WARNING, "The root is ignored because a module with the same name '${module.name}' " +
-                                       "has been found earlier on the module path at: $existingPath", jar)
+                                       "has been found earlier on the module path$atExistingPath", thisFile)
             }
         }
 
@@ -212,10 +221,9 @@ class ClasspathRootsResolver(
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
             }
             else {
-                result.add(JavaRoot(
-                        module.moduleRoot,
-                        if (module.isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE
-                ))
+                for ((root, isBinary) in module.moduleRoots) {
+                    result.add(JavaRoot(root, if (isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE))
+                }
             }
         }
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.modules
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.name.FqName
 
@@ -28,11 +29,11 @@ interface JavaModule {
     val name: String
 
     /**
-     * A directory or the root of a .jar file on the module path. Can also be the path to the `module-info.java` file if that path
-     * was passed as an explicit argument to the compiler.
-     * In case of an explicit module, module-info.class file can be found in its children.
+     * A non-empty list of directories or roots of .jar files on the module path. Can also contain the path to the `module-info.java` file
+     * if that path was passed as an explicit argument to the compiler.
+     * In case of an explicit module, module-info.class or module-info.java file must exist in at least one of these roots (the first wins).
      */
-    val moduleRoot: VirtualFile
+    val moduleRoots: List<Root>
 
     /**
      * A module-info.class or module-info.java file where this module was loaded from.
@@ -64,7 +65,9 @@ interface JavaModule {
      */
     fun exportsTo(packageFqName: FqName, moduleName: String): Boolean
 
-    class Automatic(override val name: String, override val moduleRoot: VirtualFile) : JavaModule {
+    data class Root(val file: VirtualFile, val isBinary: Boolean)
+
+    class Automatic(override val name: String, override val moduleRoots: List<Root>) : JavaModule {
         override val moduleInfoFile: VirtualFile? get() = null
 
         override val isBinary: Boolean get() = true
@@ -78,12 +81,14 @@ interface JavaModule {
 
     class Explicit(
             val moduleInfo: JavaModuleInfo,
-            override val moduleRoot: VirtualFile,
-            override val moduleInfoFile: VirtualFile,
-            override val isBinary: Boolean
+            override val moduleRoots: List<Root>,
+            override val moduleInfoFile: VirtualFile
     ) : JavaModule {
         override val name: String
             get() = moduleInfo.moduleName
+
+        override val isBinary: Boolean
+            get() = moduleInfoFile.fileType == JavaClassFileType.INSTANCE
 
         override fun exports(packageFqName: FqName): Boolean {
             return moduleInfo.exports.any { (fqName, toModules) ->
