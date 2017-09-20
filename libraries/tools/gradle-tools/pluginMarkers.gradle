@@ -1,6 +1,12 @@
 ext.pluginMarkerProject = { String pluginProjectId ->
     evaluationDependsOn(":$pluginProjectId")
 
+    if (rootProject.ext.get("isSonatypePublish")) {
+        def warning = "Plugin marker is not created for $pluginProjectId Sonatype publishing"
+        task('uploadArchives').doLast { println warning }
+        return
+    }
+
     def pluginProject = findProject(":$pluginProjectId")
 
     repositories.addAll(pluginProject.repositories.toList())
