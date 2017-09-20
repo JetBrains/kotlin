@@ -25,13 +25,6 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="get-nodejs-intellij-plugin">
-        <sequential>
-            <get src="http://plugins.jetbrains.com/plugin/download?updateId=37668" dest="${download}/nodejs_plugin.zip" usetimestamp="true"/>
-            <unzip src="${download}/nodejs_plugin.zip" dest="dependencies/nodejs_plugin" overwrite="true"/>
-        </sequential>
-    </macrodef>
-
     <target name="fetch-extras">
         <mkdir dir="${download}"/>
 
@@ -40,8 +33,6 @@
         <get-spring-library lib="spring-context" version="4.2.0.RELEASE"/>
         <get-spring-library lib="spring-tx" version="4.2.0.RELEASE"/>
         <get-spring-library lib="spring-web" version="4.2.0.RELEASE"/>
-
-        <get-nodejs-intellij-plugin/>
     </target>
 
     <!-- Override fetch-third-party from the main buildfile -->
