@@ -253,7 +253,7 @@ fun isEap(version: String): Boolean {
 }
 
 fun useEapRepository(minorKotlinVersion: Int, version: String): Boolean {
-    return Regex("1\\.$minorKotlinVersion(\\.\\d)?-[A-Za-z][A-Za-z0-9-]*").matches(version) &&
+    return Regex("1\\.$minorKotlinVersion(\\.\\d\\d?)?-[A-Za-z][A-Za-z0-9-]*").matches(version) &&
            !version.startsWith("1.$minorKotlinVersion.0-dev")
 }
 
