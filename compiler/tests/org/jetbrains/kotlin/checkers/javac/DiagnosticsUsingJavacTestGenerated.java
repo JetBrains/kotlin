@@ -13972,6 +13972,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("privateTopLevelDeclarations.kt")
+            public void testPrivateTopLevelDeclarations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecated")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -14160,6 +14166,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("noImplKeywordOnMember.kt")
                 public void testNoImplKeywordOnMember() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/noImplKeywordOnMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("privateMembers.kt")
+                public void testPrivateMembers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/privateMembers.kt");
                     doTest(fileName);
                 }
 

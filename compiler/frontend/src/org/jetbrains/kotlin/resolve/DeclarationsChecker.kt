@@ -78,22 +78,7 @@ class DeclarationsChecker(
         }
 
         for ((classOrObject, classDescriptor) in bodiesResolveContext.declaredClasses.entries) {
-            checkSupertypesForConsistency(classDescriptor, classOrObject)
-            checkTypesInClassHeader(classOrObject)
-
-            when (classOrObject) {
-                is KtClass -> {
-                    checkClassButNotObject(classOrObject, classDescriptor)
-                    descriptorResolver.checkNamesInConstraints(
-                            classOrObject, classDescriptor, classDescriptor.scopeForClassHeaderResolution, trace)
-                }
-                is KtObjectDeclaration -> {
-                    checkObject(classOrObject, classDescriptor)
-                }
-            }
-
-            checkPrimaryConstructor(classOrObject, classDescriptor)
-
+            checkClass(classDescriptor, classOrObject)
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor)
             identifierChecker.checkDeclaration(classOrObject, trace)
             exposedChecker.checkClassHeader(classOrObject, classDescriptor)
@@ -301,6 +286,26 @@ class DeclarationsChecker(
         }
         annotationChecker.check(packageDirective, trace, null)
         ModifierCheckerCore.check(packageDirective, trace, descriptor = null, languageVersionSettings = languageVersionSettings)
+    }
+
+    private fun checkClass(classDescriptor: ClassDescriptorWithResolutionScopes, classOrObject: KtClassOrObject) {
+        checkSupertypesForConsistency(classDescriptor, classOrObject)
+        checkTypesInClassHeader(classOrObject)
+
+        when (classOrObject) {
+            is KtClass -> {
+                checkClassButNotObject(classOrObject, classDescriptor)
+                descriptorResolver.checkNamesInConstraints(
+                        classOrObject, classDescriptor, classDescriptor.scopeForClassHeaderResolution, trace)
+            }
+            is KtObjectDeclaration -> {
+                checkObject(classOrObject, classDescriptor)
+            }
+        }
+
+        checkPrimaryConstructor(classOrObject, classDescriptor)
+
+        checkPrivateExpectedDeclaration(classOrObject, classDescriptor)
     }
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
@@ -548,6 +553,13 @@ class DeclarationsChecker(
         shadowedExtensionChecker.checkDeclaration(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
         checkImplicitCallableType(property, propertyDescriptor)
+        checkPrivateExpectedDeclaration(property, propertyDescriptor)
+    }
+
+    private fun checkPrivateExpectedDeclaration(declaration: KtDeclaration, descriptor: MemberDescriptor) {
+        if (descriptor.isExpect && Visibilities.isPrivate(descriptor.visibility)) {
+            trace.report(EXPECTED_PRIVATE_DECLARATION.on(declaration.modifierList?.getModifier(KtTokens.PRIVATE_KEYWORD) ?: declaration))
+        }
     }
 
     private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
@@ -579,7 +591,8 @@ class DeclarationsChecker(
     private fun checkMemberProperty(
             property: KtProperty,
             propertyDescriptor: PropertyDescriptor,
-            classDescriptor: ClassDescriptor) {
+            classDescriptor: ClassDescriptor
+    ) {
         val modifierList = property.modifierList
 
         if (modifierList != null) {
@@ -731,13 +744,13 @@ class DeclarationsChecker(
         }
 
         if (functionDescriptor.isExpect) {
-            checkExpectedFunction(function)
+            checkExpectedFunction(function, functionDescriptor)
         }
 
         shadowedExtensionChecker.checkDeclaration(function, functionDescriptor)
     }
 
-    private fun checkExpectedFunction(function: KtNamedFunction) {
+    private fun checkExpectedFunction(function: KtNamedFunction, functionDescriptor: FunctionDescriptor) {
         if (function.hasBody()) {
             trace.report(EXPECTED_DECLARATION_WITH_BODY.on(function))
         }
@@ -747,6 +760,8 @@ class DeclarationsChecker(
                 trace.report(EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER.on(parameter))
             }
         }
+
+        checkPrivateExpectedDeclaration(function, functionDescriptor)
     }
 
     private fun checkImplicitCallableType(declaration: KtCallableDeclaration, descriptor: CallableDescriptor) {

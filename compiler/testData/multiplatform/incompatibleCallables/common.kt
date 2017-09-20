@@ -14,7 +14,6 @@ expect fun f6(p1: String, p2: Int)
 expect fun <T> f7()
 
 internal expect fun f8()
-private expect fun f9()
 public expect fun f10()
 
 expect fun <T : Number> f11()

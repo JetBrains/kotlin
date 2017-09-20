@@ -1,7 +1,7 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/incompatibleCallables/common.kt:33:19: warning: the feature "coroutines" is experimental (see: https://kotlinlang.org/docs/diagnostics/experimental-coroutines)
+compiler/testData/multiplatform/incompatibleCallables/common.kt:32:19: warning: the feature "coroutines" is experimental (see: https://kotlinlang.org/docs/diagnostics/experimental-coroutines)
 expect fun f21(c: suspend Unit.() -> Unit)
                   ^
 
@@ -62,61 +62,55 @@ The following declaration is incompatible because visibility is different:
 
 public actual fun f8() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:1: error: actual function 'f9' has no corresponding expected declaration
-The following declaration is incompatible because visibility is different:
-    private expect fun f9(): Unit
-
-internal actual fun f9() {}
-^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:18:1: error: actual function 'f10' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:1: error: actual function 'f10' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     public expect fun f10(): Unit
 
-private actual fun f10() {}
+internal actual fun f10() {}
 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:24:19: error: actual function 'f14' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:23:19: error: actual function 'f14' has no corresponding expected declaration
 The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
     public expect inline fun <X> f14(): Unit
 
 actual inline fun <reified X> f14() {}
                   ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:27:15: error: actual function 'f16' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:15: error: actual function 'f16' has no corresponding expected declaration
 The following declaration is incompatible because some parameters have default values:
     public expect fun f16(s: String): Unit
 
 actual fun f16(s: String = "") {}
               ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:15: error: actual function 'f17' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:28:15: error: actual function 'f17' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
     public expect fun f17(vararg s: String): Unit
 
 actual fun f17(s: Array<out String>) {}
               ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:30:15: error: actual function 'f18' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:15: error: actual function 'f18' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
     public expect fun f18(s: Array<out String>): Unit
 
 actual fun f18(vararg s: String) {}
               ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:22: error: actual function 'f19' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:30:22: error: actual function 'f19' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is crossinline in one declaration and not crossinline in the other:
     public expect inline fun f19(s: () -> Unit): Unit
 
 actual inline fun f19(crossinline s: () -> Unit) {}
                      ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:22: error: actual function 'f20' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:22: error: actual function 'f20' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is noinline in one declaration and not noinline in the other:
     public expect inline fun f20(s: () -> Unit): Unit
 
 actual inline fun f20(noinline s: () -> Unit) {}
                      ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:15: error: actual function 'f21' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:15: error: actual function 'f21' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
     public expect fun f21(c: suspend Unit.() -> Unit): Unit
 
 actual fun f21(c: Unit.() -> Unit) {}
               ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:34:15: error: actual function 'f22' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:15: error: actual function 'f22' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
     public expect fun f22(c: Unit.() -> Unit): Unit
 

@@ -273,6 +273,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated");
         MAP.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be lateinit");
         MAP.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes");
+        MAP.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private");
 
         MAP.put(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, "Implementation by delegation in expected classes is prohibited");
 

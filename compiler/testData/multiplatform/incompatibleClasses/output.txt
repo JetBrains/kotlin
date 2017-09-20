@@ -35,55 +35,49 @@ The following declaration is incompatible because class kinds are different (cla
 
 actual class PAnnotationClass
        ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:1: error: actual object 'InternalObject' has no corresponding expected declaration
-The following declaration is incompatible because visibility is different:
-    internal expect object InternalObject
-
-private actual object InternalObject
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:8:1: error: actual object 'PublicObject' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:1: error: actual object 'PublicObject' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     public expect object PublicObject
 
 internal actual object PublicObject
 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:9:1: error: actual object 'PrivateObject' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:8:1: error: actual object 'InternalObject' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
-    private expect object PrivateObject
+    internal expect object InternalObject
 
-public actual object PrivateObject
+public actual object InternalObject
 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:1: error: actual class 'OpenClass' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:10:1: error: actual class 'OpenClass' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     public open expect class OpenClass
 
 final actual class OpenClass
 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:1: error: actual class 'AbstractClass' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:1: error: actual class 'AbstractClass' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     public abstract expect class AbstractClass
 
 open actual class AbstractClass
 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:13:1: error: actual class 'FinalClass' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:1: error: actual class 'FinalClass' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
     public final expect class FinalClass
 
 abstract actual class FinalClass
 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:16: error: actual class 'C1' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:14:16: error: actual class 'C1' has no corresponding expected declaration
 The following declaration is incompatible because number of type parameters is different:
     public final expect class C1<A>
 
 actual class C1<A, Extra>
                ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:16: error: actual class 'C2' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:16: error: actual class 'C2' has no corresponding expected declaration
 The following declaration is incompatible because declaration-site variances of type parameters are different:
     public final expect class C2<B>
 
 actual class C2<out B>
                ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:22:39: error: actual class 'ExtendsNumber' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:21:39: error: actual class 'ExtendsNumber' has no corresponding expected declaration
 The following declaration is incompatible because some supertypes are missing in the actual declaration:
     public abstract expect class ExtendsNumber : Number
 
