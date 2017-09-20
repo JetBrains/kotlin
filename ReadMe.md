@@ -38,6 +38,8 @@ In order to build Kotlin distribution you need to have:
         JDK_17="path to JDK 1.7"
         JDK_18="path to JDK 1.8"
 
+For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 8 installed, and to point all of the environment variables mentioned above to your JDK 8 installation.
+
 > Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572). 
 
 ## Building
@@ -51,15 +53,15 @@ which will setup the dependencies on
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
 
-Then, you may run gradle to build the project and run tests, using:
+Then, you may run Gradle to build the project and run tests, using:
 
     ./gradlew <tasks-and-options>
     
-command on unix/macOS, or
+command on Unix/macOS, or
 
     gradlew.bat <tasks-and-options>
     
-on windows.
+on Windows.
 
 ## Important gradle tasks
 
@@ -73,7 +75,7 @@ on windows.
 - `compilerTest` - build and run all compiler tests
 - `ideaPluginTest` - build and run all IDEA plugin tests
 
-**OPTIONAL:** Some artifacts, mainly maven plugin ones, are built separately by maven: go into `libraries` directory after building the compiler and run:
+**OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately by Maven: go into `libraries` directory after building the compiler and run:
 
     mvn install
 
@@ -81,37 +83,18 @@ Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 ## Working with the project in IntelliJ IDEA
 
-The [root kotlin project](https://github.com/JetBrains/kotlin) should be imported into IDEA as gradle project.
+Working with the Kotlin project requires IntelliJ IDEA 2017.3. You can download an Early Access Preview version of IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/nextversion/).
+
+The [root Kotlin project](https://github.com/JetBrains/kotlin) should be imported into IDEA as gradle project.
 
 To import the project in Intellij choose project directory in Open project dialog. Then, after project opened, Select 
 `File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
 
 In the import dialog, select `use default gradle wrapper`.
 
-To be able to run tests from Intellij easily, check `Delegate IDE build/run actions to Gradle` in the gradle runner settings.
+To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` in the Gradle runner settings.
 
-### <a name="installing-plugin"></a> Installing the latest Kotlin plugin
-
-Since Kotlin project contains code written in Kotlin itself, you will also need a Kotlin plugin to build the project in IntelliJ IDEA.
-
-You probably want to have locally the same version of plugin that build server is using for building.
-As this version is constantly moving, the best way to always be updated is to let IntelliJ IDEA notify you when it is time to renew your plugin.
-
-To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](https://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
-you should setup IDEA to update the plugin directly from the build server.
-
-Open:
-
-    Preferences -> Plugins -> Browse Repositories -> Manage Repositories...
-
-and add the following URL to your repositories:
-
-    https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/updatePlugins.xml
-
-Then update the list of plugins in "Browse Repositories", you'll see two versions of Kotlin there, install the one with the higher version number.
-
-If you want to keep an IntelliJ IDEA installation with that bleeding edge Kotlin plugin for working Kotlin project sources only separate to your default IntelliJ IDEA installation with the stable Kotlin
-plugin [see this document](https://intellij-support.jetbrains.com/hc/en-us/articles/207240985-Changing-IDE-default-directories-used-for-config-plugins-and-caches-storage), which describes how to have multiple IntelliJ IDEA installations using different configurations and plugin directories.
+At this time, you can use the latest released 1.1.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
 
 ### Compiling and running
 
@@ -120,7 +103,6 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * VCS -> Git -> Pull
 * Run IntelliJ IDEA
 * a child IntelliJ IDEA with the Kotlin plugin will then startup
-* you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries) to then work with the various kotlin libraries etc.
 
 # Contributing
 
@@ -143,36 +125,6 @@ macro to include code from a test function. The benefits of this approach are tw
 
 Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
 
-
-## If you want to work on the compiler
-
-The Kotlin compiler is written in Java and Kotlin (we gradually migrate more and more of it to pure Kotlin). So the easiest way to work on the compiler or IntelliJ IDEA plugin is
-
-* download a recent [IntelliJ IDEA](https://www.jetbrains.com/idea/?fromMenu#chooseYourEdition), Community edition is enough
-* [install the Kotlin plugin](#installing-plugin)
-* open the [root kotlin project](https://github.com/JetBrains/kotlin) in IDEA (opening the kotlin directory)
-
-You can now run the various Run/Debug Configurations such as
-
-* IDEA
-* All Compiler Tests
-* All IDEA Plugin Tests
-
-
-## If you want to work on the Kotlin libraries
-
-* download a recent [IntelliJ IDEA](https://www.jetbrains.com/idea/?fromMenu#chooseYourEdition), Community edition is enough
-* [install the Kotlin plugin](#installing-plugin)
-* open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries)
-
-Then build via
-
-    cd libraries
-    ./gradlew build install
-    mvn install
-    
-> Note: on Windows type `gradlew` without the leading `./`
-
 Some of the code in the standard library is created by generating code from templates. See the [README](libraries/stdlib/ReadMe.md) in the stdlib section for how run the code generator. The existing templates can be used as examples for creating new ones.
 
 ## Submitting patches
@@ -187,9 +139,3 @@ git config --global pull.rebase true
 ```
 This will avoid your local repo having too many merge commits
 which will help keep your pull request simple and easy to apply.
-
-## Commit comments
-
-If you include in your comment this text (where KT-1234 is the Issue ID in the [Issue Tracker](https://youtrack.jetbrains.com/issues/KT)), the issue will get automatically marked as fixed.
-
-    #KT-1234 Fixed
