@@ -38,7 +38,10 @@ sourceSets {
 
 testsJar {}
 
+evaluationDependsOn(":kotlin-android-extensions-runtime")
+
 projectTest {
+    environment("ANDROID_EXTENSIONS_RUNTIME_CLASSES", getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output.classesDirs.asPath)
     dependsOnTaskIfExistsRec("dist", project = rootProject)
     workingDir = rootDir
 }
