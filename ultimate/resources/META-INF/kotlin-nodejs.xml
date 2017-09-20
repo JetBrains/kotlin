@@ -1,5 +1,0 @@
-<idea-plugin>
-    <extensions defaultExtensionNs="com.intellij">
-        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.nodejs.KotlinMochaRunConfigurationProducer"/>
-    </extensions>
-</idea-plugin>
