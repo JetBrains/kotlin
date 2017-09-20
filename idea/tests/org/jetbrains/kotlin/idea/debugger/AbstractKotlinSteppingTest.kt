@@ -22,26 +22,32 @@ import java.io.File
 
 abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     protected fun doStepIntoTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
         doTest(path, "STEP_INTO")
     }
 
     protected fun doStepOutTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
         doTest(path, "STEP_OUT")
     }
 
     protected fun doStepOverTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
         doTest(path, "STEP_OVER")
     }
 
     protected fun doStepOverForceTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
         doTest(path, "STEP_OVER_FORCE")
     }
 
     protected fun doSmartStepIntoTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
         doTest(path, "SMART_STEP_INTO")
     }
 
     protected fun doCustomTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
         val fileText = FileUtil.loadFile(File(path))
         configureSettings(fileText)
         createAdditionalBreakpoints(fileText)
@@ -53,6 +59,7 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     }
 
     private fun doTest(path: String, command: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
         val fileText = FileUtil.loadFile(File(path))
 
         configureSettings(fileText)
