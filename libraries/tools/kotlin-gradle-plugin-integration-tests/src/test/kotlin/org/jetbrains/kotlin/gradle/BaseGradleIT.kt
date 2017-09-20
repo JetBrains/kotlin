@@ -442,6 +442,9 @@ abstract class BaseGradleIT {
                 options.kotlinDaemonDebugPort?.let { port ->
                     add("-Dkotlin.daemon.jvm.options=-agentlib:jdwp=transport=dt_socket\\,server=y\\,suspend=y\\,address=$port")
                 }
+                System.getProperty("maven.repo.local")?.let {
+                    add("-Dmaven.repo.local=$it") // TODO: proper escaping
+                }
                 addAll(options.freeCommandLineArgs)
             }
 

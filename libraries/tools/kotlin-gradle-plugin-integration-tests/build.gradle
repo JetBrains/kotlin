@@ -69,6 +69,12 @@ tasks.withType(Test) {
 
     executable = "${JDK_18}/bin/java"
 
+    systemProperty("kotlinVersion", kotlinVersion)
+    def mavenLocalRepo = System.getProperty("maven.repo.local")
+    if (mavenLocalRepo != null) {
+        systemProperty("maven.repo.local", mavenLocalRepo)
+    }
+
     testLogging {
         // set options for log level LIFECYCLE
         events "passed", "skipped", "failed", "standardOut"
