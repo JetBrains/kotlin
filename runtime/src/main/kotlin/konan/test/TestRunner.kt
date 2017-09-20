@@ -1,5 +1,7 @@
 package konan.test
 
+import kotlin.system.measureTimeMillis
+
 object TestRunner {
 
     private val _suites = mutableListOf<TestSuite>()
@@ -11,15 +13,17 @@ object TestRunner {
 
     fun run(listener: TestListener) = with(listener) {
         startTesting(this@TestRunner)
-        suites.forEach {
-            if (it.ignored) {
-                ignoreSuite(it)
-            } else {
-                startSuite(it)
-                it.run(listener)
-                endSuite(it)
+        val totalTime = measureTimeMillis {
+            suites.forEach {
+                if (it.ignored) {
+                    ignoreSuite(it)
+                } else {
+                    startSuite(it)
+                    val time = measureTimeMillis { it.run(listener) }
+                    endSuite(it, time)
+                }
             }
         }
-        endTesting(this@TestRunner)
+        endTesting(this@TestRunner, totalTime)
     }
 }

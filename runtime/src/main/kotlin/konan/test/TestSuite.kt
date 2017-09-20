@@ -1,6 +1,8 @@
 package konan.test
 
 import kotlin.IllegalArgumentException
+import kotlin.system.getTimeMillis
+import kotlin.system.measureTimeMillis
 
 interface TestCase {
     val name: String
@@ -12,6 +14,7 @@ interface TestSuite {
     val name: String
     val ignored: Boolean
     val testCases: Map<String, TestCase>
+    val size : Int
     fun run(listener: TestListener)
 }
 
@@ -57,21 +60,24 @@ abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String, o
         TestRunner.register(this)
     }
 
+    override val size: Int
+        get() = testCases.size
+
     override fun run(listener: TestListener) {
         doBeforeClass()
         testCases.values.forEach {
             if (it.ignored) {
                 listener.ignore(it)
             } else {
+                val startTime = getTimeMillis()
                 try {
                     listener.start(it)
                     doTest(it)
-                    listener.pass(it)
+                    listener.pass(it, getTimeMillis() - startTime)
                 } catch (e: Throwable) {
-                    listener.fail(it, e)
+                    listener.fail(it, e, getTimeMillis() - startTime)
                 }
             }
-
         }
         doAfterClass()
     }
