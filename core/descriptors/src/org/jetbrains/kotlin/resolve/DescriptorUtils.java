@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
@@ -586,11 +587,10 @@ public class DescriptorUtils {
 
     @Nullable
     public static FunctionDescriptor getFunctionByNameOrNull(@NotNull MemberScope scope, @NotNull Name name) {
-        Collection<DeclarationDescriptor> functions = scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS,
-                                                                                      MemberScope.Companion.getALL_NAME_FILTER());
-        for (DeclarationDescriptor d : functions) {
-            if (d instanceof FunctionDescriptor && name.equals(d.getOriginal().getName())) {
-                return (FunctionDescriptor) d;
+        Collection<SimpleFunctionDescriptor> functions = scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND);
+        for (SimpleFunctionDescriptor d : functions) {
+            if (name.equals(d.getOriginal().getName())) {
+                return d;
             }
         }
 
@@ -599,11 +599,10 @@ public class DescriptorUtils {
 
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull MemberScope scope, @NotNull Name name) {
-        Collection<DeclarationDescriptor> callables = scope.getContributedDescriptors(
-                DescriptorKindFilter.CALLABLES, MemberScope.Companion.getALL_NAME_FILTER());
-        for (DeclarationDescriptor d : callables) {
-            if (d instanceof PropertyDescriptor && name.equals(d.getOriginal().getName())) {
-                return (PropertyDescriptor) d;
+        Collection<PropertyDescriptor> properties = scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND);
+        for (PropertyDescriptor d : properties) {
+            if (name.equals(d.getOriginal().getName())) {
+                return d;
             }
         }
 

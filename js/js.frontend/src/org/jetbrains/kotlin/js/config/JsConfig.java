@@ -139,6 +139,12 @@ public class JsConfig {
         return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);
     }
 
+    public boolean isAtLeast(@NotNull LanguageVersion expected) {
+        LanguageVersion actual = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion();
+        return actual.getMajor() > expected.getMajor() ||
+               actual.getMajor() == expected.getMajor() && actual.getMinor() >= expected.getMinor();
+    }
+
 
     public static abstract class Reporter {
         public void error(@NotNull String message) { /*Do nothing*/ }
