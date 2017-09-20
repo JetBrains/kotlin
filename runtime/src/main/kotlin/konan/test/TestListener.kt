@@ -14,24 +14,14 @@ interface TestListener {
     fun ignore(testCase: TestCase)
 }
 
-interface TestStatistics {
-    val total: Int
-    val passed: Int
-    val failed: Int
-    val ignored: Int
-
-    // TODO: Do we need such properties for other cases?
-    val failedTests: Collection<TestCase>
-    val hasFailedTests: Boolean
-}
-
-abstract class AbstractTestStatistics: TestStatistics {
-    override var total:   Int = 0; protected set
-    override var passed:  Int = 0; protected set
-    override var failed:  Int = 0; protected set
-    override var ignored: Int = 0; protected set
-
-    protected fun registerPass() { total++; passed++ }
-    protected fun registerFail() { total++; failed++ }
-    protected fun registerIgnore() { total++; ignored++ }
+open class BaseTestListener: TestListener {
+    override fun startTesting(runner: TestRunner) {}
+    override fun endTesting(runner: TestRunner, timeMillis: Long) {}
+    override fun startSuite(suite: TestSuite) {}
+    override fun endSuite(suite: TestSuite, timeMillis: Long) {}
+    override fun ignoreSuite(suite: TestSuite) {}
+    override fun start(testCase: TestCase) {}
+    override fun pass(testCase: TestCase, timeMillis: Long) {}
+    override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) {}
+    override fun ignore(testCase: TestCase) {}
 }

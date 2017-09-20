@@ -1,25 +1,16 @@
 package konan.test
 
-val TestRunner.totalTests
-    get() = suites.map { it.size }.reduce { sum, size -> sum + size }
-
-val TestRunner.totalSuites
-    get() = suites.size
-
-class GTestListener: TestListener, AbstractTestStatistics() {
-
-    private val TestCase.prettyName get() = "${suite.name}.$name"
-    private val failedTests_ = mutableListOf<TestCase>()
-
-    private var totalSuites = 0
+class GTestLogger : TestLoggerWithStatistics() {
 
     override fun startTesting(runner: TestRunner) {
+        super.startTesting(runner)
         println("[==========] Running ${runner.totalTests} tests from ${runner.totalSuites} test case.")
-        println("[----------] Global test environment set-up.") // TODO: just emulation
+        // Just hack to deal with the Clion parser. TODO: Remove it after changes in the parser.
+        println("[----------] Global test environment set-up.")
     }
 
-    private fun printResults(timeMillis: Long) {
-        println("[----------] Global test environment tear-down")
+    private fun printResults(timeMillis: Long) = with (statistics) {
+        println("[----------] Global test environment tear-down") // Just hack to deal with the Clion parser.
         println("[==========] $total tests from $totalSuites test cases ran. ($timeMillis ms total)")
         println("[  PASSED  ] $passed tests.")
         if (hasFailedTests) {
@@ -37,31 +28,22 @@ class GTestListener: TestListener, AbstractTestStatistics() {
     override fun endTesting(runner: TestRunner, timeMillis: Long) = printResults(timeMillis)
 
     override fun startSuite(suite: TestSuite) = println("[----------] ${suite.size} tests from ${suite.name}")
+
     override fun endSuite(suite: TestSuite, timeMillis: Long) {
-        totalSuites++
+        super.endSuite(suite, timeMillis)
         println("[----------] ${suite.size} tests from ${suite.name} ($timeMillis ms total)\n")
     }
-
-    override fun ignoreSuite(suite: TestSuite) {}
 
     override fun start(testCase: TestCase) = println("[ RUN      ] ${testCase.prettyName}")
 
     override fun pass(testCase: TestCase, timeMillis: Long) {
-        registerPass()
+        super.pass(testCase, timeMillis)
         println("[       OK ] ${testCase.prettyName} ($timeMillis ms)")
     }
 
     override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) {
-        registerFail()
-        failedTests_.add(testCase)
+        super.fail(testCase, e, timeMillis)
         e.printStackTrace()
         println("[  FAILED  ] ${testCase.prettyName} ($timeMillis ms)")
     }
-
-    override fun ignore(testCase: TestCase) = registerIgnore()
-
-    override val failedTests: Collection<TestCase>
-        get() = failedTests_
-    override val hasFailedTests: Boolean
-        get() = failed != 0
 }
