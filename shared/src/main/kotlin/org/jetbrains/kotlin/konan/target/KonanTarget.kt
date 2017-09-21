@@ -165,11 +165,11 @@ class TargetManager(val userRequest: String? = null) {
             when (host) {
                 KonanTarget.LINUX   -> {
                     KonanTarget.LINUX.enabled = true
-                    KonanTarget.RASPBERRYPI.enabled = false
+                    KonanTarget.RASPBERRYPI.enabled = true
                     KonanTarget.MIPS.enabled = true
                     KonanTarget.MIPSEL.enabled = true
-                    KonanTarget.ANDROID_ARM32.enabled = false
-                    KonanTarget.ANDROID_ARM64.enabled = false
+                    KonanTarget.ANDROID_ARM32.enabled = true
+                    KonanTarget.ANDROID_ARM64.enabled = true
                 }
                 KonanTarget.MINGW -> {
                     KonanTarget.MINGW.enabled = true

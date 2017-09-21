@@ -2086,7 +2086,7 @@ kotlinNativeInterop {
 task interop0(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') ||  // No interop for wasm yet.
                (project.testTarget == 'mips')   ||  //  st_uid of '/' is not equal to 0 when using qemu
-               (project.testTarget == 'mipsel')     //  st_uid of '/' is not equal to 0 when using qemu
+               (project.testTarget == 'mipsel')
     goldValue = "0\n0\n"
     source = "interop/basics/0.kt"
     interop = 'sysstat'
