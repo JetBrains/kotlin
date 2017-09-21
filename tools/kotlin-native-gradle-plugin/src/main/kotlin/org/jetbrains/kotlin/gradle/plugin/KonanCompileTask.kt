@@ -204,6 +204,27 @@ open class KonanCompileConfig(
 
     // DSL. Libraries.
 
+    fun library(project: Project) {
+        this.project.evaluationDependsOn(project.path)
+        project.konanArtifactsContainer.asSequence()
+                .map { it.compilationTask }
+                .filter { it.produce == "library" }
+                .forEach {
+                    compilationTask.dependsOn(it)
+                    library(it.artifact)
+                }
+    }
+
+    fun library(project: Project, artifactName: String) {
+        this.project.evaluationDependsOn(project.path)
+        val libraryCompilationTask = project.konanArtifactsContainer.getByName(artifactName).compilationTask
+        if (libraryCompilationTask.produce != "library") {
+            throw IllegalArgumentException("Artifact is not a library: $artifactName (in project: ${project.path})")
+        }
+        compilationTask.dependsOn(libraryCompilationTask)
+        library(libraryCompilationTask.artifact)
+    }
+
     fun library(lib: Any) = libraries(lib)
     fun libraries(vararg libs: Any) = with(compilationTask) {
         libraries.add(project.files(*libs))

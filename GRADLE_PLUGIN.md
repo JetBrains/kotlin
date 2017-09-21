@@ -233,6 +233,12 @@ For this project the task graph will be the following:
 
              // *.klib library for linking.
              library project.file('path/to/library')
+             
+             // library project
+             library project(':lib')
+             
+             // artifect in a library project
+             library(project(':lib'), 'artifectName')
 
              // naitve library for linking.
              nativeLibrary project.file('path/to/native/library/')
