@@ -127,6 +127,11 @@ Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/maste
 
 Some of the code in the standard library is created by generating code from templates. See the [README](libraries/stdlib/ReadMe.md) in the stdlib section for how run the code generator. The existing templates can be used as examples for creating new ones.
 
+### Running specific generated tests
+
+If you need to debug a specific generated test, ensure that you have the `Working directory` in your IntelliJ run configuration set
+to the root directory of this project. If you don't, every test you try to run will fail with a `No such file or directory` exception.
+
 ## Submitting patches
 
 The best way to submit a patch is to [fork the project on github](https://help.github.com/articles/fork-a-repo/) then send us a
