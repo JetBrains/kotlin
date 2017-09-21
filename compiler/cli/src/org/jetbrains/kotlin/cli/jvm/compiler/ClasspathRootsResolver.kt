@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
-import java.io.File
 import java.io.IOException
 import java.util.jar.Attributes
 import java.util.jar.Manifest
@@ -57,40 +56,58 @@ class ClasspathRootsResolver(
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
 
-    fun convertClasspathRoots(contentRoots: List<ContentRoot>): RootsAndModules {
-        val result = mutableListOf<JavaRoot>()
+    private data class RootWithPrefix(val root: VirtualFile, val packagePrefix: String?)
 
-        val modules = ArrayList<JavaModule>()
+    fun convertClasspathRoots(contentRoots: List<ContentRoot>): RootsAndModules {
+        val javaSourceRoots = mutableListOf<RootWithPrefix>()
+        val jvmClasspathRoots = mutableListOf<VirtualFile>()
+        val jvmModulePathRoots = mutableListOf<VirtualFile>()
 
         for (contentRoot in contentRoots) {
             if (contentRoot !is JvmContentRoot) continue
             val root = contentRootToVirtualFile(contentRoot) ?: continue
-
             when (contentRoot) {
-                is JavaSourceRoot -> {
-                    val modularRoot = modularSourceRoot(root)
-                    if (modularRoot != null) {
-                        modules += modularRoot
-                    }
-                    else {
-                        result += JavaRoot(root, JavaRoot.RootType.SOURCE, contentRoot.packagePrefix?.let { prefix ->
-                            if (isValidJavaFqName(prefix)) FqName(prefix)
-                            else null.also {
-                                report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
-                            }
-                        })
-                    }
-                }
-                is JvmClasspathRoot -> {
-                    result += JavaRoot(root, JavaRoot.RootType.BINARY)
-                }
-                is JvmModulePathRoot -> {
-                    val module = modularBinaryRoot(root, contentRoot.file)
-                    if (module != null) {
-                        modules += module
-                    }
-                }
+                is JavaSourceRoot -> javaSourceRoots += RootWithPrefix(root, contentRoot.packagePrefix)
+                is JvmClasspathRoot -> jvmClasspathRoots += root
+                is JvmModulePathRoot -> jvmModulePathRoots += root
                 else -> error("Unknown root type: $contentRoot")
+            }
+        }
+
+        return computeRoots(javaSourceRoots, jvmClasspathRoots, jvmModulePathRoots)
+    }
+
+    private fun computeRoots(
+            javaSourceRoots: List<RootWithPrefix>,
+            jvmClasspathRoots: List<VirtualFile>,
+            jvmModulePathRoots: List<VirtualFile>
+    ): RootsAndModules {
+        val result = mutableListOf<JavaRoot>()
+        val modules = mutableListOf<JavaModule>()
+
+        for ((root, packagePrefix) in javaSourceRoots) {
+            val modularRoot = modularSourceRoot(root)
+            if (modularRoot != null) {
+                modules += modularRoot
+            }
+            else {
+                result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
+                    if (isValidJavaFqName(prefix)) FqName(prefix)
+                    else null.also {
+                        report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                    }
+                })
+            }
+        }
+
+        for (root in jvmClasspathRoots) {
+            result += JavaRoot(root, JavaRoot.RootType.BINARY)
+        }
+
+        for (root in jvmModulePathRoots) {
+            val module = modularBinaryRoot(root)
+            if (module != null) {
+                modules += module
             }
         }
 
@@ -99,7 +116,7 @@ class ClasspathRootsResolver(
         return RootsAndModules(result, modules)
     }
 
-    private fun modularSourceRoot(root: VirtualFile): JavaModule.Explicit? {
+    private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, PsiJavaModule>? {
         val moduleInfoFile =
                 when {
                     root.isDirectory -> root.findChild(PsiJavaModule.MODULE_INFO_FILE)
@@ -110,12 +127,16 @@ class ClasspathRootsResolver(
         val psiFile = psiManager.findFile(moduleInfoFile) ?: return null
         val psiJavaModule = psiFile.children.singleOrNull { it is PsiJavaModule } as? PsiJavaModule ?: return null
 
-        val roots = listOf(JavaModule.Root(root, isBinary = false))
+        return moduleInfoFile to psiJavaModule
+    }
 
+    private fun modularSourceRoot(root: VirtualFile): JavaModule.Explicit? {
+        val (moduleInfoFile, psiJavaModule) = findSourceModuleInfo(root) ?: return null
+        val roots = listOf(JavaModule.Root(root, isBinary = false))
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
     }
 
-    private fun modularBinaryRoot(root: VirtualFile, originalFile: File): JavaModule? {
+    private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
         val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
         val manifest: Attributes? by lazy(NONE) { readManifestAttributes(root) }
 
@@ -139,6 +160,7 @@ class ClasspathRootsResolver(
                 return JavaModule.Automatic(automaticModuleName, moduleRoot)
             }
 
+            val originalFile = VfsUtilCore.virtualToIoFile(root)
             val moduleName = LightJavaModule.moduleName(originalFile.nameWithoutExtension)
             if (moduleName.isEmpty()) {
                 report(ERROR, "Cannot infer automatic module name for the file", VfsUtilCore.getVirtualFileForJar(root) ?: root)
