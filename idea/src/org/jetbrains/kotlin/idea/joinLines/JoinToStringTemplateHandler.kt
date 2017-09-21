@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.idea.joinLines
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
@@ -35,10 +36,14 @@ class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {
 
         val plus = file.findElementAt(index)?.takeIf { it.node?.elementType == KtTokens.PLUS } ?: return -1
         val expression = (plus.parent.parent as? KtBinaryExpression) ?: return -1
-        if (!ConvertToStringTemplateIntention().isApplicableTo(expression)) return -1
+        val left = expression.left ?: return -1
+        val right = expression.right ?: return -1
+        if (left !is KtStringTemplateExpression || right !is KtStringTemplateExpression) return -1
+        if (!ConvertToStringTemplateIntention.isApplicableToNoParentCheck(expression)) return -1
 
-        val replaced = expression.replaced(ConvertToStringTemplateIntention.buildReplacement(expression))
-        return replaced.textRange.startOffset
+        val offset = left.endOffset - 1
+        expression.replace(ConvertToStringTemplateIntention.buildReplacement(expression))
+        return offset
     }
 
     override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int): Int = -1

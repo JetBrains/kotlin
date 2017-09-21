@@ -428,27 +428,27 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("firstLineVariable.kt")
+        public void testFirstLineVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/firstLineVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondLineVariable.kt")
+        public void testSecondLineVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/secondLineVariable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("simple2.kt")
-        public void testSimple2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simple3.kt")
-        public void testSimple3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simple4.kt")
-        public void testSimple4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/simple4.kt");
+        @TestMetadata("threeLines.kt")
+        public void testThreeLines() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/threeLines.kt");
             doTest(fileName);
         }
     }

@@ -1,4 +1,0 @@
-fun test2() {
-    val foo = "1"
-    val s = <caret>"${foo}bar"
-}
