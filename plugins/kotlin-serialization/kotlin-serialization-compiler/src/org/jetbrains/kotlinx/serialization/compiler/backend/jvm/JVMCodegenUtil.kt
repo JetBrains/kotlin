@@ -51,6 +51,7 @@ internal val kSerializerArrayType = Type.getObjectType("[Lkotlinx/serialization/
 
 internal val serializationExceptionName = "kotlinx/serialization/SerializationException"
 internal val serializationExceptionMissingFieldName = "kotlinx/serialization/MissingFieldException"
+internal val serializationExceptionUnknownIndexName = "kotlinx/serialization/UnknownFieldException"
 
 val OPT_MASK_TYPE: Type = Type.INT_TYPE
 val OPT_MASK_BITS = 32

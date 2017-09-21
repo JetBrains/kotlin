@@ -272,19 +272,19 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                                            bitMasks[i / 32],
                                            JsIntLiteral(bitPos)
                         ).makeStmt()
-                        // if (!readAll) break -- but only if this is last prop
-                        if (i != orderedProperties.lastIndex)
-                            +JsIf(JsAstUtils.not(readAllVar), JsBreak())
-                        else {
-                            // if (readAll) breakLoop else break
-                            +JsIf(readAllVar, JsBreak(loopRef), JsBreak())
-                        }
+                        // if (!readAll) break
+                        +JsIf(JsAstUtils.not(readAllVar), JsBreak())
                     }
                 }
-                // case -1, default: break loop
-                case(JsIntLiteral(-1)) {}
-                default {
+                // case -1: break loop
+                case(JsIntLiteral(-1)) {
                     +JsBreak(loopRef)
+                }
+                // default: throw
+                default {
+                    val excClassRef = serializableDescriptor.getClassFromSerializationPackage("UnknownFieldException")
+                            .let { context.getQualifiedReference(it) }
+                    +JsThrow(JsNew(excClassRef, listOf(indexVar)))
                 }
             }
         }, loop)

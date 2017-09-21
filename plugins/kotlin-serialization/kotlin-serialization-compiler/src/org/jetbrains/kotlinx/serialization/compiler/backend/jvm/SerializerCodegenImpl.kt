@@ -210,6 +210,7 @@ class SerializerCodegenImpl(
             val labeledProperties = orderedProperties.filter { !it.transient }
             val readAllLabel = Label()
             val readEndLabel = Label()
+            val incorrectIndLabel = Label()
             val labels = arrayOfNulls<Label>(labeledProperties.size + 2)
             labels[0] = readAllLabel // READ_ALL
             labels[1] = readEndLabel // READ_DONE
@@ -217,8 +218,7 @@ class SerializerCodegenImpl(
                 labels[i + 2] = Label()
             }
             load(indexVar, Type.INT_TYPE)
-            // todo: readEnd is currently default, should probably throw exception instead
-            tableswitch(-2, labeledProperties.size - 1, readEndLabel, *labels)
+            tableswitch(-2, labeledProperties.size - 1, incorrectIndLabel, *labels)
             // readAll: readAll := true
             visitLabel(readAllLabel)
             iconst(1)
@@ -315,6 +315,15 @@ class SerializerCodegenImpl(
             }
             // return
             areturn(serializableAsmType)
+
+            // throwing an exception in default branch (if no index matched)
+            visitLabel(incorrectIndLabel)
+            anew(Type.getObjectType(serializationExceptionUnknownIndexName))
+            dup()
+            load(indexVar, Type.INT_TYPE)
+            invokespecial(serializationExceptionUnknownIndexName, "<init>", "(I)V", false)
+            checkcast(Type.getObjectType("java/lang/Throwable"))
+            athrow()
         }
     }
 
