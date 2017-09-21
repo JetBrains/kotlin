@@ -148,7 +148,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
             is JvmPlatform -> getJavaTestIcon(declaration)
             is JsPlatform -> getJavaScriptTestIcon(declaration, descriptor)
             else -> return null
-        }
+        } ?: return null
         return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions())
     }
 }

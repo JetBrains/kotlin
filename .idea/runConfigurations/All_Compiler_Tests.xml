@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All Compiler Tests" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
-    <toRun type="JUnit" name="Compiler Tests" />
-    <toRun type="JUnit" name="Java 8 Tests" />
-    <toRun type="JUnit" name="Js-backend tests" />
-    <method />
-  </configuration>
-</component>

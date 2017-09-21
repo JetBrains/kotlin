@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="IdeLazyResolver">
-    <output-path>$PROJECT_DIR$/out/artifacts/internal/</output-path>
-    <root id="archive" name="kotlin-ide-common.jar">
-      <element id="module-output" name="ide-common" />
-      <element id="dir-copy" path="$PROJECT_DIR$/idea/ide-common" />
-    </root>
-  </artifact>
-</component>

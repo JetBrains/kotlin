@@ -1,10 +1,10 @@
 {
   "scripts": {
-    "test-jasmine": "jasmine js/jasmine-reporter.js build/classes/test/kotlin-test-js-it_test.js",
+    "test-jasmine": "jasmine js/jasmine-reporter.js build/classes/kotlin/test/kotlin-test-js-it_test.js",
     "test-jest": "jest",
-    "test-mocha": "mocha --reporter js/mocha-reporter.js build/classes/test/kotlin-test-js-it_test.js",
-    "test-qunit": "qunit -c js/qunit-reporter.js -t build/classes/test/kotlin-test-js-it_test.js",
-    "test-tape": "tape js/tape-reporter.js js/tape-plugin.js build/classes/test/kotlin-test-js-it_test.js"
+    "test-mocha": "mocha --reporter js/mocha-reporter.js build/classes/kotlin/test/kotlin-test-js-it_test.js",
+    "test-qunit": "qunit -c js/qunit-reporter.js -t build/classes/kotlin/test/kotlin-test-js-it_test.js",
+    "test-tape": "tape js/tape-reporter.js js/tape-plugin.js build/classes/kotlin/test/kotlin-test-js-it_test.js"
   },
   "devDependencies": {
     "jasmine": "^2.6.0",

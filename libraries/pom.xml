@@ -73,14 +73,6 @@
     </distributionManagement>
 
     <modules>
-        <module>tools/kotlin-compiler</module>
-        <module>tools/kotlin-compiler-embeddable</module>
-        <module>tools/kotlin-compiler-client-embeddable</module>
-        <module>tools/kotlin-compiler-client-embeddable-test</module>
-        <module>tools/native-platform</module>
-        <module>tools/kotlin-compiler-runner</module>
-        <module>tools/kotlin-daemon-client</module>
-        <module>tools/kotlin-build-common-test</module>
         <module>tools/kotlin-maven-plugin</module>
 
         <module>tools/kotlin-osgi-bundle</module>
@@ -89,17 +81,11 @@
 
 
         <module>tools/idl2k</module>
-        <module>tools/kotlin-annotation-processing</module>
         <module>tools/kotlin-annotation-processing-maven</module>
         <module>tools/kotlin-maven-allopen</module>
         <module>tools/kotlin-maven-noarg</module>
         <module>tools/kotlin-maven-sam-with-receiver</module>
-        <module>tools/kotlin-sam-with-receiver-compiler-plugin</module>
-        <module>tools/kotlin-source-sections-compiler-plugin</module>
 
-        <module>tools/kotlin-script-util</module>
-        <module>tools/kotlin-android-extensions</module>
-        <module>tools/kotlin-android-extensions-runtime</module>
         <module>tools/kotlin-maven-plugin-test</module>
 
         <module>examples/annotation-processor-example</module>
@@ -108,8 +94,6 @@
         <module>examples/kotlin-js-library-example</module>
         <module>examples/browser-example</module>
         <module>examples/browser-example-with-library</module>
-        <module>examples/kotlin-jsr223-local-example</module>
-        <module>examples/kotlin-jsr223-daemon-local-eval-example</module>
     </modules>
 
     <dependencies>

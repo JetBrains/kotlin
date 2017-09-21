@@ -119,9 +119,15 @@
                         <version>2.0.0</version>
                         <configuration>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <properties>
+                                <kotlin.version>${project.version}</kotlin.version>
+                            </properties>
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                             <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
+                            <scriptVariables>
+                                <kotlinVersion>${project.version}</kotlinVersion>
+                            </scriptVariables>
                         </configuration>
                         <executions>
                             <execution>

@@ -34,6 +34,8 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 

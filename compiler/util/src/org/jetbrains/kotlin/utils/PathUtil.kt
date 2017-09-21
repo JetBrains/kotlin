@@ -43,7 +43,8 @@ object PathUtil {
     const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
     const val KOTLIN_REFLECT_SRC_JAR = "kotlin-reflect-sources.jar"
     const val KOTLIN_TEST_SRC_JAR = "kotlin-test-sources.jar"
-    const val KOTLIN_COMPILER_JAR = "kotlin-compiler.jar"
+    const val KOTLIN_COMPILER = "kotlin-compiler"
+    const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER.jar"
 
     @JvmField
     val KOTLIN_RUNTIME_JAR_PATTERN: Pattern = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar")
@@ -63,8 +64,9 @@ object PathUtil {
 
     @JvmStatic
     val kotlinPathsForCompiler: KotlinPaths
-        get() = if (!pathUtilJar.isFile) {
-            // Not running from a jar, i.e. it is it must be a unit test
+        get() = if (!pathUtilJar.isFile || !pathUtilJar.name.startsWith(KOTLIN_COMPILER)) {
+            // PathUtil.class is located not in the kotlin-compiler*.jar, so it must be a test and we'll take KotlinPaths from "dist/"
+            // (when running tests, PathUtil.class is in its containing module's artifact, i.e. util-{version}.jar)
             kotlinPathsForDistDirectory
         }
         else KotlinPathsFromHomeDir(compilerPathForCompilerJar)

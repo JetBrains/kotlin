@@ -8,18 +8,18 @@ buildscript {
     }
     dependencies {
         classpath 'net.sf.proguard:proguard-gradle:5.2.1'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath "com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}"
     }
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 
-def core = "${rootDir}/../core"
+def core = "${rootDir}/core"
 def annotationsSrc = "${buildDir}/annotations"
 def relocatedCoreSrc = "${buildDir}/core-relocated"
 
@@ -27,12 +27,6 @@ sourceSets {
     main {
         java {
             srcDir annotationsSrc
-            srcDir "${core}/descriptor.loader.java/src"
-            srcDir "${core}/descriptors/src"
-            srcDir "${core}/descriptors.runtime/src"
-            srcDir "${core}/deserialization/src"
-            srcDir "${core}/util.runtime/src"
-
             srcDir "${core}/reflection.jvm/src"
         }
     }
@@ -40,16 +34,20 @@ sourceSets {
 
 configurations {
     proguardDeps
-    shadows
+    shadows { transitive = false }
     compileOnly.extendsFrom(shadows)
+    mainJar
 }
 
 dependencies {
     proguardDeps project(':kotlin-stdlib')
+    shadows project(':core:util.runtime')
+    shadows project(':core')
     shadows 'javax.inject:javax.inject:1'
-    shadows project(path: ':tools:protobuf-lite')
+    shadows project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 
     compile project(':kotlin-stdlib')
+    compileOnly project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 }
 
 task copyAnnotations(type: Sync) {
@@ -70,6 +68,7 @@ compileJava {
 
 compileKotlin {
     dependsOn copyAnnotations
+    dependsOn ':custom-dependencies:protobuf-lite:prepare'
     kotlinOptions {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
@@ -107,14 +106,13 @@ createScriptTask(project, "stripMetadata") {
     inputs.file(inputJar)
     outputs.file(outputJar)
     args += [
-            "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts",
+            "${rootDir}/generators/infrastructure/strip-kotlin-annotations.kts",
             "kotlin/Metadata",
             "kotlin/reflect/jvm/internal/impl/.*",
             inputJar,
             outputJar
     ]
 }
-
 
 def mainArchiveName = "${archivesBaseName}-${project.version}.jar"
 def outputJarPath = "${libsDir}/${mainArchiveName}"
@@ -173,6 +171,7 @@ task relocatedSourcesJar(type: Jar) {
 def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
 
 artifacts {
+    mainJar artifactJar
     runtime artifactJar
     archives artifactJar
     archives relocatedSourcesJar

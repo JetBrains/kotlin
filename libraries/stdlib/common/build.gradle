@@ -17,7 +17,11 @@ sourceSets {
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
 
-compileKotlinCommon.dependsOn preprocessSourcesMain
+compileKotlinCommon {
+    dependsOn preprocessSourcesMain
+//    dependsOn ":prepare:compiler:prepare-compiler-with-bootstrap-runtime"
+//    compilerJarFile = compilerJarWithBootstrapRuntime
+}
 
 /*
 // TODO: currently unsupported
@@ -53,3 +57,5 @@ task distCommon(type: Copy) {
 }
 
 dist.dependsOn distCommon
+
+classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })
