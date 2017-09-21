@@ -10222,6 +10222,36 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("expectedTypeAdditionalTest.kt")
+            public void testExpectedTypeAdditionalTest() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeAdditionalTest.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectedTypeFromCast.kt")
+            public void testExpectedTypeFromCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeFromCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectedTypeFromCastComplexExpression.kt")
+            public void testExpectedTypeFromCastComplexExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeFromCastComplexExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectedTypeWithGenerics.kt")
+            public void testExpectedTypeWithGenerics() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeWithGenerics.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("findViewById.kt")
+            public void testFindViewById() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/findViewById.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("fixVariableToNothing.kt")
             public void testFixVariableToNothing() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/fixVariableToNothing.kt");

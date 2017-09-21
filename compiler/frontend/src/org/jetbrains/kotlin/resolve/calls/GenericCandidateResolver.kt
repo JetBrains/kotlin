@@ -20,11 +20,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
@@ -39,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ValidityConstraintForConstituentType
@@ -53,12 +59,16 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val SPECIAL_FUNCTION_NAMES = ResolveConstruct.values().map { it.specialFunctionName }.toSet()
 
 class GenericCandidateResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
-        private val coroutineInferenceSupport: CoroutineInferenceSupport
+        private val coroutineInferenceSupport: CoroutineInferenceSupport,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
     fun <D : CallableDescriptor> inferTypeArguments(context: CallCandidateResolutionContext<D>): ResolutionStatus {
         val candidateCall = context.candidateCall
@@ -116,9 +126,66 @@ class GenericCandidateResolver(
         // Solution
         val hasContradiction = constraintSystem.status.hasContradiction()
         if (!hasContradiction) {
+            addExpectedTypeForExplicitCast(context, builder)
             return INCOMPLETE_TYPE_INFERENCE
         }
         return OTHER_ERROR
+    }
+
+    private fun ConstraintSystem.Builder.typeInSystem(call: Call, type: KotlinType?): KotlinType? =
+            type?.let {
+                typeVariableSubstitutors[call.toHandle()]?.substitute(it, Variance.INVARIANT)
+            }
+
+    private fun FunctionDescriptor.isFunctionForExpectTypeFromCastFeature(): Boolean {
+        val typeParameter = typeParameters.singleOrNull() ?: return false
+
+        val returnType = returnType ?: return false
+        if (returnType is DeferredType && returnType.isComputing) return false
+
+        if (returnType.constructor != typeParameter.typeConstructor) return false
+
+        fun KotlinType.isBadType() = contains { it.constructor == typeParameter.typeConstructor }
+
+        if (valueParameters.any { it.type.isBadType() } || extensionReceiverParameter?.type?.isBadType() == true) return false
+
+        return true
+    }
+
+    private fun addExpectedTypeForExplicitCast(
+            context: CallCandidateResolutionContext<*>,
+            builder: ConstraintSystem.Builder
+    ) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.ExpectedTypeFromCast)) return
+
+        if (context.candidateCall is VariableAsFunctionResolvedCall) return
+
+        val candidateDescriptor = context.candidateCall.candidateDescriptor.safeAs<FunctionDescriptor>() ?: return
+
+        val binaryParent = getBinaryWithTypeParent(context.call.calleeExpression) ?: return
+        val operationType = binaryParent.operationReference.getReferencedNameElementType().takeIf {
+            it == KtTokens.AS_KEYWORD || it == KtTokens.AS_SAFE
+        } ?: return
+
+        val leftType = context.trace.get(BindingContext.TYPE, binaryParent.right ?: return) ?: return
+        val expectedType = if (operationType == KtTokens.AS_SAFE) leftType.makeNullable() else leftType
+
+        if (context.candidateCall.call.typeArgumentList != null || !candidateDescriptor.isFunctionForExpectTypeFromCastFeature()) return
+
+        val typeInSystem = builder.typeInSystem(context.call, candidateDescriptor.returnType ?: return) ?: return
+
+        context.trace.record(BindingContext.CAST_TYPE_USED_AS_EXPECTED_TYPE, binaryParent)
+        builder.addSubtypeConstraint(typeInSystem, expectedType, ConstraintPositionKind.SPECIAL.position())
+    }
+
+    private fun getBinaryWithTypeParent(calleeExpression: KtExpression?): KtBinaryExpressionWithTypeRHS? {
+        val callExpression = calleeExpression?.parent.safeAs<KtCallExpression>() ?: return null
+        val parent = callExpression.parent
+        return when (parent) {
+            is KtBinaryExpressionWithTypeRHS -> parent
+            is KtQualifiedExpression -> parent.parent.safeAs<KtBinaryExpressionWithTypeRHS>().takeIf { parent.selectorExpression == callExpression }
+            else -> null
+        }
     }
 
     private fun addValidityConstraintsForConstituentTypes(builder: ConstraintSystem.Builder, type: KotlinType) {
