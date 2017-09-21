@@ -173,9 +173,8 @@ open class KonanInteropConfig(
         headers.add(files)
     }
 
-
-    fun includeDirs(vararg values: String) = with(interopProcessingTask) {
-        compilerOpts.addAll(values.map { "-I$it" })
+    fun includeDirs(vararg values: Any) = with(interopProcessingTask) {
+        compilerOpts.addAll(values.map { "-I${project.file(it).canonicalPath}" })
     }
 
     fun linkerOpts(vararg values: String) = linkerOpts(values.toList())

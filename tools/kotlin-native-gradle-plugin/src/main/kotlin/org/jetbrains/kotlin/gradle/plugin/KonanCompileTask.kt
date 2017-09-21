@@ -184,7 +184,7 @@ open class KonanCompileConfig(
 
     // DSL. Input/output files
 
-    fun inputDir(dir: String) = with(compilationTask) {
+    fun inputDir(dir: Any) = with(compilationTask) {
         _inputFiles.add(project.fileTree(dir))
     }
     fun inputFiles(vararg files: Any) = with(compilationTask) {
