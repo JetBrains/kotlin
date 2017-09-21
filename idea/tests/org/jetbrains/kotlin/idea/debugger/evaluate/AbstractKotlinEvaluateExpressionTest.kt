@@ -104,6 +104,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     }
 
     fun doSingleBreakpointTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
+
         val file = File(path)
         val fileText = FileUtil.loadFile(file, true)
 
@@ -165,6 +167,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     }
 
     fun doMultipleBreakpointsTest(path: String) {
+        assert(false) // TODO: Fix this test, otherwise it fails and hangs for 100 sec in AS 3.0
+
         val file = File(path)
         val fileText = FileUtil.loadFile(file, true)
 
