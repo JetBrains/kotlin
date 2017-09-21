@@ -45,6 +45,13 @@ class ClangTarget(val target: KonanTarget, konanProperties: KonanProperties) {
                         "-I$sysRoot/usr/include/c++/4.9.4",
                         "-I$sysRoot/usr/include/c++/4.9.4/mips-unknown-linux-gnu")
 
+            KonanTarget.MIPSEL ->
+                listOf("-target", targetArg!!,
+                        "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
+                        "--sysroot=$sysRoot",
+                        "-I$sysRoot/usr/include/c++/4.9.4",
+                        "-I$sysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu")
+
             KonanTarget.MINGW ->
                 listOf("-target", targetArg!!, "--sysroot=$sysRoot",
                         "-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1")

@@ -2084,7 +2084,9 @@ kotlinNativeInterop {
 }
 
 task interop0(type: RunInteropKonanTest) {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') ||  // No interop for wasm yet.
+               (project.testTarget == 'mips')   ||  //  st_uid of '/' is not equal to 0 when using qemu
+               (project.testTarget == 'mipsel')     //  st_uid of '/' is not equal to 0 when using qemu
     goldValue = "0\n0\n"
     source = "interop/basics/0.kt"
     interop = 'sysstat'
@@ -2112,6 +2114,7 @@ task interop3(type: RunInteropKonanTest) {
     // test back on.
     disabled = (project.testTarget == 'raspberrypi') ||
                (project.testTarget == 'mips') ||
+               (project.testTarget == 'mipsel') ||
                (project.testTarget == 'wasm32') // No interop for wasm yet.
     goldValue = "8 9 12 13 14 \n"
     source = "interop/basics/3.kt"
@@ -2127,12 +2130,14 @@ task interop4(type: RunInteropKonanTest) {
 
 task interop_bitfields(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    expectedFail = (project.testTarget == 'mips') // fails because of big-endiannes
     source = "interop/basics/bf.kt"
     interop = 'bitfields'
 }
 
 task interop_funptr(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    expectedFail = (project.testTarget == 'mips') // fails because of big-endiannes
     goldValue = "42\n17\n1\n0\n"
     source = "interop/basics/funptr.kt"
     interop = 'cfunptr'

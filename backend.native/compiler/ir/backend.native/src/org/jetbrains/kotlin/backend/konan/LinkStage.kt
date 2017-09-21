@@ -155,7 +155,7 @@ internal open class LinuxBasedPlatform(val distribution: Distribution)
                     "${targetSysRoot}/usr/lib64/crt1.o",
                     "${targetSysRoot}/usr/lib64/crti.o", "${libGcc}/crtbegin.o",
                     "-L${llvmLib}", "-L${libGcc}"))
-            if (distribution.target != KonanTarget.MIPS) add("--hash-style=gnu") // MIPS doesn't support hash-style=gnu
+            if (distribution.target != KonanTarget.MIPS && distribution.target != KonanTarget.MIPSEL) add("--hash-style=gnu") // MIPS doesn't support hash-style=gnu
             addAll(specificLibs)
             addAll(listOf("-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib"))
             if (optimize) addAll(listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags)
@@ -218,7 +218,8 @@ internal class LinkStage(val context: Context) {
     private val distribution = context.config.distribution
 
     private val platform = when (target) {
-        KonanTarget.LINUX, KonanTarget.RASPBERRYPI, KonanTarget.MIPS ->
+        KonanTarget.LINUX, KonanTarget.RASPBERRYPI,
+        KonanTarget.MIPS, KonanTarget.MIPSEL ->
             LinuxBasedPlatform(distribution)
         KonanTarget.MACBOOK, KonanTarget.IPHONE, KonanTarget.IPHONE_SIM ->
             MacOSBasedPlatform(distribution)

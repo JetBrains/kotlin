@@ -277,13 +277,18 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
     }
 
     List<String> executionCommandLine(String exe) {
+        def properties = project.rootProject.konanProperties
         if (target == KonanTarget.WASM32) {
-            def properties = project.rootProject.konanProperties
             def targetToolchain = TargetPropertiesKt.hostTargetString(properties, "targetToolchain", target)
             def absoluteTargetToolchain = "$dependenciesDir/$targetToolchain"
             def d8 = "$absoluteTargetToolchain/bin/d8"
             def launcherJs = "${exe}.js"
             return [d8, '--expose-wasm', launcherJs, '--', exe]
+        } else if (target == KonanTarget.MIPS || target == KonanTarget.MIPSEL) {
+            def targetSysroot = TargetPropertiesKt.targetString(properties, "targetSysRoot", target)
+            def absoluteTargetSysroot = "$dependenciesDir/$targetSysroot"
+            def qemu = "$absoluteTargetSysroot/bin/qemu-mips"
+            return [qemu, "-L", absoluteTargetSysroot, exe]
         } else {
             return [exe]
         }
