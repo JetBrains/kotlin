@@ -68,8 +68,8 @@ class JsNameClashChecker : SimpleDeclarationChecker {
             val existing = scope[name]
             if (existing != null &&
                 existing != descriptor &&
-                existing.isImpl == descriptor.isImpl &&
-                existing.isHeader == descriptor.isHeader &&
+                existing.isActual == descriptor.isActual &&
+                existing.isExpect == descriptor.isExpect &&
                 !bindingContext.isCommonDiagnosticReported(declaration)
             ) {
                 diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(declaration, name, existing))
@@ -109,11 +109,11 @@ class JsNameClashChecker : SimpleDeclarationChecker {
         return diagnostics.forElement(declaration).any { it.factory in COMMON_DIAGNOSTICS }
     }
 
-    private val DeclarationDescriptor.isImpl: Boolean
-        get() = this is MemberDescriptor && this.isImpl
+    private val DeclarationDescriptor.isActual: Boolean
+        get() = this is MemberDescriptor && this.isActual || this is PropertyAccessorDescriptor && this.correspondingProperty.isActual
 
-    private val DeclarationDescriptor.isHeader: Boolean
-        get() = this is MemberDescriptor && this.isHeader
+    private val DeclarationDescriptor.isExpect: Boolean
+        get() = this is MemberDescriptor && this.isExpect || this is PropertyAccessorDescriptor && this.correspondingProperty.isExpect
 
     private fun isFakeOverridingNative(descriptor: CallableMemberDescriptor): Boolean {
         return descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&

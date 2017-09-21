@@ -1,3 +1,3 @@
-header fun foo(): Int
+expect fun foo(): Int
 
-header val bar: String
+expect val bar: String

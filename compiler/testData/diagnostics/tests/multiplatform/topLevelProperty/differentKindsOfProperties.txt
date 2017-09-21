@@ -1,19 +1,19 @@
 package
 
-public header val backingFieldVal: kotlin.String = "no"
-public header var backingFieldVar: kotlin.String
-public const header val constVal: kotlin.Int
-public header val customAccessorVal: kotlin.String
-public header var customAccessorVar: kotlin.String
-public header val delegated: kotlin.String
-public header val justVal: kotlin.String
-public header var justVar: kotlin.String
-public header lateinit var lateinitVar: kotlin.String
-public header val valWithGet: kotlin.String
-public header var varWithGetSet: kotlin.String
-public header var varWithPlatformGetSet: kotlin.String
-public header val kotlin.String.extensionVal: kotlin.Unit
-public header var </*0*/ T> T.genericExtensionVar: T
+public expect val backingFieldVal: kotlin.String = "no"
+public expect var backingFieldVar: kotlin.String
+public const expect val constVal: kotlin.Int
+public expect val customAccessorVal: kotlin.String
+public expect var customAccessorVar: kotlin.String
+public expect val delegated: kotlin.String
+public expect val justVal: kotlin.String
+public expect var justVar: kotlin.String
+public expect lateinit var lateinitVar: kotlin.String
+public expect val valWithGet: kotlin.String
+public expect var varWithGetSet: kotlin.String
+public expect var varWithPlatformGetSet: kotlin.String
+public expect val kotlin.String.extensionVal: kotlin.Unit
+public expect var </*0*/ T> T.genericExtensionVar: T
 public fun test(): kotlin.String
 
 public object Delegate {

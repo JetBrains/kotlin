@@ -55,12 +55,19 @@ const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin incremental comp
 const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experimental Kotlin/JS incremental compilation"
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile() {
+    // TODO: deprecate and remove
     var compilerJarFile: File? = null
-    internal val compilerJar: File
-        get() = compilerJarFile
-                ?: findKotlinCompilerJar(project)
-                ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
-    protected abstract fun findKotlinCompilerJar(project: Project): File?
+    var compilerClasspath: List<File>? = null
+
+    internal val computedCompilerClasspath: List<File>
+        get() = compilerClasspath?.takeIf { it.isNotEmpty() }
+                ?: compilerJarFile?.let {
+                    // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
+                    listOf(it) + findKotlinCompilerClasspath(project).filter { it.name.startsWith("kotlin-compiler") }
+                }
+                ?: findKotlinCompilerClasspath(project).takeIf { it.isNotEmpty() }
+                ?: throw IllegalStateException("Could not find Kotlin Compiler classpath. Please specify $name.compilerClasspath")
+    protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>(), CompilerArgumentAware {
@@ -255,8 +262,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         incremental = true
     }
 
-    override fun findKotlinCompilerJar(project: Project): File? =
-            findKotlinJvmCompilerJar(project)
+    override fun findKotlinCompilerClasspath(project: Project): List<File> =
+            findKotlinJvmCompilerClasspath(project)
 
     override fun createCompilerArgs(): K2JVMCompilerArguments =
             K2JVMCompilerArguments()
@@ -306,10 +313,10 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
-            !incremental -> GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
+            !incremental -> GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
             else -> {
                 logger.warn(USING_INCREMENTAL_COMPILATION_MESSAGE)
-                GradleIncrementalCompilerEnvironment(compilerJar, changedFiles, reporter, taskBuildDirectory,
+                GradleIncrementalCompilerEnvironment(computedCompilerClasspath, changedFiles, reporter, taskBuildDirectory,
                         messageCollector, outputItemCollector, args, kaptAnnotationsFileUpdater,
                         artifactDifferenceRegistryProvider,
                         artifactFile)
@@ -403,8 +410,8 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     val outputFile: String
         get() = kotlinOptions.outputFile ?: defaultOutputFile.canonicalPath
 
-    override fun findKotlinCompilerJar(project: Project): File? =
-            findKotlinJsCompilerJar(project)
+    override fun findKotlinCompilerClasspath(project: Project): List<File> =
+            findKotlinJsCompilerClasspath(project)
 
     override fun createCompilerArgs(): K2JSCompilerArguments =
             K2JSCompilerArguments()
@@ -463,11 +470,11 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
             incremental -> {
                 logger.warn(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 GradleIncrementalCompilerEnvironment(
-                        compilerJar, changedFiles, reporter, taskBuildDirectory,
+                        computedCompilerClasspath, changedFiles, reporter, taskBuildDirectory,
                         messageCollector, outputItemCollector, args)
             }
             else -> {
-                GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
+                GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
             }
         }
 

@@ -340,7 +340,7 @@ open class LazyClassMemberScope(
         if (!hasPrimaryConstructor) {
             when (thisDescriptor.kind) {
                 ClassKind.INTERFACE -> return null
-                ClassKind.OBJECT, ClassKind.ENUM_CLASS -> if (thisDescriptor.isHeader) return null
+                ClassKind.OBJECT, ClassKind.ENUM_CLASS -> if (thisDescriptor.isExpect) return null
                 else -> {}
             }
         }

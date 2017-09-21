@@ -80,6 +80,8 @@ import static org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt.w
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
 public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
@@ -92,6 +94,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
     protected File javaClassesOutputDirectory = null;
+    protected List<File> additionalDependencies = null;
 
     protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
     private final String defaultJvmTarget = System.getProperty(DEFAULT_JVM_TARGET_FOR_TEST);
@@ -359,6 +362,9 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         List<File> files = new ArrayList<>();
         if (javaClassesOutputDirectory != null) {
             files.add(javaClassesOutputDirectory);
+        }
+        if (additionalDependencies != null) {
+            files.addAll(additionalDependencies);
         }
 
         ScriptDependenciesProvider externalImportsProvider =
@@ -711,7 +717,19 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             result = invokeBoxInSeparateProcess(classLoader, aClass);
         }
         else {
-            result = (String) method.invoke(null);
+            ClassLoader savedClassLoader = Thread.currentThread().getContextClassLoader();
+            if (savedClassLoader != classLoader) {
+                // otherwise the test infrastructure used in the test may conflict with the one from the context classloader
+                Thread.currentThread().setContextClassLoader(classLoader);
+            }
+            try {
+                result = (String) method.invoke(null);
+            }
+            finally {
+                if (savedClassLoader != classLoader) {
+                    Thread.currentThread().setContextClassLoader(savedClassLoader);
+                }
+            }
         }
         assertEquals("OK", result);
     }

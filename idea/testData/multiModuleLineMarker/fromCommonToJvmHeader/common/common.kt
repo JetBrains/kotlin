@@ -1,7 +1,7 @@
-header class <lineMarker>Header</lineMarker> {
+expect class <lineMarker>Header</lineMarker> {
     fun foo(): Int
 }
 
-header fun <lineMarker>foo</lineMarker>(arg: Int): String
+expect fun <lineMarker>foo</lineMarker>(arg: Int): String
 
-header val <lineMarker>flag</lineMarker>: Boolean
+expect val <lineMarker>flag</lineMarker>: Boolean

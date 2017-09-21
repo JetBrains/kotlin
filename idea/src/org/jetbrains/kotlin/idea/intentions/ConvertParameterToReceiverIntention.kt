@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatu
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.idea.refactoring.resolveToHeaderDescriptorIfPossible
+import org.jetbrains.kotlin.idea.refactoring.resolveToExpectedDescriptorIfPossible
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -52,7 +52,7 @@ class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtParameter>(
     override fun applyTo(element: KtParameter, editor: Editor?) {
         val function = element.getStrictParentOfType<KtNamedFunction>() ?: return
         val parameterIndex = function.valueParameters.indexOf(element)
-        val descriptor = function.resolveToHeaderDescriptorIfPossible() as? FunctionDescriptor ?: return
+        val descriptor = function.resolveToExpectedDescriptorIfPossible() as? FunctionDescriptor ?: return
         runChangeSignature(element.project, descriptor, configureChangeSignature(parameterIndex), element, text)
     }
 }

@@ -1,6 +1,6 @@
 package test
 
-impl fun foo(/*rename*/n: Int) {
+actual fun foo(/*rename*/n: Int) {
 
 }
 

@@ -13,120 +13,120 @@ import kotlin.comparisons.*
 /**
  * Returns a [List] containing all key-value pairs.
  */
-public header fun <K, V> Map<out K, V>.toList(): List<Pair<K, V>>
+public expect fun <K, V> Map<out K, V>.toList(): List<Pair<K, V>>
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each entry of original map.
  */
-public header inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -> Iterable<R>): List<R>
+public expect inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -> Iterable<R>): List<R>
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each entry of original map, to the given [destination].
  */
-public header inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C
+public expect inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each entry in the original map.
  */
-public header inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R>
+public expect inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R>
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each entry in the original map.
  */
-public header inline fun <K, V, R : Any> Map<out K, V>.mapNotNull(transform: (Map.Entry<K, V>) -> R?): List<R>
+public expect inline fun <K, V, R : Any> Map<out K, V>.mapNotNull(transform: (Map.Entry<K, V>) -> R?): List<R>
 
 /**
  * Applies the given [transform] function to each entry in the original map
  * and appends only the non-null results to the given [destination].
  */
-public header inline fun <K, V, R : Any, C : MutableCollection<in R>> Map<out K, V>.mapNotNullTo(destination: C, transform: (Map.Entry<K, V>) -> R?): C
+public expect inline fun <K, V, R : Any, C : MutableCollection<in R>> Map<out K, V>.mapNotNullTo(destination: C, transform: (Map.Entry<K, V>) -> R?): C
 
 /**
  * Applies the given [transform] function to each entry of the original map
  * and appends the results to the given [destination].
  */
-public header inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C
+public expect inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C
 
 /**
  * Returns `true` if all entries match the given [predicate].
  */
-public header inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
+public expect inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
 
 /**
  * Returns `true` if map has at least one entry.
  */
-public header fun <K, V> Map<out K, V>.any(): Boolean
+public expect fun <K, V> Map<out K, V>.any(): Boolean
 
 /**
  * Returns `true` if at least one entry matches the given [predicate].
  */
-public header inline fun <K, V> Map<out K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
+public expect inline fun <K, V> Map<out K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
 
 /**
  * Returns the number of entries in this map.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <K, V> Map<out K, V>.count(): Int
+public expect inline fun <K, V> Map<out K, V>.count(): Int
 
 /**
  * Returns the number of entries matching the given [predicate].
  */
-public header inline fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int
+public expect inline fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int
 
 /**
  * Performs the given [action] on each entry.
  */
 @kotlin.internal.HidesMembers
-public header inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit
+public expect inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit
 
 /**
  * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>?
+public expect inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>?
 
 /**
  * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>?
+public expect inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>?
 
 /**
  * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
  */
-public header inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>?
+public expect inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>?
 
 /**
  * Returns the first entry having the smallest value according to the provided [comparator] or `null` if there are no entries.
  */
-public header fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>?
+public expect fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>?
 
 /**
  * Returns `true` if the map has no entries.
  */
-public header fun <K, V> Map<out K, V>.none(): Boolean
+public expect fun <K, V> Map<out K, V>.none(): Boolean
 
 /**
  * Returns `true` if no entries match the given [predicate].
  */
-public header inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
+public expect inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean
 
 /**
  * Performs the given [action] on each entry and returns the map itself afterwards.
  */
 @SinceKotlin("1.1")
-public header inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -> Unit): M
+public expect inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -> Unit): M
 
 /**
  * Creates an [Iterable] instance that wraps the original map returning its entries when being iterated.
  */
 @kotlin.internal.InlineOnly
-public header inline fun <K, V> Map<out K, V>.asIterable(): Iterable<Map.Entry<K, V>>
+public expect inline fun <K, V> Map<out K, V>.asIterable(): Iterable<Map.Entry<K, V>>
 
 /**
  * Creates a [Sequence] instance that wraps the original map returning its entries when being iterated.
  */
-public header fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>>
+public expect fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>>
 

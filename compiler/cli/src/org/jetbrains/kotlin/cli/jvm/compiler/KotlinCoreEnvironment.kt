@@ -109,11 +109,12 @@ import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable,
         applicationEnvironment: JavaCoreApplicationEnvironment,
-        configuration: CompilerConfiguration,
+        initialConfiguration: CompilerConfiguration,
         configFiles: EnvironmentConfigFiles
 ) {
     private val projectEnvironment: JavaCoreProjectEnvironment = object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
@@ -151,7 +152,7 @@ class KotlinCoreEnvironment private constructor(
     private val classpathRootsResolver: ClasspathRootsResolver
     private val initialRoots: List<JavaRoot>
 
-    val configuration: CompilerConfiguration = configuration.copy()
+    val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
     init {
         PersistentFSConstants.setMaxIntellisenseFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING)
@@ -176,6 +177,7 @@ class KotlinCoreEnvironment private constructor(
         project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES))
 
         registerProjectServicesForCLI(projectEnvironment)
+
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         registerProjectServices(projectEnvironment, messageCollector)
 
@@ -481,20 +483,25 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            var pluginRoot =
+
+            fun File.hasConfigFile(configFile: String): Boolean =
+                    if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
+                    else try {
+                        ZipFile(this).use {
+                            it.getEntry("META-INF/" + configFile) != null
+                        }
+                    }
+                    catch (e: Throwable) {
+                        false
+                    }
+
+            val pluginRoot =
                     configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
                     ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
-                    ?: PathUtil.pathUtilJar
-
-            val app = ApplicationManager.getApplication()
-            val parentFile = pluginRoot.parentFile
-
-            if (pluginRoot.isDirectory && app != null && app.isUnitTestMode
-                && FileUtil.toCanonicalPath(parentFile.path).endsWith("out/production")) {
-                // hack for load extensions when compiler run directly from out directory(e.g. in tests)
-                val srcDir = parentFile.parentFile.parentFile
-                pluginRoot = File(srcDir, "idea/src")
-            }
+                    ?: PathUtil.pathUtilJar.takeIf { it.hasConfigFile(configFilePath) }
+                    // hack for load extensions when compiler run directly from project directory (e.g. in tests)
+                    ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
+                    ?: throw IllegalStateException("Unable to find extension point configuration $configFilePath")
 
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
         }
@@ -546,5 +553,32 @@ class KotlinCoreEnvironment private constructor(
              */
 
         }
+
+        private fun CompilerConfiguration.setupJdkClasspathRoots(configFiles: EnvironmentConfigFiles) {
+            if (getBoolean(JVMConfigurationKeys.NO_JDK)) return
+
+            val jvmTarget = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
+            if (!jvmTarget) return
+
+            val jdkHome = get(JVMConfigurationKeys.JDK_HOME)
+            val (javaRoot, classesRoots) = if (jdkHome == null) {
+                val javaHome = File(System.getProperty("java.home"))
+                put(JVMConfigurationKeys.JDK_HOME, javaHome)
+
+                javaHome to PathUtil.getJdkClassesRootsFromCurrentJre()
+            }
+            else {
+                jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
+            }
+
+            if (!CoreJrtFileSystem.isModularJdk(javaRoot)) {
+                addJvmClasspathRoots(classesRoots)
+                if (classesRoots.isEmpty()) {
+                    val messageCollector = get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                    messageCollector?.report(ERROR, "No class roots are found in the JDK path: $javaRoot")
+                }
+            }
+        }
+
     }
 }

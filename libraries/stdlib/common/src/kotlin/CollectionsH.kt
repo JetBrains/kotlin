@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-open header class ArrayList<E> : MutableList<E> {
+open expect class ArrayList<E> : MutableList<E> {
     constructor(capacity: Int)
     constructor()
     constructor(c: Collection<E>)
@@ -52,7 +52,7 @@ open header class ArrayList<E> : MutableList<E> {
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
 }
 
-open header class HashMap<K, V> : MutableMap<K, V> {
+open expect class HashMap<K, V> : MutableMap<K, V> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(initialCapacity: Int, loadFactor: Float)
@@ -75,14 +75,14 @@ open header class HashMap<K, V> : MutableMap<K, V> {
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 }
 
-open header class LinkedHashMap<K, V> : HashMap<K, V> {
+open expect class LinkedHashMap<K, V> : HashMap<K, V> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(initialCapacity: Int, loadFactor: Float)
     constructor(original: Map<out K, V>)
 }
 
-open header class HashSet<E> : MutableSet<E> {
+open expect class HashSet<E> : MutableSet<E> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(initialCapacity: Int, loadFactor: Float)
@@ -104,17 +104,17 @@ open header class HashSet<E> : MutableSet<E> {
     override fun clear()
 }
 
-open header class LinkedHashSet<E> : HashSet<E> {
+open expect class LinkedHashSet<E> : HashSet<E> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(initialCapacity: Int, loadFactor: Float)
     constructor(c: Collection<E>)
 }
 
-header interface RandomAccess
+expect interface RandomAccess
 
 
-header abstract class AbstractMutableList<E> : MutableList<E> {
+expect abstract class AbstractMutableList<E> : MutableList<E> {
     protected constructor()
 
     // From List
@@ -144,19 +144,19 @@ header abstract class AbstractMutableList<E> : MutableList<E> {
 // From collections.kt
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
-header inline fun <reified T> Array<out T>?.orEmpty(): Array<out T>
+expect inline fun <reified T> Array<out T>?.orEmpty(): Array<out T>
 
 
-header inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
+expect inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
 
-header fun <T : Comparable<T>> MutableList<T>.sort(): Unit
-header fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit
+expect fun <T : Comparable<T>> MutableList<T>.sort(): Unit
+expect fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit
 
 
 // from Grouping.kt
-public header fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int>
-// public header inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Map<K, Int>
+public expect fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int>
+// public expect inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Map<K, Int>
 
-internal header fun copyToArrayImpl(collection: Collection<*>): Array<Any?>
+internal expect fun copyToArrayImpl(collection: Collection<*>): Array<Any?>
 
-internal header fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T>
+internal expect fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T>

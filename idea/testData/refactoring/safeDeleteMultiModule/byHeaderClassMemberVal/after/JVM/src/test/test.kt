@@ -1,6 +1,6 @@
 package test
 
-impl class Foo {
+actual class Foo {
     val foo get() = 2
 }
 

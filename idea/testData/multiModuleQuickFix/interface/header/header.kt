@@ -1,6 +1,6 @@
-// "Create header interface implementation for platform JVM" "true"
+// "Create actual interface for platform JVM" "true"
 
-header interface <caret>Interface {
+expect interface <caret>Interface {
     fun foo(param: String): Int
 
     fun String.bar(y: Double): Boolean

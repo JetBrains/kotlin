@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
-import org.jetbrains.kotlin.idea.highlighter.markers.implementationsOf
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsFor
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -46,18 +46,18 @@ class KotlinMultiplatformJUnitRecognizer : JUnitRecognizer() {
 
         val bindingContext = origin.analyze(BodyResolveMode.PARTIAL)
         val methodDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, origin] ?: return false
-        return methodDescriptor.annotations.getAllAnnotations().any { it.isHeaderOfAnnotation("org.junit.Test", implModules) }
+        return methodDescriptor.annotations.getAllAnnotations().any { it.isExpectOfAnnotation("org.junit.Test", implModules) }
 
     }
 }
 
-private fun AnnotationWithTarget.isHeaderOfAnnotation(fqName: String, implModules: Collection<ModuleDescriptor>): Boolean {
+private fun AnnotationWithTarget.isExpectOfAnnotation(fqName: String, implModules: Collection<ModuleDescriptor>): Boolean {
     val annotationClass = annotation.type.constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters ?: return false
-    if (!annotationClass.isHeader) return false
+    if (!annotationClass.isExpect) return false
 
     return implModules
         .any { module ->
-            module.implementationsOf(annotationClass, checkCompatible = false)
+            module.actualsFor(annotationClass, checkCompatible = false)
                 .filterIsInstance<TypeAliasDescriptor>()
                 .any { it.classDescriptor?.fqNameSafe?.asString() == fqName }
         }

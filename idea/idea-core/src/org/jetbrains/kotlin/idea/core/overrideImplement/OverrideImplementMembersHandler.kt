@@ -32,12 +32,11 @@ import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
     fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<OverrideMemberChooserObject> {
-        val descriptor = classOrObject.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? ClassDescriptor ?: return emptySet()
+        val descriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return emptySet()
         return collectMembersToGenerate(descriptor, classOrObject.project)
     }
 

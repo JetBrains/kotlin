@@ -1,6 +1,6 @@
 package test
 
-impl open class Foo {
+actual open class Foo {
     constructor(n: Int)
 }
 

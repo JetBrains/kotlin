@@ -5,6 +5,6 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/jvm.kt:3:1: error: declaration should be marked with 'impl' (suppress with -Xno-check-impl)
+compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/jvm.kt:3:1: error: declaration should be marked with 'actual' (suppress with -Xno-check-actual)
 fun foo(s: String): Array<CharSequence?> = arrayOf(s)
 ^

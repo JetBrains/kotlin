@@ -39,15 +39,15 @@ open class KotlinUClass private constructor(
 
     override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
 
-    override fun getNameIdentifier() = UastLightIdentifier(psi, ktClass)
+    override fun getNameIdentifier(): PsiIdentifier? = UastLightIdentifier(psi, ktClass)
 
-    override fun getContainingFile(): PsiFile? = ktClass?.containingFile ?: psi.containingFile
+    override fun getContainingFile(): PsiFile? = unwrapFakeFileForLightClass(psi.containingFile)
 
     override val annotations: List<UAnnotation>
         get() = ktClass?.annotationEntries?.map { KotlinUAnnotation(it, this) } ?: emptyList()
 
     override val uastAnchor: UElement
-        get() = UIdentifier(psi.nameIdentifier, this)
+        get() = UIdentifier(nameIdentifier, this)
 
     override fun getInnerClasses(): Array<UClass> {
         // filter DefaultImpls to avoid processing same methods from original interface multiple times
@@ -123,6 +123,8 @@ class KotlinUAnonymousClass(
     override fun getInitializers(): Array<UClassInitializer> = super<AbstractJavaUClass>.getInitializers()
     override fun getInnerClasses(): Array<UClass> = super<AbstractJavaUClass>.getInnerClasses()
 
+    override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
+
     override val uastAnchor: UElement?
         get() {
             val ktClassOrObject = (psi.originalElement as? KtLightClass)?.kotlinOrigin as? KtObjectDeclaration ?: return null 
@@ -134,6 +136,12 @@ class KotlinScriptUClass(
         psi: KtLightClassForScript,
         override val uastParent: UElement?
 ) : AbstractJavaUClass(), PsiClass by psi {
+    override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
+
+    override fun getNameIdentifier(): PsiIdentifier? = UastLightIdentifier(psi, psi.kotlinOrigin)
+
+    override val uastAnchor: UElement
+        get() = UIdentifier(nameIdentifier, this)
 
     override val psi = unwrap<UClass, KtLightClassForScript>(psi)
 

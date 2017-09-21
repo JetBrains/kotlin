@@ -132,12 +132,14 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
                     return KotlinStdJSProjectDescriptor
                 }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "ENABLE_MULTIPLATFORM")) {
+                    return KotlinProjectDescriptorWithFacet.KOTLIN_STABLE_WITH_MULTIPLATFORM
+                }
             }
             catch (e: IOException) {
                 throw rethrow(e)
             }
         }
-
         return KotlinLightProjectDescriptor.INSTANCE
     }
 

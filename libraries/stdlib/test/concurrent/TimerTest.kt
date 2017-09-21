@@ -22,6 +22,6 @@ class TimerTest {
         task.cancel()
 
         val value = counter.get()
-        assertTrue(value > 4, "Expected to fire at least 4 times, but was $value")
+        assertTrue(value >= 4, "Expected to fire at least 4 times, but was $value")
     }
 }

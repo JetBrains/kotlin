@@ -1,7 +1,7 @@
 // "Add 'operator' modifier" "true"
 
-impl class Foo {
-    impl fun <caret>unaryMinus() {
+actual class Foo {
+    actual fun <caret>unaryMinus() {
 
     }
 }

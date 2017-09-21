@@ -1,3 +1,3 @@
 package test
 
-impl typealias Writer = java.io.Writer
+actual typealias Writer = java.io.Writer

@@ -31,17 +31,27 @@ import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.isBackingFieldReference;
 
 public final class ReferenceTranslator {
+    private static final Set<FqNameUnsafe> DECLARATIONS_WITHOUT_SIZE_EFFECTS = new HashSet<>(Arrays.asList(
+            new FqNameUnsafe("kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED"),
+            new FqNameUnsafe("kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED"),
+            KotlinBuiltIns.FQ_NAMES.unit
+    ));
 
     private ReferenceTranslator() {
     }
@@ -55,12 +65,10 @@ public final class ReferenceTranslator {
     public static JsExpression translateAsValueReference(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         JsExpression result = translateAsValueReferenceWithoutType(descriptor, context);
         MetadataProperties.setType(result, getType(descriptor));
-        if (descriptor instanceof ClassDescriptor) {
-            if (KotlinBuiltIns.isUnit(((ClassDescriptor) descriptor).getDefaultType())) {
-                MetadataProperties.setUnit(result, true);
-                MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
-                MetadataProperties.setSynthetic(result, true);
-            }
+        if (isValueWithoutSideEffect(descriptor)) {
+            MetadataProperties.setUnit(result, true);
+            MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
+            MetadataProperties.setSynthetic(result, true);
         }
         return result;
     }
@@ -101,7 +109,7 @@ public final class ReferenceTranslator {
 
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor property = (PropertyDescriptor) descriptor;
-            if (isLocallyAvailableDeclaration(context, property)) {
+            if (isLocallyAvailableDeclaration(context, property) || isValueWithoutSideEffect(property)) {
                 return context.getInnerReference(property);
             }
             else {
@@ -114,7 +122,7 @@ public final class ReferenceTranslator {
         if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (!isLocallyAvailableDeclaration(context, descriptor)) {
-                if (KotlinBuiltIns.isUnit(classDescriptor.getDefaultType())) {
+                if (isValueWithoutSideEffect(classDescriptor)) {
                     return context.getInnerReference(descriptor);
                 }
                 else {
@@ -128,6 +136,10 @@ public final class ReferenceTranslator {
         }
 
         return context.getInnerReference(descriptor);
+    }
+
+    private static boolean isValueWithoutSideEffect(@NotNull DeclarationDescriptor descriptor) {
+        return DECLARATIONS_WITHOUT_SIZE_EFFECTS.contains(DescriptorUtils.getFqName(descriptor));
     }
 
     @NotNull

@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -122,7 +122,7 @@ fun Call.resolveCandidates(
     val callResolutionContext = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            false, callElement.languageVersionSettings
+            false, resolutionFacade.frontendService<LanguageVersionSettings>()
     ).replaceCollectAllCandidates(true)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 

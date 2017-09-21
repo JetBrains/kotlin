@@ -1,6 +1,6 @@
 package test
 
-header fun foo(/*rename*/n: Int)
+expect fun foo(/*rename*/n: Int)
 
 fun test() {
     foo(1)

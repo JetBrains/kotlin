@@ -23,6 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstr
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -335,6 +335,7 @@ object IDELightClassContexts {
     class AdHocAnnotationResolver(
             private val moduleDescriptor: ModuleDescriptor,
             private val callResolver: CallResolver,
+            private val languageVersionSettings: LanguageVersionSettings,
             constantExpressionEvaluator: ConstantExpressionEvaluator,
             storageManager: StorageManager
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
@@ -365,7 +366,7 @@ object IDELightClassContexts {
                     BasicCallResolutionContext.create(
                             trace, scope, CallMaker.makeCall(null, null, annotationEntry), TypeUtils.NO_EXPECTED_TYPE,
                             DataFlowInfoFactory.EMPTY, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                            true, annotationEntry.languageVersionSettings
+                            true, languageVersionSettings
                     ),
                     annotationEntry.calleeExpression!!.constructorReferenceExpression!!,
                     annotationConstructor.returnType

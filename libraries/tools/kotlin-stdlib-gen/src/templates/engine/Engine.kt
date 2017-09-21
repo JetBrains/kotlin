@@ -491,7 +491,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         builder.append(visibility[f] ?: "public").append(' ')
         if (headerOnly && !hasOptionalParams) {
-            builder.append("header ")
+            builder.append("expect ")
         }
         if (external[platform, f] == true)
             builder.append("external ")

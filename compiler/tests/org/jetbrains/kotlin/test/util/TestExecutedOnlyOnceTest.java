@@ -30,7 +30,6 @@ public class TestExecutedOnlyOnceTest extends TestCase {
         testA = true;
     }
 
-    @RunWith(JUnit3RunnerWithInners.class)
     public static class InnerTest extends TestCase {
         private static boolean testB;
         private static boolean testC;
@@ -45,9 +44,8 @@ public class TestExecutedOnlyOnceTest extends TestCase {
             testC = true;
         }
 
-        @RunWith(JUnit3RunnerWithInners.class)
         public static class InnerInnerTest extends TestCase {
-            @RunWith(JUnit3RunnerWithInners.class)
+
             public static class InnerInnerInnerTest extends TestCase {
                 private static boolean testD;
                 private static boolean testE;

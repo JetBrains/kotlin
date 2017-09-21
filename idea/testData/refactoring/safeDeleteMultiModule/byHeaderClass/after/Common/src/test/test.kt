@@ -1,3 +1,3 @@
 package test
 
-header class ChildOfFoo : Foo()
+expect class ChildOfFoo : Foo()

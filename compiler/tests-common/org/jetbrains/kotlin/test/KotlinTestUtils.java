@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -343,10 +343,18 @@ public class KotlinTestUtils {
         return getHomeDirectory() + "/compiler/testData";
     }
 
+    private static String homeDir = computeHomeDirectory();
+
     @NotNull
     public static String getHomeDirectory() {
-        File resourceRoot = PathUtil.getResourcePathForClass(KotlinTestUtils.class);
-        return FileUtil.toSystemIndependentName(resourceRoot.getParentFile().getParentFile().getParent());
+        return homeDir;
+    }
+
+    @NotNull
+    private static String computeHomeDirectory() {
+        String userDir = System.getProperty("user.dir");
+        File dir = new File(userDir == null ? "." : userDir);
+        return FileUtil.toCanonicalPath(dir.getAbsolutePath());
     }
 
     public static File findMockJdkRtJar() {
@@ -503,17 +511,20 @@ public class KotlinTestUtils {
         JvmContentRootsKt.addJavaSourceRoots(configuration, javaSource);
         if (jdkKind == TestJdkKind.MOCK_JDK) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtJar());
+            configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
         else if (jdkKind == TestJdkKind.MODIFIED_MOCK_JDK) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtModified());
+            configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
         else if (jdkKind == TestJdkKind.ANDROID_API) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findAndroidApiJar());
+            configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_6) {
             String jdk6 = System.getenv("JDK_16");
             assert jdk6 != null : "Environment variable JDK_16 is not set";
-            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk6)));
+            configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
             File home = getJdk9HomeIfPossible();
@@ -523,9 +534,6 @@ public class KotlinTestUtils {
         }
         else if (SystemInfo.IS_AT_LEAST_JAVA9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
-        }
-        else {
-            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromCurrentJre());
         }
 
         if (configurationKind.getWithRuntime()) {

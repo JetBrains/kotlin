@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.Cr
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
-import org.jetbrains.kotlin.idea.quickfix.createImpl.CreateHeaderImplementationFix
+import org.jetbrains.kotlin.idea.quickfix.createImpl.CreateActualFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateExternalExtensionFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateTypeParameterListFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
@@ -130,6 +130,7 @@ class QuickFixRegistrar : QuickFixContributor {
                                                          removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
+        DEPRECATED_MODIFIER.registerFactory(ReplaceModifierFix)
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
@@ -458,6 +459,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         TYPE_PARAMETER_AS_REIFIED.registerFactory(AddReifiedToTypeParameterOfFunctionFix)
 
+        CANNOT_CHECK_FOR_ERASED.registerFactory(MakeTypeParameterReifiedAndFunctionInlineFix)
+
         TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.registerFactory(TooLongCharLiteralToStringFix)
 
         UNUSED_VALUE.registerFactory(RemoveUnusedValueFix)
@@ -476,8 +479,8 @@ class QuickFixRegistrar : QuickFixContributor {
         OVERLOADS_LOCAL.registerFactory(RemoveAnnotationFix.JvmOverloads)
         OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.registerFactory(RemoveAnnotationFix.JvmOverloads)
 
-        HEADER_WITHOUT_IMPLEMENTATION.registerFactory(CreateHeaderImplementationFix)
-        IMPL_MISSING.registerFactory(AddModifierFix.createFactory(KtTokens.IMPL_KEYWORD))
+        NO_ACTUAL_FOR_EXPECT.registerFactory(CreateActualFix)
+        ACTUAL_MISSING.registerFactory(AddModifierFix.createFactory(KtTokens.ACTUAL_KEYWORD))
 
         CAST_NEVER_SUCCEEDS.registerFactory(ReplacePrimitiveCastWithNumberConversionFix)
 

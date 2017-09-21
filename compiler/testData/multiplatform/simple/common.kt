@@ -1,4 +1,4 @@
-header class Printer {
+expect class Printer {
     fun print(message: String)
 }
 

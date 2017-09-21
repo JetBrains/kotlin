@@ -4,6 +4,6 @@ fun main(args: Array<String>) {
     doMain()
 }
 
-impl fun doMain() {
+actual fun doMain() {
     console.info(getGreeting())
 }

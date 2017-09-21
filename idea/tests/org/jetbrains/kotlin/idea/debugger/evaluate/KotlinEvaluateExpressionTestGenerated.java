@@ -947,6 +947,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("invisibleDeclarations.kt")
+        public void testInvisibleDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/invisibleDeclarations.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("isInsideInlineLambda.kt")
         public void testIsInsideInlineLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/isInsideInlineLambda.kt");

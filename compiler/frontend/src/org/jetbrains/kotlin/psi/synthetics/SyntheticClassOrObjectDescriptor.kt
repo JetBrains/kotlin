@@ -74,8 +74,8 @@ class SyntheticClassOrObjectDescriptor(
     override fun isCompanionObject() = isCompanionObject
     override fun isInner() = false
     override fun isData() = false
-    override fun isHeader() = false
-    override fun isImpl() = false
+    override fun isExpect() = false
+    override fun isActual() = false
 
     override fun getCompanionObjectDescriptor() = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor

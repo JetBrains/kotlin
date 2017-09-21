@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
@@ -165,32 +166,32 @@ class DeclarationsChecker(
             }
         }
 
-        if (declaration.hasModifier(KtTokens.IMPL_KEYWORD)) {
-            checkImplTypeAlias(declaration, typeAliasDescriptor)
+        if (declaration.hasActualModifier()) {
+            checkActualTypeAlias(declaration, typeAliasDescriptor)
         }
     }
 
-    private fun checkImplTypeAlias(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
+    private fun checkActualTypeAlias(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
         val rhs = typeAliasDescriptor.underlyingType
         val classDescriptor = rhs.constructor.declarationDescriptor
         if (classDescriptor !is ClassDescriptor) {
-            trace.report(IMPL_TYPE_ALIAS_NOT_TO_CLASS.on(declaration))
+            trace.report(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS.on(declaration))
             return
         }
 
         if (classDescriptor.declaredTypeParameters.any { it.variance != Variance.INVARIANT }) {
-            trace.report(IMPL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE.on(declaration))
+            trace.report(ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE.on(declaration))
             return
         }
 
         if (rhs.arguments.any { it.projectionKind != Variance.INVARIANT || it.isStarProjection }) {
-            trace.report(IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE.on(declaration))
+            trace.report(ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE.on(declaration))
             return
         }
 
         if (rhs.arguments.map { it.type.constructor.declarationDescriptor as? TypeParameterDescriptor } !=
                 typeAliasDescriptor.declaredTypeParameters) {
-            trace.report(IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION.on(declaration))
+            trace.report(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION.on(declaration))
             return
         }
     }
@@ -245,24 +246,24 @@ class DeclarationsChecker(
         identifierChecker.checkDeclaration(declaration, trace)
         checkVarargParameters(trace, constructorDescriptor)
         checkConstructorVisibility(constructorDescriptor, declaration)
-        checkHeaderClassConstructor(constructorDescriptor, declaration)
+        checkExpectedClassConstructor(constructorDescriptor, declaration)
     }
 
-    private fun checkHeaderClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
-        if (!constructorDescriptor.isHeader) return
+    private fun checkExpectedClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
+        if (!constructorDescriptor.isExpect) return
 
         if (declaration.hasBody()) {
-            trace.report(HEADER_DECLARATION_WITH_BODY.on(declaration))
+            trace.report(EXPECTED_DECLARATION_WITH_BODY.on(declaration))
         }
 
         if (constructorDescriptor.containingDeclaration.kind == ClassKind.ENUM_CLASS) {
-            trace.report(HEADER_ENUM_CONSTRUCTOR.on(declaration))
+            trace.report(EXPECTED_ENUM_CONSTRUCTOR.on(declaration))
         }
 
         if (declaration is KtPrimaryConstructor && !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass)) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {
-                    trace.report(HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))
+                    trace.report(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))
                 }
             }
         }
@@ -270,7 +271,7 @@ class DeclarationsChecker(
         if (declaration is KtSecondaryConstructor) {
             val delegationCall = declaration.getDelegationCall()
             if (!delegationCall.isImplicit) {
-                trace.report(HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL.on(delegationCall))
+                trace.report(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL.on(delegationCall))
             }
         }
     }
@@ -632,11 +633,11 @@ class DeclarationsChecker(
 
         val initializer = property.initializer
         val delegate = property.delegate
-        val isHeader = propertyDescriptor.isHeader
+        val isExpect = propertyDescriptor.isExpect
         if (initializer != null) {
             when {
                 inInterface -> trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
-                isHeader -> trace.report(HEADER_PROPERTY_INITIALIZER.on(initializer))
+                isExpect -> trace.report(EXPECTED_PROPERTY_INITIALIZER.on(initializer))
                 !backingFieldRequired -> trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
                 property.receiverTypeReference != null -> trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
             }
@@ -649,7 +650,7 @@ class DeclarationsChecker(
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
             val isExternal = propertyDescriptor.isEffectivelyExternal()
-            if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isHeader && isUninitialized && !isExternal) {
+            if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isExpect && isUninitialized && !isExternal) {
                 if (propertyDescriptor.extensionReceiverParameter != null && !hasAccessorImplementation) {
                     trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
                 }
@@ -695,7 +696,7 @@ class DeclarationsChecker(
 
         if (containingDescriptor is ClassDescriptor) {
             val inInterface = containingDescriptor.kind == ClassKind.INTERFACE
-            val isHeaderClass = containingDescriptor.isHeader
+            val isExpectClass = containingDescriptor.isExpect
             if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
             }
@@ -711,31 +712,31 @@ class DeclarationsChecker(
                     trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(function))
                 }
             }
-            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isHeaderClass) {
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isExpectClass) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
         }
         else /* top-level only */ {
-            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isHeader) {
+            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isExpect) {
                 trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
             }
         }
 
-        if (functionDescriptor.isHeader) {
-            checkHeaderFunction(function)
+        if (functionDescriptor.isExpect) {
+            checkExpectedFunction(function)
         }
 
         shadowedExtensionChecker.checkDeclaration(function, functionDescriptor)
     }
 
-    private fun checkHeaderFunction(function: KtNamedFunction) {
+    private fun checkExpectedFunction(function: KtNamedFunction) {
         if (function.hasBody()) {
-            trace.report(HEADER_DECLARATION_WITH_BODY.on(function))
+            trace.report(EXPECTED_DECLARATION_WITH_BODY.on(function))
         }
 
         for (parameter in function.valueParameters) {
             if (parameter.hasDefaultValue()) {
-                trace.report(HEADER_DECLARATION_WITH_DEFAULT_PARAMETER.on(parameter))
+                trace.report(EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER.on(parameter))
             }
         }
     }
@@ -788,8 +789,8 @@ class DeclarationsChecker(
             accessorDescriptor: PropertyAccessorDescriptor?
     ) {
         if (accessor == null || accessorDescriptor == null) return
-        if (propertyDescriptor.isHeader && accessor.hasBody()) {
-            trace.report(HEADER_DECLARATION_WITH_BODY.on(accessor))
+        if (propertyDescriptor.isExpect && accessor.hasBody()) {
+            trace.report(EXPECTED_DECLARATION_WITH_BODY.on(accessor))
         }
 
         val accessorModifierList = accessor.modifierList ?: return
@@ -828,9 +829,9 @@ class DeclarationsChecker(
     private fun checkEnumEntry(enumEntry: KtEnumEntry, enumEntryClass: ClassDescriptor) {
         val enumClass = enumEntryClass.containingDeclaration as ClassDescriptor
         if (DescriptorUtils.isEnumClass(enumClass)) {
-            if (enumClass.isHeader) {
+            if (enumClass.isExpect) {
                 if (enumEntry.getBody() != null) {
-                    trace.report(HEADER_ENUM_ENTRY_WITH_BODY.on(enumEntry))
+                    trace.report(EXPECTED_ENUM_ENTRY_WITH_BODY.on(enumEntry))
                 }
             }
         }

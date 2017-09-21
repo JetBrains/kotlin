@@ -90,9 +90,9 @@ fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this)
     else -> "compile"
 }
 
-fun RepositoryDescription.toGroovyRepositorySnippet() = "maven {\nurl '$url'\n}"
+fun RepositoryDescription.toGroovyRepositorySnippet() = "maven {\n    url '$url'\n}"
 
-fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\nsetUrl(\"$url\")\n}"
+fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\n    setUrl(\"$url\")\n}"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY

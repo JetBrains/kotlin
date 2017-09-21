@@ -35,23 +35,6 @@ fun clearReflectionCache(classLoader: ClassLoader) {
 }
 
 
-fun getGeneratedClass(classLoader: ClassLoader, className: String): Class<*> {
-    try {
-        return classLoader.loadClass(className)
-    }
-    catch (e: ClassNotFoundException) {
-        error("No class file was generated for: " + className)
-    }
-}
-
-fun getBoxMethodOrNull(aClass: Class<*>): Method? {
-    try {
-        return aClass.getMethod("box")
-    }
-    catch (e: NoSuchMethodException) {
-        return null
-    }
-}
 
 fun ClassLoader?.extractUrls(): List<URL> {
     return (this as? URLClassLoader)?.let {

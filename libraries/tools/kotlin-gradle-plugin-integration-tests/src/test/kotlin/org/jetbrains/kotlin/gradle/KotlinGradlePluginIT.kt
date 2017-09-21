@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -29,6 +29,7 @@ import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class KotlinGradleIT: BaseGradleIT() {
@@ -656,6 +657,62 @@ class KotlinGradleIT: BaseGradleIT() {
                 check(copyClassesToJavaOutput = null,
                         expectBuildCacheWarning = false,
                         expectGradleLowVersionWarning = true)
+            }
+        }
+    }
+
+    @Test
+    fun testSrcDirTaskDependency() {
+        Project("simpleProject", "4.1").apply {
+            setupWorkingDir()
+            File(projectDir, "build.gradle").appendText("""${'\n'}
+                task generateSources {
+                    outputs.dir('generated')
+                    doLast {
+                        def file = new File('generated/test/TestClass.java')
+                        file.parentFile.mkdirs()
+                        file.text = ""${'"'}
+                            package test;
+
+                            public class TestClass { }
+                        ""${'"'}
+                    }
+                }
+                sourceSets.main.java.srcDir(tasks.generateSources)
+                """.trimIndent())
+            File(projectDir, "src/main/kotlin/helloWorld.kt").appendText("""${'\n'}
+                fun usageOfGeneratedSource() = test.TestClass()
+                """.trimIndent())
+
+            build("build") {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
+    fun testSourceJar() {
+        Project("simpleProject", "4.1").apply {
+            setupWorkingDir()
+            val additionalSrcDir = "src/additional/kotlin/"
+
+            File(projectDir, additionalSrcDir).mkdirs()
+            File(projectDir, "$additionalSrcDir/additionalSource.kt").writeText("fun hello() = 123")
+
+            File(projectDir, "build.gradle").appendText("""${'\n'}
+                task sourcesJar(type: Jar) {
+                    from sourceSets.main.allSource
+                    classifier 'source'
+                    duplicatesStrategy = 'fail' // fail in case of Java source duplication, see KT-17564
+                }
+
+                sourceSets.main.kotlin.srcDir('$additionalSrcDir') // test that additional srcDir is included
+                """.trimIndent())
+
+            build("sourcesJar") {
+                assertSuccessful()
+                val sourcesJar = ZipFile(File(projectDir, "build/libs/simpleProject-source.jar"))
+                assertNotNull(sourcesJar.getEntry("additionalSource.kt"))
             }
         }
     }

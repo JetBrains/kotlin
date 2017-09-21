@@ -2,7 +2,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class Foo {
+expect class Foo {
     fun bar(): String
 }
 
@@ -13,4 +13,4 @@ open class Bar {
     fun bar() = "bar"
 }
 
-impl class Foo : Bar()
+actual class Foo : Bar()

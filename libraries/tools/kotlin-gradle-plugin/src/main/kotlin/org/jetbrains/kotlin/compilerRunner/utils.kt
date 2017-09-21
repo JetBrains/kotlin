@@ -32,26 +32,40 @@ import java.io.File
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
-internal fun loadCompilerVersion(compilerJar: File): String {
-    var result = "<unknown>"
+internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
+    var result: String? = null
+
+    fun checkVersion(bytes: ByteArray) {
+        ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+            override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
+                if (name == KotlinCompilerVersion::VERSION.name && value is String) {
+                    result = value
+                }
+                return super.visitField(access, name, desc, signature, value)
+            }
+        }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
+    }
 
     try {
-        ZipFile(compilerJar).use { file ->
-            val fileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
-            val bytes = file.getInputStream(file.getEntry(fileName)).use { inputStream -> inputStream.readBytes() }
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
-                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
-                    if (name == KotlinCompilerVersion::VERSION.name && value is String) {
-                        result = value
-                    }
-                    return super.visitField(access, name, desc, signature, value)
+        val versionClassFileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
+        for (cpFile in compilerClasspath) {
+            if (cpFile.isFile && cpFile.extension.toLowerCase() == "jar") {
+                ZipFile(cpFile).use { jar ->
+                    val bytes = jar.getInputStream(jar.getEntry(versionClassFileName)).use { it.readBytes() }
+                    checkVersion(bytes)
                 }
-            }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
+            }
+            else if (cpFile.isDirectory) {
+                File(cpFile, versionClassFileName).takeIf { it.isFile }?.let {
+                    checkVersion(it.readBytes())
+                }
+            }
+            if (result != null) break
         }
     }
     catch (e: Throwable) {}
 
-    return result
+    return result ?: "<unknown>"
 }
 
 internal fun runToolInSeparateProcess(

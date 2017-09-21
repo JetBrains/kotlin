@@ -163,7 +163,7 @@ public final class AnnotationsUtils {
     }
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isHeader()) return true;
+        if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isExpect()) return true;
         if (isEffectivelyExternalMember(descriptor)) return true;
 
         for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {

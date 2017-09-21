@@ -1,6 +1,6 @@
-// "Create header class implementation for platform JVM" "true"
+// "Create actual class for platform JVM" "true"
 
-header class <caret>My {
+expect class <caret>My {
     fun foo(param: String): Int
 
     fun String.bar(y: Double): Boolean

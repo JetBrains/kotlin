@@ -1,5 +1,5 @@
-impl class Foo {
-    impl fun f(s: String) {}
+actual class Foo {
+    actual fun f(s: String) {}
 }
 
-impl fun g(a: Any) {}
+actual fun g(a: Any) {}

@@ -87,7 +87,9 @@ object ModifierCheckerCore {
             OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
             INFIX_KEYWORD     to EnumSet.of(FUNCTION),
             HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
-            IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
+            IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS),
+            EXPECT_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
+            ACTUAL_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
     )
 
     private val featureDependencies = mapOf(
@@ -95,6 +97,8 @@ object ModifierCheckerCore {
             INLINE_KEYWORD    to listOf(LanguageFeature.InlineProperties),
             HEADER_KEYWORD    to listOf(LanguageFeature.MultiPlatformProjects),
             IMPL_KEYWORD      to listOf(LanguageFeature.MultiPlatformProjects),
+            EXPECT_KEYWORD    to listOf(LanguageFeature.MultiPlatformProjects),
+            ACTUAL_KEYWORD      to listOf(LanguageFeature.MultiPlatformProjects),
             LATEINIT_KEYWORD  to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables)
     )
 
@@ -106,6 +110,11 @@ object ModifierCheckerCore {
 
     // NOTE: deprecated targets must be possible!
     private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+
+    private val deprecatedModifierMap = mapOf(
+            HEADER_KEYWORD to EXPECT_KEYWORD,
+            IMPL_KEYWORD to ACTUAL_KEYWORD
+    )
 
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
@@ -182,8 +191,11 @@ object ModifierCheckerCore {
         // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
         result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
 
-        // lateinit is incompatible with header
-        result += incompatibilityRegister(LATEINIT_KEYWORD, HEADER_KEYWORD)
+        // lateinit is incompatible with header / expect
+        result += incompatibilityRegister(LATEINIT_KEYWORD, HEADER_KEYWORD, EXPECT_KEYWORD)
+
+        // header / expect / impl / actual are all incompatible
+        result += incompatibilityRegister(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD, ACTUAL_KEYWORD)
 
         return result
     }
@@ -269,13 +281,16 @@ object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
+        val deprecatedModifierReplacement = deprecatedModifierMap[modifier]
         val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
-        if (actualTargets.any { it in deprecatedTargets }) {
-            trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
-        }
-        else if (actualTargets.any { it in redundantTargets }) {
-            trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+        when {
+            deprecatedModifierReplacement != null ->
+                trace.report(Errors.DEPRECATED_MODIFIER.on(node.psi, modifier, deprecatedModifierReplacement))
+            actualTargets.any { it in deprecatedTargets } ->
+                trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+            actualTargets.any { it in redundantTargets } ->
+                trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
         }
         return true
     }

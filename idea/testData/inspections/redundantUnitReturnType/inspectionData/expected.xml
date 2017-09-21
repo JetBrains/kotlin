@@ -24,6 +24,14 @@
         <description>Redundant Unit return type</description>
     </problem>
     <problem>
+        <file>Test.kt</file>
+        <line>12</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant 'Unit' return type</problem_class>
+        <description>Redundant Unit return type</description>
+    </problem>
+    <problem>
         <file>WithLambda.kt</file>
         <line>11</line>
         <module>light_idea_test_case</module>

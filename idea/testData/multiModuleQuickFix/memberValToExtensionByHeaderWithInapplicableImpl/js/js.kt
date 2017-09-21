@@ -1,3 +1,3 @@
-impl class Foo {
-    impl val foo = 1
+actual class Foo {
+    actual val foo = 1
 }

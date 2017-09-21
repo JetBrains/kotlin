@@ -143,8 +143,8 @@ open class KnownClassDescriptor(
     override fun isCompanionObject(): Boolean = false
     override fun isData(): Boolean = false
     override fun isInner(): Boolean = false
-    override fun isHeader(): Boolean = false
-    override fun isImpl(): Boolean = false
+    override fun isExpect(): Boolean = false
+    override fun isActual(): Boolean = false
     override fun isExternal(): Boolean = false
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {

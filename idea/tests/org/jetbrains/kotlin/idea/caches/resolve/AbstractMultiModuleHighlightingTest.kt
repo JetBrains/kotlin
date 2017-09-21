@@ -41,7 +41,7 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
             jdk: TestJdkKind = TestJdkKind.MOCK_JDK
     ) {
         val commonModule = module("common", jdk)
-        commonModule.createFacet(TargetPlatformKind.Common)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
         if (withStdlibCommon) {
             commonModule.addLibrary(ForTestCompileRuntime.stdlibCommonForTests(), kind = CommonLibraryKind)
         }

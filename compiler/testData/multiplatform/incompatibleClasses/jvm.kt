@@ -1,22 +1,22 @@
-impl interface PClass
-impl object PInterface
-impl enum class PObject
-impl annotation class PEnumClass
-impl class PAnnotationClass
+actual interface PClass
+actual object PInterface
+actual enum class PObject
+actual annotation class PEnumClass
+actual class PAnnotationClass
 
-private impl object InternalObject
-internal impl object PublicObject
-public impl object PrivateObject
+private actual object InternalObject
+internal actual object PublicObject
+public actual object PrivateObject
 
-final impl class OpenClass
-open impl class AbstractClass
-abstract impl class FinalClass
+final actual class OpenClass
+open actual class AbstractClass
+abstract actual class FinalClass
 
-impl class C1<A, Extra>
-impl class C2<out B>
-impl class C3<D, E : D?>
+actual class C1<A, Extra>
+actual class C2<out B>
+actual class C3<D, E : D?>
 
-impl typealias C4<F> = C4Impl<F>
+actual typealias C4<F> = C4Impl<F>
 class C4Impl<F : Number>
 
-impl abstract class ExtendsNumber : Any()
+actual abstract class ExtendsNumber : Any()

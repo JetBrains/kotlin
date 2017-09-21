@@ -47,7 +47,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 Flags.IS_CONST.get(flags),
                 Flags.IS_EXTERNAL_PROPERTY.get(flags),
                 Flags.IS_DELEGATED.get(flags),
-                Flags.IS_HEADER_PROPERTY.get(flags),
+                Flags.IS_EXPECT_PROPERTY.get(flags),
                 proto,
                 c.nameResolver,
                 c.typeTable,
@@ -175,7 +175,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isInline = Flags.IS_INLINE.get(flags)
         function.isTailrec = Flags.IS_TAILREC.get(flags)
         function.isSuspend = Flags.IS_SUSPEND.get(flags)
-        function.isHeader = Flags.IS_HEADER_FUNCTION.get(flags)
+        function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
         return function
     }
 

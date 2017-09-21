@@ -1,3 +1,3 @@
-header class Foo {
+expect class Foo {
     fun unaryMinus()
 }

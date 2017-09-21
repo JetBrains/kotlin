@@ -183,11 +183,11 @@ public class ValueArgumentsToParametersMapper {
 
                 KtPsiUtilKt.checkReservedYield(nameReference, candidateCall.getTrace());
                 if (nameReference != null) {
-                    if (candidate instanceof MemberDescriptor && ((MemberDescriptor) candidate).isHeader() &&
+                    if (candidate instanceof MemberDescriptor && ((MemberDescriptor) candidate).isExpect() &&
                         candidate.getContainingDeclaration() instanceof ClassDescriptor) {
-                        // We do not allow named arguments for members of header classes until we're able to use both
-                        // headers and platform definitions when compiling platform code
-                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, HEADER_CLASS_MEMBER));
+                        // We do not allow named arguments for members of expected classes until we're able to use both
+                        // expected and actual definitions when compiling platform code
+                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, EXPECTED_CLASS_MEMBER));
                     }
                     else if (!candidate.hasStableParameterNames()) {
                         report(NAMED_ARGUMENTS_NOT_ALLOWED.on(

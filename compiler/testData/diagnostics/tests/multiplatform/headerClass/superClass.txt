@@ -8,7 +8,7 @@ public open class C {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class Foo : I, C, J {
+public final expect class Foo : I, C, J {
     public constructor Foo()
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -38,7 +38,7 @@ public open class C {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final impl class Foo : I, C, J {
+public final actual class Foo : I, C, J {
     public constructor Foo()
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -68,7 +68,7 @@ public open class C {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final impl class Foo : I, J, C {
+public final actual class Foo : I, J, C {
     public constructor Foo()
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int

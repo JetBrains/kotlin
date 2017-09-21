@@ -1,6 +1,6 @@
 package org.jetbrains
 
-header fun doMain()
+expect fun doMain()
 
 fun getGreeting() : String {
     return "Hello, World!"

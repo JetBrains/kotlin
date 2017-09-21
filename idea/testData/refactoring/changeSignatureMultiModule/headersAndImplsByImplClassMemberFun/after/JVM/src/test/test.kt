@@ -1,9 +1,9 @@
 package test
 
-impl class C {
-    impl fun foo() { }
-    impl fun baz(n: Int) { }
-    impl fun bar(n: Int) { }
+actual class C {
+    actual fun foo() { }
+    actual fun baz(n: Int) { }
+    actual fun bar(n: Int) { }
 }
 
 fun test(c: C) {

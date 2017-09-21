@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
@@ -283,5 +284,6 @@ private val ARRAY_OF_METHODS = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION
 fun KtCallExpression.isArrayOfMethod(): Boolean {
     val resolvedCall = getResolvedCall(analyze()) ?: return false
     val descriptor = resolvedCall.candidateDescriptor
-    return descriptor.containingDeclaration is BuiltInsPackageFragment && ARRAY_OF_METHODS.contains(descriptor.name)
+    return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+           ARRAY_OF_METHODS.contains(descriptor.name)
 }

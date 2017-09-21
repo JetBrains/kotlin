@@ -27,7 +27,7 @@ import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.*
+import com.intellij.openapi.util.text.StringUtil.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile

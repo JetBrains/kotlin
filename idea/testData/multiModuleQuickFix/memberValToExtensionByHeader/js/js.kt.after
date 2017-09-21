@@ -1,4 +1,4 @@
-impl class Foo {
+actual class Foo {
 }
 
-impl val Foo.foo get() = 1
+actual val Foo.foo get() = 1

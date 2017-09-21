@@ -49,5 +49,7 @@
                         interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
         <extensionPoint name="moduleBuilder"
                         interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
+        <extensionPoint name="gradleFrameworkSupport"
+                        interface="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleFrameworkSupportProvider"/>
     </extensionPoints>
 </idea-plugin>

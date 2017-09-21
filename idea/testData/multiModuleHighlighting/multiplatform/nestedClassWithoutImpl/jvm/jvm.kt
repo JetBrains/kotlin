@@ -1,11 +1,11 @@
 package a
 
-impl class <error>A</error>
+actual class <error>A</error>
 
-impl class B {
-    impl class <error>Nested</error>
+actual class B {
+    actual class <error>Nested</error>
 }
 
-impl class C {
-    impl inner class Inner
+actual class C {
+    actual inner class Inner
 }

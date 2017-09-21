@@ -22,14 +22,14 @@ import kotlin.reflect.KClass
  * Comments out a block of test code until it is implemented while keeping a link to the code
  * to implement in your unit test output
  */
-impl fun todo(block: () -> Unit) {
+actual fun todo(block: () -> Unit) {
     // println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
     println("TODO at " + block)
 }
 
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
+actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
     val exception = assertFails(message, block)
     @Suppress("INVISIBLE_MEMBER")
     assertTrue(exceptionClass.isInstance(exception), messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $exception")
@@ -42,4 +42,4 @@ impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: Str
 /**
  * Provides the JS implementation of asserter
  */
-internal impl fun lookupAsserter(): Asserter = DefaultJsAsserter
+internal actual fun lookupAsserter(): Asserter = DefaultJsAsserter

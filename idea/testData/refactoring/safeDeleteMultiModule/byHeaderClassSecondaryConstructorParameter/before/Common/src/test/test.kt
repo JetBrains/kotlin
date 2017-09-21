@@ -1,6 +1,6 @@
 package test
 
-header class Foo {
+expect class Foo {
     constructor(<caret>n: Int)
 }
 

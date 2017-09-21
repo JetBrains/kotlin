@@ -6717,6 +6717,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/makeTypeParameterReified")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MakeTypeParameterReified extends AbstractQuickFixTest {
+        public void testAllFilesPresentInMakeTypeParameterReified() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makeTypeParameterReified"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("noTypeParameter.kt")
+        public void testNoTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeTypeParameterReified/noTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noTypeParameter2.kt")
+        public void testNoTypeParameter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeTypeParameterReified/noTypeParameter2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParameter.kt")
+        public void testTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeTypeParameterReified/typeParameter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/memberVisibilityCanBePrivate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

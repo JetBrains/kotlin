@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
-import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
@@ -43,7 +43,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 TypeParameterBoundIsNotArrayChecker(),
                 JvmSyntheticApplicabilityChecker(),
                 StrictfpApplicabilityChecker(),
-                HeaderImplDeclarationChecker
+                ExpectedActualDeclarationChecker
         ),
 
         additionalCallCheckers = listOf(

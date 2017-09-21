@@ -1,6 +1,6 @@
 package test
 
-impl fun foo(<caret>n: Int) {
+actual fun foo(<caret>n: Int) {
     n + 1
 }
 

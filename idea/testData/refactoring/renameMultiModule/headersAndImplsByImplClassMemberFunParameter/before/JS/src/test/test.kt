@@ -1,7 +1,7 @@
 package test
 
-impl class C {
-    impl fun foo(/*rename*/n: Int) {
+actual class C {
+    actual fun foo(/*rename*/n: Int) {
 
     }
 }

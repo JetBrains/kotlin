@@ -39,6 +39,22 @@ fun <T : Any> runInReadActionWithWriteActionPriorityWithPCE(f: () -> T): T {
     return r!!
 }
 
+fun <T : Any> runInReadActionWithWriteActionPriority(f: () -> T): T? {
+    var r: T? = null
+    if (!with(ApplicationManager.getApplication()) { isDispatchThread && isUnitTestMode }) {
+        val complete = ProgressIndicatorUtils.runInReadActionWithWriteActionPriority {
+            r = f()
+        }
+
+        if (!complete) return null
+    }
+    else {
+        r = f()
+    }
+
+    return r
+}
+
 fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String, canBeCanceled: Boolean, action: () -> T): T? {
     var result: T? = null
     ProgressManager.getInstance().runProcessWithProgressSynchronously({ result = action() }, progressTitle, canBeCanceled, this)

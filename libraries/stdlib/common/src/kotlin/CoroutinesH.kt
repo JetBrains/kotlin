@@ -1,7 +1,7 @@
 package kotlin.coroutines.experimental
 
 @PublishedApi
-internal header class SafeContinuation<in T> : Continuation<T> {
+internal expect class SafeContinuation<in T> : Continuation<T> {
     internal constructor(delegate: Continuation<T>, initialResult: Any?)
 
     @PublishedApi

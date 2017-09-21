@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.checkers.javac
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestWithStdLib
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.test.KotlinTestUtils.getHomeDirectory
 import java.io.File
 
 abstract class AbstractDiagnosticsTestWithStdLibUsingJavac : AbstractDiagnosticsTestWithStdLib() {
@@ -46,10 +44,4 @@ abstract class AbstractDiagnosticsTestWithStdLibUsingJavac : AbstractDiagnostics
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         super.analyzeAndCheck(testDataFile, files)
     }
-
-    private fun getHomeDirectory(): String {
-        val resourceRoot = PathUtil.getResourcePathForClass(KotlinTestUtils::class.java)
-        return FileUtil.toSystemIndependentName(resourceRoot.parentFile.parentFile.parent)
-    }
-
 }

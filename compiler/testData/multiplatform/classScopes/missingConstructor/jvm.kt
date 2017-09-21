@@ -1,1 +1,1 @@
-impl class Foo
+actual class Foo

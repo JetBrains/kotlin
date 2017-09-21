@@ -1,15 +1,15 @@
 package
 
-public final header class Foo {
+public final expect class Foo {
     public constructor Foo()
     public constructor Foo(/*0*/ s: kotlin.String)
     public constructor Foo(/*0*/ constructorProperty: kotlin.String, /*1*/ constructorParameter: kotlin.String)
-    public header final val constructorProperty: kotlin.String
-    public header final var getSet: kotlin.String
-    public header final val prop: kotlin.String = "no"
-    public final header fun defaultArg(/*0*/ value: kotlin.String = ...): kotlin.Unit
+    public expect final val constructorProperty: kotlin.String
+    public expect final var getSet: kotlin.String
+    public expect final val prop: kotlin.String = "no"
+    public final expect fun defaultArg(/*0*/ value: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final header fun functionWithBody(/*0*/ x: kotlin.Int): kotlin.Int
+    public final expect fun functionWithBody(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

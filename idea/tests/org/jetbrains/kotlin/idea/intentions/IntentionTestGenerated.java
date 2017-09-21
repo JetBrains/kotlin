@@ -5534,6 +5534,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("errorType.kt")
+        public void testErrorType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/errorType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("independentProperty.kt")
         public void testIndependentProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/independentProperty.kt");
@@ -5649,6 +5655,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class ConvertPropertyInitializerToGetter extends AbstractIntentionTest {
         public void testAllFilesPresentInConvertPropertyInitializerToGetter() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("errorType.kt")
+        public void testErrorType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/errorType.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("inapplicableIfExtensionProperty.kt")

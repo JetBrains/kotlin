@@ -96,6 +96,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         doTest(fileName);
     }
 
+    @TestMetadata("jsNameClash")
+    public void testJsNameClash() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/jsNameClash/");
+        doTest(fileName);
+    }
+
     @TestMetadata("missingOverload")
     public void testMissingOverload() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/missingOverload/");

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.types.isError
 
 class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Convert property initializer to getter") {
 
@@ -53,7 +54,9 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<
 
         fun convertPropertyInitializerToGetter(property: KtProperty, editor: Editor?) {
             val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(property)
-            SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, property, type)
+            if (!type.isError) {
+                SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, property, type)
+            }
 
             val initializer = property.initializer!!
             val getter = KtPsiFactory(property).createPropertyGetter(initializer)

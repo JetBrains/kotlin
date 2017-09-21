@@ -74,9 +74,9 @@ abstract class AbstractTypeAliasDescriptor(
 
     override fun getVisibility() = visibilityImpl
 
-    override fun isHeader(): Boolean = false
+    override fun isExpect(): Boolean = false
 
-    override fun isImpl(): Boolean = false
+    override fun isActual(): Boolean = false
 
     override fun isExternal() = false
 

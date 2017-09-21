@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.Icon
@@ -98,11 +100,11 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         for (element in elements) {
             if (element !is KtNamedDeclaration) continue
 
-            if (element.hasModifier(KtTokens.HEADER_KEYWORD)) {
-                collectImplementationMarkers(element, result)
+            if (element.hasExpectModifier()) {
+                collectActualMarkers(element, result)
             }
-            else if (element.hasModifier(KtTokens.IMPL_KEYWORD)) {
-                collectHeaderMarkers(element, result)
+            else if (element.hasActualModifier()) {
+                collectExpectedMarkers(element, result)
             }
         }
     }
@@ -180,22 +182,22 @@ private val OVERRIDDEN_PROPERTY = object : MarkerType(
     }
 }
 
-private val PLATFORM_IMPLEMENTATION = MarkerType(
-        "PLATFORM_IMPLEMENTATION",
-        { it?.let { getPlatformImplementationTooltip(it.parent as KtDeclaration) } },
+private val PLATFORM_ACTUAL = MarkerType(
+        "PLATFORM_ACTUAL",
+        { it?.let { getPlatformActualTooltip(it.parent as KtDeclaration) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToPlatformImplementation(e, it.parent as KtDeclaration) }
+                element?.let { navigateToPlatformActual(e, it.parent as KtDeclaration) }
             }
         }
 )
 
-private val HEADER_DECLARATION = MarkerType(
-        "HEADER_DECLARATION",
-        { it?.let { getHeaderDeclarationTooltip(it.parent as KtDeclaration) } },
+private val EXPECTED_DECLARATION = MarkerType(
+        "EXPECTED_DECLARATION",
+        { it?.let { getExpectedDeclarationTooltip(it.parent as KtDeclaration) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToHeaderDeclaration(it.parent as KtDeclaration) }
+                element?.let { navigateToExpectedDeclaration(it.parent as KtDeclaration) }
             }
         }
 )
@@ -284,29 +286,29 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
     }
 }
 
-private fun collectImplementationMarkers(declaration: KtNamedDeclaration,
-                                         result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectActualMarkers(declaration: KtNamedDeclaration,
+                                 result: MutableCollection<LineMarkerInfo<*>>) {
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    if (commonModuleDescriptor.allImplementingCompatibleModules.none { it.hasImplementationsOf(descriptor) }) return
+    if (commonModuleDescriptor.allImplementingCompatibleModules.none { it.hasActualsFor(descriptor) }) return
 
     val anchor = declaration.nameIdentifier ?: declaration
 
     result.add(LineMarkerInfo(
             anchor,
             anchor.textRange,
-            KotlinIcons.FROM_HEADER,
+            KotlinIcons.FROM_EXPECTED,
             Pass.LINE_MARKERS,
-            PLATFORM_IMPLEMENTATION.tooltip,
-            PLATFORM_IMPLEMENTATION.navigationHandler,
+            PLATFORM_ACTUAL.tooltip,
+            PLATFORM_ACTUAL.navigationHandler,
             GutterIconRenderer.Alignment.RIGHT
     ))
 }
 
-private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
-                                 result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectExpectedMarkers(declaration: KtNamedDeclaration,
+                                   result: MutableCollection<LineMarkerInfo<*>>) {
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
@@ -318,10 +320,10 @@ private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
     result.add(LineMarkerInfo(
             anchor,
             anchor.textRange,
-            KotlinIcons.FROM_IMPL,
+            KotlinIcons.FROM_ACTUAL,
             Pass.LINE_MARKERS,
-            HEADER_DECLARATION.tooltip,
-            HEADER_DECLARATION.navigationHandler,
+            EXPECTED_DECLARATION.tooltip,
+            EXPECTED_DECLARATION.navigationHandler,
             GutterIconRenderer.Alignment.RIGHT
     ))
 }

@@ -1,9 +1,9 @@
 // -- Module: <m1-common> --
 package
 
-public header fun getFoo(): Foo
+public expect fun getFoo(): Foo
 
-public final header class Foo {
+public final expect class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -14,7 +14,7 @@ public final header class Foo {
 // -- Module: <m2-jvm> --
 package
 
-public impl fun getFoo(): Foo
+public actual fun getFoo(): Foo
 
 public final class Bar : Foo {
     public constructor Bar()
@@ -23,7 +23,7 @@ public final class Bar : Foo {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public open impl class Foo {
+public open actual class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

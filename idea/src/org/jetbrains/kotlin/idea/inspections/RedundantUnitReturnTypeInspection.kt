@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RedundantUnitReturnTypeInspection : AbstractKotlinInspection() {
@@ -43,7 +44,9 @@ class RedundantUnitReturnTypeInspection : AbstractKotlinInspection() {
                     if (!function.hasBlockBody()) {
                         val bodyExpression = function.bodyExpression
                         if (bodyExpression != null) {
-                            val resolvedCall = bodyExpression.getResolvedCall(bodyExpression.analyze(BodyResolveMode.PARTIAL))
+                            val bodyContext = bodyExpression.analyze(BodyResolveMode.PARTIAL)
+                            if (bodyContext.getType(bodyExpression)?.isNothing() == true) return
+                            val resolvedCall = bodyExpression.getResolvedCall(bodyContext)
                             if (resolvedCall != null) {
                                 if (resolvedCall.candidateDescriptor.returnType?.isUnit() != true) return
                             }

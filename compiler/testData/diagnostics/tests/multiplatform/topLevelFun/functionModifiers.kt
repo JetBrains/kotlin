@@ -3,17 +3,17 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header fun external()
-header fun tailrec()
-header fun inline()
-header fun String.unaryMinus(): String
-header fun String.and(other: String): String
+expect fun external()
+expect fun tailrec()
+expect fun inline()
+expect fun String.unaryMinus(): String
+expect fun String.and(other: String): String
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl external fun external()
-impl tailrec fun tailrec(): Unit = if (true) Unit else tailrec()
-impl inline fun inline() {}
-impl operator fun String.unaryMinus(): String = this
-impl infix fun String.and(other: String): String = this + other
+actual external fun external()
+actual tailrec fun tailrec(): Unit = if (true) Unit else tailrec()
+actual inline fun inline() {}
+actual operator fun String.unaryMinus(): String = this
+actual infix fun String.and(other: String): String = this + other

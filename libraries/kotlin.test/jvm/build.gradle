@@ -3,7 +3,7 @@ description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 dependencies {

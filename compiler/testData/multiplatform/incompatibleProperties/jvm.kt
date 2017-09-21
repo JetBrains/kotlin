@@ -1,2 +1,2 @@
-impl var pval: String = ""
-impl val pvar: String = ""
+actual var pval: String = ""
+actual val pvar: String = ""

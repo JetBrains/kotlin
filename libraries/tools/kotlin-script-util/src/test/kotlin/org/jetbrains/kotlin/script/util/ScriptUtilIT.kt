@@ -132,7 +132,6 @@ done
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = CompilerConfiguration().apply {
-                addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
                 contextClasspath(KOTLIN_JAVA_RUNTIME_JAR, Thread.currentThread().contextClassLoader)?.let {
                     addJvmClasspathRoots(it)
                 }

@@ -13,15 +13,18 @@ def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"
-def builtinsDir = "${rootDir}/../core/builtins"
-def jsLibrariesDir = "${rootDir}/../js/js.libraries"
+def builtinsDir = "${rootDir}/core/builtins"
+def jsLibrariesDir = "${rootDir}/js/js.libraries"
 def jsSrcDir = "${jsLibrariesDir}/src"
 def jsTestSrcDir = "${jsLibrariesDir}/test"
 def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
-def jsTestOutputFile = "${buildDir}/classes/test/kotlin-stdlib-js_test.js"
+
 def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
-def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/test/kotlin-test-js_test.js"
+
+// TODO: take from sourcesets' outputs
+def jsTestOutputFile = "${buildDir}/classes/kotlin/test/kotlin-stdlib-js_test.js"
+def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/kotlin/test/kotlin-test-js_test.js"
 
 
 sourceSets {
@@ -205,7 +208,7 @@ task mergedJar(type: Jar, dependsOn: classes) {
 
     // TODO: Use standard implementation title after js stdlib detector becomes more flexible
     Properties properties = new Properties()
-    new File("${rootDir}/../resources/kotlinManifest.properties").withInputStream {
+    new File("${rootDir}/resources/kotlinManifest.properties").withInputStream {
         properties.load(it)
     }
     manifest.attributes 'Implementation-Title' : properties."manifest.impl.title.kotlin.javascript.stdlib"

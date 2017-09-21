@@ -15,7 +15,7 @@ dependencies {
     testArtifacts project(':kotlin-stdlib-jre8')
     testArtifacts project(':kotlin-reflect')
     // legacy
-    testArtifacts project(':kotlin-runtime')
+//    testArtifacts project(':kotlin-runtime')
     testArtifacts files(project(':kotlin-stdlib').tasks.originalStdlibJar)
 }
 
@@ -40,4 +40,10 @@ test {
     systemProperty 'overwrite.output', System.getProperty("overwrite.output", "false")
     systemProperty 'kotlinVersion', project.version
     jvmArgs '-ea'
+
+    ignoreFailures = System.getenv("kotlin_build_ignore_test_failures") == 'yes'
+    environment("PROJECT_CLASSES_DIRS", sourceSets.test.output.classesDirs.asPath)
+    environment("PROJECT_BUILD_DIR", buildDir)
+
+    workingDir = projectDir
 }

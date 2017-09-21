@@ -1,4 +1,4 @@
-impl fun boo(s: String) {}
+actual fun boo(s: String) {}
 
 fun test() {
     boo("a")

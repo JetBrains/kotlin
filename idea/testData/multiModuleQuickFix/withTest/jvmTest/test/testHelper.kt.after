@@ -2,4 +2,4 @@
 
 package test
 
-impl fun testHelper() {}
+actual fun testHelper() {}

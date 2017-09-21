@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
-import org.jetbrains.kotlin.idea.highlighter.markers.hasImplementationsOf
+import org.jetbrains.kotlin.idea.highlighter.markers.hasActualsFor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
@@ -326,16 +326,16 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun isPlatformImplementation(declaration: KtNamedDeclaration) =
-            declaration.hasModifier(KtTokens.IMPL_KEYWORD)
+            declaration.hasActualModifier()
 
     private fun hasPlatformImplementations(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
-        if (!declaration.hasModifier(KtTokens.HEADER_KEYWORD)) return false
+        if (!declaration.hasExpectModifier()) return false
 
         descriptor as? MemberDescriptor ?: return false
         val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-        return commonModuleDescriptor.allImplementingCompatibleModules.any { it.hasImplementationsOf(descriptor) } ||
-               commonModuleDescriptor.hasImplementationsOf(descriptor)
+        return commonModuleDescriptor.allImplementingCompatibleModules.any { it.hasActualsFor(descriptor) } ||
+               commonModuleDescriptor.hasActualsFor(descriptor)
     }
 
     override fun createOptionsPanel(): JComponent? {

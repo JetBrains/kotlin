@@ -1,5 +1,5 @@
-impl class Foo {
-    impl fun unaryMinus() {
+actual class Foo {
+    actual fun unaryMinus() {
 
     }
 }

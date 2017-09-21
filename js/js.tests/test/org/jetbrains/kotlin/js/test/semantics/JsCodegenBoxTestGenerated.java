@@ -2957,6 +2957,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("isNullablePrimitive.kt")
+        public void testIsNullablePrimitive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/isNullablePrimitive.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaToUnitCast.kt")
         public void testLambdaToUnitCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
@@ -15087,49 +15093,25 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("uninitializedCapturedMemberAccess.kt")
                 public void testUninitializedCapturedMemberAccess() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedCapturedMemberAccess.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("uninitializedCapturedRead.kt")
                 public void testUninitializedCapturedRead() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedCapturedRead.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("uninitializedMemberAccess.kt")
                 public void testUninitializedMemberAccess() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedMemberAccess.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("uninitializedRead.kt")
                 public void testUninitializedRead() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedRead.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
             }
 

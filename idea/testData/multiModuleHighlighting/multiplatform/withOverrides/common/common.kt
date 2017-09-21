@@ -1,3 +1,3 @@
-header fun foo(arg: Int): Int
+expect fun foo(arg: Int): Int
 
-<error>header fun foo(): Int</error>
+<error>expect fun foo(): Int</error>

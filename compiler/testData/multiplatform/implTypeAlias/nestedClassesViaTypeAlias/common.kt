@@ -1,3 +1,3 @@
-header class ByTypeAlias {
+expect class ByTypeAlias {
     interface Nested
 }

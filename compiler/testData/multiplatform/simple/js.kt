@@ -1,5 +1,5 @@
-impl class Printer {
-    impl fun print(message: String) {
+actual class Printer {
+    actual fun print(message: String) {
         println("JS says: " + message)
     }
 }

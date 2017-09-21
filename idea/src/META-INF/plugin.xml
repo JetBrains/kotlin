@@ -150,9 +150,9 @@
               class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
               text="Benchmark highlighting"/>
 
-      <action id="CompletionBindingContextCachingToggleAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.CompletionBindingContextCachingToggleAction"
-              text="Enable completion binding context caching"/>
+      <action id="CacheResetOnProcessCanceledToggleAction"
+              class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
+              text="Reset caches on ProcessCanceledException"/>
 
       <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
               text="Check Component Functions Usage Search"/>
@@ -388,7 +388,7 @@
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinBuiltInFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinModuleFileFactory"/>
 
-    <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-reflect.jar;kotlin-plugin.jar;android-extensions-ide.jar;android-extensions-compiler.jar"/>
+    <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;kotlin-stdlib.jar;kotlin-reflect.jar;kotlin-plugin.jar;android-extensions-ide.jar;android-extensions-compiler.jar"/>
     <compiler.task execute="BEFORE" implementation="org.jetbrains.kotlin.idea.internal.makeBackup.MakeBackupCompileTask"/>
     <buildProcess.parametersProvider implementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinBuildProcessParametersProvider"/>
     <jps.plugin />
@@ -590,7 +590,7 @@
 
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DebugInfoAnnotator"/>
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureAnnotator"/>
-    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.PlatformHeaderAnnotator"/>
+    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.PlatformExpectedAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.kotlin.idea.highlighter.KotlinProblemHighlightFilter"/>
 
     <highlightVisitor implementation="org.jetbrains.kotlin.idea.highlighter.KotlinRainbowVisitor"/>
@@ -2626,10 +2626,12 @@
     <psi.clsCustomNavigationPolicy implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependencySourceNavigationPolicyForJavaClasses"/>
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveScopeProvider"/>
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesResolveScopeProvider"/>
-    <projectOpenProcessor implementation="org.jetbrains.kotlin.gradle.GradleKotlinDSLProjectOpenProcessor"/>
-    <projectImportProvider implementation="org.jetbrains.kotlin.gradle.GradleKotlinDSLProjectImportProvider"/>
+    <projectOpenProcessor implementation="org.jetbrains.kotlin.gradle.kdsl.GradleProjectOpenProcessor"/>
+    <projectImportProvider implementation="org.jetbrains.kotlin.gradle.kdsl.GradleProjectImportProvider"/>
 
     <codeInsight.intention.jvmCommonIntentionActionsFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.intentions.KotlinCommonIntentionActionsFactory"/>
+
+    <moduleBuilder builderClass="org.jetbrains.kotlin.gradle.kdsl.GradleModuleBuilder" />
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.uast">
@@ -2657,6 +2659,11 @@
     <storageComponentContainerContributor implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgComponentContainerContributor"/>
     <defaultErrorMessages implementation="org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg"/>
     <versionInfoProvider implementation="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProviderByModuleDependencies"/>
+
+    <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleJavaFrameworkSupportProvider" />
+    <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleKotlinDSLKotlinJavaFrameworkSupportProvider" />
+    <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleKotlinDSLKotlinJSFrameworkSupportProvider" />
+    <gradleFrameworkSupport implementation="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleGroovyFrameworkSupportProvider" />
   </extensions>
 
 </idea-plugin>

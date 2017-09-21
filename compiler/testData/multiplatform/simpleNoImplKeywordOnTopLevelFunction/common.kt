@@ -1,3 +1,3 @@
 package test
 
-header fun foo(s: String): Array<CharSequence?>
+expect fun foo(s: String): Array<CharSequence?>
