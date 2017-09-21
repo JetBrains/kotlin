@@ -80,13 +80,13 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
     fun getPropertyToGenerate(
             classDescriptor: ClassDescriptor,
             name: String,
-            isReturnTypeOk: (KotlinType) -> Boolean
+            isReturnTypeOk: (PropertyDescriptor) -> Boolean
     ): PropertyDescriptor? =
             classDescriptor.unsubstitutedMemberScope.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                     .singleOrNull { property ->
                         property.kind.let { kind -> kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE } &&
                         property.modality != Modality.FINAL &&
                         property.returnType != null &&
-                        isReturnTypeOk(property.returnType!!)
+                        isReturnTypeOk(property)
                     }
 }

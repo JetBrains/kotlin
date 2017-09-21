@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 internal val packageFqName = FqName("kotlinx.serialization")
 internal val internalPackageFqName = FqName("kotlinx.serialization.internal")
@@ -147,8 +148,8 @@ fun getSerializableClassDescriptorBySerializer(serializerDescriptor: ClassDescri
     return classDescriptor
 }
 
-// todo: serialization: do an actual check
-fun ClassDescriptor.checkSerializableClassPropertyResult(type: KotlinType): Boolean = true
+fun ClassDescriptor.checkSerializableClassPropertyResult(prop: PropertyDescriptor): Boolean =
+        prop.returnType!!.isSubtypeOf(getClassFromSerializationPackage("KSerialClassDesc").toSimpleType(false)) // todo: cache lookup
 
 // todo: serialization: do an actual check better that just number of parameters
 fun ClassDescriptor.checkSaveMethodParameters(parameters: List<ValueParameterDescriptor>): Boolean =

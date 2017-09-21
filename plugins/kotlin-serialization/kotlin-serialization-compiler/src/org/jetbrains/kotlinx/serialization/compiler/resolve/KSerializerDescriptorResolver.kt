@@ -94,10 +94,10 @@ object KSerializerDescriptorResolver {
                                      fromSupertypes: ArrayList<PropertyDescriptor>,
                                      name: Name,
                                      result: MutableSet<PropertyDescriptor>) {
-        val classDescriptor = getSerializableClassDescriptorBySerializer(thisDescriptor) ?: return
-        // todo: check if it is already defined
-        if (name == SERIAL_DESC_FIELD_NAME)
-            result.add(createSerializableClassPropertyDescriptor(thisDescriptor, classDescriptor))
+       val classDescriptor = getSerializableClassDescriptorBySerializer(thisDescriptor) ?: return
+        if (name == SERIAL_DESC_FIELD_NAME && result.none(thisDescriptor::checkSerializableClassPropertyResult) &&
+            fromSupertypes.none { thisDescriptor.checkSerializableClassPropertyResult(it) && it.modality == Modality.FINAL} )
+                result.add(createSerializableClassPropertyDescriptor(thisDescriptor, classDescriptor))
 
     }
 
