@@ -735,7 +735,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -783,7 +783,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -831,7 +831,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -879,7 +879,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -927,7 +927,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -975,7 +975,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1023,12 +1023,12 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1081,7 +1081,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1123,7 +1123,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1165,7 +1165,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1211,7 +1211,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1259,7 +1259,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1307,7 +1307,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1355,7 +1355,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1379,7 +1379,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                         <dependency>
                             <groupId>org.jetbrains.kotlin</groupId>
                             <artifactId>kotlin-maven-allopen</artifactId>
-                            <version>1.1.0</version>
+                            <version>$kotlinVersion</version>
                         </dependency>
                     </dependencies>
 
