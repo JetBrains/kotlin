@@ -57,13 +57,13 @@ dependencies {
     testRuntime(ideaSdkDeps("*.jar"))
 
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
-    testRuntime(ideaPluginDeps("jcommander", "resources_en", plugin = "testng"))
     testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("jacocoant", plugin = "coverage"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
 
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
     testCompile(project(":plugins:android-extensions-compiler"))
