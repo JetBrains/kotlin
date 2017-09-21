@@ -40,6 +40,8 @@ In order to build Kotlin distribution you need to have:
 
 For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 8 installed, and to point all of the environment variables mentioned above to your JDK 8 installation.
 
+You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_properties_and_system_properties) to setup JDK_* variables.
+
 > Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572). 
 
 ## Building
