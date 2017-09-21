@@ -60,6 +60,12 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
         doTest(fileName);
     }
 
+    @TestMetadata("irrelevantQualifierNicknames.kt")
+    public void testIrrelevantQualifierNicknames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/irrelevantQualifierNicknames.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jsr305NullabilityNicknames.kt")
     public void testJsr305NullabilityNicknames() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityNicknames.kt");

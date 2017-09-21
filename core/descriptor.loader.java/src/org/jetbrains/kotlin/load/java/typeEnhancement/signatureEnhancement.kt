@@ -68,26 +68,29 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
     }
 
     fun extractNullability(annotationDescriptor: AnnotationDescriptor): NullabilityQualifierWithMigrationStatus? {
+        extractNullabilityFromBuiltInAnnotations(annotationDescriptor)?.let { return it }
+
+        val typeQualifierAnnotation =
+                annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
+                ?: return null
+
+        val forWarning = annotationTypeQualifierResolver.jsr305State.isWarning()
+
+        return extractNullabilityFromBuiltInAnnotations(typeQualifierAnnotation)?.copy(isForWarningOnly = forWarning)
+    }
+
+    private fun extractNullabilityFromBuiltInAnnotations(
+            annotationDescriptor: AnnotationDescriptor
+    ): NullabilityQualifierWithMigrationStatus? {
         val annotationFqName = annotationDescriptor.fqName ?: return null
 
         return when (annotationFqName) {
             in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
             in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
             JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument()
-            else -> {
-                val forWarning = annotationTypeQualifierResolver.jsr305State.isWarning()
-
-                val typeQualifierAnnotation =
-                        annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
-                        ?: return null
-
-                // resolveTypeQualifierAnnotation guarantees that `typeQualifierAnnotation` is javax.annotation.NonNull with argument
-                // or javax.annotation.CheckForNull without arguments
-                extractNullability(typeQualifierAnnotation)?.copy(isForWarningOnly = forWarning)
-            }
+            else -> null
         }
     }
-
 
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
         return platformSignatures.map {
