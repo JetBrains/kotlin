@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.injected.editor.VirtualFileWindow
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 private val kotlinBinaries = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KotlinModuleFileType.INSTANCE)
 
-fun VirtualFile.isKotlinBinary(): Boolean = fileType in kotlinBinaries
+fun FileType.isKotlinBinary(): Boolean = this in kotlinBinaries
 
 fun FileIndex.isInSourceContentWithoutInjected(file: VirtualFile): Boolean {
     return file !is VirtualFileWindow && isInSourceContent(file)
@@ -62,8 +63,9 @@ object ProjectRootsUtil {
         if (!includeLibraryClasses && !includeLibrarySource) return false
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
-        val canContainClassFiles = file.fileType == ArchiveFileType.INSTANCE || file.isDirectory
-        val isBinary = file.isKotlinBinary()
+        val fileType = file.fileType
+        val canContainClassFiles = fileType == ArchiveFileType.INSTANCE || file.isDirectory
+        val isBinary = fileType.isKotlinBinary()
 
         val scriptConfigurationManager = if (includeScriptDependencies) ScriptDependenciesManager.getInstance(project) else null
 

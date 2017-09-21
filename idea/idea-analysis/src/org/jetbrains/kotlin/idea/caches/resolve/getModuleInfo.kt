@@ -181,7 +181,7 @@ private inline fun <T> collectInfosByVirtualFile(
         onOccurrence(ScriptModuleInfo(project, virtualFile, scriptDefinition))
     }
 
-    val isBinary = virtualFile.isKotlinBinary()
+    val isBinary = virtualFile.fileType.isKotlinBinary()
     val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
     if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
         if (treatAsLibrarySource) {
