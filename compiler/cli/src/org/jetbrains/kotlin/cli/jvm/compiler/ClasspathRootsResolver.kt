@@ -50,7 +50,8 @@ class ClasspathRootsResolver(
         private val additionalModules: List<String>,
         private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
         private val javaModuleFinder: CliJavaModuleFinder,
-        private val requireStdlibModule: Boolean
+        private val requireStdlibModule: Boolean,
+        private val outputDirectory: VirtualFile?
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
@@ -85,8 +86,10 @@ class ClasspathRootsResolver(
         val result = mutableListOf<JavaRoot>()
         val modules = mutableListOf<JavaModule>()
 
+        val hasOutputDirectoryInClasspath = outputDirectory in jvmClasspathRoots || outputDirectory in jvmModulePathRoots
+
         for ((root, packagePrefix) in javaSourceRoots) {
-            val modularRoot = modularSourceRoot(root)
+            val modularRoot = modularSourceRoot(root, hasOutputDirectoryInClasspath)
             if (modularRoot != null) {
                 modules += modularRoot
             }
@@ -104,7 +107,13 @@ class ClasspathRootsResolver(
             result += JavaRoot(root, JavaRoot.RootType.BINARY)
         }
 
+        val outputDirectoryAddedAsPartOfModule = modules.any { module -> module.moduleRoots.any { it.file == outputDirectory } }
+
         for (root in jvmModulePathRoots) {
+            // Do not add output directory as a separate module if we're compiling an explicit named module.
+            // It's going to be included as a root of our module in modularSourceRoot.
+            if (outputDirectoryAddedAsPartOfModule && root == outputDirectory) continue
+
             val module = modularBinaryRoot(root)
             if (module != null) {
                 modules += module
@@ -130,9 +139,13 @@ class ClasspathRootsResolver(
         return moduleInfoFile to psiJavaModule
     }
 
-    private fun modularSourceRoot(root: VirtualFile): JavaModule.Explicit? {
+    private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
         val (moduleInfoFile, psiJavaModule) = findSourceModuleInfo(root) ?: return null
-        val roots = listOf(JavaModule.Root(root, isBinary = false))
+        val sourceRoot = JavaModule.Root(root, isBinary = false)
+        val roots =
+                if (hasOutputDirectoryInClasspath)
+                    listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
+                else listOf(sourceRoot)
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
     }
 
