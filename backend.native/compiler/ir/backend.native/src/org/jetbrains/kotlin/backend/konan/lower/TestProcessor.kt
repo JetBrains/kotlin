@@ -65,7 +65,8 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
             .mapIndexed { i, it -> if (i != 0) it.capitalize() else it }
             .joinToString("")}\$test\$${testSuiteCnt++}".synthesizedName
 
-    private val IrFile.fileName get() = name.substringAfterLast(File.separatorChar)
+    // IrFile always uses a forward slash as a directory separator.
+    private val IrFile.fileName get() = name.substringAfterLast('/')
     private val IrFile.topLevelSuiteName get() = "Tests in file: $fileName"
 
     private fun MutableList<TestFunction>.registerFunction(
