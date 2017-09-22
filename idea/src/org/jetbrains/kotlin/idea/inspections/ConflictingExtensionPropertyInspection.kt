@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.resolve.scopes.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         val file = session.file as? KtFile ?: return PsiElementVisitor.EMPTY_VISITOR
         val resolutionFacade = file.getResolutionFacade()

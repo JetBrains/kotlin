@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-class RedundantSetterInspection : AbstractKotlinInspection() {
+class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {

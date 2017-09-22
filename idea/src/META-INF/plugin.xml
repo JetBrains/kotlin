@@ -1740,6 +1740,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2120,6 +2121,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2129,6 +2131,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="INFO"
                      language="kotlin"
     />
@@ -2202,6 +2205,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2211,6 +2215,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2346,6 +2351,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="INFO"
                      language="kotlin"
     />
@@ -2472,6 +2478,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2571,6 +2578,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
