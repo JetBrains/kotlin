@@ -16,8 +16,6 @@ buildscript {
 
 apply { plugin("kotlin") }
 
-val ideaCommunityPlugin by configurations.creating
-
 val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
 
 evaluationDependsOn(":prepare:idea-plugin")
@@ -40,7 +38,6 @@ dependencies {
     compile(ideaUltimatePreloadedDeps("*.jar", subdir = "nodejs_plugin/NodeJS/lib"))
     compile(ideaUltimateSdkCoreDeps("annotations", "trove4j", "intellij-core"))
     compile(ideaUltimateSdkDeps("openapi", "idea", "util"))
-//    compile(ideaUltimatePluginDeps("gradle-tooling-api", plugin = "gradle"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "CSS"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "DatabaseTools"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaEE"))
@@ -63,7 +60,6 @@ dependencies {
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":generators")) { isTransitive = false }
     testCompile(projectTests(":idea"))
-//    testCompileOnly(projectTests(":idea:idea-gradle"))
     testCompile(commonDep("junit:junit"))
     testCompile(ideaUltimateSdkDeps("gson"))
     testCompile(preloadedDeps("kotlinx-coroutines-core"))
@@ -94,8 +90,6 @@ dependencies {
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "copyright"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "java-decompiler"))
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
-
-    ideaCommunityPlugin(projectRuntimeJar(":prepare:idea-plugin"))
 }
 
 val preparedResources = File(buildDir, "prepResources")
@@ -133,14 +127,14 @@ val preparePluginXml by task<Copy> {
     }
 }
 
+val communityPluginProject = ":prepare:idea-plugin"
+
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(preparePluginXml)
-    project(":prepare:idea-plugin").afterEvaluate {
-        ideaCommunityPlugin.files.forEach {
-            from(zipTree(it), { exclude("META-INF/plugin.xml") })
-        }
-    }
+    dependsOn("$communityPluginProject:shadowJar")
+    val communityPluginJar = project(communityPluginProject).configurations["runtimeJar"].artifacts.files.singleFile
+    from(zipTree(communityPluginJar), { exclude("META-INF/plugin.xml") })
     from(preparedResources, { include("META-INF/plugin.xml") })
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
     archiveName = "kotlin-plugin.jar"
@@ -150,7 +144,8 @@ val ideaPluginDir: File by rootProject.extra
 val ideaUltimatePluginDir: File by rootProject.extra
 
 task<Copy>("ideaUltimatePlugin") {
-    dependsOnTaskIfExistsRec("idea-plugin", rootProject)
+    dependsOn("$communityPluginProject:ideaPlugin")
+    dependsOnTaskIfExistsRec("ideaPlugin", rootProject)
     into(ideaUltimatePluginDir)
     from(ideaPluginDir) { exclude("lib/kotlin-plugin.jar") }
     from(jar, { into("lib") })
