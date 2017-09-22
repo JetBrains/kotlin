@@ -17,7 +17,7 @@ internal interface KonanToolRunner: Named {
 internal abstract class KonanCliRunner(val toolName: String, val fullName: String, val project: Project): KonanToolRunner {
     override val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
 
-    override fun getName() = fullName
+    override fun getName() = toolName
 
     override val classpath: FileCollection =
             project.fileTree("${project.konanHome}/konan/lib/")
@@ -62,4 +62,4 @@ internal class KonanInteropRunner(project: Project)
 }
 
 internal class KonanCompilerRunner(project: Project) : KonanCliRunner("konanc", "Kotlin/Native compiler", project)
-internal class KonnaKlibRunner(project: Project) : KonanCliRunner("klib", "Klib management tool", project)
+internal class KonanKlibRunner(project: Project) : KonanCliRunner("klib", "Klib management tool", project)

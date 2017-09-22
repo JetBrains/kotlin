@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.gradle.plugin.test
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 
+import java.nio.file.Paths
+
 class TaskSpecification extends BaseKonanSpecification {
 
     def 'Configs should allow user to add dependencies to them'() {
@@ -118,5 +120,86 @@ class TaskSpecification extends BaseKonanSpecification {
         failOnPropertyAccess("compileStubsConfig")
         failOnTaskAccess("gen${KonanInteropProject.DEFAULT_INTEROP_NAME.capitalize()}InteropStubs")
         failOnTaskAccess("compile${KonanInteropProject.DEFAULT_INTEROP_NAME.capitalize()}InteropStubs")
+    }
+
+    def 'Compilation task should be able to use another project as a library (with artifact name)'() {
+        when:
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject prj ->
+            prj.generateSrcFile("main.kt", """\
+                external fun foo()
+                fun main(args: Array<String>) = foo()
+            """)
+            prj.settingsFile.append("include ':foo'")
+        }
+        def subproject = KonanProject.createEmpty(project.projectPath.resolve("foo").toFile()) {
+            KonanProject prj ->
+            prj.generateSrcFile("foo.kt", "fun foo() { println(42) } ")
+            prj.addCompilationSetting("produce", "'library'")
+            def buildScript = prj.buildFile.text.replace("plugins { id 'konan' }", "apply plugin: 'konan'")
+            prj.buildFile.write(buildScript)
+        }
+        project.addCompilationSetting("library", "findProject(':foo'), 'main'")
+
+        def result = project.createRunner().withArguments("build").build()
+        def successfulTasks = project.buildingTasks + subproject.buildingTasks.collect { ":foo$it".toString() }
+
+        subproject.addCompilationSetting("produce", "'program'")
+        def failedResult = project.createRunner().withArguments("build").buildAndFail()
+
+
+        then:
+        result.taskPaths(TaskOutcome.SUCCESS).containsAll(successfulTasks)
+    }
+
+    def 'Compilation task should be able to use another project as a library (all klibs in the project)'() {
+        when:
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject prj ->
+            prj.generateSrcFile("main.kt", """\
+                external fun foo()
+                external fun bar()
+                fun baz() { println("baz") }
+                fun main(args: Array<String>) { foo(); bar(); baz() }
+            """.stripIndent())
+            prj.settingsFile.append("include ':foo'")
+        }
+        def subproject = KonanProject.createEmpty(project.projectPath.resolve("foo").toFile()) {
+            KonanProject prj ->
+                def buildScript = prj.buildFile.text.replace("plugins { id 'konan' }", "apply plugin: 'konan'")
+                prj.buildFile.write(buildScript)
+
+                // Default artifact: main, should be recognized as a library with foo function.
+                prj.generateSrcFile("foo.kt", "fun foo() { println(42) } ")
+                prj.addCompilationSetting("produce", "'library'")
+
+                prj.generateSrcFile(Paths.get("src", "bar" , "kotlin"),
+                        "bar.kt", "fun bar() { println(\"bar\") }")
+
+                prj.generateSrcFile(Paths.get("src", "baz", "kotlin"),
+                        "baz.kt", "fun baz() { println(\"another baz\") }")
+
+                prj.buildFile.append("""\
+                    konanArtifacts {
+                        // Should be recognized as a library.
+                        bar {
+                            inputDir "src/bar/kotlin"
+                            produce "library"
+                        }
+                    
+                        // Should not be recognized as a library.
+                        baz {
+                            inputDir "src/baz/kotlin"
+                            produce "bitcode"
+                        }
+                    }
+                """.stripIndent())
+
+        }
+        project.addCompilationSetting("library", "findProject(':foo')")
+
+        def result = project.createRunner().withArguments("build").build()
+        def successfulTasks = project.buildingTasks + subproject.buildingTasks.collect { ":foo$it".toString() }
+
+        then:
+        result.taskPaths(TaskOutcome.SUCCESS).containsAll(successfulTasks)
     }
 }
