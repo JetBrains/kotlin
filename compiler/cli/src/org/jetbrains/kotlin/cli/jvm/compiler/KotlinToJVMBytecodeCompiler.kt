@@ -66,13 +66,15 @@ import java.util.concurrent.TimeUnit
 
 object KotlinToJVMBytecodeCompiler {
 
-    private fun getAbsolutePaths(directory: File, module: Module): List<String> {
+    private fun getAbsolutePaths(buildFile: File, module: Module): List<String> {
         return module.getSourceFiles().map { sourceFile ->
-            var source = File(sourceFile)
+            val source = File(sourceFile)
             if (!source.isAbsolute) {
-                source = File(directory, sourceFile)
+                File(buildFile.absoluteFile.parentFile, sourceFile).absolutePath
             }
-            source.absolutePath
+            else {
+                source.absolutePath
+            }
         }
     }
 
@@ -111,13 +113,12 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun compileModules(environment: KotlinCoreEnvironment, directory: File): Boolean {
+    internal fun compileModules(environment: KotlinCoreEnvironment, buildFile: File, chunk: List<Module>): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
 
         val projectConfiguration = environment.configuration
-        val chunk = projectConfiguration.getNotNull(JVMConfigurationKeys.MODULES)
         for (module in chunk) {
             moduleVisibilityManager.addModule(module)
         }
@@ -141,7 +142,7 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             val ktFiles = CompileEnvironmentUtil.getKtFiles(
-                    environment.project, getAbsolutePaths(directory, module), projectConfiguration
+                    environment.project, getAbsolutePaths(buildFile, module), projectConfiguration
             ) { path -> throw IllegalStateException("Should have been checked before: $path") }
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
@@ -180,9 +181,9 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, directory: File) {
+    internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File) {
         for (module in chunk) {
-            configuration.addKotlinSourceRoots(getAbsolutePaths(directory, module))
+            configuration.addKotlinSourceRoots(getAbsolutePaths(buildFile, module))
         }
 
         for (module in chunk) {

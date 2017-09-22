@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.modules.Module;
 import java.util.Collections;
 import java.util.List;
 
-public class ModuleScriptData {
-    public static final ModuleScriptData EMPTY = new ModuleScriptData(Collections.emptyList());
+public class ModuleChunk {
+    public static final ModuleChunk EMPTY = new ModuleChunk(Collections.emptyList());
 
     private final List<Module> modules;
 
-    public ModuleScriptData(@NotNull List<Module> modules) {
+    public ModuleChunk(@NotNull List<Module> modules) {
         this.modules = modules;
     }
 

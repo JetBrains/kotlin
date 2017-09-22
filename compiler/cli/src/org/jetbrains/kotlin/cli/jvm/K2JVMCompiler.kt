@@ -136,9 +136,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val destination = arguments.destination
 
             if (arguments.buildFile != null) {
-                val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)
-                val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.buildFile, sanitizedCollector)
-
                 if (destination != null) {
                     messageCollector.report(
                             STRONG_WARNING,
@@ -146,11 +143,13 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     )
                 }
 
-                val moduleFile = File(arguments.buildFile)
-                val directory = moduleFile.absoluteFile.parentFile
+                val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)
+                val buildFile = File(arguments.buildFile)
+                val moduleChunk = CompileEnvironmentUtil.loadModuleChunk(buildFile, sanitizedCollector)
 
-                KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleScript.modules, directory)
-                configuration.put(JVMConfigurationKeys.MODULE_XML_FILE, moduleFile)
+                configuration.put(JVMConfigurationKeys.MODULE_XML_FILE, buildFile)
+
+                KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleChunk.modules, buildFile)
 
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
@@ -159,7 +158,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     if (!it) return COMPILATION_ERROR
                 }
 
-                KotlinToJVMBytecodeCompiler.compileModules(environment, directory)
+                KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, moduleChunk.modules)
             }
             else if (arguments.script) {
                 val sourcePath = arguments.freeArgs.first()

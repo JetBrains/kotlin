@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
@@ -60,18 +60,16 @@ public class CompileEnvironmentUtil {
     private static final Logger LOG = Logger.getInstance(CompileEnvironmentUtil.class);
 
     @NotNull
-    public static ModuleScriptData loadModuleDescriptions(String moduleDefinitionFile, MessageCollector messageCollector) {
-        File file = new File(moduleDefinitionFile);
-        if (!file.exists()) {
-            messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, null);
-            return ModuleScriptData.EMPTY;
+    public static ModuleChunk loadModuleChunk(File buildFile, MessageCollector messageCollector) {
+        if (!buildFile.exists()) {
+            messageCollector.report(ERROR, "Module definition file does not exist: " + buildFile, null);
+            return ModuleChunk.EMPTY;
         }
-        String extension = FileUtilRt.getExtension(moduleDefinitionFile);
-        if ("xml".equalsIgnoreCase(extension)) {
-            return ModuleXmlParser.parseModuleScript(moduleDefinitionFile, messageCollector);
+        if ("xml".equalsIgnoreCase(FilesKt.getExtension(buildFile))) {
+            return ModuleXmlParser.parseModuleScript(buildFile.getPath(), messageCollector);
         }
-        messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, null);
-        return ModuleScriptData.EMPTY;
+        messageCollector.report(ERROR, "Unknown module definition type: " + buildFile, null);
+        return ModuleChunk.EMPTY;
     }
 
     // TODO: includeRuntime should be not a flag but a path to runtime

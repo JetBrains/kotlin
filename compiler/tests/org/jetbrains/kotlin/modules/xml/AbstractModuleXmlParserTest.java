@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
-import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -37,7 +37,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
     protected static void doTest(String xmlPath) throws IOException {
         File txtFile = new File(FileUtil.getNameWithoutExtension(xmlPath) + ".txt");
 
-        ModuleScriptData result = ModuleXmlParser.parseModuleScript(xmlPath, new MessageCollector() {
+        ModuleChunk result = ModuleXmlParser.parseModuleScript(xmlPath, new MessageCollector() {
             @Override
             public void report(
                     @NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location
