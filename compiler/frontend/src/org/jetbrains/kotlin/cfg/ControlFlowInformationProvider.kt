@@ -486,18 +486,23 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun checkAssignmentBeforeDeclaration(ctxt: VariableInitContext, expression: KtExpression) =
-            if (ctxt.enterInitState?.isDeclared == true
-                || ctxt.exitInitState?.isDeclared == true
-                || ctxt.enterInitState?.mayBeInitialized() == true
-                || ctxt.exitInitState?.mayBeInitialized() != true) {
-                false
-            }
-            else {
+            if (ctxt.isInitializationBeforeDeclaration()) {
                 if (ctxt.variableDescriptor != null) {
                     report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt)
                 }
                 true
             }
+            else {
+                false
+            }
+
+    private fun VariableInitContext.isInitializationBeforeDeclaration(): Boolean =
+            // is not declared
+            enterInitState?.isDeclared != true && exitInitState?.isDeclared != true &&
+            // wasn't initialized before current instruction
+            enterInitState?.mayBeInitialized() != true &&
+            // became initialized after current instruction
+            exitInitState?.mayBeInitialized() == true
 
     private fun checkInitializationForCustomSetter(ctxt: VariableInitContext, expression: KtExpression): Boolean {
         val variableDescriptor = ctxt.variableDescriptor
