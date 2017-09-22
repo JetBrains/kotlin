@@ -27,6 +27,8 @@ class ApiVersionCallsPreprocessingMethodTransformer(private val targetApiVersion
     private val constantConditionElimination = ConstantConditionEliminationMethodTransformer()
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
+        var hasFoldedCalls = false
+
         for (insn in methodNode.instructions.toArray()) {
             if (!insn.isApiVersionIsAtLeastCall()) continue
 
@@ -38,6 +40,8 @@ class ApiVersionCallsPreprocessingMethodTransformer(private val targetApiVersion
 
             val prev1 = prev2.previous ?: continue
             val epic = prev1.getIntConstValue() ?: continue
+
+            hasFoldedCalls = true
 
             val atLeastVersion = MavenComparableVersion("$epic.$major.$minor")
 
@@ -55,7 +59,9 @@ class ApiVersionCallsPreprocessingMethodTransformer(private val targetApiVersion
             }
         }
 
-        constantConditionElimination.transform(internalClassName, methodNode)
+        if (hasFoldedCalls) {
+            constantConditionElimination.transform(internalClassName, methodNode)
+        }
     }
 
     private fun AbstractInsnNode.isApiVersionIsAtLeastCall(): Boolean =
