@@ -78,7 +78,7 @@ jar.dependsOn agp25Classes
 
 jar {
     from compileGroovy.destinationDir
-    from sourceSets.agp25.output.classesDirs
+    from sourceSets.agp25.output.classesDir
 }
 
 test.executable = "${JDK_18}/bin/java"
