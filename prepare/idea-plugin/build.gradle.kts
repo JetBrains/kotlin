@@ -95,6 +95,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
         dependsOn("$p:classes")
         from(getSourceSetsFrom(p)["main"].output)
     }
+    archiveName = "kotlin-plugin.jar"
 }
 
 ideaPlugin {
