@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinN
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
 import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
@@ -132,7 +133,7 @@ fun getConfigurableModulesWithKotlinFiles(project: Project): List<ModuleSourceRo
 
 fun showConfigureKotlinNotificationIfNeeded(module: Module) {
     val moduleGroup = ModuleSourceRootMap(module.project).toModuleGroup(module)
-    if (isModuleConfigured(moduleGroup)) return
+    if (isNotConfiguredNotificationRequired(moduleGroup)) return
 
     ConfigureKotlinNotificationManager.notify(module.project)
 }
@@ -140,7 +141,7 @@ fun showConfigureKotlinNotificationIfNeeded(module: Module) {
 fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
     val notificationString = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
         val modules = getConfigurableModulesWithKotlinFiles(project).exclude(excludeModules)
-        if (modules.all(::isModuleConfigured))
+        if (modules.all(::isNotConfiguredNotificationRequired))
             null
         else
             ConfigureKotlinNotification.getNotificationString(project, excludeModules)
@@ -151,6 +152,10 @@ fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: Li
             ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationString))
         }
     }
+}
+
+fun isNotConfiguredNotificationRequired(moduleGroup: ModuleSourceRootGroup): Boolean {
+    return !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleGroup) && isModuleConfigured(moduleGroup)
 }
 
 fun getAbleToRunConfigurators(project: Project): Collection<KotlinProjectConfigurator> {
