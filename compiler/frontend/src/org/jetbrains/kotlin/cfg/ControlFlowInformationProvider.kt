@@ -500,9 +500,7 @@ class ControlFlowInformationProvider private constructor(
             // is not declared
             enterInitState?.isDeclared != true && exitInitState?.isDeclared != true &&
             // wasn't initialized before current instruction
-            enterInitState?.mayBeInitialized() != true &&
-            // became initialized after current instruction
-            exitInitState?.mayBeInitialized() == true
+            enterInitState?.mayBeInitialized() != true
 
     private fun checkInitializationForCustomSetter(ctxt: VariableInitContext, expression: KtExpression): Boolean {
         val variableDescriptor = ctxt.variableDescriptor
