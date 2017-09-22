@@ -394,9 +394,9 @@ class MethodInliner(
     ): MethodNode {
         val processingNode = prepareNode(node, finallyDeepShift)
 
-        normalizeLocalReturns(processingNode, labelOwner)
+        normalizeNodeBeforeInline(processingNode, labelOwner)
 
-        val sources = analyzeMethodNodeWithoutMandatoryTransformations(processingNode)
+        val sources = analyzeMethodNodeBeforeInline(processingNode)
 
         val toDelete = SmartSet.create<AbstractInsnNode>()
         val instructions = processingNode.instructions
@@ -508,7 +508,14 @@ class MethodInliner(
         return processingNode
     }
 
-    private fun normalizeLocalReturns(node: MethodNode, labelOwner: LabelOwner) {
+    private fun normalizeNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
+        try {
+            FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
+        }
+        catch (e: Throwable) {
+            throw wrapException(e, node, "couldn't inline method call")
+        }
+
         val frames = analyzeMethodNodeBeforeInline(node)
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
@@ -538,17 +545,6 @@ class MethodInliner(
         if (type == null || type.sort != Type.OBJECT) return false
         val info = inliningContext.findAnonymousObjectTransformationInfo(type.internalName)
         return info != null && info.shouldRegenerate(true)
-    }
-
-    private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
-        try {
-            FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
-        }
-        catch (e: Throwable) {
-            throw wrapException(e, node, "couldn't inline method call")
-        }
-
-        return analyzeMethodNodeWithoutMandatoryTransformations(node)
     }
 
     private fun buildConstructorInvocation(
@@ -729,7 +725,7 @@ class MethodInliner(
             )
         }
 
-        private fun analyzeMethodNodeWithoutMandatoryTransformations(node: MethodNode): Array<Frame<SourceValue>?> {
+        private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
             val analyzer = object : Analyzer<SourceValue>(SourceInterpreter()) {
                 override fun newFrame(nLocals: Int, nStack: Int): Frame<SourceValue> {
                     return object : Frame<SourceValue>(nLocals, nStack) {
