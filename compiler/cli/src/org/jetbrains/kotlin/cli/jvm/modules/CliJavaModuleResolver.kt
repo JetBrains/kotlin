@@ -32,12 +32,12 @@ class CliJavaModuleResolver(
         private val systemModules: List<JavaModule.Explicit>
 ) : JavaModuleResolver {
     init {
-        assert(userModules.count { !it.isBinary } <= 1) {
+        assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
         }
     }
 
-    private val sourceModule: JavaModule? = userModules.firstOrNull { !it.isBinary }
+    private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
 
     private fun findJavaModule(file: VirtualFile): JavaModule? {
         if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL) {

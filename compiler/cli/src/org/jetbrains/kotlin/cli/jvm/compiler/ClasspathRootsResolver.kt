@@ -161,7 +161,9 @@ class ClasspathRootsResolver(
     }
 
     private fun addModularRoots(modules: List<JavaModule>, result: MutableList<JavaRoot>) {
-        val sourceModules = modules.filterIsInstance<JavaModule.Explicit>().filterNot(JavaModule::isBinary)
+        // In current implementation, at most one source module is supported. This can be relaxed in the future if we support another
+        // compilation mode, similar to java's --module-source-path
+        val sourceModules = modules.filterIsInstance<JavaModule.Explicit>().filter(JavaModule::isSourceModule)
         if (sourceModules.size > 1) {
             for (module in sourceModules) {
                 report(ERROR, "Too many source module declarations found", module.moduleInfoFile)

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.modules
 
-import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.name.FqName
 
@@ -41,10 +41,11 @@ interface JavaModule {
     val moduleInfoFile: VirtualFile?
 
     /**
-     * `true` if this module is either an automatic module on the module path, or an explicit module loaded from module-info.class.
-     * `false` if this module is an explicit module loaded from module-info.java.
+     * `true` if this module is an explicit module loaded from module-info.java, `false` otherwise. This usually corresponds to the module
+     * currently being compiled.
+     * Note that in case of partial/incremental compilation, the source module may contain both binary roots and non-binary roots.
      */
-    val isBinary: Boolean
+    val isSourceModule: Boolean
 
     /**
      * `true` if this module exports the package with the given FQ name to all dependent modules.
@@ -70,7 +71,7 @@ interface JavaModule {
     class Automatic(override val name: String, override val moduleRoots: List<Root>) : JavaModule {
         override val moduleInfoFile: VirtualFile? get() = null
 
-        override val isBinary: Boolean get() = true
+        override val isSourceModule: Boolean get() = false
 
         override fun exports(packageFqName: FqName): Boolean = true
 
@@ -87,8 +88,8 @@ interface JavaModule {
         override val name: String
             get() = moduleInfo.moduleName
 
-        override val isBinary: Boolean
-            get() = moduleInfoFile.fileType == JavaClassFileType.INSTANCE
+        override val isSourceModule: Boolean
+            get() = moduleInfoFile.fileType == JavaFileType.INSTANCE
 
         override fun exports(packageFqName: FqName): Boolean {
             return moduleInfo.exports.any { (fqName, toModules) ->
