@@ -80,7 +80,7 @@ jar.dependsOn agp25Classes
 
 jar {
     from compileGroovy.destinationDir
-    from sourceSets.agp25.output.classesDir
+    from sourceSets.agp25.output.classesDirs
     manifestAttributes(manifest, project)
 }
 
