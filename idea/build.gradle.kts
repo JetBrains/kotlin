@@ -65,6 +65,8 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
 
+    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
+
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
     testCompile(project(":plugins:android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-ide")) { isTransitive = false }
