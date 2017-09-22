@@ -752,6 +752,10 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         val returnType = convertType(clang_getCursorResultType(cursor), clang_getCursorResultTypeAttributes(cursor))
         val parameters = getFunctionParameters(cursor)
 
+        if (returnType == UnsupportedType || parameters.any { it.type == UnsupportedType }) {
+            return null // TODO: make a more universal fix.
+        }
+
         val isClass = when (cursor.kind) {
             CXCursorKind.CXCursor_ObjCClassMethodDecl -> true
             CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> false
