@@ -263,7 +263,8 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
                 "Method inlining " + sourceCompiler.callElementText,
                 createNestedSourceMapper(nodeAndSmap, defaultSourceMapper), info.callSiteInfo,
-                if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null
+                if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
+                !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)
@@ -295,6 +296,14 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         defaultSourceMapper.callSiteMarker = null
 
         return result
+    }
+
+    private fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
+        val codegen = this.codegen as? ExpressionCodegen ?: return false
+        val caller = codegen.context.functionDescriptor
+        if (!caller.isInline) return false
+        val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
+        return callerPackage.fqName.asString().startsWith("kotlin.")
     }
 
     private fun generateClosuresBodies() {

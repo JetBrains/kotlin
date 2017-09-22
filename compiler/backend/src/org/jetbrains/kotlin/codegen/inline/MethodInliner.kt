@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
@@ -46,7 +47,8 @@ class MethodInliner(
         private val errorPrefix: String,
         private val sourceMapper: SourceMapper,
         private val inlineCallSiteInfo: InlineCallSiteInfo,
-        private val inlineOnlySmapSkipper: InlineOnlySmapSkipper? //non null only for root
+        private val inlineOnlySmapSkipper: InlineOnlySmapSkipper?, //non null only for root
+        private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
     private val typeMapper = inliningContext.state.typeMapper
     private val invokeCalls = ArrayList<InvokeCall>()
@@ -394,7 +396,7 @@ class MethodInliner(
     ): MethodNode {
         val processingNode = prepareNode(node, finallyDeepShift)
 
-        normalizeNodeBeforeInline(processingNode, labelOwner)
+        preprocessNodeBeforeInline(processingNode, labelOwner)
 
         val sources = analyzeMethodNodeBeforeInline(processingNode)
 
@@ -508,12 +510,17 @@ class MethodInliner(
         return processingNode
     }
 
-    private fun normalizeNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
+    private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
         try {
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
         }
         catch (e: Throwable) {
             throw wrapException(e, node, "couldn't inline method call")
+        }
+
+        if (shouldPreprocessApiVersionCalls) {
+            val targetApiVersion = inliningContext.state.languageVersionSettings.apiVersion
+            ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
         val frames = analyzeMethodNodeBeforeInline(node)
