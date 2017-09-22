@@ -136,10 +136,8 @@ val preparePluginXml by task<Copy> {
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(preparePluginXml)
-    project(":prepare:idea-plugin").afterEvaluate {
-        ideaCommunityPlugin.files.forEach {
-            from(zipTree(it), { exclude("META-INF/plugin.xml") })
-        }
+    ideaCommunityPlugin.files.forEach {
+        from(zipTree(it), { exclude("META-INF/plugin.xml") })
     }
     from(preparedResources, { include("META-INF/plugin.xml") })
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
