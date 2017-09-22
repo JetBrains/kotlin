@@ -151,7 +151,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleChunk.modules, buildFile)
 
-                val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
@@ -166,7 +166,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
-                val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
                 val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)
@@ -192,7 +192,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     }
                 }
 
-                val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                val environment = createCoreEnvironment(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
@@ -263,33 +263,30 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         return true
     }
 
-    private fun createEnvironmentWithScriptingSupport(rootDisposable: Disposable,
-                                                      configuration: CompilerConfiguration,
-                                                      arguments: K2JVMCompilerArguments,
-                                                      messageCollector: MessageCollector
+    private fun createCoreEnvironment(
+            rootDisposable: Disposable,
+            configuration: CompilerConfiguration,
+            arguments: K2JVMCompilerArguments,
+            messageCollector: MessageCollector
     ): KotlinCoreEnvironment? {
-
         val scriptResolverEnv = createScriptResolverEnvironment(arguments, messageCollector) ?: return null
         configureScriptDefinitions(arguments.scriptTemplates, configuration, messageCollector, scriptResolverEnv)
-        if (!messageCollector.hasErrors()) {
-            val environment = createCoreEnvironment(rootDisposable, configuration)
-            if (!messageCollector.hasErrors()) {
-                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
-                return environment
-            }
-        }
-        return null
-    }
+        if (messageCollector.hasErrors()) return null
 
-    private fun createCoreEnvironment(rootDisposable: Disposable, configuration: CompilerConfiguration): KotlinCoreEnvironment {
-        val result = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         if (initStartNanos != 0L) {
             val initNanos = System.nanoTime() - initStartNanos
             reportPerf(configuration, "INIT: Compiler initialized in " + TimeUnit.NANOSECONDS.toMillis(initNanos) + " ms")
             initStartNanos = 0L
         }
-        return result
+
+        if (!messageCollector.hasErrors()) {
+            scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
+            return environment
+        }
+
+        return null
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(
