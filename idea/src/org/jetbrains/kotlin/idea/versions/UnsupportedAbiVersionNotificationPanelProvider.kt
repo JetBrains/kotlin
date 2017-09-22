@@ -231,7 +231,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
     fun checkAndCreate(module: Module): EditorNotificationPanel? {
         val state = ServiceManager.getService(project, SuppressNotificationState::class.java).state
-        if (state != null && state.isSuppressed) {
+        if (state.isSuppressed) {
             return null
         }
 

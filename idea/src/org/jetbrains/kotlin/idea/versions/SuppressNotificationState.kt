@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.versions;
+package org.jetbrains.kotlin.idea.versions
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros
+import com.intellij.util.xmlb.XmlSerializerUtil
 
-@State(name = "SuppressABINotification", storages = {@Storage(file = StoragePathMacros.PROJECT_FILE)})
-public class SuppressNotificationState implements PersistentStateComponent<SuppressNotificationState> {
-    public boolean isSuppressed;
+@State(name = "SuppressABINotification", storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE)))
+class SuppressNotificationState : PersistentStateComponent<SuppressNotificationState> {
+    var isSuppressed: Boolean = false
 
-    @Override
-    public SuppressNotificationState getState() {
-        return this;
-    }
+    override fun getState(): SuppressNotificationState = this
 
-    @Override
-    public void loadState(SuppressNotificationState state) {
-        XmlSerializerUtil.copyBean(state, this);
+    override fun loadState(state: SuppressNotificationState) {
+        XmlSerializerUtil.copyBean(state, this)
     }
 }
