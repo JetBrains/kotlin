@@ -6,11 +6,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
-    val repos = listOf(
+    val repos = listOfNotNull(
             System.getProperty("bootstrap.kotlin.repo"),
             "https://repo.gradle.org/gradle/repo",
             "https://plugins.gradle.org/m2",
-            "http://repository.jetbrains.com/utils/").filterNotNull()
+            "http://repository.jetbrains.com/utils/")
 
     extra["bootstrapKotlinVersion"] = bootstrapKotlinVersion
 
