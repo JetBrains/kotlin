@@ -33,8 +33,8 @@ enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var 
     MINGW("mingw", "exe"),
     MACBOOK("osx", "kexe"),
     RASPBERRYPI("raspberrypi", "kexe"),
-    MIPS("mips", "kexe"),
-    MIPSEL("mipsel", "kexe"),
+    MIPS32("mips32", "kexe"),
+    MIPSEL32("mipsel32", "kexe"),
     WASM32("wasm32", "wasm");
 
     val userName get() = name.toLowerCase()
@@ -46,8 +46,8 @@ enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var 
         MACBOOK       -> Platform.OSX
         RASPBERRYPI   -> Platform.LINUX
         LINUX         -> Platform.LINUX
-        MIPS          -> Platform.LINUX
-        MIPSEL        -> Platform.LINUX
+        MIPS32 -> Platform.LINUX
+        MIPSEL32      -> Platform.LINUX
         MINGW         -> Platform.WINDOWS
         WASM32        -> Platform.WASM
     }
@@ -166,8 +166,8 @@ class TargetManager(val userRequest: String? = null) {
                 KonanTarget.LINUX   -> {
                     KonanTarget.LINUX.enabled = true
                     KonanTarget.RASPBERRYPI.enabled = true
-                    KonanTarget.MIPS.enabled = true
-                    KonanTarget.MIPSEL.enabled = true
+                    KonanTarget.MIPS32.enabled = true
+                    KonanTarget.MIPSEL32.enabled = true
                     KonanTarget.ANDROID_ARM32.enabled = true
                     KonanTarget.ANDROID_ARM64.enabled = true
                 }
