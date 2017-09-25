@@ -143,7 +143,7 @@ object TestRunner {
     private fun setLoggerFromArg(logger: String) {
         when(logger.toUpperCase()) {
             "GTEST" -> this.logger = GTestLogger()
-            "TEAMCITY" -> TODO() //this.logger = TeamCityLogger()
+            "TEAMCITY" -> this.logger = TeamCityLogger()
             "SIMPLE" -> this.logger = SimpleTestLogger()
             "SILENT" -> this.logger = SilentTestLogger()
             else -> throw IllegalArgumentException("Unknown logger type. Available types: GTEST, TEAMCITY, SIMPLE")
