@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.JvmConstantsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
@@ -294,8 +295,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isInlinedJavaConstProperty(VariableDescriptor descriptor) {
-        if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
-        return descriptor.isConst();
+        return JvmConstantsKt.isInlinedJavaConstProperty(descriptor);
     }
 
     @Nullable

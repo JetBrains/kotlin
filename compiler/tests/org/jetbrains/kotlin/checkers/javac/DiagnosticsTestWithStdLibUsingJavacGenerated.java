@@ -539,6 +539,21 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmSpecialFunctions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JvmSpecialFunctions extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+            public void testAllFilesPresentInJvmSpecialFunctions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmSpecialFunctions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("apiVersionIsAtLeastHasConstArguments.kt")
+            public void testApiVersionIsAtLeastHasConstArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmSpecialFunctions/apiVersionIsAtLeastHasConstArguments.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

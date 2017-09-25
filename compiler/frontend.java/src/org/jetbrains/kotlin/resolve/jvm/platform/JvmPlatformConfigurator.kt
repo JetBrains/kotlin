@@ -54,7 +54,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 SuperCallWithDefaultArgumentsChecker(),
                 ProtectedSyntheticExtensionCallChecker,
                 ReifiedTypeParameterSubstitutionChecker(),
-                RuntimeAssertionsOnExtensionReceiverCallChecker
+                RuntimeAssertionsOnExtensionReceiverCallChecker,
+                ApiVersionIsAtLeastArgumentsChecker
         ),
 
         additionalTypeCheckers = listOf(

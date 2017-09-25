@@ -80,6 +80,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices;
+import org.jetbrains.kotlin.resolve.jvm.JvmConstantsKt;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -786,49 +787,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             boolean takeUpConstValsAsConst,
             boolean shouldInlineConstVals
     ) {
-        CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext);
-        if (compileTimeValue == null || compileTimeValue.getUsesNonConstValAsConstant()) {
-            return null;
-        }
-
-        if (!shouldInlineConstVals && !takeUpConstValsAsConst && compileTimeValue.getUsesVariableAsConstant()) {
-            Ref<Boolean> containsNonInlinedVals = new Ref<>(false);
-            KtVisitor constantChecker = new KtVisitor() {
-                @Override
-                public Object visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, Object data) {
-                    ResolvedCall resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
-                    if (resolvedCall != null) {
-                        CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
-                        if (callableDescriptor instanceof PropertyDescriptor &&
-                            !JvmCodegenUtil.isInlinedJavaConstProperty((VariableDescriptor) callableDescriptor)) {
-                                containsNonInlinedVals.set(true);
-                        }
-                    }
-                    return null;
-                }
-
-                @Override
-                public Object visitKtElement(@NotNull KtElement element, Object data) {
-                    if (!containsNonInlinedVals.get()) {
-                        element.acceptChildren(this);
-                    }
-                    return null;
-                }
-            };
-
-            expression.accept(constantChecker);
-
-            if (containsNonInlinedVals.get()) {
-                return null;
-            }
-        }
-
-        KotlinType expectedType = bindingContext.getType(expression);
-        if (expectedType == null) {
-            return null;
-        }
-
-        return compileTimeValue.toConstantValue(expectedType);
+        return JvmConstantsKt.getCompileTimeConstant(expression, bindingContext, takeUpConstValsAsConst, shouldInlineConstVals);
     }
 
     @Override
