@@ -233,12 +233,7 @@ internal class LinkStage(val context: Context) {
     private val emitted = context.bitcodeFileName
     private val libraries = context.config.libraries 
         .map { 
-            if (!it.isNeededForLink) { 
-                if (!it.isDefaultLink) {
-                    context.reportCompilationWarning("The '${it.libraryName}' library has not been referenced. Omitted from the final link.")
-                }
-                null
-            } else it
+            if (!it.isNeededForLink && it.isDefaultLink) null else it
         }.filterNotNull()
 
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
