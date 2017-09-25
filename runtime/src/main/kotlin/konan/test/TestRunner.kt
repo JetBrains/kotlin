@@ -213,11 +213,11 @@ object TestRunner {
                 } else {
                     sendToListeners { startSuite(it) }
                     val time = measureTimeMillis { it.run() }
-                    sendToListeners { endSuite(it, time) }
+                    sendToListeners { finishSuite(it, time) }
                 }
             }
         }
-        sendToListeners { endTesting(this@TestRunner, totalTime) }
+        sendToListeners { finishTesting(this@TestRunner, totalTime) }
         return exitCode
     }
 }

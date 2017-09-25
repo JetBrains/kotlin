@@ -31,7 +31,7 @@ class TeamCityLogger : BaseTestLogger() {
 
     override fun start(testCase: TestCase) = report("testStarted name='${testCase.tcName}'")
     override fun startSuite(suite: TestSuite) = report("testSuiteStarted name='${suite.tcName}'")
-    override fun endSuite(suite: TestSuite, timeMillis: Long) = report("testSuiteFinished name='${suite.tcName}'")
+    override fun finishSuite(suite: TestSuite, timeMillis: Long) = report("testSuiteFinished name='${suite.tcName}'")
 
     override fun pass(testCase: TestCase, timeMillis: Long) = finish(testCase, timeMillis)
     override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) {

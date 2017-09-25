@@ -29,7 +29,7 @@ open class TestLoggerWithStatistics: BaseTestLogger() {
     protected val statistics = MutableTestStatistics()
 
     override fun startTesting(runner: TestRunner) = statistics.reset()
-    override fun endSuite(suite: TestSuite, timeMillis: Long) = statistics.registerSuite()
+    override fun finishSuite(suite: TestSuite, timeMillis: Long) = statistics.registerSuite()
     override fun pass(testCase: TestCase, timeMillis: Long) = statistics.registerPass()
     override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) = statistics.registerFail(testCase)
     override fun ignore(testCase: TestCase) = statistics.registerIgnore()
@@ -42,10 +42,10 @@ class SilentTestLogger: BaseTestLogger() {
 
 class SimpleTestLogger: BaseTestLogger() {
     override fun startTesting(runner: TestRunner) = println("Starting testing")
-    override fun endTesting(runner: TestRunner, timeMillis: Long) = println("Testing finished")
+    override fun finishTesting(runner: TestRunner, timeMillis: Long) = println("Testing finished")
 
     override fun startSuite(suite: TestSuite) = println("Starting test suite: $suite")
-    override fun endSuite(suite: TestSuite, timeMillis: Long) = println("Test suite finished: $suite")
+    override fun finishSuite(suite: TestSuite, timeMillis: Long) = println("Test suite finished: $suite")
     override fun ignoreSuite(suite: TestSuite) = println("Test suite ignored: $suite")
 
     override fun start(testCase: TestCase) = println("Starting test case: $testCase")

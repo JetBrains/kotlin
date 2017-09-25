@@ -25,12 +25,12 @@ class GTestLogger : TestLoggerWithStatistics() {
         }
     }
 
-    override fun endTesting(runner: TestRunner, timeMillis: Long) = printResults(timeMillis)
+    override fun finishTesting(runner: TestRunner, timeMillis: Long) = printResults(timeMillis)
 
     override fun startSuite(suite: TestSuite) = println("[----------] ${suite.size} tests from ${suite.name}")
 
-    override fun endSuite(suite: TestSuite, timeMillis: Long) {
-        super.endSuite(suite, timeMillis)
+    override fun finishSuite(suite: TestSuite, timeMillis: Long) {
+        super.finishSuite(suite, timeMillis)
         println("[----------] ${suite.size} tests from ${suite.name} ($timeMillis ms total)\n")
     }
 

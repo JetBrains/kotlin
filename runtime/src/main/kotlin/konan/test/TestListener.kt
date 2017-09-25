@@ -2,10 +2,10 @@ package konan.test
 
 interface TestListener {
     fun startTesting(runner: TestRunner)
-    fun endTesting(runner: TestRunner, timeMillis: Long)
+    fun finishTesting(runner: TestRunner, timeMillis: Long)
 
     fun startSuite(suite: TestSuite)
-    fun endSuite(suite: TestSuite, timeMillis: Long)
+    fun finishSuite(suite: TestSuite, timeMillis: Long)
     fun ignoreSuite(suite: TestSuite)
 
     fun start(testCase: TestCase)
@@ -16,9 +16,9 @@ interface TestListener {
 
 open class BaseTestListener: TestListener {
     override fun startTesting(runner: TestRunner) {}
-    override fun endTesting(runner: TestRunner, timeMillis: Long) {}
+    override fun finishTesting(runner: TestRunner, timeMillis: Long) {}
     override fun startSuite(suite: TestSuite) {}
-    override fun endSuite(suite: TestSuite, timeMillis: Long) {}
+    override fun finishSuite(suite: TestSuite, timeMillis: Long) {}
     override fun ignoreSuite(suite: TestSuite) {}
     override fun start(testCase: TestCase) {}
     override fun pass(testCase: TestCase, timeMillis: Long) {}
