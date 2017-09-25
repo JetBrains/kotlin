@@ -284,10 +284,10 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
             def d8 = "$absoluteTargetToolchain/bin/d8"
             def launcherJs = "${exe}.js"
             return [d8, '--expose-wasm', launcherJs, '--', exe]
-        } else if (target == KonanTarget.MIPS32 || target == KonanTarget.MIPSEL32) {
+        } else if (target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32) {
             def targetSysroot = TargetPropertiesKt.targetString(properties, "targetSysRoot", target)
             def absoluteTargetSysroot = "$dependenciesDir/$targetSysroot"
-            def qemu = target == KonanTarget.MIPS32 ? "qemu-mips" : "qemu-mipsel"
+            def qemu = target == KonanTarget.LINUX_MIPS32 ? "qemu-mips" : "qemu-mipsel"
             def absoluteQemu = "$absoluteTargetToolchain/bin/$qemu"
             return [absoluteQemu, "-L", absoluteTargetSysroot, exe]
         } else {
