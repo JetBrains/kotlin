@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.native.interop.gen.HeadersInclusionPolicyImpl
 import org.jetbrains.kotlin.native.interop.gen.ImportsImpl
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
-import java.io.StringReader
 import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.reflect.KFunction
@@ -124,10 +124,6 @@ private fun ProcessBuilder.runExpectingSuccess() {
     if (res != 0) {
         throw Error("Process finished with non-zero exit code: $res")
     }
-}
-
-private fun Properties.getSpaceSeparated(name: String): List<String> {
-    return this.getProperty(name)?.split(' ')?.filter { it.isNotEmpty() } ?: emptyList()
 }
 
 private fun <T> Collection<T>.atMostOne(): T? {
@@ -271,43 +267,6 @@ private fun Properties.storeProperties(file: File) {
     }
 }
 
-private fun parseDefFile(file: File?, substitutions: Map<String, String>): Triple<Properties, Properties, List<String>> {
-    val properties = Properties()
-
-    if (file == null) {
-        return Triple(properties, Properties(), emptyList())
-    }
-
-    val lines = file.readLines()
-
-    val separator = "---"
-    val separatorIndex = lines.indexOf(separator)
-
-    val propertyLines: List<String>
-    val headerLines: List<String>
-
-    if (separatorIndex != -1) {
-        propertyLines = lines.subList(0, separatorIndex)
-        headerLines = lines.subList(separatorIndex + 1, lines.size)
-    } else {
-        propertyLines = lines
-        headerLines = emptyList()
-    }
-
-    val propertiesReader = StringReader(propertyLines.joinToString(System.lineSeparator()))
-    properties.load(propertiesReader)
-
-    // Pass unsubstituted copy of properties we have obtained from `.def` 
-    // to compiler `-maniest`.
-    val manifestAddendProperties = properties.duplicate()
-
-    substitute(properties, substitutions)
-
-    return Triple(properties, manifestAddendProperties, headerLines)
-}
-
-private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
-
 private fun usage() {
     println("""
 Run interop tool with -def <def_file_for_lib>.def
@@ -327,13 +286,13 @@ private fun downloadDependencies(dependenciesRoot: String, target: String, konan
     maybeExecuteHelper(dependenciesRoot, konanProperties, dependencyList)
 }
 
-private fun selectNativeLanguage(config: Properties): Language {
+private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
     val languages = mapOf(
             "C" to Language.C,
             "Objective-C" to Language.OBJECTIVE_C
     )
 
-    val language = config.getProperty("language") ?: return Language.C
+    val language = config.language ?: return Language.C
 
     return languages[language] ?:
             error("Unexpected language '$language'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
@@ -389,8 +348,7 @@ private fun processLib(konanHome: String,
         return
     }
 
-    val (config, manifestAddendProperties, defHeaderLines)
-            = parseDefFile(defFile, substitutions)
+    val def = DefFile(defFile, substitutions)
 
     val konanFileName = args["-properties"]?.single() ?:
             "${konanHome}/konan/konan.properties"
@@ -409,10 +367,10 @@ private fun processLib(konanHome: String,
     val verbose = args["-verbose"].isTrue()
 
     val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies)
-    val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
-    val language = selectNativeLanguage(config)
+    val headerFiles = def.config.headers + additionalHeaders
+    val language = selectNativeLanguage(def.config)
     val compilerOpts: List<String> = mutableListOf<String>().apply {
-        addAll(config.getSpaceSeparated("compilerOpts"))
+        addAll(def.config.compilerOpts)
         addAll(defaultOpts)
         addAll(additionalCompilerOpts)
         addAll(when (language) {
@@ -428,19 +386,19 @@ private fun processLib(konanHome: String,
         })
     }
     val compiler = "clang"
-    val excludeSystemLibs = config.getProperty("excludeSystemLibs")?.toBoolean() ?: false
-    val excludeDependentModules = config.getProperty("excludeDependentModules")?.toBoolean() ?: false
+    val excludeSystemLibs = def.config.excludeSystemLibs
+    val excludeDependentModules = def.config.excludeDependentModules
 
-    val entryPoint = config.getSpaceSeparated("entryPoint").atMostOne()
+    val entryPoint = def.config.entryPoints.atMostOne()
     val linkerOpts =
-            config.getSpaceSeparated("linkerOpts").toTypedArray() + defaultOpts + additionalLinkerOpts
-    val linker = args["-linker"]?.atMostOne() ?: config.getProperty("linker") ?: "clang"
-    val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
-    val staticLibraries = config.getSpaceSeparated("staticLibraries") + args["-staticLibrary"].orEmpty()
-    val libraryPaths = config.getSpaceSeparated("libraryPaths") + args["-libraryPath"].orEmpty()
+            def.config.linkerOpts.toTypedArray() + defaultOpts + additionalLinkerOpts
+    val linker = args["-linker"]?.atMostOne() ?: def.config.linker
+    val excludedFunctions = def.config.excludedFunctions.toSet()
+    val staticLibraries = def.config.staticLibraries + args["-staticLibrary"].orEmpty()
+    val libraryPaths = def.config.libraryPaths + args["-libraryPath"].orEmpty()
     argsToCompiler ?. let { it.addAll(argsToCompiler(staticLibraries, libraryPaths)) }
 
-    val fqParts = (args["-pkg"]?.atMostOne() ?: config.getProperty("package"))?.let {
+    val fqParts = (args["-pkg"]?.atMostOne() ?: def.config.packageName)?.let {
         it.split('.')
     } ?: defFile!!.name.split('.').reversed().drop(1)
 
@@ -452,13 +410,13 @@ private fun processLib(konanHome: String,
 
     val libName = args["-cstubsname"]?.atMostOne() ?: fqParts.joinToString("") + "stubs"
 
-    val headerFilterGlobs = config.getSpaceSeparated("headerFilter")
+    val headerFilterGlobs = def.config.headerFilter
     val imports = parseImports(args)
     val headerInclusionPolicy = HeadersInclusionPolicyImpl(headerFilterGlobs, imports)
 
     val library = NativeLibrary(
             includes = headerFiles,
-            additionalPreambleLines = defHeaderLines,
+            additionalPreambleLines = def.defHeaderLines,
             compilerArgs = compilerOpts,
             language = language,
             excludeSystemLibs = excludeSystemLibs,
@@ -470,8 +428,8 @@ private fun processLib(konanHome: String,
             library = library,
             pkgName = outKtPkg,
             excludedFunctions = excludedFunctions,
-            strictEnums = config.getSpaceSeparated("strictEnums").toSet(),
-            nonStrictEnums = config.getSpaceSeparated("nonStrictEnums").toSet()
+            strictEnums = def.config.strictEnums.toSet(),
+            nonStrictEnums = def.config.nonStrictEnums.toSet()
     )
 
     val nativeIndex = buildNativeIndex(library)
@@ -490,13 +448,13 @@ private fun processLib(konanHome: String,
     }
 
     // TODO: if a library has partially included headers, then it shouldn't be used as a dependency.
-    manifestAddendProperties["includedHeaders"] = nativeIndex.includedHeaders.joinToString(" ") { it.value }
-    manifestAddendProperties["pkg"] = outKtPkg
+    def.manifestAddendProperties["includedHeaders"] = nativeIndex.includedHeaders.joinToString(" ") { it.value }
+    def.manifestAddendProperties["pkg"] = outKtPkg
 
-    gen.addManifestProperties(manifestAddendProperties)
+    gen.addManifestProperties(def.manifestAddendProperties)
 
     manifestAddend?.parentFile?.mkdirs()
-    manifestAddend?.let { manifestAddendProperties.storeProperties(it) }
+    manifestAddend?.let { def.manifestAddendProperties.storeProperties(it) }
 
     val workDir = defFile?.absoluteFile?.parentFile ?: File(userDir)
 
