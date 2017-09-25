@@ -18,11 +18,8 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
@@ -33,7 +30,7 @@ class ReplaceArrayEqualityOpWithArraysEqualsInspection :
 
 class ReplaceArrayEqualityOpWithArraysEqualsIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
         KtBinaryExpression::class.java,
-        "Replace '==' with 'Arrays.equals'"
+        "Replace '==' with 'contentEquals'"
 ) {
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
@@ -41,13 +38,9 @@ class ReplaceArrayEqualityOpWithArraysEqualsIntention : SelfTargetingOffsetIndep
         val right = element.right ?: return
         val left = element.left ?: return
         val factory = KtPsiFactory(project)
-        val ktFile = element.containingKtFile
-        ktFile.resolveImportReference(FqName("java.util.Arrays")).firstOrNull()?.let {
-            ImportInsertHelper.getInstance(project).importDescriptor(ktFile, it)
-        }
         val template = buildString {
             if (element.operationToken == KtTokens.EXCLEQ) append("!")
-            append("Arrays.equals($0, $1)")
+            append("$0.contentEquals($1)")
         }
         val expression = factory.createExpressionByPattern(template, left, right)
         element.replace(expression)
@@ -56,7 +49,7 @@ class ReplaceArrayEqualityOpWithArraysEqualsIntention : SelfTargetingOffsetIndep
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         val operationToken = element.operationToken
         if (operationToken != KtTokens.EQEQ && operationToken != KtTokens.EXCLEQ) return false
-        if (operationToken == KtTokens.EXCLEQ) text = "Replace '!=' with 'Arrays.equals'"
+        if (operationToken == KtTokens.EXCLEQ) text = "Replace '!=' with 'contentEquals'"
         val right = element.right ?: return false
         val left = element.left ?: return false
         val rightResolvedCall = right.getResolvedCall(right.analyze()) ?: return false
