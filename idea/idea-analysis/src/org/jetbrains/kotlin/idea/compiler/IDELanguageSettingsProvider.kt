@@ -41,7 +41,7 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
         val map = mutableMapOf<AnalysisFlag<*>, Any>()
         for (module in ModuleManager.getInstance(project).modules) {
             val settings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module) ?: continue
-            val compilerArguments = settings.compilerArguments as? K2JVMCompilerArguments ?: continue
+            val compilerArguments = settings.mergedCompilerArguments as? K2JVMCompilerArguments ?: continue
 
             val jsr305state = Jsr305State.findByDescription(compilerArguments.jsr305)
             if (jsr305state != null && jsr305state != Jsr305State.IGNORE) {
