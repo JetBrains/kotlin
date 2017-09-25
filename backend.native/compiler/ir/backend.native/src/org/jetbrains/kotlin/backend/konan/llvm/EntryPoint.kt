@@ -38,18 +38,8 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
     val config = context.config.configuration
     if (config.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.PROGRAM) return null
 
-    val userEntryName = config.get(KonanConfigKeys.ENTRY)
-    val entryPoint: FqName
-    if (config.getBoolean(KonanConfigKeys.GENERATE_TEST_RUNNER)) {
-        entryPoint = FqName(testEntryName)
-        if (userEntryName != null) {
-            config.report(CompilerMessageSeverity.WARNING,
-                    "Custom entry point is ignored if test runner is generated"
-            )
-        }
-    } else {
-        entryPoint = FqName(userEntryName ?: defaultEntryName)
-    }
+    val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?:
+            if (context.shouldGenerateTestRunner()) testEntryName else defaultEntryName)
 
     val entryName = entryPoint.shortName()
     val packageName = entryPoint.parent()
