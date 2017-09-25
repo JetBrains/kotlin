@@ -25,7 +25,7 @@ task klibInstall(type:Exec) {
     dependsOn konanInterop["$taskName"].interopProcessingTask
     commandLine klibProgram,
             'install',
-            konanInterop["$taskName"].interopProcessingTask.kLib,
+            konanInterop["$taskName"].interopProcessingTask.klib,
             '-repository',
             gradle.startParameter.projectProperties['konan.home']
 }
