@@ -65,8 +65,8 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
 
     val offset = file.getLineStartOffset(line)?.takeIf { it > 0 } ?: return emptySet()
 
-    val elem = file.findElementAt(offset)
-    val containingElement = getContainingElement(elem!!) ?: elem ?: return emptySet()
+    val elem = file.findElementAt(offset) ?: return emptySet()
+    val containingElement = getContainingElement(elem) ?: elem
 
     val limit = getLineRangeForElement(containingElement, doc)
 
