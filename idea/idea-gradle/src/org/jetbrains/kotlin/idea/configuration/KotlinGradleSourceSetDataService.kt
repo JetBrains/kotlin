@@ -205,15 +205,15 @@ private fun configureFacetByGradleModule(
         adjustClasspath(kotlinFacet, dependencyClasspath)
     }
 
-    kotlinFacet.configuration.settings.implementedModuleName = getImplementedModuleName(moduleNode, sourceSetName)
+    kotlinFacet.configuration.settings.implementedModuleName = getImplementedModuleName(moduleNode, sourceSetName, ideModule.project)
 
     return kotlinFacet
 }
 
-private fun getImplementedModuleName(moduleNode: DataNode<ModuleData>, sourceSetName: String?): String? {
+private fun getImplementedModuleName(moduleNode: DataNode<ModuleData>, sourceSetName: String?, project: Project): String? {
     val baseModuleName = moduleNode.implementedModule?.data?.internalName
     if (baseModuleName == null || sourceSetName == null) return baseModuleName
-    val delimiter = if(isQualifiedModuleNamesEnabled()) "." else "_"
+    val delimiter = if(isQualifiedModuleNamesEnabled(project)) "." else "_"
     return "$baseModuleName$delimiter$sourceSetName"
 }
 
