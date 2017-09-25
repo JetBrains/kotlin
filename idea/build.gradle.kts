@@ -109,4 +109,5 @@ projectTest {
 testsJar {}
 
 classesDirsArtifact()
+configureInstrumentation()
 
