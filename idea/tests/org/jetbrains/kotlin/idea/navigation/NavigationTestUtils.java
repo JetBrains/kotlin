@@ -50,6 +50,10 @@ public final class NavigationTestUtils {
     }
 
     public static void assertGotoDataMatching(Editor editor, GotoTargetHandler.GotoData gotoData) {
+        assertGotoDataMatching(editor, gotoData, false);
+    }
+
+    public static void assertGotoDataMatching(Editor editor, GotoTargetHandler.GotoData gotoData, boolean renderModule) {
         // Get expected references from the tested document
         List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
         for (int i = 0; i < expectedReferences.size(); i++) {
@@ -69,7 +73,7 @@ public final class NavigationTestUtils {
                 @Override
                 public String apply(@Nullable PsiElement element) {
                     Assert.assertNotNull(element);
-                    return ReferenceUtils.renderAsGotoImplementation(element);
+                    return ReferenceUtils.renderAsGotoImplementation(element, renderModule);
                 }
             });
 
