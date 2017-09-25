@@ -9529,6 +9529,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/somethingAndNotNull.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("withAssertion.kt")
+        public void testWithAssertion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/withAssertion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withAssertion2.kt")
+        public void testWithAssertion2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/withAssertion2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withAssertion3.kt")
+        public void testWithAssertion3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/withAssertion3.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/specifyOverrideExplicitly")
