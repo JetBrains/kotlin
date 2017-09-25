@@ -13739,6 +13739,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forInRangeLiteralWithMixedTypeBounds.kt")
+        public void testForInRangeLiteralWithMixedTypeBounds() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInRangeLiteralWithMixedTypeBounds.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forInRangeToConstWithOverflow.kt")
         public void testForInRangeToConstWithOverflow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInRangeToConstWithOverflow.kt");

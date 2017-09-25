@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 class ForInUntilConstantRangeLoopGenerator(
@@ -36,5 +34,5 @@ class ForInUntilConstantRangeLoopGenerator(
             codegen.generateReceiverValue(from, false)
 
     override fun generateTo(): StackValue =
-            StackValue.constant(untilValue, asmElementType)
+            StackValue.integerConstant(untilValue, asmElementType)
 }

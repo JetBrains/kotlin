@@ -180,6 +180,19 @@ public abstract class StackValue {
     }
 
     @NotNull
+    public static StackValue integerConstant(int value, @NotNull Type type) {
+        if (type == Type.LONG_TYPE) {
+            return constant(Long.valueOf(value), type);
+        }
+        else if (type == Type.BYTE_TYPE || type == Type.SHORT_TYPE || type == Type.INT_TYPE) {
+            return constant(Integer.valueOf(value), type);
+        }
+        else {
+            throw new AssertionError("Unexpected integer type: " + type);
+        }
+    }
+
+    @NotNull
     public static StackValue constant(@Nullable Object value, @NotNull Type type) {
         if (type == Type.BOOLEAN_TYPE) {
             assert value instanceof Boolean : "Value for boolean constant should have boolean type: " + value;
