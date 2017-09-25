@@ -48,6 +48,7 @@ open class KtClass : KtClassOrObject {
     fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
     fun isSealed(): Boolean = hasModifier(KtTokens.SEALED_KEYWORD)
     fun isInner(): Boolean = hasModifier(KtTokens.INNER_KEYWORD)
+    fun isOpen(): Boolean = hasModifier(KtTokens.OPEN_KEYWORD)
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         if (this === another) {
