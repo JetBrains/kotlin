@@ -6479,6 +6479,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("getterTypeInferred.kt")
+        public void testGetterTypeInferred() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/getterTypeInferred.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("getterWithThrow.kt")
         public void testGetterWithThrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/getterWithThrow.kt");
