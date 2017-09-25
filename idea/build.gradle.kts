@@ -31,7 +31,7 @@ dependencies {
 
     compile(ideaSdkCoreDeps("intellij-core", "util"))
 
-    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
+    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", /*"jsr305",*/ "forms_rt"))
 
     compile(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
     compile(ideaPluginDeps("copyright", plugin = "copyright"))
@@ -52,7 +52,7 @@ dependencies {
     testCompileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
     testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
-    testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson", "jsr305"))
+    testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson"/*, "jsr305"*/))
 
     testRuntime(ideaSdkDeps("*.jar"))
 
