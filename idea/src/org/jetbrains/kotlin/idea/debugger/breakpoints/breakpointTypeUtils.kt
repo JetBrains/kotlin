@@ -43,7 +43,7 @@ import java.util.*
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
 
-    if (psiFile == null || psiFile.virtualFile.fileType != KotlinFileType.INSTANCE) {
+    if (psiFile == null || psiFile.virtualFile?.fileType != KotlinFileType.INSTANCE) {
         return false
     }
 
