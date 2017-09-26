@@ -1,6 +1,8 @@
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtParameter
@@ -14,12 +16,15 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.uast.*
 
 class KotlinUAnnotation(
-        override val psi: KtAnnotationEntry,
+        val ktAnnotationEntry: KtAnnotationEntry,
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UAnnotation {
-    private val resolvedAnnotation: AnnotationDescriptor? by lz { psi.analyze()[BindingContext.ANNOTATION, psi] }
+    private val resolvedAnnotation: AnnotationDescriptor? by lz { ktAnnotationEntry.analyze()[BindingContext.ANNOTATION, ktAnnotationEntry] }
 
-    private val resolvedCall: ResolvedCall<*>? by lz { psi.getResolvedCall(psi.analyze()) }
+    private val resolvedCall: ResolvedCall<*>? by lz { ktAnnotationEntry.getResolvedCall(ktAnnotationEntry.analyze()) }
+
+    override val psi: PsiAnnotation?
+        get() = ktAnnotationEntry.toLightAnnotation()
 
     override val qualifiedName: String?
         get() = resolvedAnnotation?.fqName?.asString()
