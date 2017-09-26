@@ -78,11 +78,13 @@ internal open class AndroidPlatform(distribution: Distribution)
         = binaries.filter { it.isUnixStaticLib }
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+        // liblog.so must be linked in, as we use its functionality in runtime.
         return mutableListOf(clang).apply{
             add("-o")
             add(executable)
             add("-fPIC")
             add("-shared")
+            add("-llog")
             addAll(objectFiles)
             if (optimize) addAll(linkerOptimizationFlags)
             if (!debug) addAll(linkerDebugFlags)
