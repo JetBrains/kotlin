@@ -9,7 +9,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
     compileOnly(ideaSdkDeps("openapi", "idea"))
-    compile(preloadedDeps("uast-common", "uast-java"))
+    //compile(preloadedDeps("uast-common", "uast-java"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":compiler.tests-common"))
     testCompile(commonDep("junit:junit"))
