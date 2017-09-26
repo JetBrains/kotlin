@@ -20,7 +20,9 @@ dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compileOnly(project(":kotlin-annotation-processing"))
     compileOnly("org.jetbrains.kotlin:gradle-api:1.6")
+    testCompile("org.jetbrains.kotlin:gradle-api:1.6")
     compileOnly("com.android.tools.build:gradle:1.1.0")
+    testCompile("com.android.tools.build:gradle:1.1.0")
     testCompile(commonDep("junit:junit"))
     packedJars(project(":kotlin-annotation-processing")) { isTransitive = false }
 }
