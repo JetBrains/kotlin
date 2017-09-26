@@ -65,7 +65,9 @@ object CallTranslator {
                      value: JsExpression,
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
-        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), value)
+        val type = TranslationUtils.getReturnTypeForCoercion(resolvedCall.resultingDescriptor)
+        val coerceValue = TranslationUtils.coerce(context, value, type)
+        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), coerceValue)
         val result = variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
         result.type = context.currentModule.builtIns.unitType
         return result

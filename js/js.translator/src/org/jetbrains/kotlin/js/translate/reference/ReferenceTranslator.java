@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
@@ -83,6 +84,10 @@ public final class ReferenceTranslator {
                 ValueParameterDescriptor parameter = (ValueParameterDescriptor) descriptor;
                 if (parameter.getContainingDeclaration() instanceof AnonymousFunctionDescriptor) {
                     return DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+                }
+                if (parameter.getContainingDeclaration() instanceof PropertySetterDescriptor) {
+                    PropertySetterDescriptor setter = (PropertySetterDescriptor) parameter.getContainingDeclaration();
+                    return TranslationUtils.getReturnTypeForCoercion(setter.getCorrespondingProperty(), false);
                 }
             }
             return ((CallableDescriptor) descriptor).getReturnType();
