@@ -162,7 +162,7 @@ targetList.each { target ->
     "-Djava.library.path=${project.buildDir}/nativelibs",
     "-Dfile.encoding=UTF-8"]
 
-    def defaultArgs = ['-nopack', '-nostdlib','-ea' ]
+    def defaultArgs = ['-nopack', '-nostdlib', '-nodefaultlibs', '-ea' ]
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
@@ -176,7 +176,7 @@ targetList.each { target ->
         jvmArgs = konanJvmArgs
         args = [*konanArgs,
                 '-output', project(':runtime').file("build/${target}Stdlib"),
-                '-produce', 'library',
+                '-produce', 'library', '-module_name', 'stdlib',
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),
                 project(':runtime').file('src/main/kotlin')]

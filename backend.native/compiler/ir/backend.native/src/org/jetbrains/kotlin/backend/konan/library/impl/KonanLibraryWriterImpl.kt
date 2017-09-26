@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.library.impl
 
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
@@ -29,13 +30,13 @@ abstract class FileBasedLibraryWriter (
     val file: File, val currentAbiVersion: Int): KonanLibraryWriter {
 }
 
-class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int, 
+class LibraryWriterImpl(override val libDir: File, moduleName: String, currentAbiVersion: Int, 
     override val target: KonanTarget?, val nopack: Boolean = false): 
         FileBasedLibraryWriter(libDir, currentAbiVersion), KonanLibrary {
 
-    public constructor(path: String, currentAbiVersion: Int, 
+    public constructor(path: String, moduleName: String, currentAbiVersion: Int, 
         target:KonanTarget?, nopack: Boolean): 
-        this(File(path), currentAbiVersion, target, nopack)
+        this(File(path), moduleName, currentAbiVersion, target, nopack)
 
     override val libraryName = libDir.path
     val klibFile 
@@ -58,6 +59,8 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
         nativeDir.mkdirs()
         includedDir.mkdirs()
         resourcesDir.mkdirs()
+        // TODO: <name>:<hash> will go somewhere around here.
+        manifestProperties.setProperty("unique_name", "$moduleName")
         manifestProperties.setProperty("abi_version", "$currentAbiVersion")
     }
 
@@ -82,6 +85,11 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
         File(library).copyTo(File(includedDir, basename)) 
     }
 
+    override fun addLinkDependencies(libraries: List<KonanLibraryReader>) {
+        if (libraries.isEmpty()) return
+        manifestProperties.setProperty("dependencies", libraries .map { it.uniqueName } . joinToString(" "))
+    }
+
     override fun addManifestAddend(path: String) {
         val properties = File(path).loadProperties()
         manifestProperties.putAll(properties)
@@ -102,17 +110,19 @@ class LibraryWriterImpl(override val libDir: File, currentAbiVersion: Int,
 
 internal fun buildLibrary(
     natives: List<String>, 
-    included: List<String>, 
+    included: List<String>,
+    linkDependencies: List<KonanLibraryReader>,
     linkData: LinkData, 
     abiVersion: Int, 
     target: KonanTarget, 
     output: String, 
+    moduleName: String, 
     llvmModule: LLVMModuleRef, 
     nopack: Boolean, 
     manifest: String?,
     escapeAnalysis: ByteArray?): KonanLibraryWriter {
 
-    val library = LibraryWriterImpl(output, abiVersion, target, nopack)
+    val library = LibraryWriterImpl(output, moduleName, abiVersion, target, nopack)
 
     library.addKotlinBitcode(llvmModule)
     library.addLinkData(linkData)
@@ -122,6 +132,7 @@ internal fun buildLibrary(
     included.forEach {
         library.addIncludedBinary(it)
     }
+    library.addLinkDependencies(linkDependencies)
     manifest ?.let { library.addManifestAddend(it) }
     escapeAnalysis?.let { library.addEscapeAnalysis(it) }
 

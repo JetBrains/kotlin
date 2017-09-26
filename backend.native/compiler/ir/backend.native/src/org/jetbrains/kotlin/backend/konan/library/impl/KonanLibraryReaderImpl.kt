@@ -56,6 +56,9 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
     override val libraryName 
         get() = inPlace.libraryName
 
+    override val uniqueName
+        get() = manifestProperties.propertyString("unique_name")!!
+
     override val bitcodePaths: List<String>
         get() = (realFiles.kotlinDir.listFiles + realFiles.nativeDir.listFiles).map{it.absolutePath}
 
@@ -64,6 +67,9 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
 
     override val linkerOpts: List<String>
         get() = manifestProperties.propertyList("linkerOpts", target!!.detailedName)
+
+    override val dependencies: List<String>
+        get() = manifestProperties.propertyList("dependencies")
 
     val moduleHeaderData: ByteArray by lazy {
         reader.loadSerializedModule()

@@ -86,7 +86,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         arguments.libraries.toNonNullList())
 
                 put(LINKER_ARGS, arguments.linkerArguments.toNonNullList())
-
+                arguments.moduleName ?. let{ put(MODULE_NAME, it) }
                 arguments.target ?.let{ put(TARGET, it) }
 
                 put(INCLUDED_BINARY_FILES,

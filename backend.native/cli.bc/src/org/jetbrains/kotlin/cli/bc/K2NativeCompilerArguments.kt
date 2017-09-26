@@ -45,6 +45,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
     var manifestFile: String? = null
 
+    @Argument(value = "-module_name", valueDescription = "<name>", description = "Spicify a name for the compilation module")
+    var moduleName: String? = null
+
     @Argument(value = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native bitcode library")
     var nativeLibraries: Array<String>? = null
 

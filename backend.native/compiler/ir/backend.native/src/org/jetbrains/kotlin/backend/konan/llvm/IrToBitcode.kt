@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -51,7 +49,6 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-
 
 internal fun emitLLVM(context: Context) {
         val irModule = context.irModule!!
@@ -87,59 +84,6 @@ internal fun emitLLVM(context: Context) {
         if (context.shouldContainDebugInfo()) {
             DIFinalize(context.debugInfo.builder)
         }
-}
-
-internal fun produceOutput(context: Context) {
-
-    val llvmModule = context.llvmModule!!
-    val config = context.config.configuration
-
-    when (config.get(KonanConfigKeys.PRODUCE)) {
-        CompilerOutputKind.PROGRAM -> {
-            val program = context.config.outputName
-            val output = "$program.kt.bc"
-            context.bitcodeFileName = output
-
-            PhaseManager(context).phase(KonanPhase.BITCODE_LINKER) {
-                for (library in context.config.nativeLibraries) {
-                    val libraryModule = parseBitcodeFile(library)
-                    val failed = LLVMLinkModules2(llvmModule, libraryModule)
-                    if (failed != 0) {
-                        throw Error("failed to link $library") // TODO: retrieve error message from LLVM.
-                    }
-                }
-            }
-
-            LLVMWriteBitcodeToFile(llvmModule, output)
-        }
-        CompilerOutputKind.LIBRARY -> {
-            val libraryName = context.config.outputName
-            val abiVersion = context.config.currentAbiVersion
-            val target = context.config.targetManager.target
-            val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
-            val manifest = config.get(KonanConfigKeys.MANIFEST_FILE)
-
-            val library = buildLibrary(
-                context.config.nativeLibraries, 
-                context.config.includeBinaries, 
-                context.serializedLinkData!!, 
-                abiVersion,
-                target,
-                libraryName, 
-                llvmModule,
-                nopack,
-                manifest,
-                context.moduleEscapeAnalysisResult.build().toByteArray())
-
-            context.library = library
-            context.bitcodeFileName = library.mainBitcodeFileName
-        }
-        CompilerOutputKind.BITCODE -> {
-            val output = context.config.outputFile
-            context.bitcodeFileName = output
-            LLVMWriteBitcodeToFile(llvmModule, output)
-        }
-    }
 }
 
 internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {

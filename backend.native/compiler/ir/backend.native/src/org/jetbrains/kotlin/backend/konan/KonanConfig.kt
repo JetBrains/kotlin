@@ -71,15 +71,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val outputFile = outputName.suffixIfNot(produce.suffix(targetManager.target))
 
     val moduleId: String
-        // This is a decision we could change
-        get() = outputName
+        get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: File(outputName).name
 
     private val libraryNames: List<String>
         get() = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
     private val resolver = KonanLibrarySearchPathResolver(repositories, distribution.klib, distribution.localKonanDir)
-    val libraries: List<KonanLibraryReader> by lazy {
+
+    val immediateLibraries: List<LibraryReaderImpl> by lazy {
         val target = targetManager.target
 
         val defaultLibraries = resolver.defaultLinks(
@@ -91,10 +91,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             .map { resolver.resolve(it) }
             .map{ LibraryReaderImpl(it, currentAbiVersion, target) }
 
-        val resolvedLibraries = defaultLibraries + userProvidedLibraries
-        checkLibraryDuplicates(resolvedLibraries.map{it.libraryFile})
+        var resolvedLibraries = defaultLibraries + userProvidedLibraries
+        warnOnLibraryDuplicates(resolvedLibraries.map{ it.libraryFile })
+        resolvedLibraries.distinctBy { it.libraryFile.absolutePath }
+    }
 
-        resolvedLibraries
+    val libraries: List<LibraryReaderImpl> by lazy {
+        val result = mutableListOf<LibraryReaderImpl>()
+        result.addAll(immediateLibraries)
+        do {
+            val dependencies = result 
+                .map { it.dependencies } .flatten()
+                .map { resolver.resolve(it) }
+                .map { LibraryReaderImpl(it, currentAbiVersion, targetManager.target) }
+
+            val newDependencies = dependencies.deleteMatching(result, { it.libraryFile.absolutePath })
+            result.addAll(newDependencies)
+        } while (newDependencies.size > 0)
+
+        result
     }
 
     private val loadedDescriptors = loadLibMetadata()
@@ -144,12 +159,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         loadedDescriptors
     }
 
-    private fun checkLibraryDuplicates(resolvedLibraries: List<File>) {
+    private fun warnOnLibraryDuplicates(resolvedLibraries: List<File>) {
         val duplicates = resolvedLibraries.groupBy { it.absolutePath } .values.filter { it.size > 1 }
         duplicates.forEach {
             configuration.report(STRONG_WARNING, "library included more than once: ${it.first().absolutePath}")
         }
     }
+}
+
+private fun <T, K> List<T>.deleteMatching(other: List<T>, transform: (T) -> K): List<T> {
+    val transformed = other.map { transform(it) }
+    return this.filterNot { transformed.contains( transform(it) ) }
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 

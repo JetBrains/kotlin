@@ -23,6 +23,7 @@ interface KonanLibraryWriter {
     fun addNativeBitcode(library: String)
     fun addIncludedBinary(library: String)
     fun addKotlinBitcode(llvmModule: LLVMModuleRef)
+    fun addLinkDependencies(libraries: List<KonanLibraryReader>)
     fun addManifestAddend(path: String)
     fun addEscapeAnalysis(escapeAnalysis: ByteArray)
     val mainBitcodeFileName: String

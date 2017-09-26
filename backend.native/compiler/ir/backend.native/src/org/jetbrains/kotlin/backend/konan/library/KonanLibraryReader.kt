@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.konan.properties.Properties
 
 interface KonanLibraryReader {
     val libraryName: String
+    val uniqueName: String
     val bitcodePaths: List<String>
     val includedPaths: List<String>
     val linkerOpts: List<String>
+    val dependencies: List<String>
     val escapeAnalysis: ByteArray?
     val isNeededForLink: Boolean get() = true
     val isDefaultLink: Boolean get() = false
