@@ -44,3 +44,8 @@ projectTest {
 
 testsJar {}
 
+projectTest("quickTest") {
+    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    workingDir = rootDir
+    systemProperty("kotlin.js.skipMinificationTest", "true")
+}
