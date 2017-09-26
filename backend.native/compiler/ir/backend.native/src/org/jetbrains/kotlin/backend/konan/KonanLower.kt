@@ -41,7 +41,7 @@ internal class KonanLower(val context: Context) {
         val phaser = PhaseManager(context)
 
         phaser.phase(KonanPhase.TEST_PROCESSOR) {
-            irModule.files.forEach(TestProcessor(context)::lower)
+            TestProcessor(context).process(irModule)
         }
 
         phaser.phase(KonanPhase.LOWER_BEFORE_INLINE) {

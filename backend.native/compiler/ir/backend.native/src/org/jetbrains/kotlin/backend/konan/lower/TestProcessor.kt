@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.replace
 import org.jetbrains.kotlin.backend.common.ir.createFakeOverrideDescriptor
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
@@ -10,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
-import java.io.File
 
-internal class TestProcessor (val context: KonanBackendContext): FileLoweringPass {
+internal class TestProcessor (val context: KonanBackendContext) {
 
     object TEST_SUITE_CLASS: IrDeclarationOriginImpl("TEST_SUITE_CLASS")
     object TEST_SUITE_GENERATED_MEMBER: IrDeclarationOriginImpl("TEST_SUITE_GENERATED_MEMBER")
@@ -58,16 +58,22 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
 
     val baseClassSuiteDescriptor = symbols.baseClassSuite.descriptor
 
+    private val topLevelSuiteNames = mutableSetOf<String>()
+
     // region Useful extensions.
     var testSuiteCnt = 0
     fun Name.synthesizeSuiteClassName() = identifier.synthesizeSuiteClassName()
-    fun String.synthesizeSuiteClassName() = "${splitToSequence('.')
-            .mapIndexed { i, it -> if (i != 0) it.capitalize() else it }
-            .joinToString("")}\$test\$${testSuiteCnt++}".synthesizedName
+    fun String.synthesizeSuiteClassName() = "$this\$test\$${testSuiteCnt++}".synthesizedName
 
     // IrFile always uses a forward slash as a directory separator.
-    private val IrFile.fileName get() = name.substringAfterLast('/')
-    private val IrFile.topLevelSuiteName get() = "Tests in file: $fileName"
+    private val IrFile.fileName
+        get() = name.substringAfterLast('/')
+    private val IrFile.topLevelSuiteName: String
+        get() {
+            val packageFqName = packageFragmentDescriptor.fqName
+            val shortFileName = PackagePartClassUtils.getFilePartShortName(fileName)
+            return if (packageFqName.isRoot) shortFileName else "$packageFqName.$shortFileName"
+        }
 
     private fun MutableList<TestFunction>.registerFunction(
             function: IrFunctionSymbol,
@@ -515,12 +521,28 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
                 )
             }
 
+    /** Check if this fqName already used or not. */
+    private fun checkSuiteName(irFile: IrFile, name: String): Boolean {
+        if (topLevelSuiteNames.contains(name)) {
+            context.reportCompilationError("Package '${irFile.packageFragmentDescriptor.fqName}' has top-level test " +
+                    "functions in several files with the same name: '${irFile.fileName}'")
+            return false
+        }
+        topLevelSuiteNames.add(name)
+        return true
+    }
+
     private fun generateTopLevelSuite(irFile: IrFile, functions: Collection<TestFunction>) {
         val builder = context.createIrBuilder(irFile.symbol)
+        val suiteName = irFile.topLevelSuiteName
+        if (!checkSuiteName(irFile, suiteName)) {
+            return
+        }
+
         irFile.addTopLevelInitializer(builder.irBlock {
             val constructorCall = irCall(symbols.topLevelSuiteConstructor).apply {
                 putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                context.builtIns.stringType, irFile.topLevelSuiteName))
+                                context.builtIns.stringType, suiteName))
             }
             val testSuiteVal = irTemporary(constructorCall,  "topLevelTestSuite")
             generateFunctionRegistration(testSuiteVal.symbol,
@@ -542,9 +564,11 @@ internal class TestProcessor (val context: KonanBackendContext): FileLoweringPas
     }
     // endregion
 
-    override fun lower(irFile: IrFile) {
-        val annotationCollector = AnnotationCollector(irFile)
-        irFile.acceptChildrenVoid(annotationCollector)
-        createTestSuites(irFile, annotationCollector)
+    fun process(irModuleFragment: IrModuleFragment) {
+        irModuleFragment.files.forEach {
+            val annotationCollector = AnnotationCollector(it)
+            it.acceptChildrenVoid(annotationCollector)
+            createTestSuites(it, annotationCollector)
+        }
     }
 }
