@@ -222,6 +222,15 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is List<*>) return false
+
+        return AbstractList.orderedEquals(this, other)
+    }
+
+    override fun hashCode(): Int = AbstractList.orderedHashCode(this)
+
     private open inner class IteratorImpl : MutableIterator<E> {
         /** the index of the item that will be returned on the next call to [next]`()` */
         protected var index = 0
