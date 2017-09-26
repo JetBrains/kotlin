@@ -53,7 +53,7 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
             checkAssignmentOfSingleElementInAnnotation(argument, argumentExpression, context)
         }
         else {
-            checkAssignmentOfSingleElementInFunction(argument, argumentExpression, context)
+            checkAssignmentOfSingleElementInFunction(argument, argumentExpression, context, parameterDescriptor)
         }
     }
 
@@ -75,10 +75,11 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     private fun checkAssignmentOfSingleElementInFunction(
             argument: ValueArgument,
             argumentExpression: KtExpression,
-            context: ResolutionContext<*>
+            context: ResolutionContext<*>,
+            parameterDescriptor: ValueParameterDescriptor
     ) {
         if (!argument.hasSpread()) {
-            context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.on(argumentExpression))
+            context.trace.report(Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.on(argumentExpression, parameterDescriptor.type))
         }
     }
 
