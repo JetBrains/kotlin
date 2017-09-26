@@ -16,49 +16,37 @@
 
 package org.jetbrains.kotlin.konan.target
 
-enum class Platform {
-    OSX,
-    LINUX,
-    WINDOWS,
-    ANDROID,
-    WASM
+enum class Family(name:String, val exeSuffix:String) {
+    OSX("osx", "kexe"),
+    LINUX("linux", "kexe"),
+    WINDOWS("windows", "exe"),
+    ANDROID("android", "so"),
+    WASM("wasm", "wasm")
 }
 
-enum class KonanTarget(val targetSuffix: String, val programSuffix: String, var enabled: Boolean = false) {
-    ANDROID_ARM32("android_arm32", "so"),
-    ANDROID_ARM64("android_arm64", "so"),
-    IPHONE("ios", "kexe"),
-    IPHONE_SIM("ios_sim", "kexe"),
-    LINUX("linux", "kexe"),
-    MINGW("mingw", "exe"),
-    MACBOOK("osx", "kexe"),
-    RASPBERRYPI("raspberrypi", "kexe"),
-    LINUX_MIPS32("linux_mips32", "kexe"),
-    LINUX_MIPSEL32("linux_mipsel32", "kexe"),
-    WASM32("wasm32", "wasm");
+
+enum class KonanTarget(val family: Family, val detailedName: String, var enabled: Boolean = false) {
+    ANDROID_ARM32(Family.ANDROID, "android_arm32"),
+    ANDROID_ARM64(Family.ANDROID, "android_arm64"),
+    IPHONE(Family.OSX, "ios"),
+    IPHONE_SIM(Family.OSX, "ios_sim"),
+    LINUX(Family.LINUX, "linux"),
+    MINGW(Family.WINDOWS, "mingw"),
+    MACBOOK(Family.OSX, "osx"),
+    RASPBERRYPI(Family.LINUX, "raspberrypi"),
+    LINUX_MIPS32(Family.LINUX, "linux_mips32"),
+    LINUX_MIPSEL32(Family.LINUX, "linux_mipsel32"),
+    WASM32(Family.WASM, "wasm32");
 
     val userName get() = name.toLowerCase()
-    val platform get() = when (this) {
-        ANDROID_ARM32   -> Platform.ANDROID
-        ANDROID_ARM64   -> Platform.ANDROID
-        IPHONE          -> Platform.OSX
-        IPHONE_SIM      -> Platform.OSX
-        MACBOOK         -> Platform.OSX
-        RASPBERRYPI     -> Platform.LINUX
-        LINUX           -> Platform.LINUX
-        LINUX_MIPS32    -> Platform.LINUX
-        LINUX_MIPSEL32  -> Platform.LINUX
-        MINGW           -> Platform.WINDOWS
-        WASM32          -> Platform.WASM
-    }
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
-    if (target == host) host.targetSuffix else "${host.targetSuffix}-${target.targetSuffix}"
+    if (target == host) host.detailedName else "${host.detailedName}-${target.detailedName}"
 
 enum class CompilerOutputKind {
     PROGRAM {
-        override fun suffix(target: KonanTarget?) = ".${target!!.programSuffix}"
+        override fun suffix(target: KonanTarget?) = ".${target!!.family.exeSuffix}"
     },
     LIBRARY {
         override fun suffix(target: KonanTarget?) = ".klib"
@@ -102,9 +90,7 @@ class TargetManager(val userRequest: String? = null) {
     }
 
     val hostTargetSuffix get() = hostTargetSuffix(host, target)
-    val targetSuffix get() = target.targetSuffix
-
-    val programSuffix get() = CompilerOutputKind.PROGRAM.suffix(target)
+    val targetSuffix get() = target.detailedName
 
     companion object {
 
@@ -157,7 +143,7 @@ class TargetManager(val userRequest: String? = null) {
             else -> throw TargetSupportException("Unknown host target: ${host_os()} ${host_arch()}")
         }
 
-        val hostSuffix get() = host.targetSuffix
+        val hostSuffix get() = host.detailedName
         @JvmStatic
         val hostName get() = host.name.toLowerCase()
 

@@ -63,7 +63,7 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
         get() = (realFiles.includedDir.listFiles).map{it.absolutePath}
 
     override val linkerOpts: List<String>
-        get() = manifestProperties.propertyList("linkerOpts", target!!.targetSuffix)
+        get() = manifestProperties.propertyList("linkerOpts", target!!.detailedName)
 
     val moduleHeaderData: ByteArray by lazy {
         reader.loadSerializedModule()
