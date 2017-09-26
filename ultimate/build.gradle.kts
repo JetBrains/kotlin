@@ -82,7 +82,7 @@ dependencies {
     testRuntime(ideaUltimateSdkDeps("*.jar"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "properties"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "coverage"))
-    testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "maven"))
+    //testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "android"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "testng"))
     testRuntime(ideaUltimatePluginDeps("*.jar", plugin = "IntelliLang"))
