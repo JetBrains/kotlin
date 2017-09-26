@@ -7151,6 +7151,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inheritedFromInterfaceViaAbstractSuperclass.kt")
+        public void testInheritedFromInterfaceViaAbstractSuperclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/inheritedFromInterfaceViaAbstractSuperclass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/kt6382.kt");

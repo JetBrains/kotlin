@@ -6479,6 +6479,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("inheritedFromInterfaceViaAbstractSuperclass.kt")
+        public void testInheritedFromInterfaceViaAbstractSuperclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/inheritedFromInterfaceViaAbstractSuperclass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/kt6382.kt");

@@ -6479,6 +6479,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("inheritedFromInterfaceViaAbstractSuperclass.kt")
+        public void testInheritedFromInterfaceViaAbstractSuperclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/inheritedFromInterfaceViaAbstractSuperclass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/kt6382.kt");
