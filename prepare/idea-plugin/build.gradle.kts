@@ -77,7 +77,6 @@ val packedJars by configurations.creating
 val sideJars by configurations.creating
 
 dependencies {
-    packedJars(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     packedJars(preloadedDeps("protobuf-${rootProject.extra["versions.protobuf-java"]}"))
     packedJars(project(":kotlin-stdlib", configuration = "builtins"))
     sideJars(projectDist(":kotlin-script-runtime"))

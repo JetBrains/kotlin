@@ -105,7 +105,6 @@ extra["JDK_9"] = jdkPathIfFound("9")
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
-extra["versions.cli-parser"] = "1.1.2"
 extra["versions.jansi"] = "1.16"
 extra["versions.jline"] = "3.3.1"
 extra["versions.junit"] = "4.12"
