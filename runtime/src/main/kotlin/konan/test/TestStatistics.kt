@@ -10,17 +10,6 @@ interface TestStatistics {
 
     val failedTests: Collection<TestCase>
     val hasFailedTests: Boolean
-
-    object EMPTY: TestStatistics {
-        override val total: Int       get() = 0
-        override val passed: Int      get() = 0
-        override val failed: Int      get() = 0
-        override val ignored: Int     get() = 0
-        override val totalSuites: Int get() = 0
-
-        override val failedTests: Collection<TestCase> = emptyList()
-        override val hasFailedTests: Boolean = false
-    }
 }
 
 class MutableTestStatistics: TestStatistics {
