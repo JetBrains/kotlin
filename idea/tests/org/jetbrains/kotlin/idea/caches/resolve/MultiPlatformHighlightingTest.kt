@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.TestJdkKind
 
@@ -85,4 +86,24 @@ class MultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
     fun ignore_testNestedClassWithoutImpl() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
+
+    fun testTransitive() {
+        val commonModule = module("common", TestJdkKind.MOCK_JDK)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
+        val jvmPlatform = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+
+        val baseModule = module("jvm_base", TestJdkKind.MOCK_JDK)
+        baseModule.createFacet(jvmPlatform, implementedModuleName = "common")
+        baseModule.enableMultiPlatform()
+        baseModule.addDependency(commonModule)
+
+        val userModule = module("jvm_user", TestJdkKind.MOCK_JDK)
+        userModule.createFacet(jvmPlatform)
+        userModule.enableMultiPlatform()
+        userModule.addDependency(commonModule)
+        userModule.addDependency(baseModule)
+
+        checkHighlightingInAllFiles()
+    }
+
 }
