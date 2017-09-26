@@ -174,6 +174,11 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
+                is KtLightAnnotationForSourceEntry -> el<UAnnotation>{
+                    val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                    val ktAnnotation = original.kotlinOrigin as? KtAnnotationEntry ?: return null
+                    KotlinUAnnotation(ktAnnotation, parent)
+                }
                 else -> null
             }
         }
@@ -206,6 +211,7 @@ internal object KotlinConverter {
         is KtValueArgumentList -> unwrapElements(element.parent)
         is KtValueArgument -> unwrapElements(element.parent)
         is KtDeclarationModifierList -> unwrapElements(element.parent)
+        is KtLightModifierList<*> -> unwrapElements(element.parent)
         else -> element
     }
 
