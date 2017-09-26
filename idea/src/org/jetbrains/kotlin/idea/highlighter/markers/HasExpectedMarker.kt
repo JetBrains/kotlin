@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.highlighter.sourceKind
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -29,6 +31,15 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+
+val ModuleDescriptor.sourceKind: SourceKind
+    get() = when (getCapability(ModuleInfo.Capability)) {
+        is ModuleProductionSourceInfo -> SourceKind.PRODUCTION
+        is ModuleTestSourceInfo -> SourceKind.TEST
+        else -> SourceKind.OTHER
+    }
+
+enum class SourceKind { OTHER, PRODUCTION, TEST }
 
 fun ModuleDescriptor.commonModuleOrNull(): ModuleDescriptor? {
     val sourceKind = sourceKind

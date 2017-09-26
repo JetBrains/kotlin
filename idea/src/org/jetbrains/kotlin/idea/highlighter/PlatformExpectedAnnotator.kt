@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,11 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.facet.findImplementingDescriptors
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -37,22 +34,6 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 
-val ModuleDescriptor.sourceKind: SourceKind
-    get() = when (getCapability(ModuleInfo.Capability)) {
-        is ModuleProductionSourceInfo -> SourceKind.PRODUCTION
-        is ModuleTestSourceInfo -> SourceKind.TEST
-        else -> SourceKind.OTHER
-    }
-
-enum class SourceKind { OTHER, PRODUCTION, TEST }
-
-val ModuleDescriptor.allImplementingCompatibleModules
-    get() = allImplementingModules.filter { other ->
-        this.sourceKind == SourceKind.OTHER ||
-        other.sourceKind == SourceKind.OTHER ||
-        other.sourceKind == this.sourceKind
-    }
-
 class PlatformExpectedAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         val declaration = element as? KtDeclaration ?: return
@@ -60,7 +41,7 @@ class PlatformExpectedAnnotator : Annotator {
 
         if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Common) return
 
-        val implementingModules = declaration.findModuleDescriptor().allImplementingCompatibleModules
+        val implementingModules = declaration.findModuleDescriptor().findImplementingDescriptors()
         if (implementingModules.isEmpty()) return
 
         val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return

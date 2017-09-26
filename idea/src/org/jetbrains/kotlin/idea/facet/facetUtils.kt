@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -26,9 +27,13 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -109,6 +114,35 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .flatMap { platform -> platform.mavenLibraryIds.map { it to platform } }
             .sortedByDescending { it.first.length }
             .toMap()
+}
+
+private fun Module.findImplementedModuleName(modelsProvider: IdeModifiableModelsProvider): String? {
+    val facetModel = modelsProvider.getModifiableFacetModel(this)
+    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
+    return facet?.configuration?.settings?.implementedModuleName
+}
+
+private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
+    return modelsProvider.modules.filter { module ->
+        module.findImplementedModuleName(modelsProvider) == name
+    }
+}
+
+fun ModuleDescriptor.findImplementingDescriptors(): List<ModuleDescriptor> {
+    val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
+    val module = moduleSourceInfo.module
+    val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
+    val implementingModules = module.findImplementingModules(modelsProvider)
+    return implementingModules.mapNotNull {
+        val implementingModuleInfo = when (moduleSourceInfo) {
+            is ModuleProductionSourceInfo -> it.productionSourceInfo()
+            is ModuleTestSourceInfo -> it.testSourceInfo()
+            else -> null
+        }
+        implementingModuleInfo?.let {
+            KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+        }
+    }
 }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider,
