@@ -157,7 +157,8 @@ class KotlinScriptUClass(
 
     override fun getInitializers(): Array<UClassInitializer> = super.getInitializers()
 
-    override fun getInnerClasses(): Array<UClass> = super.getInnerClasses()
+    override fun getInnerClasses(): Array<UClass> =
+            psi.innerClasses.mapNotNull { getLanguagePlugin().convertOpt<UClass>(it, this) }.toTypedArray()
 
     override fun getMethods(): Array<UMethod> = psi.methods.map(this::createUMethod).toTypedArray()
 
