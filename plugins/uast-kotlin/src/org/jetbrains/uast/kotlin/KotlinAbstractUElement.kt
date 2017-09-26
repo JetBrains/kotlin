@@ -17,6 +17,8 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.toLightGetter
+import org.jetbrains.kotlin.asJava.toLightSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -38,10 +40,14 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
             val target = psi.useSiteTarget?.getAnnotationUseSiteTarget()
             when (target) {
                 AnnotationUseSiteTarget.PROPERTY_GETTER ->
-                    parent = (parentUnwrapped as? KtProperty)?.getter ?: parent
+                    parent = (parentUnwrapped as? KtProperty)?.getter
+                             ?: (parentUnwrapped as? KtParameter)?.toLightGetter()
+                             ?: parent
 
                 AnnotationUseSiteTarget.PROPERTY_SETTER ->
-                    parent = (parentUnwrapped as? KtProperty)?.setter ?: parent
+                    parent = (parentUnwrapped as? KtProperty)?.setter
+                             ?: (parentUnwrapped as? KtParameter)?.toLightSetter()
+                             ?: parent
             }
         }
 

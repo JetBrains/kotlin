@@ -119,6 +119,10 @@ private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
     return LightClassUtil.getLightClassMethod(this)
 }
 
+fun KtParameter.toLightGetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).getter
+
+fun KtParameter.toLightSetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).setter
+
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return listOf()
 
