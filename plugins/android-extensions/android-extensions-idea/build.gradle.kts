@@ -10,6 +10,7 @@ dependencies {
     compile(project(":idea"))
     compile(project(":idea:idea-gradle"))
     compile(project(":plugins:android-extensions-compiler"))
+    compile(ideaSdkDeps("android-base-common"))
     compile(ideaPluginDeps("android", "android-common", "sdk-tools", "sdk-common", /*"common",*/ plugin = "android"))
     compile(ideaPluginDeps("Groovy", plugin = "Groovy"))
     testCompile(project(":compiler.tests-common"))
