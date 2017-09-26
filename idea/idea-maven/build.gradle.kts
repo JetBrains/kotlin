@@ -3,7 +3,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     compileOnly(ideaSdkDeps("openapi", "idea", "gson"))
-    compileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
+    //compileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
     compile(project(":core:util.runtime"))
     compile(project(":compiler:frontend"))
@@ -22,7 +22,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework"))
     testCompileOnly(ideaSdkDeps("openapi", "idea", "gson", "idea_rt"))
-    testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
+    //testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -39,13 +39,13 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
     testRuntime(ideaPluginDeps("jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
+    //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 }
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    "main" { /*projectDefault()*/ }
+    "test" { /*projectDefault()*/ }
 }
 
 testsJar()
