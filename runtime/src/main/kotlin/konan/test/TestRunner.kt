@@ -12,6 +12,7 @@ object TestRunner {
         get() = suites_
 
     var logger: TestLogger = GTestLogger()
+    var iterations = 1
 
     val listeners = mutableSetOf<TestListener>()
     val filters = mutableListOf<(TestCase) -> Boolean>()
@@ -42,8 +43,9 @@ object TestRunner {
      *  --gtest_list_tests
      *  --ktest_list_tests                                  - Show all available tests.
      *
-     *  --gtest_filter=POSTIVE_PATTERNS[-NEGATIVE_PATTERNS] - Run only the tests whose name matches one of the
-     *  --ktest_filter=POSTIVE_PATTERNS[-NEGATIVE_PATTERNS]   positive patterns but none of the negative patterns.
+     *  --gtest_filter=POSTIVE_PATTERNS[-NEGATIVE_PATTERNS]
+     *  --ktest_filter=POSTIVE_PATTERNS[-NEGATIVE_PATTERNS] - Run only the tests whose name matches one of the
+     *                                                        positive patterns but none of the negative patterns.
      *                                                        '?' matches any single character; '*' matches any
      *                                                        substring; ':' separates two patterns.
      *
@@ -52,6 +54,10 @@ object TestRunner {
      *
      *  --ktest_negative_regex_filter=PATTERN               - Run only the tests whose name doesn't match the pattern.
      *                                                        The pattern is a Kotlin regular expression.
+     *
+     *  --gtest_repeat=COUNT
+     *  --ktest_repeat=COUNT                                - Run the tests repeatedly.
+     *                                                        Use a negative count to repeat forever.
      *
      *  --ktest_logger=GTEST|TEAMCITY|SIMPLE|SILENT         - Use the specified output format. The default one is GTEST.
      */
@@ -67,13 +73,14 @@ object TestRunner {
     private fun parseArgs(args: Array<String>): Boolean {
         var result = true
         args.filter {
-            it.startsWith("--gtest_") || it.startsWith("--ktest_") || it == "--help"
+            it.startsWith("--gtest_") || it.startsWith("--ktest_") || it == "--help" || it == "-h"
         }.forEach {
             val arg = it.split('=')
             when (arg.size) {
                 1 -> when (arg[0]) {
                     "--gtest_list_tests",
                     "--ktest_list_tests" -> { logger.logTestList(this); result = false }
+                    "-h",
                     "--help" -> { logger.log(help); result = false }
                     else -> throw IllegalArgumentException("Unknown option: $it\n$help")
                 }
@@ -84,8 +91,11 @@ object TestRunner {
                         "--ktest_logger" -> setLoggerFromArg(value)
                         "--gtest_filter",
                         "--ktest_filter" -> setGTestFilterFromArg(value)
-                        "--ktest_regex_filter"-> setRegexFilterFromArg(value, true)
+                        "--ktest_regex_filter" -> setRegexFilterFromArg(value, true)
                         "--ktest_negative_regex_filter" -> setRegexFilterFromArg(value, false)
+                        "--ktest_repeat",
+                        "--gtest_repeat" -> iterations = value.toIntOrNull() ?:
+                                throw IllegalArgumentException("Cannot parse number: $value")
                         else -> throw IllegalArgumentException("Unknown option: $it\n$help")
                     }
                 }
@@ -167,6 +177,9 @@ object TestRunner {
             |
             |--ktest_negative_regex_filter=PATTERN               - Run only the tests whose name doesn't match the pattern.
             |                                                      The pattern is a Kotlin regular expression.
+            |--gtest_repeat=COUNT
+            |--ktest_repeat=COUNT                                - Run the tests repeatedly.
+            |                                                      Use a negative count to repeat forever.
             |
             |--ktest_logger=GTEST|TEAMCITY|SIMPLE|SILENT         - Use the specified output format. The default one is GTEST.
         """.trimMargin()
@@ -196,6 +209,22 @@ object TestRunner {
         doAfterClass()
     }
 
+    private fun runIteration(iteration: Int) {
+        sendToListeners { startIteration(this@TestRunner, iteration) }
+        val iterationTime = measureTimeMillis {
+            suites.forEach {
+                if (it.ignored) {
+                    sendToListeners { ignoreSuite(it) }
+                } else {
+                    sendToListeners { startSuite(it) }
+                    val time = measureTimeMillis { it.run() }
+                    sendToListeners { finishSuite(it, time) }
+                }
+            }
+        }
+        sendToListeners { finishIteration(this@TestRunner, iteration, iterationTime) }
+    }
+
     fun run(args: Array<String>): Int {
         return if (useArgs(args)) {
             run()
@@ -207,14 +236,10 @@ object TestRunner {
     fun run(): Int {
         sendToListeners { startTesting(this@TestRunner) }
         val totalTime = measureTimeMillis {
-            suites.forEach {
-                if (it.ignored) {
-                    sendToListeners { ignoreSuite(it) }
-                } else {
-                    sendToListeners { startSuite(it) }
-                    val time = measureTimeMillis { it.run() }
-                    sendToListeners { finishSuite(it, time) }
-                }
+            var i = 1
+            while (i <= iterations || iterations < 0) {
+                runIteration(i)
+                i++
             }
         }
         sendToListeners { finishTesting(this@TestRunner, totalTime) }

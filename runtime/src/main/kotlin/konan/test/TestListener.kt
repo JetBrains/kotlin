@@ -4,6 +4,9 @@ interface TestListener {
     fun startTesting(runner: TestRunner)
     fun finishTesting(runner: TestRunner, timeMillis: Long)
 
+    fun startIteration(runner: TestRunner, iteration: Int)
+    fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long)
+
     fun startSuite(suite: TestSuite)
     fun finishSuite(suite: TestSuite, timeMillis: Long)
     fun ignoreSuite(suite: TestSuite)
@@ -17,6 +20,8 @@ interface TestListener {
 open class BaseTestListener: TestListener {
     override fun startTesting(runner: TestRunner) {}
     override fun finishTesting(runner: TestRunner, timeMillis: Long) {}
+    override fun startIteration(runner: TestRunner, iteration: Int) {}
+    override fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long) {}
     override fun startSuite(suite: TestSuite) {}
     override fun finishSuite(suite: TestSuite, timeMillis: Long) {}
     override fun ignoreSuite(suite: TestSuite) {}

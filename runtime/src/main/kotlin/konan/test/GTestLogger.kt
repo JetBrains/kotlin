@@ -9,6 +9,12 @@ class GTestLogger : TestLoggerWithStatistics() {
         println("[----------] Global test environment set-up.")
     }
 
+    override fun startIteration(runner: TestRunner, iteration: Int) {
+        if (runner.iterations != 1) {
+            println("\nRepeating all tests (iteration $iteration) . . .\n")
+        }
+    }
+
     private fun printResults(timeMillis: Long) = with (statistics) {
         println("[----------] Global test environment tear-down") // Just hack to deal with the Clion parser.
         println("[==========] $total tests from $totalSuites test cases ran. ($timeMillis ms total)")
