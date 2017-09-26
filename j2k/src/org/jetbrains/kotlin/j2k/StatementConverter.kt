@@ -257,7 +257,12 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 fun CodeConverter.convertStatementOrBlock(statement: PsiStatement?): Statement {
     return if (statement is PsiBlockStatement)
         convertBlock(statement.codeBlock)
-    else
-        convertStatement(statement)
+    else {
+        val assignments = findAssignmentsAsExpressions(statement)
+        if (assignments.isNotEmpty())
+            Block.of(listOf(*assignments, convertStatement(statement))).assignNoPrototype()
+        else
+            convertStatement(statement)
+    }
 }
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiMethodUtil
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.*
@@ -127,6 +128,11 @@ fun PsiMember.isImported(file: PsiJavaFile): Boolean {
 }
 
 fun PsiExpression.isNullLiteral() = this is PsiLiteralExpression && type == PsiType.NULL
+
+fun PsiAssignmentExpression.isStatementOrInLoop(): Boolean {
+    return parent.let { it is PsiExpressionStatement || it is PsiFile || it.parent is PsiExpressionListStatement }
+           || PsiTreeUtil.getParentOfType(this, PsiStatement::class.java) is PsiLoopStatement
+}
 
 // TODO: set origin for facade classes in library
 fun isFacadeClassFromLibrary(element: PsiElement?) = element is KtLightClass && element.kotlinOrigin == null

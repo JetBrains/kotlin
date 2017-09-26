@@ -92,6 +92,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val tokenType = expression.operationSign.tokenType
 
         val lhs = codeConverter.convertExpression(expression.lExpression)
+        if (!expression.isStatementOrInLoop()) {
+            result = lhs
+            return
+        }
+
         val rhs = codeConverter.convertExpression(expression.rExpression!!, expression.lExpression.type)
 
         val secondOp = when (tokenType) {

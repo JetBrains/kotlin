@@ -28,18 +28,12 @@ class LocalVariable(
 ) : Element() {
 
     override fun generateCode(builder: CodeBuilder) {
-        if(initializer is AssignmentExpression)
-            builder append initializer append "\n"
         builder append annotations append (if (isVal) "val " else "var ") append identifier
         if (explicitType != null) {
             builder append ":" append explicitType
         }
         if (!initializer.isEmpty) {
-            builder append " = "
-            if(initializer is AssignmentExpression)
-                builder append initializer.left
-            else
-                builder append initializer
+            builder append " = " append initializer
         }
     }
 }

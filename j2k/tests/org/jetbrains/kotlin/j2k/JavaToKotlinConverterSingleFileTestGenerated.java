@@ -437,6 +437,24 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("assignmentInArgumentResolve.java")
+        public void testAssignmentInArgumentResolve() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/assignmentInArgumentResolve.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentInCondition.java")
+        public void testAssignmentInCondition() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/assignmentInCondition.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentInReturn.java")
+        public void testAssignmentInReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/assignmentInReturn.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("bitOperationPriority.java")
         public void testBitOperationPriority() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/bitOperationPriority.java");
