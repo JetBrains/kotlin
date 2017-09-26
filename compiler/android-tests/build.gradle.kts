@@ -20,7 +20,7 @@ dependencies {
     testCompile(ideaSdkDeps("jps-model.jar", subdir = "jps"))
     testCompile(ideaSdkDeps("groovy-all"))
     testCompile(ideaSdkDeps("idea", "idea_rt"))
-    testCompile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
+    //testCompile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(ideaSdkDeps("jps-builders"))
 }
 
