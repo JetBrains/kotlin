@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
@@ -248,7 +249,7 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
         return
     }
 
-    val lightClass = element.toLightClass() ?: return
+    val lightClass = element.toLightClass() ?: KtFakeLightClass(element)
 
     if (ClassInheritorsSearch.search(lightClass, false).findFirst() == null) return
 
