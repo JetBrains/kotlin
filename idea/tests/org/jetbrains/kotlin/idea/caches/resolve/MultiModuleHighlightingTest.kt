@@ -30,14 +30,10 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
-import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -225,70 +221,6 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             configuration.settings.useProjectSettings = false
 
             configuration.configure()
-        }
-    }
-
-    // Some tests are ignored below. They fail because <error> markers are not stripped correctly in multi-module highlighting tests.
-    // TODO: fix this in the test framework and unignore the tests
-    class MultiPlatform : AbstractMultiModuleHighlightingTest() {
-        override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleHighlighting/multiplatform/"
-
-        fun testBasic() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderClass() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderWithoutImplForBoth() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
-        }
-
-        fun ignore_testHeaderPartiallyImplemented() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderFunctionProperty() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testSuppressHeaderWithoutImpl() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testCatchHeaderExceptionInPlatformModule() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true)
-        }
-
-        fun testWithOverrides() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testUseCorrectBuiltInsForCommonModule() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
-                                withStdlibCommon = true, jdk = FULL_JDK, configureModule = { module, platform ->
-                if (platform == TargetPlatformKind.JavaScript) {
-                    module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
-                    module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
-                }
-            })
-        }
-
-        fun testHeaderClassImplTypealias() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderFunUsesStdlibInSignature() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true, configureModule = { module, platform ->
-                if (platform is TargetPlatformKind.Jvm) {
-                    module.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
-                }
-            })
-        }
-
-        fun ignore_testNestedClassWithoutImpl() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         }
     }
 }
