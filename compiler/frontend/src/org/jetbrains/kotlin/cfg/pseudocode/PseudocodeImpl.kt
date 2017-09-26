@@ -77,6 +77,9 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
 
     private var postPrecessed = false
 
+    override var containsDoWhile: Boolean = false
+        internal set
+
     private fun getLocalDeclarations(pseudocode: Pseudocode): Set<LocalFunctionDeclarationInstruction> {
         val localDeclarations = linkedSetOf<LocalFunctionDeclarationInstruction>()
         for (instruction in (pseudocode as PseudocodeImpl).mutableInstructionList) {
@@ -88,7 +91,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         return localDeclarations
     }
 
-    val rootPseudocode: Pseudocode
+    override val rootPseudocode: Pseudocode
         get() {
             var parent = parent
             while (parent != null) {
