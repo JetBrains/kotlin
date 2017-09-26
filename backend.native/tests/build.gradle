@@ -1992,20 +1992,27 @@ task deserialized_members(type: LinkKonanTest) {
 task testing_annotations(type: RunKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
-    goldValue = "Starting testing\nTest suite ignored: IgnoredClass.IgnoredObject\n" +
-            "Test suite ignored: IgnoredClass\nTest suite ignored: IgnoredObject\nStarting test suite: A\n" +
-            "beforeClass (A.companion)\nStarting test case: test1 (A)\nbefore (A)\ntest1 (A)\nafter (A)\n" +
-            "Passed: test1 (A)\nIgnore: ignoredTest (A)\nafterClass (A.companion)\nTest suite finished: A\n" +
-            "Starting test suite: A.O\nbeforeClass (A.object)\nStarting test case: test1 (A.O)\n" +
-            "before (A.object)\ntest1 (A.object)\nafter (A.object)\nPassed: test1 (A.O)\n" +
-            "Ignore: ignoredTest (A.O)\nafterClass (A.object)\nTest suite finished: A.O\n" +
-            "Starting test suite: O\nbeforeClass (object)\nStarting test case: test1 (O)\n" +
-            "before (object)\ntest1 (object)\nafter (object)\nPassed: test1 (O)\n" +
-            "Ignore: ignoredTest (O)\nafterClass (object)\nTest suite finished: O\n" +
-            "Starting test suite: Tests in file: annotations.kt\nbeforeClass (file)\n" +
-            "Starting test case: test1 (Tests in file: annotations.kt)\nbefore (file)\ntest1 (file)\nafter (file)\n" +
-            "Passed: test1 (Tests in file: annotations.kt)\nIgnore: ignoredTest (Tests in file: annotations.kt)\n" +
-            "afterClass (file)\nTest suite finished: Tests in file: annotations.kt\nTesting finished\n"
+    arguments = ['--ktest_logger=SIMPLE']
+    goldValue = 'Starting testing\nStarting iteration: 1\n' +
+            'Test suite ignored: kotlin.test.tests.IgnoredClass.IgnoredObject\n' +
+            'Test suite ignored: kotlin.test.tests.IgnoredClass\nTest suite ignored: kotlin.test.tests.IgnoredObject\n' +
+            'Starting test suite: kotlin.test.tests.A\nbeforeClass (A.companion)\n' +
+            'Starting test case: test1 (kotlin.test.tests.A)\nbefore (A)\ntest1 (A)\nafter (A)\n' +
+            'Passed: test1 (kotlin.test.tests.A)\nIgnore: ignoredTest (kotlin.test.tests.A)\n' +
+            'afterClass (A.companion)\nTest suite finished: kotlin.test.tests.A\n' +
+            'Starting test suite: kotlin.test.tests.A.O\nbeforeClass (A.object)\n' +
+            'Starting test case: test1 (kotlin.test.tests.A.O)\nbefore (A.object)\n' +
+            'test1 (A.object)\nafter (A.object)\nPassed: test1 (kotlin.test.tests.A.O)\n' +
+            'Ignore: ignoredTest (kotlin.test.tests.A.O)\nafterClass (A.object)\n' +
+            'Test suite finished: kotlin.test.tests.A.O\nStarting test suite: kotlin.test.tests.O\n' +
+            'beforeClass (object)\nStarting test case: test1 (kotlin.test.tests.O)\nbefore (object)\n' +
+            'test1 (object)\nafter (object)\nPassed: test1 (kotlin.test.tests.O)\n' +
+            'Ignore: ignoredTest (kotlin.test.tests.O)\nafterClass (object)\nTest suite finished: kotlin.test.tests.O\n' +
+            'Starting test suite: kotlin.test.tests.AnnotationsKt\nbeforeClass (file)\n' +
+            'Starting test case: test1 (kotlin.test.tests.AnnotationsKt)\nbefore (file)\n' +
+            'test1 (file)\nafter (file)\nPassed: test1 (kotlin.test.tests.AnnotationsKt)\n' +
+            'Ignore: ignoredTest (kotlin.test.tests.AnnotationsKt)\nafterClass (file)\n' +
+            'Test suite finished: kotlin.test.tests.AnnotationsKt\nIteration finished: 1\nTesting finished\n'
 }
 
 task testing_assertions(type: RunKonanTest) {
@@ -2013,6 +2020,29 @@ task testing_assertions(type: RunKonanTest) {
     flags = ['-tr']
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     expectedExitStatus = 0
+}
+
+task testing_custom_main(type: RunKonanTest) {
+    source = "testing/custom_main.kt"
+    flags = ['-tr', '-e', 'kotlin.test.tests.main']
+    arguments = ['--ktest_logger=SIMPLE', '--ktest_repeat=2']
+    goldValue = 'Custom main\n' +
+            'Starting testing\n' +
+            'Starting iteration: 1\n' +
+            'Starting test suite: kotlin.test.tests.Custom_mainKt\n' +
+            'Starting test case: test (kotlin.test.tests.Custom_mainKt)\n' +
+            'test\n' +
+            'Passed: test (kotlin.test.tests.Custom_mainKt)\n' +
+            'Test suite finished: kotlin.test.tests.Custom_mainKt\n' +
+            'Iteration finished: 1\n' +
+            'Starting iteration: 2\n' +
+            'Starting test suite: kotlin.test.tests.Custom_mainKt\n' +
+            'Starting test case: test (kotlin.test.tests.Custom_mainKt)\n' +
+            'test\n' +
+            'Passed: test (kotlin.test.tests.Custom_mainKt)\n' +
+            'Test suite finished: kotlin.test.tests.Custom_mainKt\n' +
+            'Iteration finished: 2\n' +
+            'Testing finished\n'
 }
 
 // Just check that the driver is able to produce runnable binaries.

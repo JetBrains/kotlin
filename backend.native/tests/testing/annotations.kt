@@ -1,3 +1,5 @@
+package kotlin.test.tests
+
 import kotlin.test.*
 import konan.test.*
 
