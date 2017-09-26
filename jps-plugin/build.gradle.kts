@@ -19,7 +19,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:incremental-compilation-impl"))
     testCompile(ideaSdkDeps("openapi", "idea"))
-    testCompileOnly(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
+    //testCompileOnly(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
@@ -29,16 +29,16 @@ dependencies {
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar", subdir = "jps/test"))
+    //testRuntime(ideaSdkDeps("*.jar", subdir = "jps/test"))
     testRuntime(ideaSdkDeps("*.jar", subdir = "jps"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        java.srcDirs("jps-tests/test"
+        /*java.srcDirs("jps-tests/test"
                      /*, "kannotator-jps-plugin-test/test"*/ // Obsolete
-        )
+        )*/
     }
 }
 
