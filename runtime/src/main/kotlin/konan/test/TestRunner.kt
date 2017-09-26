@@ -20,14 +20,19 @@ object TestRunner {
     var exitCode = 0
         private set
 
-    private val TestCase.matchFilters: Boolean
-        get() = filters.map { it(this) }.all { it }
+    class FilteredSuite(val innerSuite: TestSuite): TestSuite by innerSuite {
 
-    private val TestSuite.testCasesFiltered
-        get() = testCases.values.filter { it.matchFilters }
+        private val TestCase.matchFilters: Boolean
+            get() = filters.map { it(this) }.all { it }
 
-    // TODO: We can cache it.
-    fun filterTests(): Collection<TestCase> = suites.flatMap { it.testCasesFiltered }
+        override val size: Int
+            get() = testCases.size
+
+        override val testCases: Map<String, TestCase> = innerSuite.testCases.filter { it.value.matchFilters }
+        override fun toString() = innerSuite.toString()
+    }
+
+    private fun filterSuites(): Collection<TestSuite> = suites.map { FilteredSuite(it) }
 
     fun register(suite: TestSuite) = suites_.add(suite)
     fun register(suites: Iterable<TestSuite>) = suites_.addAll(suites)
@@ -79,7 +84,7 @@ object TestRunner {
             when (arg.size) {
                 1 -> when (arg[0]) {
                     "--gtest_list_tests",
-                    "--ktest_list_tests" -> { logger.logTestList(this); result = false }
+                    "--ktest_list_tests" -> { logger.logTestList(this, filterSuites()); result = false }
                     "-h",
                     "--help" -> { logger.log(help); result = false }
                     else -> throw IllegalArgumentException("Unknown option: $it\n$help")
@@ -96,7 +101,9 @@ object TestRunner {
                         "--ktest_repeat",
                         "--gtest_repeat" -> iterations = value.toIntOrNull() ?:
                                 throw IllegalArgumentException("Cannot parse number: $value")
-                        else -> throw IllegalArgumentException("Unknown option: $it\n$help")
+                        else -> if (key.startsWith("--ktest_")) {
+                            throw IllegalArgumentException("Unknown option: $it\n$help")
+                        }
                     }
                 }
                 else -> throw IllegalArgumentException("Unknown option: $it\n$help")
@@ -191,7 +198,7 @@ object TestRunner {
 
     private fun TestSuite.run() {
         doBeforeClass()
-        testCasesFiltered.forEach { testCase ->
+        testCases.values.forEach { testCase ->
             if (testCase.ignored) {
                 sendToListeners { ignore(testCase) }
             } else {
@@ -210,9 +217,10 @@ object TestRunner {
     }
 
     private fun runIteration(iteration: Int) {
-        sendToListeners { startIteration(this@TestRunner, iteration) }
+        val suitesFiltered = filterSuites()
+        sendToListeners { startIteration(this@TestRunner, iteration, suitesFiltered) }
         val iterationTime = measureTimeMillis {
-            suites.forEach {
+            suitesFiltered.forEach {
                 if (it.ignored) {
                     sendToListeners { ignoreSuite(it) }
                 } else {

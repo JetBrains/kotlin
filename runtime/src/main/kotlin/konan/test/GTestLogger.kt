@@ -2,17 +2,20 @@ package konan.test
 
 class GTestLogger : TestLoggerWithStatistics() {
 
-    override fun startTesting(runner: TestRunner) {
-        super.startTesting(runner)
-        println("[==========] Running ${runner.totalTests} tests from ${runner.totalSuites} test case.")
-        // Just hack to deal with the Clion parser. TODO: Remove it after changes in the parser.
-        println("[----------] Global test environment set-up.")
-    }
+    private val Collection<TestSuite>.totalTestsNotIgnored: Int
+        get() = asSequence().filter { !it.ignored }.sumBy { it.testCases.values.count { !it.ignored } }
 
-    override fun startIteration(runner: TestRunner, iteration: Int) {
+    private val Collection<TestSuite>.totalNotIgnored: Int
+        get() = filter { !it.ignored }.size
+
+    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) {
         if (runner.iterations != 1) {
             println("\nRepeating all tests (iteration $iteration) . . .\n")
         }
+        super.startIteration(runner, iteration, suites)
+        println("[==========] Running ${suites.totalTestsNotIgnored} tests from ${suites.totalNotIgnored} test cases.")
+        // Just hack to deal with the Clion parser. TODO: Remove it after changes in the parser.
+        println("[----------] Global test environment set-up.")
     }
 
     private fun printResults(timeMillis: Long) = with (statistics) {
@@ -31,7 +34,7 @@ class GTestLogger : TestLoggerWithStatistics() {
         }
     }
 
-    override fun finishTesting(runner: TestRunner, timeMillis: Long) = printResults(timeMillis)
+    override fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long) = printResults(timeMillis)
 
     override fun startSuite(suite: TestSuite) = println("[----------] ${suite.size} tests from ${suite.name}")
 

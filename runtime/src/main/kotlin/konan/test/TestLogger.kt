@@ -1,23 +1,16 @@
 package konan.test
 
 interface TestLogger: TestListener {
-    fun logTestList(runner: TestRunner)
+    fun logTestList(runner: TestRunner, suites: Collection<TestSuite>)
     fun log(message: String)
 }
 
 open class BaseTestLogger: BaseTestListener(), TestLogger {
-
-    protected val TestRunner.totalTests
-        get() = filterTests().filter { !it.ignored }.size
-
-    protected val TestRunner.totalSuites
-        get() = suites.filter { !it.ignored }.size
-
     override fun log(message: String) = println(message)
-    override fun logTestList(runner: TestRunner) {
-        runner.filterTests().groupBy { it.suite }.forEach { (suite, tests) ->
+    override fun logTestList(runner: TestRunner, suites: Collection<TestSuite>) {
+        suites.forEach { suite ->
             println("${suite.name}.")
-            tests.forEach {
+            suite.testCases.values.forEach {
                 println("  ${it.name}")
             }
         }
@@ -29,7 +22,7 @@ open class TestLoggerWithStatistics: BaseTestLogger() {
     protected val statistics = MutableTestStatistics()
 
     override fun startTesting(runner: TestRunner) = statistics.reset()
-    override fun startIteration(runner: TestRunner, iteration: Int) = statistics.reset()
+    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) = statistics.reset()
 
     override fun finishSuite(suite: TestSuite, timeMillis: Long) = statistics.registerSuite()
     override fun pass(testCase: TestCase, timeMillis: Long) = statistics.registerPass()
@@ -38,7 +31,7 @@ open class TestLoggerWithStatistics: BaseTestLogger() {
 }
 
 class SilentTestLogger: BaseTestLogger() {
-    override fun logTestList(runner: TestRunner) {}
+    override fun logTestList(runner: TestRunner, suites: Collection<TestSuite>) {}
     override fun log(message: String) {}
 }
 
@@ -46,7 +39,8 @@ class SimpleTestLogger: BaseTestLogger() {
     override fun startTesting(runner: TestRunner) = println("Starting testing")
     override fun finishTesting(runner: TestRunner, timeMillis: Long) = println("Testing finished")
 
-    override fun startIteration(runner: TestRunner, iteration: Int) = println("Starting iteration: $iteration")
+    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) =
+            println("Starting iteration: $iteration")
     override fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long) =
             println("Iteration finished: $iteration")
 
