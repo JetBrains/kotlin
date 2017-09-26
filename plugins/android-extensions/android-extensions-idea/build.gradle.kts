@@ -13,6 +13,7 @@ dependencies {
     compile(project(":idea:idea-gradle"))
     compile(project(":plugins:android-extensions-compiler"))
     compile(ideaPluginDeps("android", "android-common", "sdk-tools", "sdk-common", plugin = "android"))
+    compile(ideaSdkDeps("android-base-common"))
     compile(ideaPluginDeps("Groovy", plugin = "Groovy"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
 
