@@ -37,9 +37,9 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        java.srcDirs("jps-tests/test"
+        /*java.srcDirs("jps-tests/test"
                      /*, "kannotator-jps-plugin-test/test"*/ // Obsolete
-        )
+        )*/
     }
 }
 
