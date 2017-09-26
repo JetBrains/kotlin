@@ -50,8 +50,8 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    "main" { /*projectDefault()*/ }
+    "test" { /*projectDefault()*/ }
 }
 
 testsJar()
