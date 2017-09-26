@@ -238,7 +238,7 @@ For this project the task graph will be the following:
              library project(':lib')
              
              // artifect in a library project
-             library(project(':lib'), 'artifectName')
+             library(project(':lib'), 'artefactName')
 
              // naitve library for linking.
              nativeLibrary project.file('path/to/native/library/')
