@@ -30,19 +30,23 @@ import kotlin.internal.*
  */
 @InlineOnly
 public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
-    var closed = false
+    var exception: Throwable? = null
     try {
         return block(this)
-    } catch (e: Exception) {
-        closed = true
-        try {
-            this?.close()
-        } catch (closeException: Exception) {
-        }
+    } catch (e: Throwable) {
+        exception = e
         throw e
     } finally {
-        if (!closed) {
-            this?.close()
+        when {
+            apiVersionIsAtLeast(1, 1, 0) -> this.closeFinally(exception)
+            this == null -> {}
+            exception == null -> close()
+            else ->
+                try {
+                    close()
+                } catch (closeException: Throwable) {
+                    // cause.addSuppressed(closeException) // ignored here
+                }
         }
     }
 }
