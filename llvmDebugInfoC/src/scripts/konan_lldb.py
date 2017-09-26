@@ -35,15 +35,15 @@ def kotlin_object_type_summary(lldb_val, internal_dict):
 
     buff_len = evaluate(
         "Konan_DebugObjectToUtf8Array((struct ObjHeader *) %s, Konan_DebugBuffer(), Konan_DebugBufferSize());" % lldb_val.GetValueAsUnsigned()
-    ).GetValueAsUnsigned()
+    ).unsigned
 
     if not buff_len:
         return fallback
 
-    buff_addr = evaluate("Konan_DebugBuffer()").GetValueAsUnsigned()
+    buff_addr = evaluate("Konan_DebugBuffer()").unsigned
 
     error = lldb.SBError()
-    s = lldb_val.GetProcess().ReadCStringFromMemory(buff_addr, buff_len, error)
+    s = lldb_val.GetProcess().ReadCStringFromMemory(int(buff_addr), int(buff_len), error)
     return s if error.Success() else fallback
 
 
@@ -52,7 +52,7 @@ def __lldb_init_module(debugger, internal_dict):
         type summary add \
         --no-value \
         --python-function konan_lldb.kotlin_object_type_summary \
-        -x "ObjHeader \*" \
+        "ObjHeader *" \
         --category Kotlin\
     ')
     debugger.HandleCommand('type category enable Kotlin')
