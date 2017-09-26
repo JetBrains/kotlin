@@ -44,7 +44,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
     testRuntime(ideaPluginDeps("coverage", "jacocoant", plugin = "coverage"))
     testRuntime(ideaPluginDeps("java-decompiler", plugin = "java-decompiler"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
+    //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
 }
 
