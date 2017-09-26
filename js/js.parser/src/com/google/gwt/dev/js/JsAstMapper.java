@@ -392,9 +392,7 @@ public class JsAstMapper {
                     JsUnaryOperator.DELETE, to);
         }
         else {
-            throw createParserException(
-                    "'delete' can only operate on property names and array elements",
-                    from);
+            return new JsNullLiteral();
         }
     }
 
