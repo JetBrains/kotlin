@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.facet.findImplementingDescriptors
+import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.highlighter.markers.actualsFor
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.module
@@ -41,7 +41,7 @@ class KotlinMultiplatformJUnitRecognizer : JUnitRecognizer() {
         if (origin.module?.targetPlatform !is TargetPlatformKind.Common) return false
 
         val moduleDescriptor = origin.containingKtFile.findModuleDescriptor()
-        val implModules = moduleDescriptor.findImplementingDescriptors()
+        val implModules = moduleDescriptor.implementingDescriptors
         if (implModules.isEmpty()) return false
 
         val bindingContext = origin.analyze(BodyResolveMode.PARTIAL)

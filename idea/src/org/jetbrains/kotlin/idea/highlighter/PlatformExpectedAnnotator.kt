@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.findImplementingDescriptors
+import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -41,7 +41,7 @@ class PlatformExpectedAnnotator : Annotator {
 
         if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Common) return
 
-        val implementingModules = declaration.findModuleDescriptor().findImplementingDescriptors()
+        val implementingModules = declaration.findModuleDescriptor().implementingDescriptors
         if (implementingModules.isEmpty()) return
 
         val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return

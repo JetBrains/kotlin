@@ -25,8 +25,10 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -128,11 +130,9 @@ private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsPr
     }
 }
 
-fun ModuleDescriptor.findImplementingDescriptors(): List<ModuleDescriptor> {
-    val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
-    val module = moduleSourceInfo.module
-    val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
-    val implementingModules = module.findImplementingModules(modelsProvider)
+private fun Module.findImplementingDescriptors(moduleSourceInfo: ModuleSourceInfo): List<ModuleDescriptor> {
+    val modelsProvider = IdeModifiableModelsProviderImpl(project)
+    val implementingModules = findImplementingModules(modelsProvider)
     return implementingModules.mapNotNull {
         val implementingModuleInfo = when (moduleSourceInfo) {
             is ModuleProductionSourceInfo -> it.productionSourceInfo()
@@ -140,10 +140,22 @@ fun ModuleDescriptor.findImplementingDescriptors(): List<ModuleDescriptor> {
             else -> null
         }
         implementingModuleInfo?.let {
-            KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+            KotlinCacheService.getInstance(project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
         }
     }
 }
+
+val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
+    get() {
+        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
+        val module = moduleSourceInfo.module
+        return module.cached(CachedValueProvider {
+            CachedValueProvider.Result(
+                module.findImplementingDescriptors(moduleSourceInfo),
+                ProjectRootModificationTracker.getInstance(module.project)
+            )
+        })
+    }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider,
                             useProjectSettings: Boolean,

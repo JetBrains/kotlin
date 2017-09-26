@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.findImplementingDescriptors
+import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -48,7 +48,7 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val platformModulesWithActuals = commonModuleDescriptor.findImplementingDescriptors().filter {
+    val platformModulesWithActuals = commonModuleDescriptor.implementingDescriptors.filter {
         it.hasActualsFor(descriptor)
     }
     if (platformModulesWithActuals.isEmpty()) return null
@@ -74,7 +74,7 @@ private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDe
     if (this is MemberDescriptor) {
         if (!this.isExpect) return emptyList()
 
-        return module.findImplementingDescriptors().flatMap { it.actualsFor(this) }
+        return module.implementingDescriptors.flatMap { it.actualsFor(this) }
     }
 
     if (this is ValueParameterDescriptor) {

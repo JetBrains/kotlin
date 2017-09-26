@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.findImplementingDescriptors
+import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -292,7 +292,7 @@ private fun collectActualMarkers(declaration: KtNamedDeclaration,
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    if (commonModuleDescriptor.findImplementingDescriptors().none { it.hasActualsFor(descriptor) }) return
+    if (commonModuleDescriptor.implementingDescriptors.none { it.hasActualsFor(descriptor) }) return
 
     val anchor = declaration.nameIdentifier ?: declaration
 
