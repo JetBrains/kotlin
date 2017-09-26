@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -42,12 +43,12 @@ fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
     return classes
 }
 
-internal fun getPsiClass(element: PsiElement?): PsiClass? {
+internal tailrec fun getPsiClass(element: PsiElement?): PsiClass? {
     return when {
         element == null -> null
         element is PsiClass -> element
-        element is KtClass -> element.toLightClass()
-        element.parent is KtClass -> (element.parent as KtClass).toLightClass()
+        element is KtClass -> element.toLightClass() ?: KtFakeLightClass(element)
+        element.parent is KtClass -> getPsiClass(element.parent)
         else -> null
     }
 }

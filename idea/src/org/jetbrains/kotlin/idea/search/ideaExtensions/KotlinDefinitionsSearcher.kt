@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachImplementation
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -88,7 +89,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         }
 
         private fun processClassImplementations(klass: KtClass, consumer: Processor<PsiElement>): Boolean {
-            val psiClass = runReadAction { klass.toLightClass() } ?: return true
+            val psiClass = runReadAction { klass.toLightClass() ?: KtFakeLightClass(klass) }
 
             val searchScope = runReadAction { psiClass.useScope }
             if (searchScope is LocalSearchScope) {

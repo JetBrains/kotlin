@@ -67,4 +67,12 @@ class KotlinGotoImplementationMultiModuleTest : AbstractMultiModuleTest() {
                 actuals = *arrayOf("jvm" to TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], "js" to TargetPlatformKind.JavaScript)
         )
     }
+
+    fun testExpectClassSuperclass() {
+        doMultiPlatformTest("common.kt")
+    }
+
+    fun testExpectClass() {
+        doMultiPlatformTest("common.kt")
+    }
 }
