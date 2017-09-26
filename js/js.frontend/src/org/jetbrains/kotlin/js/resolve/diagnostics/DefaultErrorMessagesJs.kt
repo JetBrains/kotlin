@@ -104,6 +104,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "External class constructor cannot have a property parameter")
         put(ErrorsJs.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations")
 
+        put(ErrorsJs.WRONG_MULTIPLE_INHERITANCE,
+            "Can't apply multiple inheritance here, since it's impossible to generate bridge for system function {0}",
+            Renderers.DECLARATION_NAME_WITH_KIND)
+
         this
     }
 }
