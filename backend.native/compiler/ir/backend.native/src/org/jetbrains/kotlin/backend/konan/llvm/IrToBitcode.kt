@@ -1386,8 +1386,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun evaluateStringConst(value: IrConst<String>) =
-            context.llvm.staticData.kotlinStringLiteral(
-                    context.builtIns.stringType, value).llvm
+            context.llvm.staticData.kotlinStringLiteral(value.value).llvm
 
     private fun evaluateConst(value: IrConst<*>): LLVMValueRef {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
@@ -2006,6 +2005,22 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             interop.readBits -> genReadBits(args)
             interop.writeBits -> genWriteBits(args)
+
+            context.ir.symbols.getClassTypeInfo.descriptor -> {
+                val typeArgument = callee.getTypeArgumentOrDefault(descriptor.typeParameters.single())
+                val typeArgumentClass = TypeUtils.getClassDescriptor(typeArgument)
+                if (typeArgumentClass == null) {
+                    // E.g. for `T::class` in a body of an inline function itself.
+                    functionGenerationContext.unreachable()
+                    kNullInt8Ptr
+                } else {
+                    val classDescriptor = context.ir.symbols.valueClassToBox[typeArgumentClass]?.descriptor
+                            ?: typeArgumentClass
+
+                    val typeInfo = codegen.typeInfoValue(classDescriptor)
+                    LLVMConstBitCast(typeInfo, kInt8Ptr)!!
+                }
+            }
 
             else -> TODO(callee.descriptor.original.toString())
         }

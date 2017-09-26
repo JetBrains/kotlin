@@ -42,8 +42,9 @@ private fun StaticData.arrayHeader(typeInfo: ConstPointer, length: Int): Struct 
     return Struct(runtime.arrayHeaderType, typeInfo, Int32(containerOffsetNegative), Int32(length))
 }
 
-internal fun StaticData.createKotlinStringLiteral(type: KotlinType, irConst: IrConst<String>): ConstPointer {
-    val value = irConst.value
+internal fun StaticData.createKotlinStringLiteral(value: String): ConstPointer {
+    val type = context.builtIns.stringType
+
     val name = "kstr:" + value.globalHashBase64
     val elements = value.toCharArray().map(::Char16)
 

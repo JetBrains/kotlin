@@ -928,6 +928,15 @@ task lateinit_inBaseClass(type: RunKonanTest) {
     source = "codegen/lateinit/inBaseClass.kt"
 }
 
+task kclass0(type: RunKonanTest) {
+    source = "codegen/kclass/kclass0.kt"
+}
+
+task kclass1(type: RunKonanTest) {
+    goldValue = "OK :D\n"
+    source = "codegen/kclass/kclass1.kt"
+}
+
 task coroutines_simple(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // llvm: 'WebAssembly hasn't implemented computed gotos'
     goldValue = "42\n"

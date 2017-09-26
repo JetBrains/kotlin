@@ -1,33 +1,58 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
+import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
-import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 /**
- * This pass runs before inlining and performs the following additional transformations over some calls:
+ * This pass runs before inlining and performs the following additional transformations over some operations:
  *     - Assertion call removal.
  *     - Convert immutableBinaryBlobOf() arguments to special IrConst.
+ *     - Convert `obj::class` and `Class::class` to calls.
  */
-internal class SpecialCallsLowering(val context: Context) : FileLoweringPass {
+internal class PreInlineLowering(val context: Context) : FileLoweringPass {
 
-    private val asserts = context.ir.symbols.asserts
+    private val symbols get() = context.ir.symbols
+
+    private val asserts = symbols.asserts
     private val enableAssertions = context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
+
+            override fun visitClassReference(expression: IrClassReference): IrExpression {
+                expression.transformChildrenVoid()
+                builder.at(expression)
+
+                val typeArgument = expression.descriptor.defaultType
+
+                return builder.irCall(symbols.kClassImplConstructor, listOf(typeArgument)).apply {
+                    putValueArgument(0, builder.irCall(symbols.getClassTypeInfo, listOf(typeArgument)))
+                }
+            }
+
+            override fun visitGetClass(expression: IrGetClass): IrExpression {
+                expression.transformChildrenVoid()
+                builder.at(expression)
+
+                val typeArgument = expression.type.arguments.single().type
+                return builder.irCall(symbols.kClassImplConstructor, listOf(typeArgument)).apply {
+                    val typeInfo = builder.irCall(symbols.getObjectTypeInfo).apply {
+                        putValueArgument(0, expression.argument)
+                    }
+
+                    putValueArgument(0, typeInfo)
+                }
+            }
 
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)

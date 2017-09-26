@@ -68,18 +68,6 @@ template <typename T> OBJ_GETTER(Kotlin_toStringRadix, T value, KInt radix) {
 
 extern "C" {
 
-OBJ_GETTER(Kotlin_Any_toString, KConstRef thiz) {
-  char cstring[80];
-  if (IsArray(thiz)) {
-    konan::snprintf(cstring, sizeof(cstring), "%d@%p: array of %d",
-                    Kotlin_Any_hashCode(thiz), thiz->type_info_, thiz->array()->count_);
-  } else {
-    konan::snprintf(cstring, sizeof(cstring), "%d@%p: object",
-                    Kotlin_Any_hashCode(thiz), thiz->type_info_);
-  }
-  RETURN_RESULT_OF(CreateStringFromCString, cstring);
-}
-
 OBJ_GETTER(Kotlin_Byte_toString, KByte value) {
   char cstring[8];
   konan::snprintf(cstring, sizeof(cstring), "%d", value);

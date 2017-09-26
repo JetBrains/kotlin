@@ -157,8 +157,8 @@ internal class StaticData(override val context: Context): ContextUtils {
     fun cStringLiteral(value: String) =
             cStringLiterals.getOrPut(value) { placeCStringLiteral(value) }
 
-    fun kotlinStringLiteral(type: KotlinType, value: IrConst<String>) =
-        stringLiterals.getOrPut(value.value) { createKotlinStringLiteral(type, value) }
+    fun kotlinStringLiteral(value: String) =
+        stringLiterals.getOrPut(value) { createKotlinStringLiteral(value) }
 }
 
 /**

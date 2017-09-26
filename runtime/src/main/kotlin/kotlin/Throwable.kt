@@ -50,7 +50,8 @@ public open class Throwable(open val message: String?, open val cause: Throwable
     }
 
     override fun toString(): String {
-        val s = "Throwable" // TODO: should be class name
+        val kClass = this::class
+        val s = kClass.qualifiedName ?: kClass.simpleName ?: "Throwable"
         return if (message != null) s + ": " + message.toString() else s
     }
 }

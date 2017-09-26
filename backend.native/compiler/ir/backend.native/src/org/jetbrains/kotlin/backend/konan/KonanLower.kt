@@ -44,8 +44,8 @@ internal class KonanLower(val context: Context) {
             irModule.files.forEach(TestProcessor(context)::lower)
         }
 
-        phaser.phase(KonanPhase.LOWER_SPECIAL_CALLS) {
-            irModule.files.forEach(SpecialCallsLowering(context)::lower)
+        phaser.phase(KonanPhase.LOWER_BEFORE_INLINE) {
+            irModule.files.forEach(PreInlineLowering(context)::lower)
         }
 
         phaser.phase(KonanPhase.LOWER_INLINE_CONSTRUCTORS) {

@@ -28,10 +28,15 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.Delegates
@@ -87,6 +92,12 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
 
     val boxClasses = ValueType.values().associate {
         it to symbolTable.referenceClass(context.getInternalClass("${it.classFqName.shortName()}Box"))
+    }
+
+    val valueClassToBox = ValueType.values().associate {
+        val valueClassId = ClassId.topLevel(it.classFqName.toSafe())
+        val valueClassDescriptor = context.builtIns.builtInsModule.findClassAcrossModuleDependencies(valueClassId)!!
+        valueClassDescriptor to boxClasses[it]!!
     }
 
     val unboxFunctions = ValueType.values().mapNotNull {
@@ -169,6 +180,17 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
 
     val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
     val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
+
+    val getClassTypeInfo = internalFunction("getClassTypeInfo")
+    val getObjectTypeInfo = internalFunction("getObjectTypeInfo")
+    val kClassImpl = internalClass("KClassImpl")
+    val kClassImplConstructor by lazy { kClassImpl.constructors.single() }
+
+    private fun internalFunction(name: String): IrSimpleFunctionSymbol =
+            symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
+
+    private fun internalClass(name: String): IrClassSymbol =
+            symbolTable.referenceClass(context.getInternalClass(name))
 
     private fun getKonanTestClass(className: String) = symbolTable.referenceClass(
             builtInsPackage("konan", "test").getContributedClassifier(

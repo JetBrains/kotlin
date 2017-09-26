@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 
 
 internal class RTTIGenerator(override val context: Context) : ContextUtils {
@@ -45,7 +47,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                                  val methods: ConstValue,
                                  val methodsCount: Int,
                                  val fields: ConstValue,
-                                 val fieldsCount: Int) :
+                                 val fieldsCount: Int,
+                                 val packageName: String?,
+                                 val relativeName: String?) :
             Struct(
                     runtime.typeInfoType,
 
@@ -64,8 +68,17 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     Int32(methodsCount),
 
                     fields,
-                    Int32(fieldsCount)
+                    Int32(fieldsCount),
+
+                    kotlinStringLiteral(packageName),
+                    kotlinStringLiteral(relativeName)
             )
+
+    private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
+        NullPointer(runtime.objHeaderType)
+    } else {
+        staticData.kotlinStringLiteral(string)
+    }
 
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
         val annot = classDesc.annotations.findAnnotation(FqName("konan.ExportTypeInfo"))
@@ -159,12 +172,17 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
                 runtime.methodTableRecordType, methods)
 
+        val reflectionInfo = getReflectionInfo(classDesc)
+
         val typeInfo = TypeInfo(name, size,
                 superType,
                 objOffsetsPtr, objOffsets.size,
                 interfacesPtr, interfaces.size,
                 methodsPtr, methods.size,
-                fieldsPtr, if (classDesc.isInterface) -1 else fields.size)
+                fieldsPtr, if (classDesc.isInterface) -1 else fields.size,
+                reflectionInfo.packageName,
+                reflectionInfo.relativeName
+        )
 
         val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
 
@@ -201,4 +219,26 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             }
             return context.specialDeclarationsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
         }
+
+    data class ReflectionInfo(val packageName: String?, val relativeName: String?)
+
+    private fun getReflectionInfo(descriptor: ClassDescriptor): ReflectionInfo {
+        // Use data from value class in type info for box class:
+        val descriptorForReflection = context.ir.symbols.valueClassToBox.entries
+                .firstOrNull { it.value.descriptor == descriptor }
+                ?.key ?: descriptor
+
+        return if (DescriptorUtils.isAnonymousObject(descriptorForReflection)) {
+            ReflectionInfo(packageName = null, relativeName = null)
+        } else if (DescriptorUtils.isLocal(descriptorForReflection)) {
+            ReflectionInfo(packageName = null, relativeName = descriptorForReflection.name.asString())
+        } else {
+            ReflectionInfo(
+                    packageName = descriptorForReflection.findPackage().fqName.asString(),
+                    relativeName = descriptorForReflection.parentsWithSelf
+                            .takeWhile { it is ClassDescriptor }.toList().reversed()
+                            .joinToString(".") { it.name.asString() }
+            )
+        }
+    }
 }

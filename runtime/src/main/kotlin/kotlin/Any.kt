@@ -48,8 +48,13 @@ public open class Any {
     /**
      * Returns a string representation of the object.
      */
-    @SymbolName("Kotlin_Any_toString")
-    external public open fun toString(): String
+    public open fun toString(): String {
+        val kClass = this::class
+        val className = kClass.qualifiedName ?: kClass.simpleName ?: "<object>"
+        val unsignedHashCode = this.hashCode().toLong() and 0xffffffffL
+        val hashCodeStr = unsignedHashCode.toString(16)
+        return "$className@$hashCodeStr"
+    }
 }
 
 public fun Any?.hashCode() = if (this != null) this.hashCode() else 0

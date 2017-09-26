@@ -70,4 +70,8 @@ void Kotlin_system_exitProcess(KInt status) {
   konan::exit(status);
 }
 
+const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
+  return obj->type_info();
+}
+
 }  // extern "C"
