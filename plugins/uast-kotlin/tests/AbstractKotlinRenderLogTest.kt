@@ -21,8 +21,20 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
             File(File(TEST_KOTLIN_MODEL_DIR, testName).canonicalPath + '.' + ext)
 
     override fun check(testName: String, file: UFile) {
+        check(testName, file, true)
+    }
+
+    fun check(testName: String, file: UFile, checkParentConsistency: Boolean) {
         super.check(testName, file)
 
+        if (checkParentConsistency) {
+            checkParentConsistency(file)
+        }
+
+        file.checkContainingFileForAllElements()
+    }
+
+    private fun checkParentConsistency(file: UFile) {
         val parentMap = mutableMapOf<PsiElement, String>()
 
         file.accept(object : UastVisitor {
@@ -65,8 +77,6 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                 super.visitElement(element)
             }
         })
-
-        file.checkContainingFileForAllElements()
     }
 
     private fun UFile.checkContainingFileForAllElements() {

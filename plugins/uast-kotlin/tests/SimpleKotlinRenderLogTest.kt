@@ -27,7 +27,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
 
-    @Test fun testPropertyDelegate() = doTest("PropertyDelegate")
+    @Test fun testPropertyDelegate() = doTest("PropertyDelegate") { testName, file -> check(testName, file, false) }
 
     @Test fun testPropertyWithAnnotation() = doTest("PropertyWithAnnotation")
 
@@ -35,7 +35,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testInnerClasses() = doTest("InnerClasses")
 
-    @Test fun testSimpleScript() = doTest("SimpleScript")
+    @Test fun testSimpleScript() = doTest("SimpleScript") { testName, file -> check(testName, file, false) }
 
     @Test fun testDestructuringDeclaration() = doTest("DestructuringDeclaration")
 
