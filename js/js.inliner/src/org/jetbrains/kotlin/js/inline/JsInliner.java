@@ -361,6 +361,22 @@ public class JsInliner extends JsVisitorWithContextImpl {
         // body of inline function can contain call to lambdas that need to be inlined
         JsStatement inlineableBodyWithLambdasInlined = accept(inlineableBody);
         assert inlineableBody == inlineableBodyWithLambdasInlined;
+
+        // Support non-local return from secondary constructor
+        // Returns from secondary constructors should return `$this` object.
+        JsFunction currentFunction = getCurrentNamedFunction();
+        if (currentFunction != null) {
+            JsName returnVariable = MetadataProperties.getForcedReturnVariable(currentFunction);
+            if (returnVariable != null) {
+                inlineableBody.accept(new RecursiveJsVisitor() {
+                    @Override
+                    public void visitReturn(@NotNull JsReturn x) {
+                        x.setExpression(returnVariable.makeRef());
+                    }
+                });
+            }
+        }
+
         statementContext.addPrevious(flattenStatement(inlineableBody));
 
         /*
