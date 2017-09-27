@@ -23,7 +23,10 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
             project.fileTree("${project.konanHome}/konan/lib/")
             .apply { include("*.jar")  }
 
-    override val jvmArgs = mutableListOf("-Dkonan.home=${project.konanHome}",
+    override val jvmArgs = mutableListOf(
+            "-ea",
+            "-Xmx3G",
+            "-Dkonan.home=${project.konanHome}",
             "-Djava.library.path=${project.konanHome}/konan/nativelib")
 
     override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
