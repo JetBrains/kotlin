@@ -4,11 +4,10 @@ import org.gradle.jvm.tasks.Jar
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compile(project(":core"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:cli-common"))
-    compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
@@ -27,6 +26,8 @@ dependencies {
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
+//    compile(project(":kotlin-daemon-client")) { isTransitive = false }
+    compile(project(":kotlin-script-util")) { isTransitive = false }
 
     compile(ideaSdkCoreDeps("intellij-core", "util"))
 
@@ -39,8 +40,7 @@ dependencies {
 
     compile(preloadedDeps("markdown", "kotlinx-coroutines-core"))
 
-    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
-    testCompile(project(":compiler:cli"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
@@ -92,6 +92,7 @@ sourceSets {
         java.srcDirs("idea-completion/src",
                      "idea-live-templates/src",
                      "idea-repl/src")
+        resources.srcDirs("idea-repl/src").apply { include("META-INF/**") }
     }
     "test" {
         projectDefault()

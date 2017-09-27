@@ -30,4 +30,6 @@ javadocJar()
 
 dist()
 
+ideaPlugin()
+
 publish()
