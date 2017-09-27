@@ -10,7 +10,7 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     netinet/ip.h netinet/ip6.h netinet/ip_icmp.h netinet/tcp.h netinet/udp.h \
     sys/ioctl.h sys/ipc.h sys/mman.h sys/poll.h sys/ptrace.h \
     sys/queue.h sys/select.h sys/shm.h sys/stat.h \
-    sys/syslimits.h sys/time.h sys/times.h sys/wait.h
+    limits.h sys/time.h sys/times.h sys/wait.h
 
 compilerOpts = -D_GNU_SOURCE
 
