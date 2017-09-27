@@ -357,8 +357,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 configuration.put(JSConfigurationKeys.SOURCE_MAP_PREFIX, arguments.getSourceMapPrefix());
             }
 
-            String sourceMapSourceRoots = arguments.getSourceMapSourceRoots() != null ?
-                                          arguments.getSourceMapSourceRoots() :
+            String sourceMapSourceRoots = arguments.getSourceMapBaseDirs() != null ?
+                                          arguments.getSourceMapBaseDirs() :
                                           calculateSourceMapSourceRoot(messageCollector, arguments);
             List<String> sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator);
             configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList);
@@ -367,7 +367,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             if (arguments.getSourceMapPrefix() != null) {
                 messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map", null);
             }
-            if (arguments.getSourceMapSourceRoots() != null) {
+            if (arguments.getSourceMapBaseDirs() != null) {
                 messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map", null);
             }
         }
