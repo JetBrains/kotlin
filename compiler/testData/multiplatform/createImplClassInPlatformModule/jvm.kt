@@ -1,5 +1,5 @@
 actual class Foo(x: Int) {
-    actual constructor() : this(0)
+    constructor() : this(0)
 
     val x: Int = x
 }

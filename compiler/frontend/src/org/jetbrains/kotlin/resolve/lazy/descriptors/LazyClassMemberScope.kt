@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -338,11 +338,8 @@ open class LazyClassMemberScope(
 
         val hasPrimaryConstructor = classOrObject.hasExplicitPrimaryConstructor()
         if (!hasPrimaryConstructor) {
-            when (thisDescriptor.kind) {
-                ClassKind.INTERFACE -> return null
-                ClassKind.OBJECT, ClassKind.ENUM_CLASS -> if (thisDescriptor.isExpect) return null
-                else -> {}
-            }
+            if (thisDescriptor.isExpect && !DescriptorUtils.isEnumEntry(thisDescriptor)) return null
+            if (DescriptorUtils.isInterface(thisDescriptor)) return null
         }
 
         if (DescriptorUtils.canHaveDeclaredConstructors(thisDescriptor) || hasPrimaryConstructor) {

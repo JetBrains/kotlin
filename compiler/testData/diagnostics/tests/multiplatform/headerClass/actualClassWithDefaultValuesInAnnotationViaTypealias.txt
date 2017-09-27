@@ -1,29 +1,35 @@
 // -- Module: <m1-common> --
 package
 
+@Foo5 public fun bar(): kotlin.Unit
+@Foo1 public fun foo(): kotlin.Unit
+
 public final expect annotation class Foo1 : kotlin.Annotation {
-    public constructor Foo1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final expect annotation class Foo2 : kotlin.Annotation {
-    public constructor Foo2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final expect annotation class Foo3 : kotlin.Annotation {
-    public constructor Foo3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final expect annotation class Foo4 : kotlin.Annotation {
-    public constructor Foo4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final expect annotation class Foo5 : kotlin.Annotation {
+    public constructor Foo5()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -32,6 +38,9 @@ public final expect annotation class Foo4 : kotlin.Annotation {
 
 // -- Module: <m2-jvm> --
 package
+
+@Foo5 public fun bar(): kotlin.Unit
+@Foo1 /* = Bar1 */ public fun foo(): kotlin.Unit
 
 public final annotation class Bar1 : kotlin.Annotation {
     public constructor Bar1(/*0*/ value: kotlin.String = ...)
@@ -62,6 +71,13 @@ public final actual annotation class Foo3 : kotlin.Annotation {
     public constructor Foo3(/*0*/ a: kotlin.String = ..., /*1*/ b: kotlin.String = ...)
     public final val a: kotlin.String
     public final val b: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual annotation class Foo5 : kotlin.Annotation {
+    public constructor Foo5()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

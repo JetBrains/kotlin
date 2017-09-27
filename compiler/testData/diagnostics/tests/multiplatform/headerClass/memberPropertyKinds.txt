@@ -9,7 +9,6 @@ public object Delegate {
 }
 
 public final expect class Foo {
-    public constructor Foo()
     public expect final val backingFieldVal: kotlin.String = "no"
     public expect final var backingFieldVar: kotlin.String
     public expect final val customAccessorVal: kotlin.String
