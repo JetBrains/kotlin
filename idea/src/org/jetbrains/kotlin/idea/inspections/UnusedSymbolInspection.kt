@@ -386,8 +386,15 @@ class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val declaration = descriptor.psiElement.getStrictParentOfType<KtDeclaration>() ?: return
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
+        val primaryConstructorParameterList = (declaration.parent as? KtParameterList)?.takeIf { it.parent is KtPrimaryConstructor }
         ApplicationManager.getApplication().invokeLater(
-                { SafeDeleteHandler.invoke(project, arrayOf(declaration), false) },
+                {
+                    SafeDeleteHandler.invoke(project, arrayOf(declaration), null, false, null) {
+                        if (primaryConstructorParameterList != null && primaryConstructorParameterList.parameters.isEmpty()) {
+                            primaryConstructorParameterList.delete()
+                        }
+                    }
+                },
                 ModalityState.NON_MODAL
         )
     }
