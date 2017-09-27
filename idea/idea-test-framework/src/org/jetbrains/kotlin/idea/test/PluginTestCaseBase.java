@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,12 @@ public class PluginTestCaseBase {
     }
 
     @NotNull
+    @TestOnly
+    private static Sdk createMockJdk(@NotNull String name, String path) {
+        return ((JavaSdkImpl)JavaSdk.getInstance()).createMockJdk(name, path, false);
+    }
+
+    @NotNull
     private static Sdk getSdk(String sdkHome, String name) {
         return JavaSdk.getInstance().createJdk(name, sdkHome, true);
     }
@@ -47,6 +54,12 @@ public class PluginTestCaseBase {
     @NotNull
     public static Sdk mockJdk() {
         return getSdk("compiler/testData/mockJDK/jre", "Mock JDK");
+    }
+
+    @TestOnly
+    @NotNull
+    public static Sdk mockJdk9() {
+        return createMockJdk("9", "compiler/testData/mockJDK9/jre");
     }
 
     @NotNull
