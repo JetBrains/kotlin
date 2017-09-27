@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
@@ -557,7 +560,7 @@ class ClassFileToSourceStubConverter(
         return name.pathSegments().all { getValidIdentifierName(it.asString(), false) != null }
     }
 
-    fun getValidIdentifierName(name: String, canBeConstructor: Boolean = false): String? {
+    private fun getValidIdentifierName(name: String, canBeConstructor: Boolean = false): String? {
         if (canBeConstructor && name == "<init>") {
             return name
         }
@@ -632,29 +635,102 @@ class ClassFileToSourceStubConverter(
         val argMapping = ktAnnotation?.calleeExpression
                 ?.getResolvedCall(kaptContext.bindingContext)?.valueArguments
                 ?.mapKeys { it.key.name.asString() }
-
-        fun getKtElementsForArgument(name: String): List<KtExpression?>? {
-            val args = argMapping?.get(name) ?: return null
-            return args.arguments.map { it.getArgumentExpression() }
-        }
+                ?: emptyMap()
 
         val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
-        val name = if (useSimpleName) treeMaker.FqName(fqName.substring(packageFqName!!.length + 1)) else treeMaker.Type(annotationType)
-        val values = mapPairedValuesJList<JCExpression>(annotation.values) { key, value ->
-            val name = getValidIdentifierName(key) ?: return@mapPairedValuesJList null
-            val convertedExpression = convertLiteralExpression(value)
 
-            fun assign(expr: JCExpression) = treeMaker.Assign(treeMaker.SimpleName(name), expr)
-
-            if (value is Int) { // This may be a resource identifier
-                val ktExpression = getKtElementsForArgument(name)?.singleOrNull()
-                tryParseReferenceToAndroidResource(ktExpression)?.let { return@mapPairedValuesJList assign(it) }
-            }
-
-            assign(convertedExpression)
+        val annotationFqName = when {
+            useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName!!.length + 1))
+            else -> treeMaker.Type(annotationType)
         }
 
-        return treeMaker.Annotation(name, values)
+        val constantValues = pairedListToMap(annotation.values)
+
+        val values = if (argMapping.isNotEmpty()) {
+            argMapping.mapNotNull { (parameterName, arg) ->
+                if (arg is DefaultValueArgument) return@mapNotNull null
+                convertAnnotationArgumentWithName(constantValues[parameterName], arg, parameterName)
+            }
+        } else {
+            constantValues.mapNotNull { (parameterName, arg) ->
+                convertAnnotationArgumentWithName(arg, null, parameterName)
+            }
+        }
+
+        return treeMaker.Annotation(annotationFqName, JavacList.from(values))
+    }
+
+    private fun convertAnnotationArgumentWithName(constantValue: Any?, value: ResolvedValueArgument?, name: String): JCExpression? {
+        val validName = getValidIdentifierName(name) ?: return null
+        val expr = convertAnnotationArgument(constantValue, value) ?: return null
+        return treeMaker.Assign(treeMaker.SimpleName(validName), expr)
+    }
+
+    private fun convertAnnotationArgument(constantValue: Any?, value: ResolvedValueArgument?): JCExpression? {
+        val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
+        val singleArg by lazy { args.singleOrNull() }
+
+        if (constantValue is Int) {
+            // This may be a resource identifier, we should not inline the id int
+            tryParseReferenceToAndroidResource(singleArg)?.let { return it }
+        }
+
+        fun tryParseTypeExpression(expression: KtExpression?): JCExpression? {
+            return when (expression) {
+                is KtSimpleNameExpression -> treeMaker.SimpleName(expression.getReferencedName())
+                is KtDotQualifiedExpression -> {
+                    val selector = expression.selectorExpression as? KtSimpleNameExpression ?: return null
+                    val receiver = tryParseTypeExpression(expression.receiverExpression) ?: return null
+                    return treeMaker.Select(receiver, treeMaker.name(selector.getReferencedName()))
+                }
+                else -> null
+            }
+        }
+
+        fun tryParseTypeLiteralExpression(expression: KtExpression?): JCExpression? {
+            val literalExpression = expression as? KtClassLiteralExpression ?: return null
+            val typeExpression = tryParseTypeExpression(literalExpression.receiverExpression) ?: return null
+            return treeMaker.Select(typeExpression, treeMaker.name("class"))
+        }
+
+        // Unresolved class literal
+        if (constantValue == null && singleArg is KtClassLiteralExpression) {
+            tryParseTypeLiteralExpression(singleArg)?.let { return it }
+        }
+
+        // Some of class literals in vararg list are unresolved
+        if (args.isNotEmpty() && args[0] is KtClassLiteralExpression && constantValue is List<*> && args.size != constantValue.size) {
+            val literalExpressions = mapJList(args, ::tryParseTypeLiteralExpression)
+            if (literalExpressions.size == args.size) {
+                return treeMaker.NewArray(null, null, literalExpressions)
+            }
+        }
+
+        // Probably arrayOf(SomeUnresolvedType::class, ...)
+        if (constantValue is List<*>) {
+            val callArgs = when (singleArg) {
+                is KtCallExpression -> {
+                    val resultingDescriptor = singleArg.getResolvedCall(kaptContext.bindingContext)?.resultingDescriptor
+
+                    if (resultingDescriptor is FunctionDescriptor && resultingDescriptor.fqNameSafe.asString() == "kotlin.arrayOf")
+                        singleArg.valueArguments.map { it.getArgumentExpression() }
+                    else
+                        null
+                }
+                is KtCollectionLiteralExpression -> singleArg.getInnerExpressions()
+                else -> null
+            }
+
+            // So we make sure something is absent in the constant value
+            if (callArgs != null && callArgs.size != constantValue.size) {
+                val literalExpressions = mapJList(callArgs, ::tryParseTypeLiteralExpression)
+                if (literalExpressions.size == callArgs.size) {
+                    return treeMaker.NewArray(null, null, literalExpressions)
+                }
+            }
+        }
+
+        return convertLiteralExpression(constantValue)
     }
 
     private fun tryParseReferenceToAndroidResource(expression: KtExpression?): JCExpression? {

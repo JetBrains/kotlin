@@ -1,11 +1,14 @@
 // CORRECT_ERROR_TYPES
 // NON_EXISTENT_CLASS
 // NO_VALIDATION
+// WITH_RUNTIME
 
 import java.util.Calendar
+import kotlin.reflect.KClass
 
-@Suppress("UNRESOLVED_REFERENCE")
-class Test {
+@Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE")
+@Anno(Blah::class, arrayOf(NoFoo1::class, NoBar1::class), [NoFoo2::class, String::class], Boolean::class, NoBar3::class)
+class Test/* {
     lateinit var a: ABC
     val b: ABC? = null
     val c: List<ABC>? = null
@@ -44,3 +47,6 @@ class Test {
 }
 
 class MyType<T>
+
+*/
+annotation class Anno(val a: KClass<*>, val b: Array<KClass<*>>, val c: Array<KClass<*>>, vararg val d: KClass<*>)

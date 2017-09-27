@@ -54,6 +54,16 @@ internal inline fun <T> mapPairedValuesJList(valuePairs: List<Any>?, f: (String,
     return result.reverse()
 }
 
+internal fun pairedListToMap(valuePairs: List<Any>?): Map<String, Any?> {
+    val map = mutableMapOf<String, Any?>()
+
+    mapPairedValuesJList(valuePairs) { key, value ->
+        map.put(key, value)
+    }
+
+    return map
+}
+
 internal operator fun <T : Any> JavacList<T>.plus(other: JavacList<T>): JavacList<T> {
     return this.appendList(other)
 }
