@@ -1,42 +1,40 @@
 // -- Module: <m1-common> --
 package
 
-@Foo5 public fun bar(): kotlin.Unit
-@Foo1 public fun foo(): kotlin.Unit
-
-public final expect annotation class Foo1 : kotlin.Annotation {
+public final expect class Bar1 {
+    public constructor Bar1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final expect annotation class Foo2 : kotlin.Annotation {
+public final expect class Bar2 {
+    public constructor Bar2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final expect annotation class Foo3 : kotlin.Annotation {
+public final expect class Bar3 {
+    public constructor Bar3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final expect annotation class Foo4 : kotlin.Annotation {
+public final expect class Foo1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final expect annotation class Foo5 : kotlin.Annotation {
-    public constructor Foo5()
+public final expect class Foo2 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final expect annotation class Foo6 : kotlin.Annotation {
-    public constructor Foo6()
+public final expect class Foo3 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -46,48 +44,50 @@ public final expect annotation class Foo6 : kotlin.Annotation {
 // -- Module: <m2-jvm> --
 package
 
-@Foo5 public fun bar(): kotlin.Unit
-@Foo1 /* = Bar1 */ public fun foo(): kotlin.Unit
-
-public final annotation class Bar1 : kotlin.Annotation {
-    public constructor Bar1(/*0*/ value: kotlin.String = ...)
-    public final val value: kotlin.String
+public final actual class Bar1 {
+    public constructor Bar1(/*0*/ s: kotlin.String)
+    public final val s: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final annotation class Bar2 : kotlin.Annotation {
-    public constructor Bar2(/*0*/ value: kotlin.String = ..., /*1*/ path: kotlin.String)
-    public final val path: kotlin.String
-    public final val value: kotlin.String
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public final actual annotation class Foo2 : kotlin.Annotation {
-    public constructor Foo2(/*0*/ p: kotlin.String = ...)
+public final actual class Bar2 {
+    public constructor Bar2(/*0*/ p: kotlin.String = ..., /*1*/ i: kotlin.Int)
     public final val p: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final actual annotation class Foo3 : kotlin.Annotation {
-    public constructor Foo3(/*0*/ a: kotlin.String = ..., /*1*/ b: kotlin.String = ...)
-    public final val a: kotlin.String
-    public final val b: kotlin.String
+public final actual class Foo1 {
+    public constructor Foo1(/*0*/ s: kotlin.String)
+    public final val s: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final actual annotation class Foo5 : kotlin.Annotation {
-    public constructor Foo5()
+public final actual class Foo2 {
+    public constructor Foo2(/*0*/ p: kotlin.String = ..., /*1*/ i: kotlin.Int)
+    public final val p: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias Foo1 = Bar1
-public typealias Foo4 = Bar2
+
+public open class JavaBar {
+    public constructor JavaBar(/*0*/ i: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class JavaFoo {
+    public constructor JavaFoo(/*0*/ i: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Bar3 = JavaBar
+public typealias Foo3 = JavaFoo
