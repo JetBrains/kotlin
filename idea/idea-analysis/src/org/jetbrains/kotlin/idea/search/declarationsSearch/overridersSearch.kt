@@ -29,14 +29,14 @@ import com.intellij.util.EmptyQuery
 import com.intellij.util.MergeQuery
 import com.intellij.util.Processor
 import com.intellij.util.Query
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.excludeKotlinSources
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
@@ -122,6 +119,17 @@ object PsiMethodOverridingHierarchyTraverser: HierarchyTraverser<PsiMethod> {
     override fun shouldDescend(element: PsiMethod): Boolean = PsiUtil.canBeOverriden(element)
 }
 
+fun PsiElement.toPossiblyFakeLightMethods(): List<PsiMethod> {
+    if (this is PsiMethod) return listOf(this)
+
+    val element = unwrapped ?: return emptyList()
+
+    val lightMethods = element.toLightMethods()
+    if (lightMethods.isNotEmpty()) return lightMethods
+
+    return if (element is KtNamedDeclaration) listOfNotNull(KtFakeLightMethod.get(element)) else emptyList()
+}
+
 private fun forEachKotlinOverride(
         ktClass: KtClass,
         members: List<KtNamedDeclaration>,
@@ -133,7 +141,7 @@ private fun forEachKotlinOverride(
     if (baseDescriptors.isEmpty()) return true
 
     HierarchySearchRequest(ktClass, scope.restrictToKotlinSources(), true).searchInheritors().forEach {
-        val inheritor = (it as? KtLightClass)?.kotlinOrigin ?: return@forEach
+        val inheritor = it.unwrapped as? KtClassOrObject ?: return@forEach
         val inheritorDescriptor = runReadAction { inheritor.unsafeResolveToDescriptor() as ClassDescriptor }
         val substitutor = getTypeSubstitutor(baseClassDescriptor.defaultType, inheritorDescriptor.defaultType) ?: return@forEach
         baseDescriptors.forEach {
@@ -149,16 +157,31 @@ private fun forEachKotlinOverride(
     return true
 }
 
+fun KtNamedDeclaration.forEachOverridingElement(
+        scope: SearchScope = runReadAction { useScope },
+        processor: (PsiElement) -> Boolean
+): Boolean {
+    val ktClass = runReadAction { containingClassOrObject as? KtClass } ?: return true
+
+    toLightMethods().forEach {
+        if (!OverridingMethodsSearch.search(it, scope.excludeKotlinSources(), true).all(processor)) return false
+    }
+
+    return forEachKotlinOverride(ktClass, listOf(this), scope) { _, overrider -> processor(overrider) }
+}
+
 fun PsiMethod.forEachOverridingMethod(
         scope: SearchScope = runReadAction { useScope },
         processor: (PsiMethod) -> Boolean
 ): Boolean {
-    if (!OverridingMethodsSearch.search(this, scope.excludeKotlinSources(), true).forEach(processor)) return false
+    if (this !is KtFakeLightMethod) {
+        if (!OverridingMethodsSearch.search(this, scope.excludeKotlinSources(), true).forEach(processor)) return false
+    }
 
-    val ktMember = (this as? KtLightMethod)?.kotlinOrigin as? KtNamedDeclaration ?: return true
+    val ktMember = this.unwrapped as? KtNamedDeclaration ?: return true
     val ktClass = runReadAction { ktMember.containingClassOrObject as? KtClass } ?: return true
     return forEachKotlinOverride(ktClass, listOf(ktMember), scope) { _, overrider ->
-        val lightMethods = runReadAction { overrider.toLightMethods() }
+        val lightMethods = runReadAction { overrider.toPossiblyFakeLightMethods() }
         lightMethods.all { processor(it) }
     }
 }
@@ -174,9 +197,11 @@ fun PsiMethod.forEachImplementation(
 fun PsiClass.forEachDeclaredMemberOverride(processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean) {
     val scope = runReadAction { useScope }
 
-    AllOverridingMethodsSearch.search(this, scope.excludeKotlinSources()).all { processor(it.first, it.second) }
+    if (this !is KtFakeLightClass) {
+        AllOverridingMethodsSearch.search(this, scope.excludeKotlinSources()).all { processor(it.first, it.second) }
+    }
 
-    val ktClass = (this as? KtLightClass)?.kotlinOrigin as? KtClass ?: return
+    val ktClass = unwrapped as? KtClass ?: return
     val members = ktClass.declarations.filterIsInstance<KtNamedDeclaration>() +
                   ktClass.primaryConstructorParameters.filter { it.hasValOrVar() }
     forEachKotlinOverride(ktClass, members, scope, processor)

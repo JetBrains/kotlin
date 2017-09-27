@@ -72,7 +72,23 @@ class KotlinGotoImplementationMultiModuleTest : AbstractMultiModuleTest() {
         doMultiPlatformTest("common.kt")
     }
 
+    fun testExpectClassSuperclassFun() {
+        doMultiPlatformTest("common.kt")
+    }
+
+    fun testExpectClassSuperclassProperty() {
+        doMultiPlatformTest("common.kt")
+    }
+
     fun testExpectClass() {
+        doMultiPlatformTest("common.kt")
+    }
+
+    fun testExpectClassFun() {
+        doMultiPlatformTest("common.kt")
+    }
+
+    fun testExpectClassProperty() {
         doMultiPlatformTest("common.kt")
     }
 }

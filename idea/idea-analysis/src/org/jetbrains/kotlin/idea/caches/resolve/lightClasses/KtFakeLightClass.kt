@@ -18,14 +18,19 @@ package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElementFactory
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
 import com.intellij.psi.impl.light.AbstractLightClass
+import com.intellij.psi.impl.light.LightMethod
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -57,5 +62,29 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
         val baseDescriptor = baseKtClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
         val thisDescriptor = kotlinOrigin.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
         return if (checkDeep) DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor) else DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
+    }
+}
+
+class KtFakeLightMethod private constructor(
+        val ktDeclaration: KtNamedDeclaration,
+        ktClassOrObject : KtClassOrObject
+) : LightMethod (
+        ktDeclaration.manager,
+        PsiElementFactory.SERVICE.getInstance(ktDeclaration.project).createMethod(ktDeclaration.name ?: "", PsiType.VOID),
+        KtFakeLightClass(ktClassOrObject),
+        KotlinLanguage.INSTANCE
+), KtLightElement<KtNamedDeclaration, PsiMethod> {
+    override val kotlinOrigin get() = ktDeclaration
+    override val clsDelegate get() = myMethod
+
+    override fun getNavigationElement() = ktDeclaration
+    override fun getIcon(flags: Int) = ktDeclaration.getIcon(flags)
+    override fun getUseScope() = ktDeclaration.useScope
+
+    companion object {
+        fun get(ktDeclaration: KtNamedDeclaration): KtFakeLightMethod? {
+            val ktClassOrObject = ktDeclaration.containingClassOrObject ?: return null
+            return KtFakeLightMethod(ktDeclaration, ktClassOrObject)
+        }
     }
 }

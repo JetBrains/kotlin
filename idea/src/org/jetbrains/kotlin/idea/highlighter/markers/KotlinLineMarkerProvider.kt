@@ -34,7 +34,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.getAccessorLightMethods
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -42,11 +41,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.facet.implementedDescriptor
 import org.jetbrains.kotlin.idea.facet.implementingDescriptors
+import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -271,10 +272,7 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
     val mappingToJava = HashMap<PsiElement, KtNamedDeclaration>()
     for (property in properties) {
         if (property.isOverridable()) {
-            val accessorsPsiMethods = property.getAccessorLightMethods()
-            for (psiMethod in accessorsPsiMethods) {
-                mappingToJava.put(psiMethod, property)
-            }
+            property.toPossiblyFakeLightMethods().forEach { mappingToJava.put(it, property) }
             mappingToJava[property] = property
         }
     }
@@ -352,7 +350,7 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
     val mappingToJava = HashMap<PsiElement, KtNamedFunction>()
     for (function in functions) {
         if (function.isOverridable()) {
-            val method = LightClassUtil.getLightClassMethod(function)
+            val method = LightClassUtil.getLightClassMethod(function) ?: KtFakeLightMethod.get(function)
             if (method != null) {
                 mappingToJava.put(method, function)
             }
