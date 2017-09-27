@@ -25,6 +25,8 @@ import java.net.Socket
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 fun getGeneratedClass(classLoader: ClassLoader, className: String): Class<*> {
     try {
@@ -47,7 +49,19 @@ fun getBoxMethodOrNull(aClass: Class<*>): Method? {
 //Use only JDK 1.6 compatible api
 object TestProcessServer {
 
-    val executor = Executors.newFixedThreadPool(1)!!
+    private val executor = Executors.newFixedThreadPool(1)!!
+
+    @Volatile
+    private var isProcessingTask = true
+
+    @Volatile
+    private var lastTime = System.currentTimeMillis()
+
+    private val scheduler = Executors.newScheduledThreadPool(1)
+
+    private lateinit var handler: ScheduledFuture<*>
+
+    private lateinit var serverSocket: ServerSocket
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -55,16 +69,33 @@ object TestProcessServer {
         println("Starting server on port $portNumber...")
 
         val serverSocket = ServerSocket(portNumber)
+        sheduleShutdownProcess()
+
         try {
             while (true) {
+                lastTime = System.currentTimeMillis()
+                isProcessingTask = false
                 val clientSocket = serverSocket.accept()
+                isProcessingTask = true
                 println("Socket established...")
                 executor.execute(ServerTest(clientSocket))
             }
         }
         finally {
+            handler.cancel(false)
+            scheduler.shutdown()
             serverSocket.close()
+            println("Server stopped!")
         }
+    }
+
+    private fun sheduleShutdownProcess() {
+        handler = scheduler.scheduleAtFixedRate({
+            if (!isProcessingTask && (System.currentTimeMillis() - lastTime) >= 60 * 1000 /*60 sec*/) {
+                println("Stopping server...")
+                serverSocket.close()
+            }
+        }, 60, 60, TimeUnit.SECONDS)
     }
 }
 
