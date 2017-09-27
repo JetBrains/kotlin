@@ -1236,7 +1236,8 @@ task link_omit_unused(type: LinkKonanTest) {
 }
 
 task link_default_libs(type: RunKonanTest) {
-    goldValue = "ptrdiff = 0\n"
+    disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
+    goldValue = "sizet = 0\n"
     source = "link/default/default.kt"
 }
 
