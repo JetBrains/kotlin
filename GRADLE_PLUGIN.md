@@ -298,6 +298,11 @@ For this project the task graph will be the following:
              // Add the `anotherTask` to the stub generation task dependencies.
              dependsOn anotherTask
              
+             // Add dependency on 'library' in the output klib (analogue of 'depends' parameter in a def-file)
+             // where 'library' is a konan interop or konan interop name.
+             klibDependsOn 'konanInteropName'
+             klibDependsOn konanInterop['foo']
+             
              // Pass additional command line options to the cinterop tool.
              extraOpts '-shims', 'true'
          }

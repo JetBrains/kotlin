@@ -27,7 +27,7 @@ import java.io.File
 /**
  * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
-open class KonanInteropTask: KonanTargetableTask() {
+open class KonanInteropTask: KonanBuildingTask() {
 
     internal fun init(libName: String) {
         dependsOn(project.konanCompilerDownloadTask)
@@ -38,10 +38,22 @@ open class KonanInteropTask: KonanTargetableTask() {
 
     // Output directories -----------------------------------------------------
 
-    @Internal val outputDir = project.file(project.konanInteropOutputDir)
+    @Internal override val outputDir = project.file(project.konanInteropOutputDir)
 
+    // TODO: Mark as deprecated
     lateinit var klib: File
-        @OutputFile get
+        @Internal get
+        internal set
+
+    override val artifact: File
+        @OutputFile get() = klib
+
+    // TODO Annotations are not inherited
+    override val artifactPath: String
+        @Internal get() = artifact.canonicalPath
+
+    override val isLibrary: Boolean
+        @Internal get() = true
 
     // Interop stub generator parameters -------------------------------------
 
@@ -54,10 +66,7 @@ open class KonanInteropTask: KonanTargetableTask() {
     @Input lateinit var libName: String
         internal set
 
-    @Input var dumpParameters = false
-        internal set
-    @Input var noDefaultLibs  = false
-        internal set
+    @Internal internal val klibDependencies_ = mutableListOf<KonanInteropConfig>()
 
     @Input val compilerOpts   = mutableListOf<String>()
     @Input val linkerOpts     = mutableListOf<String>()
@@ -66,11 +75,6 @@ open class KonanInteropTask: KonanTargetableTask() {
     // TODO: Check if we can use only one FileCollection instead of set.
     @InputFiles val headers   = mutableSetOf<FileCollection>()
     @InputFiles val linkFiles = mutableSetOf<FileCollection>()
-
-    val konanVersion
-        @Input get() = project.konanVersion
-    val konanHome
-        @Input get() = project.konanHome
 
     @TaskAction
     fun exec() {
@@ -104,15 +108,19 @@ open class KonanInteropTask: KonanTargetableTask() {
             addArg("-lopt", it)
         }
 
+        addFileArgs("-library", libraries.files)
+        addArgs("-library", libraries.namedKlibs)
+        addArgs("-library", libraries.artifacts.map { it.task.artifact.canonicalPath })
+        addArgs("-repo", libraries.repos.map { it.canonicalPath })
+
         addAll(extraOpts)
     }
-
 }
 
 open class KonanInteropConfig(
-        val configName: String,
-        val project: Project
-): Named {
+        configName: String,
+        project: Project
+): KonanBuildingConfig(configName, project) {
 
     override fun getName() = configName
 
@@ -142,6 +150,10 @@ open class KonanInteropConfig(
         it.description = "Generates a klib for the Kotlin/Native interop '$name'"
     }
 
+    // TODO: Rename tasks
+    override val task: KonanInteropTask
+        get() = interopProcessingTask
+
     init {
         val dummyGenerateStubsTask = project.tasks.create(
                 "gen${name.capitalize()}InteropStubs",
@@ -159,10 +171,6 @@ open class KonanInteropConfig(
 
     fun pkg(value: String) = with(interopProcessingTask) {
         pkg = value
-    }
-
-    fun target(value: String) = with(interopProcessingTask) {
-        interopProcessingTask.target = value
     }
 
     fun compilerOpts(vararg values: String) = with(interopProcessingTask) {
@@ -193,15 +201,8 @@ open class KonanInteropConfig(
         linkFiles.add(files)
     }
 
-    fun dumpParameters(value: Boolean) = with(interopProcessingTask) {
-        dumpParameters = value
-    }
-
-    fun noDefaultLibs(flag: Boolean) = with(interopProcessingTask) {
-        noDefaultLibs = flag
-    }
-
     fun dependsOn(dependency: Any) = interopProcessingTask.dependsOn(dependency)
+    // Other.
 
     fun extraOpts(vararg values: Any) = extraOpts(values.asList())
     fun extraOpts(values: List<Any>) {

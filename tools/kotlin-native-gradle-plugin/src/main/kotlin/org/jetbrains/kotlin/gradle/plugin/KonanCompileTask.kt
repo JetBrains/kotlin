@@ -16,24 +16,27 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
+import org.gradle.util.ConfigureUtil
 import java.io.File
 
 /**
  * A task compiling the target executable/library using Kotlin/Native compiler
  */
-open class KonanCompileTask: KonanTargetableTask() {
+open class KonanCompileTask: KonanBuildingTask() {
 
     // Output artifact --------------------------------------------------------
 
     internal lateinit var artifactName: String
         @Internal get
 
-    @Internal lateinit var outputDir: File
+    @Internal override lateinit var outputDir: File
         internal set
 
     internal fun init(artifactName: String) {
@@ -42,16 +45,16 @@ open class KonanCompileTask: KonanTargetableTask() {
         outputDir = project.file(project.konanCompilerOutputDir)
     }
 
-    val artifactNamePath: String
+    protected val artifactNamePath: String
         @Internal get() = "${outputDir.absolutePath}/$artifactName"
 
-    val artifactSuffix: String
+    protected val artifactSuffix: String
         @Internal get() = produceSuffix(produce)
 
-    val artifactPath: String
+    override val artifactPath: String
         @Internal get() = "$artifactNamePath$artifactSuffix"
 
-    val artifact: File
+    override val artifact: File
         @OutputFile get() = project.file(artifactPath)
 
     // Other compilation parameters -------------------------------------------
@@ -60,22 +63,20 @@ open class KonanCompileTask: KonanTargetableTask() {
     val inputFiles: Collection<FileCollection>
         @InputFiles get() = _inputFiles.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
 
-    @InputFiles val libraries       = mutableSetOf<FileCollection>()
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
 
     @Input var produce              = "program"
         internal set
 
-    @Internal val interops = mutableSetOf<KonanInteropConfig>()
+    // TODO: Replace produce string with an enum.
+    override val isLibrary: Boolean
+        @Internal get() = produce == "library"
 
     @Input val extraOpts = mutableListOf<String>()
 
     internal var _linkerOpts = mutableListOf<String>()
     val linkerOpts: List<String>
-        @Input get() = mutableListOf<String>().apply {
-            addAll(_linkerOpts)
-            interops.flatMapTo(this) { it.interopProcessingTask.linkerOpts }
-        }
+        @Input get() = _linkerOpts // TODO: use the original linkerOpts prop.
 
     @Input var enableDebug        = project.properties.containsKey("enableDebug") && project.properties["enableDebug"].toString().toBoolean()
         internal set
@@ -97,19 +98,19 @@ open class KonanCompileTask: KonanTargetableTask() {
     @Optional @Input var apiVersion      : String? = null
         internal set
 
-    @Input var dumpParameters: Boolean = false
-
-    val konanVersion
-        @Input get() = project.konanVersion
-    val konanHome
-        @Input get() = project.konanHome
-
     // Task action ------------------------------------------------------------
 
     protected fun buildArgs() = mutableListOf<String>().apply {
         addArg("-output", artifactNamePath)
 
-        addFileArgs("-library", libraries)
+        // TODO: remove this repo
+        addArg("-repo", outputDir.canonicalPath)
+
+        addFileArgs("-library", libraries.files)
+        addArgs("-library", libraries.namedKlibs)
+        addArgs("-library", libraries.artifacts.map { it.task.artifact.canonicalPath })
+        addArgs("-repo", libraries.repos.map { it.canonicalPath })
+
         addFileArgs("-nativelibrary", nativeLibraries)
         addArg("-produce", produce)
 
@@ -143,12 +144,11 @@ open class KonanCompileTask: KonanTargetableTask() {
     }
 }
 
-// TODO: check debug outputs
 // TODO: Use +=/-= syntax for libraries and inputFiles
 open class KonanCompileConfig(
-        val configName: String,
-        val project: Project,
-        taskNamePrefix: String = "compileKonan"): Named {
+        configName: String,
+        project: Project,
+        taskNamePrefix: String = "compileKonan"): KonanBuildingConfig(configName, project) {
 
     override fun getName() = configName
 
@@ -160,21 +160,24 @@ open class KonanCompileConfig(
         it.description = "Compiles the Kotlin/Native artifact '${this@KonanCompileConfig.name}'"
     }
 
-    // DSL methods. Interop. --------------------------------------------------
+    override val task: KonanCompileTask
+        get() = compilationTask
 
-    fun useInterop(interop: KonanInteropConfig) = with(compilationTask) {
-        val generateStubsTask = interop.interopProcessingTask
-
-        dependsOn(generateStubsTask)
-        library(project.files(generateStubsTask.klib))
-
-        interops.add(interop)
+    private fun evaluationDependsOn(anotherProject: Project) {
+        if (anotherProject != project) {
+            project.evaluationDependsOn(anotherProject.path)
+        }
     }
 
-    fun useInterop(interop: String) {
-        useInterop(project.konanInteropContainer.getByName(interop))
-    }
+    // DSL methods. --------------------------------------------------
 
+    @Deprecated("Use `libraries` block instead")
+    fun useInterop(interop: KonanInteropConfig) = libraries { interop(interop) }
+
+    @Deprecated("Use `libraries` block instead")
+    fun useInterop(interop: String) = libraries { interop(interop) }
+
+    @Deprecated("Use `libraries` block instead")
     fun useInterops(interops: Collection<Any>) {
         interops.forEach {
             when(it) {
@@ -185,10 +188,13 @@ open class KonanCompileConfig(
         }
     }
 
-    // DSL. Input/output files
+    // DSL. Input/output files.
 
     fun inputDir(dir: Any) = with(compilationTask) {
-        _inputFiles.add(project.fileTree(dir))
+        _inputFiles.add(project.fileTree(dir).apply {
+            include("**/*.kt")
+            exclude { it.file.startsWith(project.buildDir) }
+        })
     }
     fun inputFiles(vararg files: Any) = with(compilationTask) {
         _inputFiles.add(project.files(files))
@@ -196,7 +202,7 @@ open class KonanCompileConfig(
     fun inputFiles(files: FileCollection) = compilationTask._inputFiles.add(files)
     fun inputFiles(files: Collection<FileCollection>) = compilationTask._inputFiles.addAll(files)
 
-
+    // TODO: Remove this functional.
     fun outputDir(dir: Any) = with(compilationTask) {
         outputDir = project.file(dir)
     }
@@ -207,34 +213,22 @@ open class KonanCompileConfig(
 
     // DSL. Libraries.
 
-    fun library(project: Project) {
-        this.project.evaluationDependsOn(project.path)
-        project.konanArtifactsContainer.asSequence()
-                .map { it.compilationTask }
-                .filter { it.produce == "library" }
-                .forEach {
-                    compilationTask.dependsOn(it)
-                    library(it.artifact)
-                }
-    }
+    @Deprecated("Use `libraries` block instead")
+    fun library(project: Project) = libraries { allArtifactsFrom(project) }
 
-    fun library(project: Project, artifactName: String) {
-        this.project.evaluationDependsOn(project.path)
-        val libraryCompilationTask = project.konanArtifactsContainer.getByName(artifactName).compilationTask
-        if (libraryCompilationTask.produce != "library") {
-            throw IllegalArgumentException("Artifact is not a library: $artifactName (in project: ${project.path})")
-        }
-        compilationTask.dependsOn(libraryCompilationTask)
-        library(libraryCompilationTask.artifact)
-    }
+    @Deprecated("Use `libraries` block instead")
+    fun library(project: Project, artifactName: String) = libraries { this.artifact(project, artifactName) }
 
-    fun library(lib: Any) = libraries(lib)
-    fun libraries(vararg libs: Any) = with(compilationTask) {
-        libraries.add(project.files(*libs))
-    }
-    fun libraries(libs: FileCollection) = with(compilationTask) {
-        libraries.add(libs)
-    }
+    @Deprecated("Use `libraries` block instead")
+    fun library(lib: Any) = libraries { file(lib) }
+
+    @Deprecated("Use `libraries` block instead")
+    fun libraries(vararg libs: Any) = libraries { files(*libs) }
+
+    @Deprecated("Use `libraries` block instead")
+    fun libraries(libs: FileCollection) = libraries { files(libs) }
+
+    // DSL. Native libraries.
 
     fun nativeLibrary(lib: Any) = nativeLibraries(lib)
     fun nativeLibraries(vararg libs: Any) = with(compilationTask) {
@@ -249,10 +243,6 @@ open class KonanCompileConfig(
     fun linkerOpts(args: List<String>) = linkerOpts(*args.toTypedArray())
     fun linkerOpts(vararg args: String) = with(compilationTask) {
         _linkerOpts.addAll(args)
-    }
-
-    fun target(tgt: String) = with(compilationTask) {
-        target = tgt
     }
 
     fun languageVersion(version: String) = with(compilationTask) {
@@ -294,12 +284,6 @@ open class KonanCompileConfig(
     fun measureTime(value: Boolean) = with(compilationTask) {
         measureTime = value
     }
-
-    fun dumpParameters(value: Boolean) = with(compilationTask) {
-        dumpParameters = value
-    }
-
-    fun dependsOn(dependency: Any) = compilationTask.dependsOn(dependency)
 
     fun extraOpts(vararg values: Any) = extraOpts(values.asList())
     fun extraOpts(values: List<Any>) {

@@ -113,6 +113,12 @@ internal fun MutableList<String>.addArg(parameter: String, value: String) {
     add(value)
 }
 
+internal fun MutableList<String>.addArgs(parameter: String, values: Iterable<String>) {
+    values.forEach {
+        addArg(parameter, it)
+    }
+}
+
 internal fun MutableList<String>.addArgIfNotNull(parameter: String, value: String?) {
     if (value != null) {
         addArg(parameter, value)
@@ -144,8 +150,8 @@ internal fun MutableList<String>.addListArg(parameter: String, values: List<Stri
 }
 
 internal fun dumpProperties(task: Task) {
-    fun Collection<FileCollection>.dump() = flatMap { it.files }.joinToString(prefix = "[",
-            separator = ",\n${" ".repeat(22)}", postfix = "]")
+    fun Iterable<String>.dump() = joinToString(prefix = "[", separator = ",\n${" ".repeat(22)}", postfix = "]")
+    fun Collection<FileCollection>.dump() = flatMap { it.files }.map { it.canonicalPath }.dump()
 
     when (task) {
         is KonanCompileTask -> {
@@ -156,7 +162,11 @@ internal fun dumpProperties(task: Task) {
             println("artifactPath       : ${task.artifactPath}")
             println("inputFiles         : ${task.inputFiles.dump()}")
             println("produce            : ${task.produce}")
-            println("libraries          : ${task.libraries.dump()}")
+            println("libraries          : ${task.libraries.files.dump()}")
+            println("                   : ${task.libraries.artifacts.map {
+                it.task.artifact.canonicalPath
+            }.dump()}")
+            println("                   : ${task.libraries.namedKlibs.dump()}")
             println("nativeLibraries    : ${task.nativeLibraries.dump()}")
             println("linkerOpts         : ${task.linkerOpts}")
             println("enableDebug        : ${task.enableDebug}")
@@ -206,7 +216,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     companion object {
         internal const val ARTIFACTS_CONTAINER_NAME = "konanArtifacts"
         internal const val INTEROP_CONTAINER_NAME   = "konanInterop"
-        internal const val KONAN_DOWNLOAD_TASK_NAME = "downloadKonanCompiler"
+        internal const val KONAN_DOWNLOAD_TASK_NAME = "checkKonanCompiler"
 
         internal val DEFAULT_KONAN_VERSION = Properties().apply {
             load(KonanPlugin::class.java.getResourceAsStream("/META-INF/gradle-plugins/konan.properties") ?:
