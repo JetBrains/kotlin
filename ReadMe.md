@@ -87,8 +87,6 @@ Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 Working with the Kotlin project requires IntelliJ IDEA 2017.3. You can download an Early Access Preview version of IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/nextversion/).
 
-The [root Kotlin project](https://github.com/JetBrains/kotlin) should be imported into IDEA as gradle project.
-
 To import the project in Intellij choose project directory in Open project dialog. Then, after project opened, Select 
 `File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
 
