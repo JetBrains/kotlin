@@ -12779,6 +12779,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("expectClassExplicitConstructor.kt")
+        public void testExpectClassExplicitConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/expectClassExplicitConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expectClassPrimaryConstructor.kt")
+        public void testExpectClassPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/expectClassPrimaryConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("keyword.kt")
         public void testKeyword() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/keyword.kt");
@@ -12788,6 +12800,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("modifier.kt")
         public void testModifier() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/modifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedExpectClassPrimaryConstructor.kt")
+        public void testNestedExpectClassPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/nestedExpectClassPrimaryConstructor.kt");
             doTest(fileName);
         }
 
