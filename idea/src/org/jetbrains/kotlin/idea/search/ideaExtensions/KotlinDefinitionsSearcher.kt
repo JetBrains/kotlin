@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
-import com.intellij.codeInsight.navigation.MethodImplementationsSearch
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -28,13 +27,14 @@ import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachImplementation
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
+import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -117,29 +117,21 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         }
 
         private fun processFunctionImplementations(function: KtFunction, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val psiMethod = runReadAction { LightClassUtil.getLightClassMethod(function) }
-            return psiMethod?.forEachImplementation(scope, consumer::process) ?: true
+            return runReadAction {
+                function.toPossiblyFakeLightMethods().firstOrNull()?.forEachImplementation(scope, consumer::process) ?: true
+            }
         }
 
-        private fun processPropertyImplementations(parameter: KtParameter, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
-
-            return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
+        private fun processPropertyImplementations(declaration: KtNamedDeclaration, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
+            return runReadAction {
+                processPropertyImplementationsMethods(declaration.toPossiblyFakeLightMethods(), scope, consumer)
+            }
         }
 
-        private fun processPropertyImplementations(property: KtProperty, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(property) }
-
-            return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
-        }
-
-        fun processPropertyImplementationsMethods(accessors: LightClassUtil.PropertyAccessorsPsiMethods, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            for (method in accessors) {
-                val implementations = ArrayList<PsiMethod>()
-                MethodImplementationsSearch.getOverridingMethods(method, implementations, scope)
-
-                for (implementation in implementations) {
-                    if (isDelegated(implementation)) continue
+        fun processPropertyImplementationsMethods(accessors: Iterable<PsiMethod>, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
+            return accessors.all { method ->
+                method.forEachOverridingMethod(scope) { implementation ->
+                    if (isDelegated(implementation)) return@forEachOverridingMethod true
 
                     val elementToProcess = runReadAction {
                         val mirrorElement = (implementation as? KtLightMethod)?.kotlinOrigin
@@ -150,12 +142,9 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                         }
                     }
 
-                    if (!consumer.process(elementToProcess)) {
-                        return false
-                    }
+                    consumer.process(elementToProcess)
                 }
             }
-            return true
         }
     }
 }
