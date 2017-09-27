@@ -97,7 +97,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
         setupK2JsArguments(outputFile, sourceFiles, libraries, friendModules, arguments)
         if (arguments.sourceMap) {
-            arguments.sourceMapSourceRoots = sourceRoots.joinToString(File.pathSeparator) { it.path }
+            arguments.sourceMapBaseDirs = sourceRoots.joinToString(File.pathSeparator) { it.path }
         }
 
         log.debug("K2JS: arguments after setup" + ArgumentUtils.convertArgumentsToStringList(arguments))
