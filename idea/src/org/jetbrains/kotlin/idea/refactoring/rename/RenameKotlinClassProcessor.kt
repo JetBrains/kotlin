@@ -79,17 +79,6 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    override fun getQualifiedNameAfterRename(element: PsiElement, newName: String?, nonJava: Boolean): String? {
-        if (!nonJava) return newName
-
-        val qualifiedName = when (element) {
-            is KtClassOrObject -> element.fqName?.asString() ?: element.name
-            is PsiClass -> element.qualifiedName ?: element.name
-            else -> return null
-        }
-        return PsiUtilCore.getQualifiedNameAfterRename(qualifiedName, newName)
-    }
-
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
         if (element is KtObjectDeclaration && element.isCompanion()) {
             return super.findReferences(element).filter { !it.isCompanionObjectClassReference() }
