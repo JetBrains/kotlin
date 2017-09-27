@@ -37,9 +37,10 @@ public class JetRunConfigurationType extends ConfigurationTypeBase {
             super(type);
         }
 
+        @NotNull
         @Override
-        public RunConfiguration createTemplateConfiguration(Project project) {
-            return new JetRunConfiguration("", new RunConfigurationModule(project), this);
+        public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+            return new JetRunConfiguration("", new JavaRunConfigurationModule(project, true), this);
         }
     }
 }

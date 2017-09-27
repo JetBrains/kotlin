@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.run;
 
+import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.BaseJavaApplicationCommandLineState;
@@ -30,19 +31,20 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.projectRoots.JavaSdkVersion;
+import com.intellij.openapi.projectRoots.ex.JavaSdkUtil;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import com.intellij.util.PathsList;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -62,7 +64,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.util.*;
 
-public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
+public class JetRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
     implements CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
 
     public String MAIN_CLASS_NAME;
@@ -75,7 +77,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     private Map<String, String> myEnvs = new LinkedHashMap<String, String>();
     public boolean PASS_PARENT_ENVS = true;
 
-    public JetRunConfiguration(String name, RunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
+    public JetRunConfiguration(String name, JavaRunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
         super(name, runConfigurationModule, factory);
         runConfigurationModule.init();
     }
@@ -343,7 +345,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         @Override
         protected JavaParameters createJavaParameters() throws ExecutionException {
             JavaParameters params = new JavaParameters();
-            RunConfigurationModule module = myConfiguration.getConfigurationModule();
+            JavaRunConfigurationModule module = myConfiguration.getConfigurationModule();
 
             int classPathType = getClasspathType(module);
 
@@ -352,6 +354,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             setupJavaParameters(params);
 
             params.setMainClass(myConfiguration.getRunClass());
+            setupModulePath(params, module);
 
             return params;
         }
@@ -401,6 +404,21 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
                 return String.format("Function 'main' not found in class '%s'", classFqName);
             }
             return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());
+        }
+
+        private static void setupModulePath(JavaParameters params, JavaRunConfigurationModule module) {
+            if (JavaSdkUtil.isJdkAtLeast(params.getJdk(), JavaSdkVersion.JDK_1_9)) {
+                PsiJavaModule mainModule = DumbService.getInstance(module.getProject()).computeWithAlternativeResolveEnabled(
+                        () -> JavaModuleGraphUtil.findDescriptorByElement(module.findClass(params.getMainClass())));
+                if (mainModule != null) {
+                    params.setModuleName(mainModule.getName());
+                    PathsList classPath = params.getClassPath();
+                    PathsList modulePath = params.getModulePath();
+
+                    modulePath.addAll(classPath.getPathList());
+                    classPath.clear();
+                }
+            }
         }
     }
 }
