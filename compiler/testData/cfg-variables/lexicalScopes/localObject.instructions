@@ -22,8 +22,8 @@ L0:
     v(val a = 1)                                                                          INIT: in: {} out: {a=D}
     r(1) -> <v1>                                                                          INIT: in: {a=D} out: {a=D}
     w(a|<v1>)                                                                             INIT: in: {a=D} out: {a=ID}
-  2 jmp?(L3)                                                                              INIT: in: {} out: {}
-    d(fun foo() { val b = 2 })
+  2 jmp?(L3)                                                                              INIT: in: {a=ID} out: {a=ID}
+    d(fun foo() { val b = 2 })                                                            INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}
 L2 [after local class]:
 L3 [after local declaration]:
     mark("after")
@@ -33,7 +33,7 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                               USE: in: {} out: {}
+    <SINK>                                                                                                                            USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -41,15 +41,15 @@ fun foo() {
         }
 ---------------------
 L4:
-  3 <START>                INIT: in: {} out: {}
+  3 <START>                INIT: in: {a=ID} out: {a=ID}
   4 mark({ val b = 2 })
-    v(val b = 2)           INIT: in: {} out: {b=D}
-    r(2) -> <v0>           INIT: in: {b=D} out: {b=D}
-    w(b|<v0>)              INIT: in: {b=D} out: {b=ID}
+    v(val b = 2)           INIT: in: {a=ID} out: {a=ID, b=D}
+    r(2) -> <v0>           INIT: in: {a=ID, b=D} out: {a=ID, b=D}
+    w(b|<v0>)              INIT: in: {a=ID, b=D} out: {a=ID, b=ID}
 L5:
-  3 <END>                  INIT: in: {} out: {}
+  3 <END>                  INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}
 error:
     <ERROR>
 sink:
-    <SINK>                                                USE: in: {} out: {}
+    <SINK>                                                             USE: in: {} out: {}
 =====================

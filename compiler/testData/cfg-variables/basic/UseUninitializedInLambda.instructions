@@ -5,17 +5,17 @@ L0:
   1 <START>                                           INIT: in: {} out: {}
     v(f: () -> Unit)                                  INIT: in: {} out: {f=D}
     magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>    INIT: in: {f=D} out: {f=D}
-    w(f|<v0>)                                         INIT: in: {f=D} out: {f=ID}     USE: in: {f=READ} out: {f=READ}
-    r(f) -> <v1>                                      INIT: in: {f=ID} out: {f=ID}    USE: in: {} out: {f=READ}
+    w(f|<v0>)                                         INIT: in: {f=D} out: {f=ID}
+    r(f) -> <v1>                                      INIT: in: {f=ID} out: {f=ID}
     mark(f())
     call(f(), invoke|<v1>) -> <v2>
     ret(*|<v2>) L1
 L1:
     <END>
 error:
-    <ERROR>                                           INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                            INIT: in: {f=I?} out: {f=I?}    USE: in: {} out: {}
+    <SINK>                                                                            USE: in: {f=READ} out: {f=READ}
 =====================
 == foo ==
 fun foo() {

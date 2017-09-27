@@ -9,7 +9,7 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                                     INIT: in: {} out: {}                        USE: in: {} out: {}
+  1 <START>                                                                     INIT: in: {} out: {}
   2 mark({ "before" val b = 1 val f = { x: Int -> val a = x + b } "after" })
     mark("before")
     r("before") -> <v0>
@@ -19,18 +19,18 @@ L0:
     v(val f = { x: Int -> val a = x + b })                                      INIT: in: {b=ID} out: {b=ID, f=D}
     mark({ x: Int -> val a = x + b })                                           INIT: in: {b=ID, f=D} out: {b=ID, f=D}
     jmp?(L2)
-    d({ x: Int -> val a = x + b })                                              INIT: in: {b=I, f=I?} out: {b=I, f=I?}      USE: in: {b=READ} out: {b=READ}
+    d({ x: Int -> val a = x + b })                                              INIT: in: {a=ID, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}
 L2 [after local declaration]:
-    r({ x: Int -> val a = x + b }) -> <v2>                                      INIT: in: {b=ID, f=D} out: {b=ID, f=D}
-    w(f|<v2>)                                                                   INIT: in: {b=ID, f=D} out: {b=ID, f=ID}
-    mark("after")                                                               INIT: in: {b=ID, f=ID} out: {b=ID, f=ID}
+    r({ x: Int -> val a = x + b }) -> <v2>
+    w(f|<v2>)                                                                   INIT: in: {a=ID, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=ID, x=ID}
+    mark("after")                                                               INIT: in: {a=ID, b=ID, f=ID, x=ID} out: {a=ID, b=ID, f=ID, x=ID}
     r("after") -> <v3>
 L1:
-  1 <END>                                                                       INIT: in: {} out: {}
+  1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                                  USE: in: {} out: {}
+    <SINK>                                                                                                                                          USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
 =====================
 == anonymous_0 ==
 { x: Int ->
@@ -43,16 +43,16 @@ L3:
     magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {b=ID, f=D, x=D} out: {b=ID, f=D, x=D}
     w(x|<v0>)                                  INIT: in: {b=ID, f=D, x=D} out: {b=ID, f=D, x=ID}
   4 mark(val a = x + b)                        INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}
-    v(val a = x + b)                           INIT: in: {b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}          USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x) -> <v1>                               INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}     USE: in: {b=READ} out: {b=READ, x=READ}
-    r(b) -> <v2>                                                                                                USE: in: {} out: {b=READ}
+    v(val a = x + b)                           INIT: in: {b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}
+    r(x) -> <v1>                               INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}
+    r(b) -> <v2>
     mark(x + b)
     call(x + b, plus|<v1>, <v2>) -> <v3>
     w(a|<v3>)                                  INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}
 L4:
-  3 <END>                                      INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}
+  3 <END>                                      INIT: in: {a=ID, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                     INIT: in: {b=I, f=I?, x=I?} out: {b=I, f=I?, x=I?}               USE: in: {} out: {}
+    <SINK>                                                                                                       USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
 =====================

@@ -7,7 +7,7 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                           INIT: in: {} out: {}            USE: in: {} out: {}
+  1 <START>                                                           INIT: in: {} out: {}
   2 mark({ "before" val b = 1 fun local(x: Int) = x + b "after" })
     mark("before")
     r("before") -> <v0>
@@ -15,16 +15,16 @@ L0:
     r(1) -> <v1>                                                      INIT: in: {b=D} out: {b=D}
     w(b|<v1>)                                                         INIT: in: {b=D} out: {b=ID}
     jmp?(L2)                                                          INIT: in: {b=ID} out: {b=ID}
-    d(fun local(x: Int) = x + b)                                      INIT: in: {b=I} out: {b=I}      USE: in: {b=READ} out: {b=READ}
+    d(fun local(x: Int) = x + b)                                      INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}
 L2 [after local declaration]:
-    mark("after")                                                     INIT: in: {b=ID} out: {b=ID}
+    mark("after")
     r("after") -> <v2>
 L1:
-  1 <END>                                                             INIT: in: {} out: {}
+  1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                            USE: in: {} out: {}
+    <SINK>                                                                                                        USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
 =====================
 == local ==
 fun local(x: Int) = x + b
@@ -33,16 +33,16 @@ L3:
   3 <START>                                    INIT: in: {b=ID} out: {b=ID}
     v(x: Int)                                  INIT: in: {b=ID} out: {b=ID, x=D}
     magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {b=ID, x=D} out: {b=ID, x=D}
-    w(x|<v0>)                                  INIT: in: {b=ID, x=D} out: {b=ID, x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x) -> <v1>                               INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}    USE: in: {b=READ} out: {b=READ, x=READ}
-    r(b) -> <v2>                                                                           USE: in: {} out: {b=READ}
+    w(x|<v0>)                                  INIT: in: {b=ID, x=D} out: {b=ID, x=ID}
+    r(x) -> <v1>                               INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}
+    r(b) -> <v2>
     mark(x + b)
     call(x + b, plus|<v1>, <v2>) -> <v3>
     ret(*|<v3>) L4
 L4:
     <END>
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                     INIT: in: {b=I, x=I?} out: {b=I, x=I?}      USE: in: {} out: {}
+    <SINK>                                                                                 USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
 =====================

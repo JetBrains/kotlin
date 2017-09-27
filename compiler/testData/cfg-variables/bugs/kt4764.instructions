@@ -78,27 +78,27 @@ L12 [start finally]:
     mark(println(foo))
     magic[UNRESOLVED_CALL](println(foo)|<v10>, !<v11>) -> <v12>
 L13 [finish finally]:
-  5 mark({})                                                                                                                                                                                                                                                                         INIT: in: {} out: {}
+  5 mark({})                                                                                                                                                                                                                                                                         INIT: in: {e=ID} out: {e=ID}
     read (Unit)
   8 ret(*|<v9>) L1                                                                                                                                                                                                                                                                                                                   USE: in: {} out: {}
 - 7 jmp(L11)
 L11 [afterCatches]:
-  6 jmp(L14)                                                                                                                                                                                                                                                                         INIT: in: {foo=ID} out: {foo=ID}
+  6 jmp(L14)                                                                                                                                                                                                                                                                         INIT: in: {e=ID, foo=ID} out: {e=ID, foo=ID}
 L10 [onExceptionToFinallyBlock]:
   9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                                                                     USE: in: {foo=READ} out: {foo=READ}
     r(foo) -> <v10>                                                                                                                                                                                                                                                                                                                  USE: in: {} out: {foo=READ}
     mark(println(foo))
     magic[UNRESOLVED_CALL](println(foo)|<v10>, !<v11>) -> <v12>
-  5 mark({})                                                                                                                                                                                                                                                                         INIT: in: {} out: {}
+  5 mark({})                                                                                                                                                                                                                                                                         INIT: in: {e=ID} out: {e=ID}
     read (Unit)
   6 jmp(error)                                                                                                                                                                                                                                                                                                                       USE: in: {} out: {}
 L14 [skipFinallyToErrorBlock]:
-  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                     INIT: in: {foo=ID} out: {foo=ID}                USE: in: {foo=READ} out: {foo=READ}
+  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                     INIT: in: {e=ID, foo=ID} out: {e=ID, foo=ID}    USE: in: {foo=READ} out: {foo=READ}
     r(foo) -> <v10>                                                                                                                                                                                                                                                                                                                  USE: in: {} out: {foo=READ}
     mark(println(foo))
     magic[UNRESOLVED_CALL](println(foo)|<v10>, !<v11>) -> <v12>
   6 merge(try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized }|!<v7>, !<v13>) -> <v14>
-  5 jmp(L15)                                                                                                                                                                                                                                                                         INIT: in: {} out: {}
+  5 jmp(L15)                                                                                                                                                                                                                                                                         INIT: in: {e=ID} out: {e=ID}
 L8 [else branch]:
     read (Unit)
 L15 ['if' expression result]:
@@ -111,7 +111,7 @@ L15 ['if' expression result]:
     ret(*|<v16>) L1                                                                                                                                                                                                                                                                                                                  USE: in: {} out: {}
 - 4 jmp(L16)
 L7 [else branch]:
-    read (Unit)                                                                                                                                                                                                                                                                      INIT: in: {} out: {}
+    read (Unit)                                                                                                                                                                                                                                                                      INIT: in: {e=ID} out: {e=ID}
 L16 ['if' expression result]:
     merge(if (false) { if (false) { var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } } return "fail" }|!<v17>) -> <v18>
 L6 ['if' expression result]:

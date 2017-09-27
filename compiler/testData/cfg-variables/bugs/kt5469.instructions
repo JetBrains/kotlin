@@ -37,9 +37,9 @@ L2 [onException]:
     magic[UNRESOLVED_CALL](println(foo)|<v5>, !<v6>) -> <v7>
   3 jmp(L3)
 L3 [afterCatches]:
-  2 merge(try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) }|!<v3>, <v7>) -> <v8>    INIT: in: {foo=ID} out: {foo=ID}
+  2 merge(try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) }|!<v3>, <v7>) -> <v8>
 L1:
-  1 <END>                                                                                                        INIT: in: {} out: {}
+  1 <END>                                                                                                        INIT: in: {e=ID} out: {e=ID}
 error:
     <ERROR>
 sink:

@@ -26,18 +26,18 @@ L0:
     magic[IMPLICIT_RECEIVER](x) -> <v2>                                                              INIT: in: {a=D, x=ID} out: {a=D, x=ID}
     r(x|<v2>) -> <v3>
     w(a|<v3>)                                                                                        INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
-  2 jmp?(L3)                                                                                         INIT: in: {x=ID} out: {x=ID}
-    d(fun foo() { val b = x })                                                                       INIT: in: {x=I} out: {x=I}                 USE: in: {x=READ} out: {x=READ}
+  2 jmp?(L3)                                                                                         INIT: in: {a=ID, x=ID} out: {a=ID, x=ID}
+    d(fun foo() { val b = x })                                                                       INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}
 L2 [after local class]:
 L3 [after local declaration]:
-    mark("after")                                                                                    INIT: in: {x=I?} out: {x=I?}
+    mark("after")
     r("after") -> <v4>
 L1:
-  1 <END>                                                                                            INIT: in: {} out: {}
+  1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                                                      USE: in: {} out: {}
+    <SINK>                                                                                                                                                   USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -45,16 +45,16 @@ fun foo() {
         }
 ---------------------
 L4:
-  3 <START>                                INIT: in: {x=ID} out: {x=ID}
+  3 <START>                                INIT: in: {a=ID, x=ID} out: {a=ID, x=ID}
   4 mark({ val b = x })
-    v(val b = x)                           INIT: in: {x=ID} out: {b=D, x=ID}
-    magic[IMPLICIT_RECEIVER](x) -> <v0>    INIT: in: {b=D, x=ID} out: {b=D, x=ID}     USE: in: {x=READ} out: {x=READ}
-    r(x|<v0>) -> <v1>                                                                 USE: in: {} out: {x=READ}
-    w(b|<v1>)                              INIT: in: {b=D, x=ID} out: {b=ID, x=ID}
+    v(val b = x)                           INIT: in: {a=ID, x=ID} out: {a=ID, b=D, x=ID}
+    magic[IMPLICIT_RECEIVER](x) -> <v0>    INIT: in: {a=ID, b=D, x=ID} out: {a=ID, b=D, x=ID}
+    r(x|<v0>) -> <v1>
+    w(b|<v1>)                              INIT: in: {a=ID, b=D, x=ID} out: {a=ID, b=ID, x=ID}
 L5:
-  3 <END>                                  INIT: in: {x=ID} out: {x=ID}
+  3 <END>                                  INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}
 error:
-    <ERROR>                                INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                 INIT: in: {x=I} out: {x=I}                 USE: in: {} out: {}
+    <SINK>                                                                                         USE: in: {} out: {}
 =====================
