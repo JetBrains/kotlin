@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -83,13 +84,15 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     ) {
         val psiPackage = directory?.getPackage() ?: return
         val moveTarget = KotlinDirectoryMoveTarget(FqName(psiPackage.qualifiedName), directory)
-        for ((index, usageInfo) in infos.withIndex()) {
-            if (usageInfo !is FileUsagesWrapper) continue
+        project.runSynchronouslyWithProgress("Analyzing conflicts", false) {
+            runReadAction {
+                for ((index, usageInfo) in infos.withIndex()) {
+                    if (usageInfo !is FileUsagesWrapper) continue
 
-            project.runSynchronouslyWithProgress("Analyzing conflicts in ${usageInfo.psiFile.name}", false) {
-                runReadAction {
+
                     val elementsToMove = usageInfo.psiFile.declarations
                     if (elementsToMove.isEmpty()) continue
+                    ProgressManager.getInstance().progressIndicator?.text2 = "in ${usageInfo.psiFile.name}"
 
                     val (internalUsages, externalUsages) = usageInfo.usages.partition { it is KotlinMoveUsage && it.isInternal }
                     val internalUsageSet = internalUsages.toMutableSet()
