@@ -78,10 +78,7 @@ class JavaTypeQualifiersByElementType(
     operator fun get(
             applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType?
     ): JavaTypeQualifiers? {
-        val nullabilityQualifierWithMigrationStatus =
-                nullabilityQualifiers[applicabilityType]
-                ?: nullabilityQualifiers[AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE]
-                ?: return null
+        val nullabilityQualifierWithMigrationStatus = nullabilityQualifiers[applicabilityType] ?: return null
 
         return JavaTypeQualifiers(
                 nullabilityQualifierWithMigrationStatus.qualifier, null,

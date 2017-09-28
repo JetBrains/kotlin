@@ -42,10 +42,14 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305
             private val typeQualifier: AnnotationDescriptor,
             private val applicability: Int
     ) {
-        private fun isApplicableTo(elementType: QualifierApplicabilityType) = (applicability and (1 shl elementType.ordinal)) != 0
-
         operator fun component1() = typeQualifier
         operator fun component2() = QualifierApplicabilityType.values().filter(this::isApplicableTo)
+
+        private fun isApplicableTo(elementType: QualifierApplicabilityType) =
+                isApplicableConsideringMask(QualifierApplicabilityType.TYPE_USE) || isApplicableConsideringMask(elementType)
+
+        private fun isApplicableConsideringMask(elementType: QualifierApplicabilityType) =
+                (applicability and (1 shl elementType.ordinal)) != 0
     }
 
     private val resolvedNicknames =
