@@ -95,7 +95,7 @@ expect fun Float.isFinite(): Boolean
 @Target(PROPERTY, FIELD)
 expect annotation class Volatile
 
-inline expect fun <R> synchronized(lock: Any, crossinline block: () -> R): R
+public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 
 
 
