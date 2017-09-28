@@ -6923,6 +6923,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("genericSetValueViaSyntheticAccessor.kt")
+        public void testGenericSetValueViaSyntheticAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericSetValueViaSyntheticAccessor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("getAsExtensionFun.kt")
         public void testGetAsExtensionFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/getAsExtensionFun.kt");

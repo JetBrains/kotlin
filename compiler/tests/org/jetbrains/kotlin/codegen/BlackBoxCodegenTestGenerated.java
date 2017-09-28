@@ -6923,6 +6923,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("genericSetValueViaSyntheticAccessor.kt")
+        public void testGenericSetValueViaSyntheticAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericSetValueViaSyntheticAccessor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("getAsExtensionFun.kt")
         public void testGetAsExtensionFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/getAsExtensionFun.kt");
