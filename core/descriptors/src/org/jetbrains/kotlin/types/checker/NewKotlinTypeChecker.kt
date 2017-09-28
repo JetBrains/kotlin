@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.isFinalClass
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object StrictEqualityTypeChecker {
     /**
@@ -91,8 +94,23 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     fun TypeCheckerContext.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
         if (a === b) return true
 
+        if (isCommonDenotableType(a) && isCommonDenotableType(b)) {
+            if (!areEqualTypeConstructors(a.constructor, b.constructor)) return false
+            if (a.arguments.isEmpty()) {
+                if (a.hasFlexibleNullability() || b.hasFlexibleNullability()) return true
+
+                return a.isMarkedNullable == b.isMarkedNullable
+            }
+        }
+
         return isSubtypeOf(a, b) && isSubtypeOf(b, a)
     }
+
+    private fun KotlinType.hasFlexibleNullability() =
+            lowerIfFlexible().isMarkedNullable != upperIfFlexible().isMarkedNullable
+
+    private fun isCommonDenotableType(type: KotlinType) =
+            type.constructor.isDenotable && !type.isDynamic() && type.lowerIfFlexible().constructor == type.upperIfFlexible().constructor
 
     fun TypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
         val newSubType = transformToNewType(subType)
@@ -266,6 +284,12 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             baseType: SimpleType,
             constructor: TypeConstructor
     ): List<SimpleType> {
+        if (constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.isCommonFinalClass == true) {
+            return if (areEqualTypeConstructors(baseType.constructor, constructor))
+                listOf(captureFromArguments(baseType, CaptureStatus.FOR_SUBTYPING) ?: baseType)
+            else
+                emptyList()
+        }
 
         var result: MutableList<SimpleType>? = null
 
@@ -292,6 +316,9 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
 
         return result ?: emptyList()
     }
+
+    private val ClassDescriptor.isCommonFinalClass: Boolean
+        get() = isFinalClass && kind != ClassKind.ENUM_ENTRY
 
     /**
      * If we have several paths to some interface, we should prefer pure kotlin path.
@@ -356,7 +383,6 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     }
 
 }
-
 
 object NullabilityChecker {
 
