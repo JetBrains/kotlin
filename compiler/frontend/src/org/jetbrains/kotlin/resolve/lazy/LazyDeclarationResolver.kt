@@ -185,7 +185,7 @@ open class LazyDeclarationResolver @Deprecated("") constructor(
                     destructuringDeclarationEntry: KtDestructuringDeclarationEntry, data: Nothing?
             ): DeclarationDescriptor? {
                 val location = lookupLocationFor(destructuringDeclarationEntry, false)
-                val destructuringDeclaration = destructuringDeclarationEntry.parent as KtDestructuringDeclaration
+                val destructuringDeclaration = destructuringDeclarationEntry.parent as? KtDestructuringDeclaration ?: return null
                 val scopeForDeclaration = getMemberScopeDeclaredIn(destructuringDeclaration, location)
                 scopeForDeclaration.getContributedVariables(destructuringDeclarationEntry.nameAsSafeName, location)
                 return bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, destructuringDeclarationEntry)
