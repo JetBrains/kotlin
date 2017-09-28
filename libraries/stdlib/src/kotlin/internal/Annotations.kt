@@ -65,3 +65,22 @@ internal annotation class InlineOnly
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class DynamicExtension
+
+/**
+ * Specifies that this declaration is only completely supported since the specified version.
+ *
+ * The Kotlin compiler of an earlier version is going to report a diagnostic on usages of this declaration.
+ * The diagnostic message can be specified with [message], or via [errorCode] (takes less space, but might not be immediately clear
+ * to the user). The diagnostic severity can be specified with [level]: WARNING/ERROR mean that either a warning or an error
+ * is going to be reported, HIDDEN means that the declaration is going to be removed from resolution completely.
+ *
+ * This annotation is erased at compile time; its arguments are stored in a more compact form in the Kotlin metadata.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPEALIAS)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class RequireKotlin(
+        val version: String,
+        val message: String = "",
+        val level: DeprecationLevel = DeprecationLevel.ERROR,
+        val errorCode: Int = -1
+)

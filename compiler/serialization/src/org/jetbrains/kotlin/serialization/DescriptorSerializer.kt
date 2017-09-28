@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -134,6 +137,11 @@ class DescriptorSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
+        val requirement = serializeVersionRequirement(classDescriptor)
+        if (requirement != null) {
+            builder.versionRequirement = requirement
+        }
+
         val versionRequirementTableProto = versionRequirementTable.serialize()
         if (versionRequirementTableProto != null) {
             builder.versionRequirementTable = versionRequirementTableProto
@@ -216,7 +224,11 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+        val requirement = serializeVersionRequirement(descriptor)
+        if (requirement != null) {
+            builder.versionRequirement = requirement
+        }
+        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
@@ -273,7 +285,11 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+        val requirement = serializeVersionRequirement(descriptor)
+        if (requirement != null) {
+            builder.versionRequirement = requirement
+        }
+        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
@@ -296,7 +312,11 @@ class DescriptorSerializer private constructor(
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
 
-        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+        val requirement = serializeVersionRequirement(descriptor)
+        if (requirement != null) {
+            builder.versionRequirement = requirement
+        }
+        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
@@ -344,6 +364,11 @@ class DescriptorSerializer private constructor(
         }
         else {
             builder.setExpandedType(local.type(expandedType))
+        }
+
+        val requirement = serializeVersionRequirement(descriptor)
+        if (requirement != null) {
+            builder.versionRequirement = requirement
         }
 
         builder.addAllAnnotation(descriptor.annotations.map { extension.annotationSerializer.serializeAnnotation(it) })
@@ -578,6 +603,44 @@ class DescriptorSerializer private constructor(
         return versionRequirementTable[requirement]
     }
 
+    // Returns index into versionRequirementTable, or null if there's no @RequireKotlin on the descriptor
+    private fun serializeVersionRequirement(descriptor: DeclarationDescriptor): Int? {
+        val annotation = descriptor.annotations.findAnnotation(RequireKotlinNames.FQ_NAME) ?: return null
+        val args = annotation.allValueArguments
+
+        val versionString = (args[RequireKotlinNames.VERSION] as? StringValue)?.value ?: return null
+        val matchResult = RequireKotlinNames.VERSION_REGEX.matchEntire(versionString) ?: return null
+
+        val major = matchResult.groupValues.getOrNull(1)?.toIntOrNull() ?: return null
+        val minor = matchResult.groupValues.getOrNull(2)?.toIntOrNull() ?: 0
+        val patch = matchResult.groupValues.getOrNull(3)?.toIntOrNull() ?: 0
+
+        val proto = ProtoBuf.VersionRequirement.newBuilder()
+        VersionRequirement.Version(major, minor, patch).encode(
+                writeVersion = { proto.version = it },
+                writeVersionFull = { proto.versionFull = it }
+        )
+
+        val message = (args[RequireKotlinNames.MESSAGE] as? StringValue)?.value
+        if (message != null) {
+            proto.message = stringTable.getStringIndex(message)
+        }
+
+        val level = (args[RequireKotlinNames.LEVEL] as? EnumValue)?.value?.name?.asString()
+        when (level) {
+            DeprecationLevel.ERROR.toString() -> { /* ERROR is the default level */ }
+            DeprecationLevel.WARNING.toString() -> proto.level = ProtoBuf.VersionRequirement.Level.WARNING
+            DeprecationLevel.HIDDEN.toString() -> proto.level = ProtoBuf.VersionRequirement.Level.HIDDEN
+        }
+
+        val errorCode = (args[RequireKotlinNames.ERROR_CODE] as? IntValue)?.value
+        if (errorCode != null && errorCode != -1) {
+            proto.errorCode = errorCode
+        }
+
+        return versionRequirementTable[proto]
+    }
+
     private fun getClassifierId(descriptor: ClassifierDescriptorWithTypeParameters): Int =
             stringTable.getFqNameIndex(descriptor)
 
@@ -586,6 +649,17 @@ class DescriptorSerializer private constructor(
 
     private fun getTypeParameterId(descriptor: TypeParameterDescriptor): Int =
             typeParameters.intern(descriptor)
+
+    private object RequireKotlinNames {
+        val FQ_NAME = FqName("kotlin.internal.RequireKotlin")
+
+        val VERSION = Name.identifier("version")
+        val MESSAGE = Name.identifier("message")
+        val LEVEL = Name.identifier("level")
+        val ERROR_CODE = Name.identifier("errorCode")
+
+        val VERSION_REGEX: Regex = "(0|[1-9][0-9]*)".let { number -> Regex("$number\\.$number(\\.$number)?") }
+    }
 
     companion object {
         @JvmStatic

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -36,7 +37,6 @@ import java.io.File
 
 class VersionRequirementTest : TestCaseWithTmpdir() {
     fun doTest(
-            fileName: String,
             expectedVersionRequirement: VersionRequirement.Version,
             expectedLevel: DeprecationLevel,
             expectedMessage: String?,
@@ -44,7 +44,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
             vararg fqNames: String
     ) {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(
-                listOf(File(fileName)), tmpdir,
+                listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), tmpdir,
                 KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(testRootDisposable)
         )
 
@@ -57,11 +57,11 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
         )
 
         fun check(descriptor: DeclarationDescriptor) {
-            if (descriptor !is DeserializedMemberDescriptor) {
-                throw AssertionError("Not a deserialized descriptor: $descriptor")
-            }
-
-            val requirement = descriptor.versionRequirement ?: throw AssertionError("No VersionRequirement for $descriptor")
+            val requirement = when (descriptor) {
+                is DeserializedMemberDescriptor -> descriptor.versionRequirement
+                is DeserializedClassDescriptor -> descriptor.versionRequirement
+                else -> throw AssertionError("Unknown descriptor: $descriptor")
+            } ?: throw AssertionError("No VersionRequirement for $descriptor")
 
             assertEquals(expectedVersionRequirement, requirement.version)
             assertEquals(expectedLevel, requirement.level)
@@ -96,8 +96,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testSuspendFun() {
-        doTest("compiler/testData/versionRequirement/suspendFun.kt",
-               VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, null,
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, null,
                "test.topLevel",
                "test.Foo.member",
                "test.Foo.<init>",
@@ -106,6 +105,16 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
                "test.async3",
                "test.async4",
                "test.asyncVal"
+       )
+    }
+
+    fun testLanguageVersionViaAnnotation() {
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", 42,
+               "test.Klass",
+               "test.Konstructor.<init>",
+               "test.Typealias",
+               "test.function",
+               "test.property"
        )
     }
 }
