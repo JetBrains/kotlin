@@ -221,8 +221,8 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
 
         createOutputDirectory()
         def program = buildExePath()
-        def suffix = targetManager.programSuffix
-        def exe = "$program$suffix"
+        def suffix = targetManager.target.family.exeSuffix
+        def exe = "$program.$suffix"
 
         compileTest(buildCompileList(), program)
 
