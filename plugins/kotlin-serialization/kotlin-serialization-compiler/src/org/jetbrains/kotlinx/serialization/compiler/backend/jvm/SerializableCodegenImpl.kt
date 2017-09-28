@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
@@ -140,6 +141,8 @@ class SerializableCodegenImpl(
                 goTo(nextLabel)
                 visitLabel(setLbl)
                 // setting defaultValue
+                if (classCodegen.bindingContext[BindingContext.BACKING_FIELD_REQUIRED, prop.descriptor] != true)
+                    throw CompilationException("Optional properties without backing fields doesn't have much sense, maybe you want transient?", null, getProp(prop))
                 exprCodegen.genInitProperty(prop)
                 visitLabel(nextLabel)
             }
@@ -150,6 +153,7 @@ class SerializableCodegenImpl(
         val serializedProps = properties.serializableProperties.map { it.descriptor }
 
         (descToProps - serializedProps)
+                .filter { classCodegen.shouldInitializeProperty(it.value) }
                 .forEach { (_, prop) -> classCodegen.initializeProperty(exprCodegen, prop) }
         (paramsToProps - serializedProps)
                 .forEach { (t, u) -> exprCodegen.genInitParam(t, u) }
@@ -168,7 +172,8 @@ class SerializableCodegenImpl(
         load(0, thisAsmType)
 
         if (!superClass.isInternalSerializable) {
-            require(superClass.constructors.firstOrNull { it.valueParameters.isEmpty() } != null) { "Non-serializable parent of serializable class must have no arg constructor" }
+            require(superClass.constructors.firstOrNull { it.valueParameters.isEmpty() } != null,
+                    { "Non-serializable parent of serializable $serializableDescriptor must have no arg constructor" })
 
             // call
             invokespecial(superType, "<init>", "()V", false)
@@ -191,6 +196,8 @@ class SerializableCodegenImpl(
     }
               ?: getParam(prop)?.let {
         this.v.load(0, thisAsmType)
+        if (!it.hasDefaultValue()) throw CompilationException("Optional field ${it.name} in primary constructor of serializable " +
+                                                                 "$serializableDescriptor must have default value", null, it)
         this.gen(it.defaultValue, prop.asmType)
         this.v.putfield(thisAsmType.internalName, prop.name, prop.asmType.descriptor)
     }
@@ -199,6 +206,8 @@ class SerializableCodegenImpl(
     private fun ExpressionCodegen.genInitParam(prop: PropertyDescriptor, param: KtParameter) {
         this.v.load(0, thisAsmType)
         val mapType = classCodegen.typeMapper.mapType(prop.type)
+        if (!param.hasDefaultValue()) throw CompilationException("Transient field ${param.name} in primary constructor of serializable " +
+                                                                 "$serializableDescriptor must have default value", null, param)
         this.gen(param.defaultValue, mapType)
         this.v.putfield(thisAsmType.internalName, prop.name.asString(), mapType.descriptor)
     }
