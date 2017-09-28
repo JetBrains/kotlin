@@ -2,6 +2,7 @@
 apply { plugin("kotlin") }
 
 dependencies {
+    compile(protobufFull())
     compile(project(":core"))
     compile(project(":idea"))
     compile(project(":j2k"))
@@ -31,7 +32,6 @@ dependencies {
     compile(projectTests(":kotlin-annotation-processing"))
     compile(projectTests(":plugins:uast-kotlin"))
     compile(projectTests(":js:js.tests"))
-    compile(protobufFull())
     compile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
