@@ -816,7 +816,7 @@ private fun Project.createAptConfiguration(sourceSetName: String, kotlinPluginVe
     // Add base kotlin-annotation-processing artifact for the main kapt configuration,
     // All other configurations (such as kaptTest) should extend the main one
     if (aptConfiguration.name == Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
-        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlinPluginVersion"
+        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:$kotlinPluginVersion"
         aptConfiguration.dependencies.add(dependencies.create(kotlinAnnotationProcessingDep))
     } else {
         // "main" configuration can be created after some other. We should handle this case
