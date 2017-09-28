@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
@@ -334,7 +335,7 @@ fun getStdlibArtifactId(sdk: Sdk?, version: String): String {
         return MAVEN_STDLIB_ID
     }
 
-    val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
+    val sdkVersion = sdk?.version
     return when (sdkVersion) {
         JavaSdkVersion.JDK_1_8, JavaSdkVersion.JDK_1_9 -> MAVEN_STDLIB_ID_JRE8
         JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JRE7
@@ -346,7 +347,7 @@ fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {
     if (!hasJreSpecificRuntime(version)) {
         return null
     }
-    val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
+    val sdkVersion = sdk?.version
     if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
         return JvmTarget.JVM_1_8
     }

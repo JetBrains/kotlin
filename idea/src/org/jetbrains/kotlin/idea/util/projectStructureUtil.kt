@@ -20,6 +20,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderEnumerator
@@ -35,6 +37,8 @@ fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
 
 val Module.sdk: Sdk? get() = ModuleRootManager.getInstance(this).sdk
+
+val Sdk.version: JavaSdkVersion? get() = JavaSdk.getInstance().getVersion(this)
 
 fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library? {
     var lib: Library? = null
