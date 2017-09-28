@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.ReportLevel
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -165,10 +166,15 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
             value = "-Xjsr305",
             deprecatedName = "-Xjsr305-annotations",
-            valueDescription = "{ignore|strict|warn}",
-            description = "Specify global behavior for JSR-305 nullability annotations: ignore, treat as other supported nullability annotations, or report a warning"
+            valueDescription = "{ignore|strict|warn}" +
+                               "|under-migration:{ignore-strict-warn}" +
+                               "|@<fully qualified class name>:{ignore|strict|warn}",
+            description = "Specify behaviors for JSR-305 nullability annotations for: " +
+                          "global, annotated with @UnderMigration or custom annotation " +
+                          "with specific value: ignore, treat as other supported nullability annotations, or report a warning. " +
+                          "Note that strict value is experimental yet"
     )
-    var jsr305: String? by FreezableVar(Jsr305State.DEFAULT.description)
+    var jsr305: Array<String>? by FreezableVar(null)
 
     @Argument(
             value = "-Xno-exception-on-explicit-equals-for-boxed-null",
@@ -181,20 +187,54 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
+        result[AnalysisFlag.jsr305] = parseJsr305(collector)
+        return result
+    }
 
-        if (jsr305 == "enable") {
-            collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
-            )
-            result.put(AnalysisFlag.jsr305, Jsr305State.STRICT)
+    fun parseJsr305(collector: MessageCollector): Jsr305State {
+        var global: ReportLevel? = null
+        var migration: ReportLevel? = null
+        val userDefined = mutableMapOf<String, ReportLevel>()
+
+        fun parseJsr305UnderMigration(collector: MessageCollector, item: String): ReportLevel? {
+            val rawState = item.split(":").takeIf { it.size == 2 }?.get(1)
+            return ReportLevel.findByDescription(rawState)
         }
-        else {
-            Jsr305State.findByDescription(jsr305)?.let {
-                result.put(AnalysisFlag.jsr305, it)
+
+        jsr305?.forEach { item ->
+            when {
+                item.startsWith("@") -> {
+                    val (name, state) = parseJsr305UserDefined(collector, item) ?: return@forEach
+                    val current = userDefined[name]
+                    current?.let { return@forEach }
+                    userDefined[name] = state
+                }
+                item.startsWith("under-migration") -> {
+                    migration?.let { return@forEach }
+                    migration = parseJsr305UnderMigration(collector, item)
+                }
+                item == "enable" -> {
+                    collector.report(
+                            CompilerMessageSeverity.STRONG_WARNING,
+                            "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
+                    )
+                    global?.let { return@forEach }
+                    global = ReportLevel.STRICT
+                }
+                else -> {
+                    global?.let { return@forEach }
+                    global = ReportLevel.findByDescription(item)
+                }
             }
         }
 
-        return result
+        val state = Jsr305State(global ?: ReportLevel.WARN, migration, userDefined)
+        return if (state == Jsr305State.DISABLED) Jsr305State.DISABLED else state
+    }
+
+    private fun parseJsr305UserDefined(collector: MessageCollector, item: String): Pair<String, ReportLevel>? {
+        val (name, rawState) = item.substring(1).split(":").takeIf { it.size == 2 } ?: return null
+        val state = ReportLevel.findByDescription(rawState) ?: return null
+        return name to state
     }
 }

@@ -52,8 +52,8 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
     private fun AnnotationDescriptor.extractNullabilityTypeFromArgument(): NullabilityQualifierWithMigrationStatus? {
         val enumEntryDescriptor = firstArgumentValue()
-            // if no argument is specified, use default value: NOT_NULL
-            ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+                                  // if no argument is specified, use default value: NOT_NULL
+                                  ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
 
         if (enumEntryDescriptor !is ClassDescriptor) return null
 
@@ -72,9 +72,10 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
                 ?: return null
 
-        val forWarning = annotationTypeQualifierResolver.jsr305State.isWarning()
+        val jsr305State = annotationTypeQualifierResolver.resolveJsr305AnnotationState(annotationDescriptor)
+        if (jsr305State.isIgnore) return null
 
-        return extractNullabilityFromKnownAnnotations(typeQualifierAnnotation)?.copy(isForWarningOnly = forWarning)
+        return extractNullabilityFromKnownAnnotations(typeQualifierAnnotation)?.copy(isForWarningOnly = jsr305State.isWarning)
     }
 
     private fun extractNullabilityFromKnownAnnotations(
@@ -119,7 +120,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 if (extensionReceiverParameter != null)
                     partsForValueParameter(
                             parameterDescriptor =
-                                annotationOwnerForMember.safeAs<FunctionDescriptor>()
+                            annotationOwnerForMember.safeAs<FunctionDescriptor>()
                                     ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
                             methodContext = memberContext
                     ) { it.extensionReceiverParameter!!.type }.enhance()
@@ -138,10 +139,9 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             }
         }
 
-        val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map {
-            p ->
-                partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
-                        .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
+        val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map { p ->
+            partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
+                    .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
         }
 
         val returnTypeEnhancement =
@@ -149,10 +149,10 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                         typeContainer = annotationOwnerForMember, isCovariant = true,
                         containerContext = memberContext,
                         containerApplicabilityType =
-                            if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
-                                AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
-                            else
-                                AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
+                        if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
+                            AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
+                        else
+                            AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
                 ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
         if ((receiverTypeEnhancement?.wereChanges ?: false)
@@ -176,14 +176,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             val qualifiers = computeIndexedQualifiersForOverride()
 
             val qualifiersWithPredefined: ((Int) -> JavaTypeQualifiers)? = predefined?.let {
-                {
-                    index ->
+                { index ->
                     predefined.map[index] ?: qualifiers(index)
                 }
             }
 
-            return fromOverride.enhance(qualifiersWithPredefined ?: qualifiers)?.let {
-                enhanced ->
+            return fromOverride.enhance(qualifiersWithPredefined ?: qualifiers)?.let { enhanced ->
                 PartEnhancementResult(enhanced, wereChanges = true)
             } ?: PartEnhancementResult(fromOverride, wereChanges = false)
         }
@@ -219,10 +217,10 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                     else
                         annotations
 
-            fun <T: Any> List<FqName>.ifPresent(qualifier: T) =
+            fun <T : Any> List<FqName>.ifPresent(qualifier: T) =
                     if (any { composedAnnotation.findAnnotation(it) != null }) qualifier else null
 
-            fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
+            fun <T : Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
             val defaultTypeQualifier =
                     if (isHeadTypeConstructor)
@@ -270,8 +268,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             val onlyHeadTypeConstructor = isCovariant && fromOverridden.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, fromOverride) }
 
             val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
-            val computedResult = Array(treeSize) {
-                index ->
+            val computedResult = Array(treeSize) { index ->
                 val isHeadTypeConstructor = index == 0
                 assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
 

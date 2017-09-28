@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.ReportLevel
+import org.jetbrains.kotlin.utils.ReportLevel.Companion.findByDescription
 
 class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
@@ -48,7 +50,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 facetSettings.apply {
                     val jsrStateByTestName =
-                            Jsr305State.findByDescription(getTestName(true)) ?: return@apply
+                            ReportLevel.findByDescription(getTestName(true)) ?: return@apply
 
                     compilerSettings!!.additionalArguments += " -Xjsr305=${jsrStateByTestName.description}"
                     updateMergedArguments()

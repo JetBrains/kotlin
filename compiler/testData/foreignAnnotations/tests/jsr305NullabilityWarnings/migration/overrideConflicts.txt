@@ -1,0 +1,48 @@
+package
+
+public fun main(/*0*/ b: B, /*1*/ c: C): kotlin.Unit
+
+public open class A {
+    public constructor A()
+    public open fun bar(/*0*/ @MyNonnull baz: kotlin.String!): kotlin.Unit
+    public open fun bar2(/*0*/ @MyMigrationNonnull baz: kotlin.String): kotlin.Unit
+    public open fun bar3(/*0*/ @javax.annotation.Nonnull baz: kotlin.String): kotlin.Unit
+    public open fun bar4(/*0*/ baz: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @MyNullable public open fun foo(): kotlin.String!
+    @MyMigrationNullable public open fun foo2(): kotlin.String?
+    @javax.annotation.Nullable public open fun foo3(): kotlin.String?
+    public open fun foo4(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B : A {
+    public constructor B()
+    public open override /*1*/ fun bar(/*0*/ @MyMigrationNonnull baz: kotlin.String): kotlin.Unit
+    public open override /*1*/ fun bar2(/*0*/ @MyNonnull baz: kotlin.String): kotlin.Unit
+    public open override /*1*/ fun bar3(/*0*/ @MyNonnull baz: kotlin.String): kotlin.Unit
+    public open override /*1*/ fun bar4(/*0*/ @MyNonnull baz: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @MyMigrationNullable public open override /*1*/ fun foo(): kotlin.String?
+    @MyNullable public open override /*1*/ fun foo2(): kotlin.String?
+    @MyNullable public open override /*1*/ fun foo3(): kotlin.String?
+    @MyNullable public open override /*1*/ fun foo4(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class C : A {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun bar(/*0*/ @MyNonnull baz: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun bar2(/*0*/ @MyMigrationNonnull baz: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun bar3(/*0*/ @javax.annotation.Nonnull baz: kotlin.String): kotlin.Unit
+    public open override /*1*/ fun bar4(/*0*/ @MyMigrationNonnull baz: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @MyNullable public open override /*1*/ /*fake_override*/ fun foo(): kotlin.String!
+    @MyMigrationNullable public open override /*1*/ /*fake_override*/ fun foo2(): kotlin.String?
+    @javax.annotation.Nullable public open override /*1*/ /*fake_override*/ fun foo3(): kotlin.String?
+    @MyMigrationNullable public open override /*1*/ fun foo4(): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

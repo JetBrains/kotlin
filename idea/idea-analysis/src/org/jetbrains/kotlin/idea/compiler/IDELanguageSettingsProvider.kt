@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
@@ -43,11 +44,8 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
             val settings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module) ?: continue
             val compilerArguments = settings.mergedCompilerArguments as? K2JVMCompilerArguments ?: continue
 
-            val jsr305state = Jsr305State.findByDescription(compilerArguments.jsr305)
-            if (jsr305state != null && jsr305state != Jsr305State.DEFAULT) {
-                map.put(AnalysisFlag.jsr305, jsr305state)
-                break
-            }
+            val jsr305State = compilerArguments.parseJsr305(MessageCollector.NONE)
+            map.put(AnalysisFlag.jsr305, jsr305State)
         }
         return map
     }

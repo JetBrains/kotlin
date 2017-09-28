@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// WARNING_FOR_JSR305_ANNOTATIONS
+// JSR305_GLOBAL_REPORT warn
 
 // FILE: FieldsAreNullable.java
 import java.lang.annotation.Documented;

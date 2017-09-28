@@ -55,7 +55,7 @@ class LazyJavaPackageFragment(
 
     override val annotations =
             // Do not resolve package annotations if JSR-305 is disabled
-            if (c.components.annotationTypeQualifierResolver.jsr305State.isIgnored()) Annotations.EMPTY
+            if (c.components.annotationTypeQualifierResolver.disabled) Annotations.EMPTY
             else c.resolveAnnotations(jPackage)
 
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()

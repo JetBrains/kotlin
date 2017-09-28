@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
@@ -128,7 +129,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
     private fun ClassDescriptor.findSingleTypeQualifierAnnotationOnMethod(
             name: String,
             typeQualifierResolver: AnnotationTypeQualifierResolver
-    ) = unsubstitutedMemberScope
+    ): AnnotationDescriptor = unsubstitutedMemberScope
             .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_TEST)
             .single()
             .annotations.single()

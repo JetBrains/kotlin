@@ -401,4 +401,76 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
             }
         }
     }
+
+    @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jsr305NullabilityWarnings extends AbstractJavacForeignAnnotationsTest {
+        public void testAllFilesPresentInJsr305NullabilityWarnings() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Migration extends AbstractJavacForeignAnnotationsTest {
+            public void testAllFilesPresentInMigration() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("customMigration.kt")
+            public void testCustomMigration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/customMigration.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("globalIgnore.kt")
+            public void testGlobalIgnore() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/globalIgnore.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("globalWarningMigrationIgnore.kt")
+            public void testGlobalWarningMigrationIgnore() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/globalWarningMigrationIgnore.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("migrationError.kt")
+            public void testMigrationError() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/migrationError.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("migrationIgnore.kt")
+            public void testMigrationIgnore() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/migrationIgnore.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("migrationWarning.kt")
+            public void testMigrationWarning() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/migrationWarning.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overrideConflicts.kt")
+            public void testOverrideConflicts() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/overrideConflicts.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("specialCollision.kt")
+            public void testSpecialCollision() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/specialCollision.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("stateRefinement.kt")
+            public void testStateRefinement() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration/stateRefinement.kt");
+                doTest(fileName);
+            }
+        }
+    }
 }

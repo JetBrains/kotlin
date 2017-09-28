@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// WARNING_FOR_JSR305_ANNOTATIONS
+// JSR305_GLOBAL_REPORT warn
 
 // KT-6829 False warning on map to @Nullable
 

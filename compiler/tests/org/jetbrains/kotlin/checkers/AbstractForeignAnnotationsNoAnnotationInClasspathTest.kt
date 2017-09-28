@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.checkers
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
 
 abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractForeignAnnotationsTest() {
     private val compiledJavaPath = KotlinTestUtils.tmpDir("java-compiled-files")
+
     override fun getExtraClasspath(): List<File> {
         val foreignAnnotations = createJarWithForeignAnnotations()
         val testAnnotations = compileTestAnnotations(foreignAnnotations)
@@ -45,7 +45,4 @@ abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractF
 
     override fun isJavaSourceRootNeeded() = false
     override fun skipDescriptorsValidation() = true
-
-    private fun createJarWithForeignAnnotations(): List<File> =
-            listOf(MockLibraryUtil.compileJvmLibraryToJar(annotationsPath, "foreign-annotations"))
 }
