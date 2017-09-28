@@ -22849,6 +22849,24 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SyntheticAccessors extends AbstractJsCodegenBoxTest {
+        @TestMetadata("accessorForGenericConstructor.kt")
+        public void testAccessorForGenericConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/accessorForGenericConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("accessorForGenericMethod.kt")
+        public void testAccessorForGenericMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/accessorForGenericMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("accessorForGenericMethodWithDefaults.kt")
+        public void testAccessorForGenericMethodWithDefaults() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/accessorForGenericMethodWithDefaults.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("accessorForProtected.kt")
         public void testAccessorForProtected() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/accessorForProtected.kt");
