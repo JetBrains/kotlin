@@ -99,7 +99,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
-            return applyExperimental(androidExtension, androidExtensionsExtension,
+            return applyExperimental(kotlinCompile, androidExtension, androidExtensionsExtension,
                     project, variantData, androidProjectHandler)
         }
 
@@ -119,6 +119,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         fun addVariant(sourceSet: AndroidSourceSet) {
             pluginOptions += SubpluginOption("variant", sourceSet.name + ';' +
                     sourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
+            kotlinCompile.source(project.files(getLayoutDirectories(sourceSet.res.srcDirs)))
         }
 
         addVariant(mainSourceSet)
@@ -131,7 +132,16 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         return pluginOptions
     }
 
+    private fun getLayoutDirectories(resDirectories: Collection<File>): List<File> {
+        fun isLayoutDirectory(file: File) = file.name == "layout" || file.name.startsWith("layout-")
+
+        return resDirectories.flatMap { resDir ->
+            (resDir.listFiles(::isLayoutDirectory)).asList()
+        }
+    }
+
     private fun applyExperimental(
+            kotlinCompile: KotlinCompile,
             androidExtension: BaseExtension,
             androidExtensionsExtension: AndroidExtensionsExtension,
             project: Project,
@@ -144,7 +154,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val pluginOptions = arrayListOf<SubpluginOption>()
 
         pluginOptions += SubpluginOption("experimental", "true")
-        pluginOptions += SubpluginOption("defaultCacheImplementation", androidExtensionsExtension.defaultCacheImplementation.optionName)
+        pluginOptions += SubpluginOption("defaultCacheImplementation",
+                androidExtensionsExtension.defaultCacheImplementation.optionName)
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
@@ -155,6 +166,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 append(';')
                 resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
             })
+
+            kotlinCompile.source(project.files(getLayoutDirectories(resDirectories)))
         }
 
         fun addSourceSetAsVariant(name: String) {
