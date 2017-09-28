@@ -86,3 +86,10 @@ public inline fun repeat(times: Int, action: (Int) -> Unit) {
         action(index)
     }
 }
+
+/**
+ * Returns `this` value if it is not `null` or the result of [block], if it is.
+ *
+ * @sample samples.Standard.orElse
+ */
+public inline fun <T> T?.orElse(block: () -> T): T = this ?: block()
