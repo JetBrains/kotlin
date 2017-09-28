@@ -4268,6 +4268,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceTypeAliasTest(fileName);
         }
 
+        @TestMetadata("unmatchedNullability.kt")
+        public void testUnmatchedNullability() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/unmatchedNullability.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
         @TestMetadata("userTypeDuplicatesNoTypeParameters.kt")
         public void testUserTypeDuplicatesNoTypeParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/userTypeDuplicatesNoTypeParameters.kt");

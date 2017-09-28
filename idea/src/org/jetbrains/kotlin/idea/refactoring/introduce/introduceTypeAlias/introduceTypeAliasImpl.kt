@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 sealed class IntroduceTypeAliasAnalysisResult {
@@ -214,6 +215,9 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
                 else continue
             }
             if (arguments.size != typeAliasDescriptor.declaredTypeParameters.size) continue
+            if (TypeUtils.isNullableType(typeAliasDescriptor.underlyingType)
+                && occurrence is KtUserType
+                && occurrence.parent !is KtNullableType) continue
             rangesWithReplacers += occurrence.toRange() to { replaceOccurrence(occurrence, arguments) }
         }
     }
