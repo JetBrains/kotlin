@@ -248,11 +248,13 @@ open class KotlinIntroduceParameterHandler(
         val replacementType = expressionType.approximateWithResolvableType(targetParent.getResolutionScope(context, targetParent.getResolutionFacade()), false)
 
         val body = when (targetParent) {
-                       is KtFunction -> targetParent.bodyExpression
-                       is KtClass -> targetParent.getBody()
-                       else -> null
-                   } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
-        val nameValidator = NewDeclarationNameValidator(body, sequenceOf(body), NewDeclarationNameValidator.Target.VARIABLES)
+            is KtFunction -> targetParent.bodyExpression
+            is KtClass -> targetParent.getBody()
+            else -> null
+        }
+        val bodyValidator: ((String) -> Boolean)? =
+                body?.let { NewDeclarationNameValidator(it, sequenceOf(it), NewDeclarationNameValidator.Target.VARIABLES) }
+        val nameValidator = CollectingNameValidator(targetParent.getValueParameters().mapNotNull { it.name }, bodyValidator ?: { true })
 
         val suggestedNames = SmartList<String>().apply {
             if (physicalExpression is KtProperty && !ApplicationManager.getApplication().isUnitTestMode) {
@@ -271,7 +273,7 @@ open class KotlinIntroduceParameterHandler(
         }
         else {
             expression.toRange()
-                    .match(body, KotlinPsiUnifier.DEFAULT)
+                    .match(targetParent, KotlinPsiUnifier.DEFAULT)
                     .filterNot {
                         val textRange = it.range.getPhysicalTextRange()
                         forbiddenRanges.any { it.intersects(textRange) }

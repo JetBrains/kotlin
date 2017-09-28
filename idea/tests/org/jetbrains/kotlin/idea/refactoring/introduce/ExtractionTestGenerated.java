@@ -3356,6 +3356,18 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
+        @TestMetadata("avoidClassDuplicatingParameters.kt")
+        public void testAvoidClassDuplicatingParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/avoidClassDuplicatingParameters.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
+        @TestMetadata("avoidFunDuplicatingParameters.kt")
+        public void testAvoidFunDuplicatingParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/avoidFunDuplicatingParameters.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
         @TestMetadata("classInAnonymousInitializer.kt")
         public void testClassInAnonymousInitializer() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classInAnonymousInitializer.kt");
@@ -3593,6 +3605,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("substituteInfixCall.kt")
         public void testSubstituteInfixCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/substituteInfixCall.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
+        @TestMetadata("superCallArgument.kt")
+        public void testSuperCallArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/superCallArgument.kt");
             doIntroduceSimpleParameterTest(fileName);
         }
 
