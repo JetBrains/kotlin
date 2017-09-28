@@ -229,15 +229,15 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         }
     }
 
+    private fun TypeCheckerContext.collectAndFilter(classType: SimpleType, constructor: TypeConstructor) =
+            selectOnlyPureKotlinSupertypes(collectAllSupertypesWithGivenTypeConstructor(classType, constructor))
+
     // nullability was checked earlier via nullabilityChecker
     // should be used only if you really sure that it is correct
     fun TypeCheckerContext.findCorrespondingSupertypes(
             baseType: SimpleType,
             constructor: TypeConstructor
     ): List<SimpleType> {
-        fun TypeCheckerContext.collectAndFilter(classType: SimpleType, constructor: TypeConstructor) =
-                selectOnlyPureKotlinSupertypes(collectAllSupertypesWithGivenTypeConstructor(classType, constructor))
-
         if (baseType.isClassType) {
             return collectAndFilter(baseType, constructor)
         }
