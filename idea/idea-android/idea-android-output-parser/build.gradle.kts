@@ -6,6 +6,7 @@ dependencies {
     compile(ideaSdkCoreDeps("intellij-core"))
     compile(ideaPluginDeps("gradle-tooling-api", plugin = "gradle"))
     compile(ideaPluginDeps("android", "android-common", "sdk-common", /*"common",*/ plugin = "android"))
+    compile(ideaSdkDeps("android-base-common"))
 }
 
 sourceSets {
