@@ -377,6 +377,10 @@ open class KotlinIntroduceParameterHandler(
             showErrorHint(project, editor, "Introduce Parameter is not available inside of annotation entries", INTRODUCE_PARAMETER)
             return
         }
+        if (elementAtCaret.getNonStrictParentOfType<KtParameter>() != null) {
+            showErrorHint(project, editor, "Introduce Parameter is not available for default value", INTRODUCE_PARAMETER)
+            return
+        }
 
         selectNewParameterContext(editor, file) { elements, targetParent ->
             val expression = ((elements.singleOrNull() as? KtBlockExpression)?.statements ?: elements).singleOrNull()

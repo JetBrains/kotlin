@@ -3512,6 +3512,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
+        @TestMetadata("inDefaultValue.kt")
+        public void testInDefaultValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/inDefaultValue.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
         @TestMetadata("lambdaArgument.kt")
         public void testLambdaArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/lambdaArgument.kt");
