@@ -36,6 +36,12 @@ public class AdditionalResolveDescriptorRendererTestGenerated extends AbstractAd
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/additionalLazyResolve"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("anonymousObjectInBaseConstructor.kt")
+    public void testAnonymousObjectInBaseConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInBaseConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("anonymousObjectInClassInitializer.kt")
     public void testAnonymousObjectInClassInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassInitializer.kt");
@@ -45,6 +51,12 @@ public class AdditionalResolveDescriptorRendererTestGenerated extends AbstractAd
     @TestMetadata("anonymousObjectInClassParameterInitializer.kt")
     public void testAnonymousObjectInClassParameterInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassParameterInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("functionLiteralInBaseConstructor.kt")
+    public void testFunctionLiteralInBaseConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/functionLiteralInBaseConstructor.kt");
         doTest(fileName);
     }
 
