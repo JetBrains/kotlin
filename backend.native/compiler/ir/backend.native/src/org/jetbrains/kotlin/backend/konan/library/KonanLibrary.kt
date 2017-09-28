@@ -46,7 +46,7 @@ interface KonanLibraryLayout {
     val escapeAnalysisFile
         get() = File(linkdataDir, "module_escape_analysis")
     fun packageFile(packageName: String)
-        = File(linkdataDir, if (packageName == "") "root_package" else "package_$packageName")
+        = File(linkdataDir, if (packageName == "") "root_package.knm" else "package_$packageName.knm")
 }
 
 interface KonanLibrary: KonanLibraryLayout {
