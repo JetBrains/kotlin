@@ -3914,7 +3914,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             boolean isGetter = OperatorNameConventions.GET.equals(operationDescriptor.getName());
 
-            Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall);
+            ResolvedCall<FunctionDescriptor> resolvedCall = isGetter ? resolvedGetCall : resolvedSetCall;
+            assert resolvedCall != null : "No resolved call for " + operationDescriptor;
+            Callable callable = resolveToCallable(accessibleFunctionDescriptor(resolvedCall), false, resolvedCall);
             Callable callableMethod = resolveToCallableMethod(operationDescriptor, false);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 
