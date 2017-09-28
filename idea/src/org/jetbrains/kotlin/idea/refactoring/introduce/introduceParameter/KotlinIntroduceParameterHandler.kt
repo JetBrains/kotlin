@@ -369,6 +369,13 @@ open class KotlinIntroduceParameterHandler(
         }
 
         if (file !is KtFile) return
+
+        val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return
+        if (elementAtCaret.getNonStrictParentOfType<KtAnnotationEntry>() != null) {
+            showErrorHint(project, editor, "Introduce Parameter is not available inside of annotation entries", INTRODUCE_PARAMETER)
+            return
+        }
+
         selectNewParameterContext(editor, file) { elements, targetParent ->
             val expression = ((elements.singleOrNull() as? KtBlockExpression)?.statements ?: elements).singleOrNull()
             if (expression is KtExpression) {

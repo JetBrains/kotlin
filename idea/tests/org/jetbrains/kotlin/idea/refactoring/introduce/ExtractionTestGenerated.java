@@ -3344,6 +3344,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceParameter"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotationArgument.kt")
+        public void testAnnotationArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/annotationArgument.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
         @TestMetadata("assignment.kt")
         public void testAssignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/assignment.kt");
