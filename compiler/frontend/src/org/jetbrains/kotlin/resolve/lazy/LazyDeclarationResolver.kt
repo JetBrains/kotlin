@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.lazy.descriptors.AbstractLazyMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager
 import javax.inject.Inject
@@ -85,34 +83,9 @@ open class LazyDeclarationResolver @Deprecated("") constructor(
     private fun findClassDescriptor(
             classObjectOrScript: KtNamedDeclaration,
             location: LookupLocation
-    ): ClassDescriptor {
-        val descriptor = findClassDescriptorIfAny(classObjectOrScript, location)
-
-        if (descriptor == null) {
-            val scope = getMemberScopeDeclaredIn(classObjectOrScript, location)
-            val scopeDescriptor = scope.getContributedClassifier(classObjectOrScript.nameAsSafeName, location)
-
-            var providerInfoString: String? = null
-            if (scope is AbstractLazyMemberScope<*, *>) {
-                providerInfoString = scope.toProviderString()
-            }
-            throw IllegalArgumentException(
-                    String.format(
-                            "Could not find a classifier for %s.\n" +
-                            "Found descriptor: %s (%s).\n" +
-                            "Scope: %s.\n" +
-                            "Provider: %s.",
-                            classObjectOrScript.getElementTextWithContext(),
-                            scopeDescriptor?.let { DescriptorRenderer.DEBUG_TEXT.render(it) } ?: "null",
-                            scopeDescriptor?.containingDeclaration?.javaClass,
-                            scope,
-                            providerInfoString ?: "null"
-                    )
-            )
-        }
-
-        return descriptor
-    }
+    ): ClassDescriptor =
+            findClassDescriptorIfAny(classObjectOrScript, location)
+            ?: (absentDescriptorHandler.diagnoseDescriptorNotFound(classObjectOrScript) as ClassDescriptor)
 
     fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor =
             resolveToDescriptor(declaration, /*track =*/true) ?: absentDescriptorHandler.diagnoseDescriptorNotFound(declaration)
