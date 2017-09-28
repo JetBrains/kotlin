@@ -291,18 +291,14 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
                 emptyList()
         }
 
-        var result: MutableList<SimpleType>? = null
+        val result: MutableList<SimpleType> = SmartList()
 
         anySupertype(baseType, { false }) {
             val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING) ?: it
 
             when {
                 areEqualTypeConstructors(current.constructor, constructor) -> {
-                    if (result == null) {
-                        result = SmartList()
-                    }
-                    result!!.add(current)
-
+                    result.add(current)
                     SupertypesPolicy.None
                 }
                 current.arguments.isEmpty() -> {
@@ -314,7 +310,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             }
         }
 
-        return result ?: emptyList()
+        return result
     }
 
     private val ClassDescriptor.isCommonFinalClass: Boolean
