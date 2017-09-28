@@ -39,7 +39,7 @@ open class DeserializedPackageMemberScope(
         classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(
         components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable),
-                                 SinceKotlinInfoTable.create(proto.sinceKotlinInfoTable), containerSource),
+                                 VersionRequirementTable.create(proto.versionRequirementTable), containerSource),
         proto.functionList, proto.propertyList, proto.typeAliasList, classNames
 ) {
     private val packageFqName = packageDescriptor.fqName

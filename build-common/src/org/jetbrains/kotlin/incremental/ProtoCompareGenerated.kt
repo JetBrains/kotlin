@@ -47,9 +47,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
-        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) return false
-        if (old.hasSinceKotlinInfoTable()) {
-            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) return false
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) return false
         }
 
         if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) return false
@@ -78,7 +78,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         PROPERTY_LIST,
         TYPE_ALIAS_LIST,
         TYPE_TABLE,
-        SINCE_KOTLIN_INFO_TABLE,
+        VERSION_REQUIREMENT_TABLE,
         JVM_EXT_PACKAGE_MODULE_NAME,
         JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST,
         JS_EXT_PACKAGE_FQ_NAME
@@ -98,9 +98,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufPackageKind.TYPE_TABLE)
         }
 
-        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) result.add(ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE)
-        if (old.hasSinceKotlinInfoTable()) {
-            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) result.add(ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE)
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) result.add(ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE)
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) result.add(ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE)
         }
 
         if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) result.add(ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME)
@@ -163,14 +163,14 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
-        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
-        if (old.hasSinceKotlinInfo()) {
-            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
         }
 
-        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) return false
-        if (old.hasSinceKotlinInfoTable()) {
-            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) return false
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) return false
         }
 
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) return false
@@ -218,8 +218,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         ENUM_ENTRY_LIST,
         SEALED_SUBCLASS_FQ_NAME_LIST,
         TYPE_TABLE,
-        SINCE_KOTLIN_INFO,
-        SINCE_KOTLIN_INFO_TABLE,
+        VERSION_REQUIREMENT,
+        VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
         JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
         JS_EXT_CLASS_ANNOTATION_LIST,
@@ -266,14 +266,14 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufClassKind.TYPE_TABLE)
         }
 
-        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO)
-        if (old.hasSinceKotlinInfo()) {
-            if (old.sinceKotlinInfo != new.sinceKotlinInfo) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO)
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
         }
 
-        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE)
-        if (old.hasSinceKotlinInfoTable()) {
-            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE)
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_TABLE)
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_TABLE)
         }
 
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) result.add(ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME)
@@ -349,9 +349,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
-        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
-        if (old.hasSinceKotlinInfo()) {
-            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
         }
 
         if (old.hasExtension(JvmProtoBuf.methodSignature) != new.hasExtension(JvmProtoBuf.methodSignature)) return false
@@ -426,9 +426,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.setterFlags != new.setterFlags) return false
         }
 
-        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
-        if (old.hasSinceKotlinInfo()) {
-            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
         }
 
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
@@ -490,9 +490,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
-        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
-        if (old.hasSinceKotlinInfo()) {
-            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
         }
 
         return true
@@ -509,8 +509,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
-    open fun checkEquals(old: ProtoBuf.SinceKotlinInfoTable, new: ProtoBuf.SinceKotlinInfoTable): Boolean {
-        if (!checkEqualsSinceKotlinInfoTableInfo(old, new)) return false
+    open fun checkEquals(old: ProtoBuf.VersionRequirementTable, new: ProtoBuf.VersionRequirementTable): Boolean {
+        if (!checkEqualsVersionRequirementTableRequirement(old, new)) return false
 
         return true
     }
@@ -657,9 +657,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsConstructorValueParameter(old, new)) return false
 
-        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
-        if (old.hasSinceKotlinInfo()) {
-            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
         }
 
         if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
@@ -829,7 +829,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
-    open fun checkEquals(old: ProtoBuf.SinceKotlinInfo, new: ProtoBuf.SinceKotlinInfo): Boolean {
+    open fun checkEquals(old: ProtoBuf.VersionRequirement, new: ProtoBuf.VersionRequirement): Boolean {
         if (old.hasVersion() != new.hasVersion()) return false
         if (old.hasVersion()) {
             if (old.version != new.version) return false
@@ -1089,11 +1089,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
-    open fun checkEqualsSinceKotlinInfoTableInfo(old: ProtoBuf.SinceKotlinInfoTable, new: ProtoBuf.SinceKotlinInfoTable): Boolean {
-        if (old.infoCount != new.infoCount) return false
+    open fun checkEqualsVersionRequirementTableRequirement(old: ProtoBuf.VersionRequirementTable, new: ProtoBuf.VersionRequirementTable): Boolean {
+        if (old.requirementCount != new.requirementCount) return false
 
-        for(i in 0..old.infoCount - 1) {
-            if (!checkEquals(old.getInfo(i), new.getInfo(i))) return false
+        for(i in 0..old.requirementCount - 1) {
+            if (!checkEquals(old.getRequirement(i), new.getRequirement(i))) return false
         }
 
         return true
@@ -1209,8 +1209,8 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasSinceKotlinInfoTable()) {
-        hashCode = 31 * hashCode + sinceKotlinInfoTable.hashCode(stringIndexes, fqNameIndexes)
+    if (hasVersionRequirementTable()) {
+        hashCode = 31 * hashCode + versionRequirementTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasExtension(JvmProtoBuf.packageModuleName)) {
@@ -1285,12 +1285,12 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasSinceKotlinInfo()) {
-        hashCode = 31 * hashCode + sinceKotlinInfo
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
     }
 
-    if (hasSinceKotlinInfoTable()) {
-        hashCode = 31 * hashCode + sinceKotlinInfoTable.hashCode(stringIndexes, fqNameIndexes)
+    if (hasVersionRequirementTable()) {
+        hashCode = 31 * hashCode + versionRequirementTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasExtension(JvmProtoBuf.classModuleName)) {
@@ -1353,8 +1353,8 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasSinceKotlinInfo()) {
-        hashCode = 31 * hashCode + sinceKotlinInfo
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
     }
 
     if (hasExtension(JvmProtoBuf.methodSignature)) {
@@ -1417,8 +1417,8 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + setterFlags
     }
 
-    if (hasSinceKotlinInfo()) {
-        hashCode = 31 * hashCode + sinceKotlinInfo
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
     }
 
     if (hasExtension(JvmProtoBuf.propertySignature)) {
@@ -1473,8 +1473,8 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasSinceKotlinInfo()) {
-        hashCode = 31 * hashCode + sinceKotlinInfo
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
     }
 
     return hashCode
@@ -1494,11 +1494,11 @@ fun ProtoBuf.TypeTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
     return hashCode
 }
 
-fun ProtoBuf.SinceKotlinInfoTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+fun ProtoBuf.VersionRequirementTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    for(i in 0..infoCount - 1) {
-        hashCode = 31 * hashCode + getInfo(i).hashCode(stringIndexes, fqNameIndexes)
+    for(i in 0..requirementCount - 1) {
+        hashCode = 31 * hashCode + getRequirement(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1623,8 +1623,8 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasSinceKotlinInfo()) {
-        hashCode = 31 * hashCode + sinceKotlinInfo
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
     }
 
     if (hasExtension(JvmProtoBuf.constructorSignature)) {
@@ -1774,7 +1774,7 @@ fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqN
     return hashCode
 }
 
-fun ProtoBuf.SinceKotlinInfo.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+fun ProtoBuf.VersionRequirement.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
     if (hasVersion()) {

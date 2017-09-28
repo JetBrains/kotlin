@@ -224,8 +224,8 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
-                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO,
-                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE -> {
+                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT,
+                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
                     // TODO
                 }
                 ProtoBufClassKind.FLAGS,
@@ -281,7 +281,7 @@ class DifferenceCalculatorForPackageFacade(
                 ProtoBufPackageKind.TYPE_ALIAS_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
                 ProtoBufPackageKind.TYPE_TABLE,
-                ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE,
+                ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE,
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
                 ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME-> {
                     // TODO

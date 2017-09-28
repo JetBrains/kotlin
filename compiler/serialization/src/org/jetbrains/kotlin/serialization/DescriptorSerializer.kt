@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.Interner
@@ -41,7 +41,7 @@ class DescriptorSerializer private constructor(
         private val typeParameters: Interner<TypeParameterDescriptor>,
         private val extension: SerializerExtension,
         private val typeTable: MutableTypeTable,
-        private val sinceKotlinInfoTable: MutableSinceKotlinInfoTable,
+        private val versionRequirementTable: MutableVersionRequirementTable,
         private val serializeTypeTableToFunction: Boolean
 ) {
     fun serialize(message: MessageLite): ByteArray {
@@ -52,7 +52,7 @@ class DescriptorSerializer private constructor(
     }
 
     private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
-            DescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, sinceKotlinInfoTable,
+            DescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
                                  serializeTypeTableToFunction = false)
 
     val stringTable: StringTable
@@ -134,9 +134,9 @@ class DescriptorSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
-        val sinceKotlinInfoProto = sinceKotlinInfoTable.serialize()
-        if (sinceKotlinInfoProto != null) {
-            builder.sinceKotlinInfoTable = sinceKotlinInfoProto
+        val versionRequirementTableProto = versionRequirementTable.serialize()
+        if (versionRequirementTableProto != null) {
+            builder.versionRequirementTable = versionRequirementTableProto
         }
 
         extension.serializeClass(classDescriptor, builder)
@@ -217,7 +217,7 @@ class DescriptorSerializer private constructor(
         }
 
         if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
+            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
         extension.serializeProperty(descriptor, builder)
@@ -274,7 +274,7 @@ class DescriptorSerializer private constructor(
         }
 
         if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
+            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
         extension.serializeFunction(descriptor, builder)
@@ -297,7 +297,7 @@ class DescriptorSerializer private constructor(
         }
 
         if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
+            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
         extension.serializeConstructor(descriptor, builder)
@@ -557,9 +557,9 @@ class DescriptorSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
-        val sinceKotlinInfoProto = sinceKotlinInfoTable.serialize()
-        if (sinceKotlinInfoProto != null) {
-            builder.sinceKotlinInfoTable = sinceKotlinInfoProto
+        val versionRequirementTableProto = versionRequirementTable.serialize()
+        if (versionRequirementTableProto != null) {
+            builder.versionRequirementTable = versionRequirementTableProto
         }
 
         extension.serializePackage(packageFqName, builder)
@@ -567,15 +567,15 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    private fun writeSinceKotlinInfo(languageFeature: LanguageFeature): Int {
+    private fun writeVersionRequirement(languageFeature: LanguageFeature): Int {
         val languageVersion = languageFeature.sinceVersion!!
-        val sinceKotlinInfo = ProtoBuf.SinceKotlinInfo.newBuilder().apply {
-            SinceKotlinInfo.Version(languageVersion.major, languageVersion.minor).encode(
+        val requirement = ProtoBuf.VersionRequirement.newBuilder().apply {
+            VersionRequirement.Version(languageVersion.major, languageVersion.minor).encode(
                     writeVersion = { version = it },
                     writeVersionFull = { versionFull = it }
             )
         }
-        return sinceKotlinInfoTable[sinceKotlinInfo]
+        return versionRequirementTable[requirement]
     }
 
     private fun getClassifierId(descriptor: ClassifierDescriptorWithTypeParameters): Int =
@@ -590,13 +590,13 @@ class DescriptorSerializer private constructor(
     companion object {
         @JvmStatic
         fun createTopLevel(extension: SerializerExtension): DescriptorSerializer {
-            return DescriptorSerializer(null, Interner(), extension, MutableTypeTable(), MutableSinceKotlinInfoTable(),
+            return DescriptorSerializer(null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
                                         serializeTypeTableToFunction = false)
         }
 
         @JvmStatic
         fun createForLambda(extension: SerializerExtension): DescriptorSerializer {
-            return DescriptorSerializer(null, Interner(), extension, MutableTypeTable(), MutableSinceKotlinInfoTable(),
+            return DescriptorSerializer(null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
                                         serializeTypeTableToFunction = true)
         }
 
@@ -616,7 +616,7 @@ class DescriptorSerializer private constructor(
                     Interner(parentSerializer.typeParameters),
                     parentSerializer.extension,
                     MutableTypeTable(),
-                    MutableSinceKotlinInfoTable(),
+                    MutableVersionRequirementTable(),
                     serializeTypeTableToFunction = false
             )
             for (typeParameter in descriptor.declaredTypeParameters) {
