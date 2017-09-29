@@ -5516,6 +5516,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("objectExpression.kt")
+        public void testObjectExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsCode/objectExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectScopes.kt")
         public void testObjectScopes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsCode/objectScopes.kt");

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.declaration.ClassModelGenerator;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
@@ -895,5 +896,10 @@ public class TranslationContext {
                 return result;
             });
         }
+    }
+
+    @NotNull
+    public SourceFilePathResolver getSourceFilePathResolver() {
+        return staticContext.getSourceFilePathResolver();
     }
 }

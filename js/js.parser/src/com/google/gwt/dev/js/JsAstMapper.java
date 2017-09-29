@@ -462,7 +462,7 @@ public class JsAstMapper {
         }
     }
 
-    private JsExpression mapExpression(Node exprNode) throws JsParserException {
+    public JsExpression mapExpression(Node exprNode) throws JsParserException {
         JsNode unknown = map(exprNode);
 
         if (unknown instanceof JsExpression) {

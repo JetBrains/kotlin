@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.JsRootScope
-import org.jetbrains.kotlin.js.parser.parse
+import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder
 import org.jetbrains.kotlin.js.resolve.LEXICAL_SCOPE_FOR_JS
@@ -90,7 +90,8 @@ class JsCallChecker(
 
         try {
             val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
-            val statements = parse(code, errorReporter, parserScope, reportOn.containingFile?.name ?: "<unknown file>")
+            val statements = parseExpressionOrStatement(
+                    code, errorReporter, parserScope, CodePosition(0, 0), reportOn.containingFile?.name ?: "<unknown file>")
 
             if (statements == null || statements.isEmpty()) {
                 context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))

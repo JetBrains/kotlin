@@ -727,7 +727,7 @@ public class Parser {
         return pn;
     }
 
-    private Node expr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
+    public Node expr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
         Node pn = assignExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.COMMA)) {
             CodePosition position = ts.tokenPosition;

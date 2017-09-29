@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
 import org.jetbrains.kotlin.js.translate.declaration.ClassModelGenerator;
@@ -137,10 +138,14 @@ public final class StaticContext {
 
     private final Map<String, JsName> intrinsicNames = new HashMap<>();
 
+    @NotNull
+    private final SourceFilePathResolver sourceFilePathResolver;
+
     public StaticContext(
             @NotNull BindingTrace bindingTrace,
             @NotNull JsConfig config,
-            @NotNull ModuleDescriptor moduleDescriptor
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull SourceFilePathResolver sourceFilePathResolver
     ) {
         program = new JsProgram();
         JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
@@ -157,6 +162,7 @@ public final class StaticContext {
         createImportedModule(new JsImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null), Namer.KOTLIN_LOWER_NAME, kotlinName, null);
 
         classModelGenerator = new ClassModelGenerator(TranslationContext.rootContext(this));
+        this.sourceFilePathResolver = sourceFilePathResolver;
     }
 
     @NotNull
@@ -187,6 +193,11 @@ public final class StaticContext {
     @NotNull
     public Namer getNamer() {
         return namer;
+    }
+
+    @NotNull
+    public SourceFilePathResolver getSourceFilePathResolver() {
+        return sourceFilePathResolver;
     }
 
     @NotNull
