@@ -211,11 +211,10 @@ task run {
 }
 
 jar {
-    from 'build/classes/cli_bc', 
-         'build/classes/compiler', 
-         'build/classes/hashInteropStubs', 
-         'build/classes/llvmInteropStubs',
-         'build/resources/compiler'
+    from sourceSets.cli_bc.output,
+         sourceSets.compiler.output,
+         sourceSets.hashInteropStubs.output,
+         sourceSets.llvmInteropStubs.output
 
     dependsOn ':runtime:hostRuntime', 'external_jars'
 }

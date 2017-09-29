@@ -273,6 +273,7 @@ targetList.each { target ->
             if (new PlatformInfo().isWindows())
                 suffix = 'bat'
             task(taskName, type:GradleBuild) {
+                dependsOn ':dist'
                 dependsOn ':tools:kotlin-native-gradle-plugin:jar'
                 dependsOn defFile.config.depends.collect{defFileToTaskName(target, it)}
                 tasks = ['clean', 'klibInstall']
