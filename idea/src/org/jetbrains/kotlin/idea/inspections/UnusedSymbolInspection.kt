@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.highlighter.markers.hasActualsFor
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
@@ -386,9 +387,14 @@ class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val declaration = descriptor.psiElement.getStrictParentOfType<KtDeclaration>() ?: return
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
-        ApplicationManager.getApplication().invokeLater(
-                { SafeDeleteHandler.invoke(project, arrayOf(declaration), false) },
-                ModalityState.NON_MODAL
-        )
+        if (declaration is KtParameter && declaration.parent is KtParameterList && declaration.parent?.parent is KtFunction) {
+            RemoveUnusedFunctionParameterFix(declaration).invoke(project, declaration.findExistingEditor(), declaration.containingKtFile)
+        }
+        else {
+            ApplicationManager.getApplication().invokeLater(
+                    { SafeDeleteHandler.invoke(project, arrayOf(declaration), false) },
+                    ModalityState.NON_MODAL
+            )
+        }
     }
 }
