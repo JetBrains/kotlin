@@ -20,15 +20,15 @@ L0:
     d(get() { return field })                                                             INIT: in: {a=I?} out: {a=I?}
 L3 [after local declaration]:
     jmp?(L6)                                                                              INIT: in: {a=D} out: {a=D}
-    d(set(v: Int) { field = v })                                                          INIT: in: {a=I?, v=ID} out: {a=I?, v=ID}
+    d(set(v: Int) { field = v })                                                          INIT: in: {a=I?} out: {a=I?}
 L1:
 L2 [after local class]:
 L6 [after local declaration]:
-  1 <END>                                                                                 INIT: in: {v=ID} out: {v=ID}
+  1 <END>                                                                                 INIT: in: {} out: {}
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                                            USE: in: {v=READ} out: {v=READ}
+    <SINK>                                                                                                                USE: in: {} out: {}
 =====================
 == get_a ==
 get() {
@@ -45,7 +45,7 @@ L5:
 error:
     <ERROR>                   INIT: in: {} out: {}
 sink:
-    <SINK>                    INIT: in: {a=I?} out: {a=I?}    USE: in: {v=READ} out: {v=READ}
+    <SINK>                    INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
 =====================
 == set_a ==
 set(v: Int) {
@@ -54,16 +54,16 @@ set(v: Int) {
 ---------------------
 L7:
   3 <START>                                    INIT: in: {a=D} out: {a=D}
-    v(v: Int)                                  INIT: in: {a=D} out: {a=D, v=D}
-    magic[FAKE_INITIALIZER](v: Int) -> <v0>    INIT: in: {a=D, v=D} out: {a=D, v=D}
-    w(v|<v0>)                                  INIT: in: {a=D, v=D} out: {a=D, v=ID}
-  4 mark({ field = v })                        INIT: in: {a=D, v=ID} out: {a=D, v=ID}
+    v(v: Int)                                  INIT: in: {a=D} out: {a=D}
+    magic[FAKE_INITIALIZER](v: Int) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(v|<v0>)                                  INIT: in: {a=D} out: {a=D}
+  4 mark({ field = v })                        INIT: in: {a=D} out: {a=D}
     r(v) -> <v1>
     w(field|<v1>)
 L8:
   3 <END>
 error:
-    <ERROR>                                    INIT: in: {v=ID} out: {v=ID}
+    <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {a=I?, v=ID} out: {a=I?, v=ID}    USE: in: {v=READ} out: {v=READ}
+    <SINK>                                     INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
 =====================

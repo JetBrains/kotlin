@@ -18,23 +18,23 @@ L0:
     call(1..10, rangeTo|<v1>, <v2>) -> <v3>
     mark(1..10)
     call(1..10, iterator|<v3>) -> <v4>
-    v(i)                                                         INIT: in: {} out: {i=D}
+    v(i)                                                         INIT: in: {} out: {}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    mark(1..10)                                                  INIT: in: {i=D} out: {i=D}
+    mark(1..10)                                                  INIT: in: {} out: {}
     call(1..10, hasNext) -> <v5>
     jmp?(L3)
     mark(1..10)
     call(1..10, next) -> <v6>
     magic[LOOP_RANGE_ITERATION](1..10|<v6>) -> <v7>
-    w(i|<v7>)                                                    INIT: in: {i=D} out: {i=ID}
-    mark(for (i in 1..10) { val a = i })                         INIT: in: {i=ID} out: {i=ID}
+    w(i|<v7>)                                                    INIT: in: {} out: {}
+    mark(for (i in 1..10) { val a = i })                         INIT: in: {} out: {}
 L4 [body entry point]:
   4 mark({ val a = i })
-    v(val a = i)                                                 INIT: in: {i=ID} out: {a=D, i=ID}
-    r(i) -> <v8>                                                 INIT: in: {a=D, i=ID} out: {a=D, i=ID}
-    w(a|<v8>)                                                    INIT: in: {a=D, i=ID} out: {a=ID, i=ID}
-  3 jmp(L2)                                                      INIT: in: {a=ID, i=ID} out: {a=ID, i=ID}
+    v(val a = i)                                                 INIT: in: {} out: {}
+    r(i) -> <v8>                                                 INIT: in: {} out: {}
+    w(a|<v8>)                                                    INIT: in: {} out: {}
+  3 jmp(L2)                                                      INIT: in: {} out: {}
 L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)
@@ -45,5 +45,5 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                   USE: in: {i=READ} out: {i=READ}
+    <SINK>                                                                               USE: in: {} out: {}
 =====================

@@ -25,10 +25,10 @@ fun foo(f: Boolean) {
 ---------------------
 L0:
   1 <START>                                                                  INIT: in: {} out: {}
-    v(f: Boolean)                                                            INIT: in: {} out: {f=D}
-    magic[FAKE_INITIALIZER](f: Boolean) -> <v0>                              INIT: in: {f=D} out: {f=D}
-    w(f|<v0>)                                                                INIT: in: {f=D} out: {f=ID}
-  2 mark({ try { if (f) { x = 0 } } finally { fun bar() {} } })              INIT: in: {f=ID} out: {f=ID}
+    v(f: Boolean)                                                            INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](f: Boolean) -> <v0>                              INIT: in: {} out: {}
+    w(f|<v0>)                                                                INIT: in: {} out: {}
+  2 mark({ try { if (f) { x = 0 } } finally { fun bar() {} } })              INIT: in: {} out: {}
     mark(try { if (f) { x = 0 } } finally { fun bar() {} })
     jmp?(L2)
   3 mark({ if (f) { x = 0 } })
@@ -65,13 +65,13 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                   USE: in: {f=READ} out: {f=READ}
+    <SINK>                                                                                           USE: in: {} out: {}
 =====================
 == bar ==
 fun bar() {}
 ---------------------
 L8:
-  4 <START>        INIT: in: {f=ID} out: {f=ID}
+  4 <START>        INIT: in: {} out: {}
   5 mark({})
     read (Unit)
 L9:
@@ -79,13 +79,13 @@ L9:
 error:
     <ERROR>
 sink:
-    <SINK>                                         USE: in: {f=READ} out: {f=READ}
+    <SINK>                                 USE: in: {} out: {}
 =====================
 == bar ==
 fun bar() {}
 ---------------------
 L2 [copy of L8, null]:
-  4 <START>        INIT: in: {f=ID} out: {f=ID}
+  4 <START>        INIT: in: {} out: {}
   5 mark({})
     read (Unit)
 L3 [copy of L9, null]:
@@ -93,5 +93,5 @@ L3 [copy of L9, null]:
 L0 [copy of error, null]:
     <ERROR>
 L1 [copy of sink, null]:
-    <SINK>                                         USE: in: {f=READ} out: {f=READ}
+    <SINK>                                 USE: in: {} out: {}
 =====================
