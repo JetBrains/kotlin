@@ -138,12 +138,12 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return with(requiredType) {
             when (original) {
                 is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
-                is KtLightClass -> el<UDeclaration> {
-                    (original.kotlinOrigin as? KtEnumEntry)?.let { enumEntry ->
-                        convertEnumEntry(enumEntry, givenParent)
-                    } ?: KotlinUClass.create(original, givenParent)
+                is KtLightClass -> when (original.kotlinOrigin) {
+                    is KtEnumEntry -> el<UEnumConstant> {
+                        convertEnumEntry(original.kotlinOrigin as KtEnumEntry, givenParent)
+                    }
+                    else -> el<UClass> { KotlinUClass.create(original, givenParent) }
                 }
-
                 is KtLightFieldImpl.KtLightEnumConstant -> el<UEnumConstant>(build(::KotlinUEnumConstant))
                 is KtLightField -> el<UField>(build(::KotlinUField))
                 is KtLightParameter, is UastKotlinPsiParameter -> el<UParameter>(build(::KotlinUParameter))

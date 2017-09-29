@@ -88,16 +88,16 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
             val test2 = file.classes.find { it.name == "Test2" }!!
             val constructor2 = test2.methods.find { it.name == "Test2" }!!
-            assertFalse(constructor2.uastParameters.first().annotations.any { it.qualifiedName == "MyAnnotation" })
+            assertFalse(constructor2.uastParameters.first().annotations.any { it.qualifiedName?.startsWith("MyAnnotation") ?: false })
 
             val getter2 = test2.methods.find { it.name == "getBar" }!!
             getter2.annotations.single { it.qualifiedName == "MyAnnotation" }
 
             val setter2 = test2.methods.find { it.name == "setBar" }!!
-            setter2.annotations.single { it.qualifiedName == "MyAnnotation" }
-            setter2.uastParameters.first().annotations.single { it.qualifiedName == "MyAnnotation" }
+            setter2.annotations.single { it.qualifiedName == "MyAnnotation2" }
+            setter2.uastParameters.first().annotations.single { it.qualifiedName == "MyAnnotation3" }
 
-            test2.fields.find { it.name == "bar" }!!.annotations.single { it.qualifiedName == "MyAnnotation" }
+            test2.fields.find { it.name == "bar" }!!.annotations.single { it.qualifiedName == "MyAnnotation5" }
         }
     }
 
