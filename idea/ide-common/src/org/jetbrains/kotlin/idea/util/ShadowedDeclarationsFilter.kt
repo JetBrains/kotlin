@@ -102,14 +102,13 @@ class ShadowedDeclarationsFilter(
         }
     }
 
-    private fun signature(descriptor: DeclarationDescriptor): Any {
-        return when (descriptor) {
-            is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
-            is VariableDescriptor -> descriptor.name
-            is ClassDescriptor -> descriptor.importableFqName ?: descriptor
-            else -> descriptor
-        }
-    }
+    private fun signature(descriptor: DeclarationDescriptor): Any =
+            when (descriptor) {
+                is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
+                is VariableDescriptor -> descriptor.name
+                is ClassDescriptor -> descriptor.importableFqName ?: descriptor
+                else -> descriptor
+            }
 
     private fun packageName(descriptor: DeclarationDescriptor) = descriptor.importableFqName?.parent()
 
@@ -122,7 +121,7 @@ class ShadowedDeclarationsFilter(
         val first = descriptors.first()
 
         if (first is ClassDescriptor) { // for classes with the same FQ-name we simply take the first one
-            return listOf<TDescriptor>(first)
+            return listOf(first)
         }
 
         val isFunction = first is FunctionDescriptor
@@ -203,7 +202,7 @@ class ShadowedDeclarationsFilter(
         val dataFlowInfo = bindingContext.getDataFlowInfoBefore(context)
         val context = BasicCallResolutionContext.create(bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        false, resolutionFacade.frontendService<LanguageVersionSettings>())
+                                                        false, /* languageVersionSettings */ resolutionFacade.frontendService())
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.resultingCalls.map { it.resultingDescriptor }
