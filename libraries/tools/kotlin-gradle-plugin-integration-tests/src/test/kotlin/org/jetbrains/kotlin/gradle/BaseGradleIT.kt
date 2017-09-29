@@ -9,7 +9,6 @@ import org.junit.Assert
 import org.junit.Before
 import java.io.File
 import java.util.regex.Pattern
-import kotlin.test.*
 
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
@@ -145,7 +144,8 @@ abstract class BaseGradleIT {
             val forceOutputToStdout: Boolean = false,
             val debug: Boolean = false,
             val freeCommandLineArgs: List<String> = emptyList(),
-            val kotlinVersion: String = KOTLIN_VERSION)
+            val kotlinVersion: String = KOTLIN_VERSION,
+            val kotlinDaemonDebugPort: Int? = null)
 
     open inner class Project(
             val projectName: String,
@@ -428,6 +428,9 @@ abstract class BaseGradleIT {
                 options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it")}
                 if (options.debug) {
                     add("-Dorg.gradle.debug=true")
+                }
+                options.kotlinDaemonDebugPort?.let { port ->
+                    add("-Dkotlin.daemon.jvm.options=-agentlib:jdwp=transport=dt_socket\\,server=y\\,suspend=y\\,address=$port")
                 }
                 addAll(options.freeCommandLineArgs)
             }
