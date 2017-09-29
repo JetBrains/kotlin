@@ -1,5 +1,5 @@
 fun foo() {
-    val s = "idea/testData/resolve/references/<caret>fileRefInStringLiteral.Data.java"
+    val s = "<caret>fileRefInStringLiteral.Data.java"
 }
 
-// REF: /src/<test dir>/resolve/references.fileRefInStringLiteral.Data.java
+// REF: /src.fileRefInStringLiteral.Data.java
