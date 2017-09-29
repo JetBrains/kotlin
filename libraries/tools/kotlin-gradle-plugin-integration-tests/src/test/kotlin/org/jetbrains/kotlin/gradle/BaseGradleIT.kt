@@ -9,6 +9,7 @@ import org.junit.Assert
 import org.junit.Before
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.test.*
 
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
