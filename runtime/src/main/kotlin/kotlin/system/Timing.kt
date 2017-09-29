@@ -16,17 +16,14 @@
 
 package kotlin.system
 
-@PublishedApi
 @SymbolName("Kotlin_system_getTimeMillis")
-internal external fun getTimeMillis() : Long
+public external fun getTimeMillis() : Long
 
-@PublishedApi
 @SymbolName("Kotlin_system_getTimeNanos")
-internal external fun getTimeNanos() : Long
+public external fun getTimeNanos() : Long
 
-@PublishedApi
 @SymbolName("Kotlin_system_getTimeMicros")
-internal external fun getTimeMicros() : Long
+public external fun getTimeMicros() : Long
 
 /** Executes the given block and returns elapsed time in milliseconds. */
 public inline fun measureTimeMillis(block: () -> Unit) : Long {

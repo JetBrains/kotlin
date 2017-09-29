@@ -36,7 +36,10 @@ void Kotlin_io_Console_print(KString message) {
 
 void Kotlin_io_Console_println(KString message) {
   Kotlin_io_Console_print(message);
+#ifndef KONAN_ANDROID
+  // On Android single print produces logcat entry, so no need in linefeed.
   Kotlin_io_Console_println0();
+#endif
 }
 
 void Kotlin_io_Console_println0() {
