@@ -390,7 +390,7 @@ class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
         ApplicationManager.getApplication().invokeLater(
                 {
                     SafeDeleteHandler.invoke(project, arrayOf(declaration), null, false, null) {
-                        if (primaryConstructorParameterList != null && primaryConstructorParameterList.parameters.isEmpty()) {
+                        if (primaryConstructorParameterList?.parameters?.isEmpty() == true) {
                             primaryConstructorParameterList.delete()
                         }
                     }

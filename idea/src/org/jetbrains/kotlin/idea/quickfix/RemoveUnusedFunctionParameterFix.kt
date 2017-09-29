@@ -35,7 +35,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val primaryConstructorParameterList = (element.parent as? KtParameterList)?.takeIf { it.parent is KtPrimaryConstructor }
-        if (primaryConstructorParameterList != null && primaryConstructorParameterList.parameters.size == 1) {
+        if (primaryConstructorParameterList?.parameters?.size == 1) {
             runWriteAction {
                 primaryConstructorParameterList.delete()
             }
