@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.light.LightJavaModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -140,8 +141,10 @@ class ClasspathRootsResolver(
 
         return moduleInfoFile to psiJavaModule
     }
+    */
 
     private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
+        /*
         val (moduleInfoFile, psiJavaModule) = findSourceModuleInfo(root) ?: return null
         val sourceRoot = JavaModule.Root(root, isBinary = false)
         val roots =
@@ -149,12 +152,15 @@ class ClasspathRootsResolver(
                     listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
                 else listOf(sourceRoot)
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
+        */
+        return null
     }
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
         val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
         val manifest: Attributes? by lazy(NONE) { readManifestAttributes(root) }
 
+        /*
         val moduleInfoFile =
                 root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
                 ?: root.takeIf { isJar }?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)?.takeIf {
@@ -165,6 +171,7 @@ class ClasspathRootsResolver(
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
+        */
 
         // Only .jar files can be automatic modules
         if (isJar) {
@@ -186,7 +193,6 @@ class ClasspathRootsResolver(
 
         return null
     }
-*/
 
     private fun readManifestAttributes(jarRoot: VirtualFile): Attributes? {
         val manifestFile = jarRoot.findChild("META-INF")?.findChild("MANIFEST.MF")
@@ -322,7 +328,7 @@ class ClasspathRootsResolver(
     }
 
     private companion object {
-        //const val MULTI_RELEASE_MODULE_INFO_CLS_FILE = "META-INF/versions/9/${PsiJavaModule.MODULE_INFO_CLS_FILE}"
+        const val MULTI_RELEASE_MODULE_INFO_CLS_FILE = "META-INF/versions/9/${PsiJavaModule.MODULE_INFO_CLS_FILE}"
         const val AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"
         const val IS_MULTI_RELEASE = "Multi-Release"
     }
