@@ -127,7 +127,7 @@ class ClasspathRootsResolver(
         return RootsAndModules(result, modules)
     }
 
-    private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, PsiJavaModule>? {
+    private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, *>? {
         return null
         /*
         val moduleInfoFile =
@@ -145,6 +145,8 @@ class ClasspathRootsResolver(
     }
 
     private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
+        return null
+        /*
         val (moduleInfoFile, psiJavaModule) = findSourceModuleInfo(root) ?: return null
         val sourceRoot = JavaModule.Root(root, isBinary = false)
         val roots =
@@ -152,6 +154,7 @@ class ClasspathRootsResolver(
                     listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
                 else listOf(sourceRoot)
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
+        */
     }
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
