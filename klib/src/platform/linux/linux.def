@@ -34,3 +34,4 @@ headers = aio.h aliases.h a.out.h argp.h argz.h byteswap.h cpio.h crypt.h \
 	sys/vt.h sys/vtimes.h sys/xattr.h
 
 compilerOpts = -D_GNU_SOURCE
+depends = posix
