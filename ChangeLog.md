@@ -3,6 +3,11 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1.51
+
+- [`KT-19901`](https://youtrack.jetbrains.com/issue/KT-19901) KotlinLanguageInjector#getLanguagesToInject can cancel any progress in which it was invoked
+- [`KT-20411`](https://youtrack.jetbrains.com/issue/KT-20411) JSR 305 meta-annotations support is broken with Kotlin 1.1.50
+
 ## 1.1.50
 
 ### Android
