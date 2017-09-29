@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.lang.Language
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -46,6 +47,8 @@ interface KotlinUastBindingContextProviderService {
     fun getTypeMapper(element: KtElement): KotlinTypeMapper?
 }
 
+private val LOG = Logger.getInstance(KotlinUastLanguagePlugin::class.java.canonicalName)
+
 class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override val priority = 10
 
@@ -59,27 +62,40 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     }
 
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
-        return convertDeclaration(element, parent.toCallback(), requiredType)
-               ?: KotlinConverter.convertPsiElement(element, parent.toCallback(), requiredType)
+        try {
+            return convertDeclaration(element, parent.toCallback(), requiredType)
+                   ?: KotlinConverter.convertPsiElement(element, parent.toCallback(), requiredType)
+        }
+        catch (e: Exception) {
+            //refer KT-20448
+            LOG.error("exception caught when converting $element of ${element.javaClass} with text: '${element.text}'", e)
+            return null
+        }
     }
     
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
-        if (element is PsiFile) return convertDeclaration(element, null, requiredType)
-        if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
+        try {
+            if (element is PsiFile) return convertDeclaration(element, null, requiredType)
+            if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
 
-        val parentCallback = fun(): UElement? {
-            val parent = element.parent
-            val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
-            if (parent is KtValueArgument && parentUnwrapped is KtAnnotationEntry) {
-                val argumentName = parent.getArgumentName()?.asName?.asString() ?: ""
-                return (convertElementWithParent(parentUnwrapped, null) as? UAnnotation)
-                        ?.attributeValues?.find { it.name == argumentName }
+            val parentCallback = fun(): UElement? {
+                val parent = element.parent
+                val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
+                if (parent is KtValueArgument && parentUnwrapped is KtAnnotationEntry) {
+                    val argumentName = parent.getArgumentName()?.asName?.asString() ?: ""
+                    return (convertElementWithParent(parentUnwrapped, null) as? UAnnotation)
+                            ?.attributeValues?.find { it.name == argumentName }
+                }
+                else
+                    return convertElementWithParent(parentUnwrapped, null)
             }
-            else
-                return convertElementWithParent(parentUnwrapped, null)
+            return convertDeclaration(element, parentCallback, requiredType)
+                   ?: KotlinConverter.convertPsiElement(element, parentCallback, requiredType)
+        } catch (e: Exception){
+            //refer KT-20448
+            LOG.error("exception caught when converting $element of ${element.javaClass} with text: '${element.text}'", e)
+            return null
         }
-        return convertDeclaration(element, parentCallback, requiredType)
-               ?: KotlinConverter.convertPsiElement(element, parentCallback, requiredType)
     }
 
     override fun getMethodCallExpression(

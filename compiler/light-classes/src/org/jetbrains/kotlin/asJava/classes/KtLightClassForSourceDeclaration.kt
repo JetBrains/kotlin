@@ -104,8 +104,6 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     }
 
     private val _containingFile: PsiFile by lazyPub {
-        classOrObject.containingFile.virtualFile ?: error("No virtual file for " + classOrObject.text)
-
         object : FakeFileForLightClass(
                 classOrObject.containingKtFile,
                 { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
