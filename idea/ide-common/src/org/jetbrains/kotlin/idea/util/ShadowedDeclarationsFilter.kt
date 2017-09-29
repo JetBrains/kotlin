@@ -118,14 +118,19 @@ class ShadowedDeclarationsFilter(
     ): Collection<TDescriptor> {
         if (descriptors.size == 1) return descriptors
 
-        val first = descriptors.first()
+        val first = descriptors.firstOrNull {
+            it is ClassDescriptor || it is ConstructorDescriptor || it is CallableDescriptor && !it.name.isSpecial
+        } ?: return descriptors
 
         if (first is ClassDescriptor) { // for classes with the same FQ-name we simply take the first one
             return listOf(first)
         }
 
         val isFunction = first is FunctionDescriptor
-        val name = first.name
+        val name = when (first) {
+            is ConstructorDescriptor -> first.constructedClass.name
+            else -> first.name
+        }
         val parameters = (first as CallableDescriptor).valueParameters
 
         val dummyArgumentExpressions = dummyExpressionFactory.createDummyExpressions(parameters.size)
