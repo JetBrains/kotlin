@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
+import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
 import java.io.IOException
 import java.util.jar.Attributes
 import java.util.jar.Manifest
@@ -264,11 +265,11 @@ class ClasspathRootsResolver(
             }
         }
 
-        if (requireStdlibModule && sourceModule != null && "kotlin.stdlib" !in allDependencies) {
+        if (requireStdlibModule && sourceModule != null && KOTLIN_STDLIB_MODULE_NAME !in allDependencies) {
             report(
                     ERROR,
                     "The Kotlin standard library is not found in the module graph. " +
-                    "Please ensure you have the 'requires kotlin.stdlib' clause in your module definition",
+                    "Please ensure you have the 'requires $KOTLIN_STDLIB_MODULE_NAME' clause in your module definition",
                     sourceModule.moduleInfoFile
             )
         }

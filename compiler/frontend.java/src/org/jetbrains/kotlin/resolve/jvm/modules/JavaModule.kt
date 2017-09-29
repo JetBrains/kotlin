@@ -106,3 +106,5 @@ interface JavaModule {
         override fun toString(): String = name
     }
 }
+
+const val KOTLIN_STDLIB_MODULE_NAME = "kotlin.stdlib"
