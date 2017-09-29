@@ -130,17 +130,14 @@ private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsPr
     }
 }
 
-private fun Module.findImplementingDescriptors(moduleSourceInfo: ModuleSourceInfo): List<ModuleDescriptor> {
+private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
     val modelsProvider = IdeModifiableModelsProviderImpl(project)
     val implementingModules = findImplementingModules(modelsProvider)
     return implementingModules.mapNotNull {
-        val implementingModuleInfo = when (moduleSourceInfo) {
+        when (moduleSourceInfo) {
             is ModuleProductionSourceInfo -> it.productionSourceInfo()
             is ModuleTestSourceInfo -> it.testSourceInfo()
             else -> null
-        }
-        implementingModuleInfo?.let {
-            KotlinCacheService.getInstance(project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
         }
     }
 }
@@ -150,9 +147,14 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
         val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
         val module = moduleSourceInfo.module
         return module.cached(CachedValueProvider {
+            val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo)
+            val implementingModuleDescriptors = implementingModuleInfos.mapNotNull {
+                KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+            }
             CachedValueProvider.Result(
-                module.findImplementingDescriptors(moduleSourceInfo),
-                ProjectRootModificationTracker.getInstance(module.project)
+                    implementingModuleDescriptors,
+                    *(implementingModuleInfos.map { it.createModificationTracker() } +
+                      ProjectRootModificationTracker.getInstance(module.project)).toTypedArray()
             )
         })
     }
