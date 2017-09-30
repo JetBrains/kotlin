@@ -485,7 +485,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     protected fun ConvertCallData.convertWithIgnoreCaseArgument(methodName: String, ignoreCaseArgument: PsiExpression? = null): Expression {
         val ignoreCaseExpression = ignoreCaseArgument?.let { codeConverter.convertExpression(it) }
                                    ?: LiteralExpression("true").assignNoPrototype()
-        val ignoreCaseArgumentExpression = AssignmentExpression(Identifier.withNoPrototype("ignoreCase"), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
+        val ignoreCaseArgumentExpression = NamedArgumentExpression(Identifier.withNoPrototype("ignoreCase"), ignoreCaseExpression).assignNoPrototype()
         val convertedArguments = arguments.map {
             codeConverter.convertExpression(it, null, Nullability.NotNull).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS)
         } + ignoreCaseArgumentExpression

@@ -28,8 +28,17 @@ class MethodCallExpression(
 ) : Expression() {
 
     override fun generateCode(builder: CodeBuilder) {
+        val noAssignmentExpressions = argumentList.expressions.map { expr ->
+            expr as? AssignmentExpression ?: return@map expr
+
+            builder.append(expr).append("\n")
+            return@map expr.left
+        }
+
+        val newArgumentList = ArgumentList(noAssignmentExpressions, argumentList.lPar, argumentList.rPar).assignNoPrototype()
+
         builder.appendOperand(this, methodExpression).append(typeArguments, ", ", "<", ">")
-        builder.append(argumentList)
+        builder.append(newArgumentList)
     }
 
     companion object {
