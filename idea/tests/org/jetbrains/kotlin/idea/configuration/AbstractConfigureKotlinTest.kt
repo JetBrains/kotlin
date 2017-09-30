@@ -16,10 +16,14 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -27,6 +31,7 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.IOException
@@ -62,6 +67,14 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     @Throws(Exception::class)
     override fun initApplication() {
         super.initApplication()
+
+        ApplicationManager.getApplication().runWriteAction {
+            ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk6())
+            ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk8())
+            ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk9())
+        }
+
+        PluginTestCaseBase.clearSdkTable(testRootDisposable)
 
         val tempLibDir = FileUtil.createTempDirectory("temp", null)
         PathMacros.getInstance().setMacro(TEMP_DIR_MACRO_KEY, FileUtilRt.toSystemDependentName(tempLibDir.absolutePath))
@@ -240,5 +253,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
             val tempPath = PathMacros.getInstance().getValue(TEMP_DIR_MACRO_KEY)
             return tempPath + '/' + relativePath
         }
+    }
+
+    override fun getTestProjectJdk(): Sdk {
+        val projectRootManager = ProjectRootManager.getInstance(project)
+        return projectRootManager.projectSdk ?: throw IllegalStateException("SDK ${projectRootManager.projectSdkName} was not found")
     }
 }
