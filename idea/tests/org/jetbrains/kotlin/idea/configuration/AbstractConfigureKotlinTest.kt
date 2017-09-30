@@ -22,6 +22,7 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
@@ -31,6 +32,25 @@ import java.io.File
 import java.io.IOException
 
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
+    override fun setUp() {
+        super.setUp()
+
+        val distPaths = with(PathUtil.kotlinPathsForIdeaPlugin) {
+            listOf(
+                    stdlibPath,
+                    stdlibSourcesPath,
+                    reflectPath,
+                    kotlinTestPath,
+                    jsKotlinTestJarPath,
+                    jsStdLibJarPath,
+                    jsStdLibSrcJarPath
+            )
+        }
+
+        for (path in distPaths) {
+            VfsRootAccess.allowRootAccess(testRootDisposable, path.absolutePath)
+        }
+    }
 
     @Throws(Exception::class)
     override fun tearDown() {
@@ -143,7 +163,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
                 jarFromDist: String,
                 jarFromTemp: String
         ) {
-            val project = modules.iterator().next().project
+            val project = modules.first().project
             val collector = createConfigureKotlinNotificationCollector(project)
 
             val pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp)
