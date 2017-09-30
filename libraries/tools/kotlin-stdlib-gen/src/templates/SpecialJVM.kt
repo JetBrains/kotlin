@@ -390,6 +390,51 @@ object CommonArrays {
                 }
             }
 
+    // https://youtrack.jetbrains.com/issue/KT-17392
+    fun f_copyRangeTo() =
+        (PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (InvariantArraysOfObjects to null)).map {
+            val (family, primitive) = it
+            f("copyRangeTo(srcPos: Int, dest: SELF, destPos: Int, length: Int)") {
+                since("1.2")
+                only(family)
+                if (family == InvariantArraysOfObjects) {
+                    only(Platform.JS, ArraysOfObjects)
+                }
+
+                inline(Platform.JVM, Inline.Only)
+                doc { "Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest]." }
+                returns { "Unit" }
+
+                if (primitive != null) {
+                    only(primitive)
+                }
+
+                when {
+                    (primitive != null) && (primitive != PrimitiveType.Long) -> {
+                        body(Platform.JS) {
+                            // NOTE: subarray may require a polyfill or a fallback if it doesn't exists
+                            "(dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)"
+                        }
+                    }
+                    else -> {
+                        body(Platform.JS) {
+                            listOf(
+                                "if ((this === dest) && (destPos > srcPos)) {",
+                                "   for (n in 0 until length) dest[destPos + length - n - 1] = this[srcPos + length - n - 1]",
+                                "} else {",
+                                "   for (n in 0 until length) dest[destPos + n] = this[srcPos + n]",
+                                "}"
+                            ).joinToString("\n")
+                        }
+                    }
+                }
+
+                body(Platform.JVM) {
+                    "java.lang.System.arraycopy(this, srcPos, dest, destPos, length)"
+                }
+            }
+        }
+
     fun f_sortPrimitives() =
         (PrimitiveType.numericPrimitives + PrimitiveType.Char).map { primitive ->
             f("sort()") {
@@ -544,6 +589,7 @@ object CommonArrays {
             f_copyOf() +
             f_copyOfRange() +
             f_copyOfResized() +
+            f_copyRangeTo() +
             f_sortPrimitives() +
             listOf(f_sort(), f_sortWith(), f_asList()) +
             f_asListPrimitives() +
