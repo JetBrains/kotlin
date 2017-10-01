@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val ModuleDescriptor.sourceKind: SourceKind
     get() = when (getCapability(ModuleInfo.Capability)) {
@@ -76,8 +79,17 @@ internal fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
     return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
 }
 
-internal fun KtDeclaration.isExpectedOrExpectedClassMember() =
-        hasExpectModifier() || (containingClassOrObject?.hasExpectModifier() ?: false)
+internal fun KtDeclaration.isExpectedOrExpectedClassMember(): Boolean {
+    if (hasExpectModifier()) return true
+    if (this is KtClassOrObject) return this.isExpected()
+
+    return containingClassOrObject?.isExpected() == true
+}
+
+internal fun KtClassOrObject.isExpected(): Boolean {
+    return this.hasExpectModifier() ||
+           this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
+}
 
 internal fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {
     if (this is MemberDescriptor) {

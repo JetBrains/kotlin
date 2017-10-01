@@ -19,14 +19,10 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RemoveEmptyPrimaryConstructorInspection : IntentionBasedInspection<KtPrimaryConstructor>(
         RemoveEmptyPrimaryConstructorIntention::class
@@ -44,14 +40,7 @@ class RemoveEmptyPrimaryConstructorIntention : SelfTargetingOffsetIndependentInt
         element.annotations.isNotEmpty() -> false
         element.modifierList?.text?.isBlank() == false -> false
         element.containingClass()?.secondaryConstructors?.isNotEmpty() == true -> false
-        element.isConstructorOfExpectClass() -> false
+        element.isExpectedOrExpectedClassMember() -> false
         else -> true
-    }
-
-    private fun KtPrimaryConstructor.isConstructorOfExpectClass(): Boolean {
-        val containingClass = containingClassOrObject ?: return false
-        if (containingClass.hasExpectModifier()) return true
-
-        return containingClass.descriptor.safeAs<ClassDescriptor>()?.isExpect ?: false
     }
 }
