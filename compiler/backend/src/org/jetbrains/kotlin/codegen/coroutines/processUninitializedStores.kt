@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -76,7 +77,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode, private v
     private val isInSpecialMethod = methodNode.name == "<init>" || methodNode.name == "<clinit>"
 
     fun run() {
-        val interpreter = UninitializedNewValueMarkerInterpreter()
+        val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
 
         val frames = CustomFramesMethodAnalyzer(
                 "fake", methodNode, interpreter,
@@ -190,7 +191,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode, private v
 
     private fun AbstractInsnNode.isConstructorCall() = this is MethodInsnNode && this.name == "<init>"
 
-    private class UninitializedNewValueMarkerInterpreter : OptimizationBasicInterpreter() {
+    private class UninitializedNewValueMarkerInterpreter(private val instructions: InsnList) : OptimizationBasicInterpreter() {
         val uninitializedValuesToCopyUsages = hashMapOf<AbstractInsnNode, MutableSet<AbstractInsnNode>>()
         override fun newOperation(insn: AbstractInsnNode): BasicValue? {
             if (insn.opcode == Opcodes.NEW) {
@@ -202,6 +203,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode, private v
 
         override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? {
             if (value is UninitializedNewValue) {
+                checkUninitializedObjectCopy(value.newInsn, insn)
                 uninitializedValuesToCopyUsages[value.newInsn]!!.add(insn)
                 return value
             }
@@ -225,5 +227,15 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode, private v
 
             return super.merge(v, w)
         }
+
+        private fun checkUninitializedObjectCopy(newInsn: TypeInsnNode, usageInsn: AbstractInsnNode) {
+            when (usageInsn.opcode) {
+                Opcodes.DUP, Opcodes.ASTORE, Opcodes.ALOAD -> {}
+                else -> error("Unexpected copy instruction for ${newInsn.debugText}: ${usageInsn.debugText}")
+            }
+        }
+
+        private val AbstractInsnNode.debugText
+            get() = "${instructions.indexOf(this)}: $insnText"
     }
 }
