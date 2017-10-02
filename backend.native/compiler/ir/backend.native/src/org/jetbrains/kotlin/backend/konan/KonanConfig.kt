@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
-import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
+import org.jetbrains.kotlin.backend.konan.library.*
 import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
@@ -33,8 +32,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.target.TargetManager.*
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -79,40 +76,24 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private val resolver = KonanLibrarySearchPathResolver(repositories, distribution.klib, distribution.localKonanDir)
+    private val resolver = defaultResolver(repositories, distribution)
 
     val immediateLibraries: List<LibraryReaderImpl> by lazy {
-        val target = targetManager.target
-
-        val defaultLibraries = resolver.defaultLinks(
+        resolver.resolveImmediateLibraries(
+                libraryNames,
+                targetManager.target,
+                currentAbiVersion,
                 configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
-                configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS)
-            ) .map { LibraryReaderImpl(it, currentAbiVersion, target, isDefaultLink=true) }
-
-        val userProvidedLibraries = libraryNames
-            .map { resolver.resolve(it) }
-            .map{ LibraryReaderImpl(it, currentAbiVersion, target) }
-
-        var resolvedLibraries = defaultLibraries + userProvidedLibraries
-        warnOnLibraryDuplicates(resolvedLibraries.map{ it.libraryFile })
-        resolvedLibraries.distinctBy { it.libraryFile.absolutePath }
+                configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
+                false
+        ).let {
+            warnOnLibraryDuplicates(it.map { it.libraryFile })
+            it.distinctBy { it.libraryFile.absolutePath }
+        }
     }
 
     val libraries: List<LibraryReaderImpl> by lazy {
-        val result = mutableListOf<LibraryReaderImpl>()
-        result.addAll(immediateLibraries)
-        do {
-            val dependencies = result 
-                .map { it.dependencies } .flatten()
-                .map { resolver.resolve(it) }
-                .map { LibraryReaderImpl(it, currentAbiVersion, targetManager.target) }
-                .distinctBy { it.libraryFile.absolutePath }
-
-            val newDependencies = dependencies.deleteMatching(result, { it.libraryFile.absolutePath })
-            result.addAll(newDependencies)
-        } while (newDependencies.size > 0)
-
-        result
+        resolver.resolveLibrariesRecursive(immediateLibraries, targetManager.target, currentAbiVersion)
     }
 
     private val loadedDescriptors = loadLibMetadata()
@@ -168,11 +149,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             configuration.report(STRONG_WARNING, "library included more than once: ${it.first().absolutePath}")
         }
     }
-}
-
-private fun <T, K> List<T>.deleteMatching(other: List<T>, transform: (T) -> K): List<T> {
-    val transformed = other.map { transform(it) }
-    return this.filterNot { transformed.contains( transform(it) ) }
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 

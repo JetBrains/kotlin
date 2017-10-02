@@ -24,7 +24,7 @@ import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.StandardOpenOption
 
-class File constructor(internal val javaPath: Path) {
+data class File constructor(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
     constructor(parent: File, child: String): this(parent.javaPath.resolve(child))
     constructor(path: String): this(Paths.get(path))

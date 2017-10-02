@@ -16,14 +16,75 @@
 
 package org.jetbrains.kotlin.backend.konan.library
 
+import org.jetbrains.kotlin.backend.konan.Distribution
+import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetManager
 
 interface SearchPathResolver {
     val searchRoots: List<File>
     fun resolve(givenPath: String): File
     fun defaultLinks(nostdlib: Boolean, noDefaultLibs: Boolean): List<File>
+}
+
+fun defaultResolver(repositories: List<String>, targetManager: TargetManager): SearchPathResolver =
+        defaultResolver(repositories, Distribution(targetManager))
+
+fun defaultResolver(repositories: List<String>, distribution: Distribution): SearchPathResolver =
+        KonanLibrarySearchPathResolver(repositories, distribution.klib, distribution.localKonanDir)
+
+fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
+                                                 target: KonanTarget,
+                                                 abiVersion: Int = 1,
+                                                 noStdLib: Boolean = false,
+                                                 noDefaultLibs: Boolean = false,
+                                                 removeDuplicates: Boolean = true): List<LibraryReaderImpl> {
+
+    val defaultLibraries = defaultLinks(noStdLib, noDefaultLibs).map {
+        LibraryReaderImpl(it, abiVersion, target, isDefaultLink = true)
+    }
+
+    val userProvidedLibraries = libraryNames
+            .map { resolve(it) }
+            .map{ LibraryReaderImpl(it, abiVersion, target) }
+
+    val resolvedLibraries = defaultLibraries + userProvidedLibraries
+
+    return resolvedLibraries.let {
+        if (removeDuplicates) it.distinctBy { it.libraryFile.absolutePath } else it
+    }
+}
+
+fun SearchPathResolver.resolveLibrariesRecursive(immediateLibraries: List<LibraryReaderImpl>,
+                                                 target: KonanTarget,
+                                                 abiVersion: Int): List<LibraryReaderImpl> {
+    val result = mutableMapOf<File, LibraryReaderImpl>()
+    result.putAll(immediateLibraries.map { it.libraryFile.absoluteFile to it })
+    var newDependencies: Map<File, LibraryReaderImpl> = result
+    do {
+        newDependencies = newDependencies.values.asSequence()
+                .flatMap { it.dependencies.asSequence() }
+                .map { resolve(it).absoluteFile }
+                .filter { it !in result }
+                .map { it to LibraryReaderImpl(it, abiVersion, target) }.toMap()
+
+        result.putAll(newDependencies)
+    } while (newDependencies.isNotEmpty())
+    return result.values.toList()
+}
+
+fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
+                                                 target: KonanTarget,
+                                                 abiVersion: Int = 1,
+                                                 noStdLib: Boolean = false,
+                                                 noDefaultLibs: Boolean = false): List<LibraryReaderImpl> {
+    return resolveLibrariesRecursive(
+            resolveImmediateLibraries(libraryNames, target, abiVersion, noStdLib, noDefaultLibs, true),
+            target, abiVersion
+    )
 }
 
 class KonanLibrarySearchPathResolver(repositories: List<String>,
@@ -48,21 +109,22 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
     }
 
     private fun found(candidate: File): File? {
+        fun check(file: File): Boolean =
+                file.exists && (file.isFile || File(file, "manifest").exists)
+
         val noSuffix = File(candidate.path.removeSuffixIfPresent(".klib"))
         val withSuffix = File(candidate.path.suffixIfNot(".klib"))
-        if (withSuffix.exists) {
-            return withSuffix
+        return when {
+            check(withSuffix) -> withSuffix
+            check(noSuffix) -> noSuffix
+            else -> null
         }
-        if (noSuffix.exists) {
-            return noSuffix
-        }
-        return null
     }
 
     override fun resolve(givenPath: String): File {
         val given = File(givenPath)
         if (given.isAbsolute) {
-            found(given)?.apply{return this}
+            found(given)?.apply{ return this }
         } else {
             searchRoots.forEach{ 
                 found(File(it, givenPath))?.apply{return this}
@@ -74,7 +136,7 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
     private val File.klib
         get() = File(this, "klib")
 
-    // The libraries from the default root are linked autimatically.
+    // The libraries from the default root are linked automatically.
     val defaultRoot: File?
         get() = if (distHead?.exists ?: false) distHead else null
 

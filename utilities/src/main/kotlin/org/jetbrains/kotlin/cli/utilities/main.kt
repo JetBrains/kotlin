@@ -1,8 +1,11 @@
 package org.jetbrains.kotlin.cli.utilities
 
+import org.jetbrains.kotlin.backend.konan.library.defaultResolver
 import org.jetbrains.kotlin.backend.konan.library.impl.KonanLibrary
+import org.jetbrains.kotlin.backend.konan.library.resolveLibrariesRecursive
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.konan.target.TargetManager
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.cli.bc.main as konancMain
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop 
@@ -12,6 +15,7 @@ fun invokeCinterop(args: Array<String>) {
     var outputFileName = "nativelib"
     var target = "host"
     val libraries = mutableListOf<String>()
+    val repos = mutableListOf<String>()
     for (i in args.indices) {
         val arg = args[i]
         val nextArg = args.getOrNull(i + 1)
@@ -21,6 +25,8 @@ fun invokeCinterop(args: Array<String>) {
             target = nextArg ?: target
         if (arg == "-library")
             libraries.addIfNotNull(nextArg)
+        if (arg == "-r" || arg == "-repo")
+            repos.addIfNotNull(nextArg)
     }
 
     val buildDir = File("$outputFileName-build")
@@ -29,14 +35,22 @@ fun invokeCinterop(args: Array<String>) {
     val cstubsName ="cstubs"
     val manifest = File(buildDir, "manifest.properties")
 
-    val importArgs = libraries.flatMap {
-        val library = KonanLibrary(File(it))
+    val targetManager = TargetManager(target)
+    val resolver = defaultResolver(repos, targetManager)
+    val allLibraries = resolver.resolveLibrariesRecursive(
+            libraries, targetManager.target, noStdLib = true, noDefaultLibs = false
+    )
+
+    val importArgs = allLibraries.flatMap {
+        val library = KonanLibrary(it.libraryFile)
         val manifestProperties = library.manifestFile.loadProperties()
         // TODO: handle missing properties?
-        val pkg = manifestProperties["pkg"] as String
-        val headerIds = (manifestProperties["includedHeaders"] as String).split(' ')
-        val arg = "$pkg:${headerIds.joinToString(",")}"
-        listOf("-import", arg)
+        manifestProperties["pkg"]?.let {
+            val pkg = it as String
+            val headerIds = (manifestProperties["includedHeaders"] as String).split(' ')
+            val arg = "$pkg:${headerIds.joinToString(",")}"
+            listOf("-import", arg)
+        } ?: emptyList()
     }
 
     val additionalArgs = listOf<String>(
@@ -58,7 +72,7 @@ fun invokeCinterop(args: Array<String>) {
         "-o", outputFileName,
         "-target", target,
         "-manifest", manifest.path
-    ) + cinteropArgsToCompiler + libraries.flatMap { listOf("-library", it) }
+    ) + cinteropArgsToCompiler + libraries.flatMap { listOf("-library", it) } + repos.flatMap { listOf("-repo", it) }
     konancMain(konancArgs)
 }
 
