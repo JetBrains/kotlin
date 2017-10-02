@@ -19,5 +19,9 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="javax.inject" level="project" />
+    <orderEntry type="module" module-name="util.runtime" />
+    <orderEntry type="module" module-name="descriptors" exported="" />
+    <orderEntry type="module" module-name="deserialization" />
   </component>
 </module>

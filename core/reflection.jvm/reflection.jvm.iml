@@ -19,5 +19,8 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="builtins" />
+    <orderEntry type="module" module-name="runtime.jvm" />
+    <orderEntry type="module" module-name="descriptors.runtime" />
   </component>
 </module>
