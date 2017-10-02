@@ -11,10 +11,11 @@ dependencies {
     testCompile(project(":js:js.dce"))
     testCompile(ideaSdkDeps("openapi", "idea"))
     testRuntime(commonDep("junit:junit"))
-    testRuntime(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testRuntime(projectDist(":kotlin-test:kotlin-test-junit"))
     testRuntime(projectDist(":kotlin-stdlib"))
+    testRuntime(projectDist(":kotlin-stdlib-js"))
+    testRuntime(projectDist(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
     testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(projectDist(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
 //    testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
@@ -31,9 +32,6 @@ val testDistProjects = listOf(
         ":kotlin-compiler",
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
-        ":kotlin-stdlib-js",
-        ":kotlin-test:kotlin-test-jvm",
-        ":kotlin-test:kotlin-test-junit",
         ":kotlin-daemon-client",
         ":kotlin-ant")
 
