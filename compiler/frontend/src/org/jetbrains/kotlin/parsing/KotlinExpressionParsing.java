@@ -695,7 +695,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : OPEN_QUOTE stringTemplateElement* CLOSING_QUOTE
      *   ;
      */
-    private void parseStringTemplate() {
+    void parseStringTemplate() {
         assert _at(OPEN_QUOTE);
 
         PsiBuilder.Marker template = mark();
@@ -809,7 +809,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : "null"
      *   ;
      */
-    private boolean parseLiteralConstant() {
+    boolean parseLiteralConstant() {
         if (at(TRUE_KEYWORD) || at(FALSE_KEYWORD)) {
             parseOneTokenExpression(BOOLEAN_CONSTANT);
         }
@@ -1618,7 +1618,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * "(" element ")"
      */
-    private void parseCondition() {
+    void parseCondition() {
         myBuilder.disableNewlines();
 
         if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {

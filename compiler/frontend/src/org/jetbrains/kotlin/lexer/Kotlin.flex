@@ -312,7 +312,7 @@ LONELY_BACKTICK=`
 ">"          { return KtTokens.GT        ; }
 "?"          { return KtTokens.QUEST     ; }
 ":"          { return KtTokens.COLON     ; }
-";;"          { return KtTokens.DOUBLE_SEMICOLON;}
+";;"         { return KtTokens.DOUBLE_SEMICOLON;}
 ";"          { return KtTokens.SEMICOLON ; }
 "="          { return KtTokens.EQ        ; }
 ","          { return KtTokens.COMMA     ; }

@@ -124,6 +124,28 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         err.error(message);
     }
 
+    private void errorIf(boolean condition, String message) {
+        if (condition) {
+            error(message);
+        }
+    }
+
+    private void errorAndAdvanceIf(boolean condition, String message) {
+        if (condition) {
+            error(message);
+            advance();
+        }
+    }
+
+    protected void unexpectAndAdvance(KtToken expectation, String message) {
+        errorAndAdvanceIf(at(expectation), message);
+    }
+
+    protected void unexpectNoAdvance(KtToken expectation, String message) {
+        errorIf(at(expectation), message);
+    }
+
+
     protected boolean eof() {
         return myBuilder.eof();
     }
@@ -184,6 +206,11 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
             }
         }
         return false;
+    }
+
+    protected boolean at(int k, IElementType expectation) {
+        IElementType token = lookahead(k);
+        return tokenMatches(token, expectation);
     }
 
     /**
@@ -358,7 +385,11 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         return myBuilder.newlineBeforeCurrentToken() || eof();
     }
 
-    protected static void closeDeclarationWithCommentBinders(@NotNull PsiBuilder.Marker marker, @NotNull IElementType elementType, boolean precedingNonDocComments) {
+    protected static void closeDeclarationWithCommentBinders(
+            @NotNull PsiBuilder.Marker marker,
+            @NotNull IElementType elementType,
+            boolean precedingNonDocComments
+    ) {
         marker.done(elementType);
         marker.setCustomEdgeTokenBinders(precedingNonDocComments ? PrecedingCommentsBinder.INSTANCE : PrecedingDocCommentsBinder.INSTANCE,
                                          TrailingCommentsBinder.INSTANCE);
@@ -388,7 +419,6 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         public boolean matching(boolean topLevel) {
             return (topLevel || !topLevelOnly) && at(lookFor);
         }
-
     }
 
     protected class AtSet extends AbstractTokenStreamPredicate {
