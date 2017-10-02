@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -59,6 +60,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
+        if (declaration !is KtNamedDeclaration) return
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
         if (descriptor.isExpect) {
@@ -71,7 +73,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     fun checkExpectedDeclarationHasActual(
-            reportOn: KtDeclaration,
+            reportOn: KtNamedDeclaration,
             descriptor: MemberDescriptor,
             diagnosticHolder: DiagnosticSink,
             platformModule: ModuleDescriptor
@@ -120,7 +122,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun checkActualDeclarationHasExpected(
-            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkActual: Boolean
+            reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkActual: Boolean
     ) {
         // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
         // However, it would be clearer to find the common module this platform module implements and look for expected there instead.

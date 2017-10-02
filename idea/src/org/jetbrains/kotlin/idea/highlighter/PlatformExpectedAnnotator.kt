@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 
 class PlatformExpectedAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        val declaration = element as? KtDeclaration ?: return
+        val declaration = element as? KtNamedDeclaration ?: return
         if (!isExpectedDeclaration(declaration)) return
 
         if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Common) return

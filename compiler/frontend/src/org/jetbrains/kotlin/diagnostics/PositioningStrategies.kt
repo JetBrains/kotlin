@@ -96,6 +96,17 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField val ACTUAL_DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> = object : DeclarationHeader<KtNamedDeclaration>() {
+        override fun mark(element: KtNamedDeclaration): List<TextRange> {
+            val nameIdentifier = element.nameIdentifier
+            return when {
+                nameIdentifier != null -> markElement(nameIdentifier)
+                element is KtNamedFunction -> DECLARATION_SIGNATURE.mark(element)
+                else -> DEFAULT.mark(element)
+            }
+        }
+    }
+
     @JvmField val DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> = object : DeclarationHeader<KtNamedDeclaration>() {
         override fun mark(element: KtNamedDeclaration): List<TextRange> {
             val nameIdentifier = element.nameIdentifier

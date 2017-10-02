@@ -10,5 +10,5 @@ expect class Foo {
 // FILE: jvm.kt
 
 actual class Foo {
-    <!ACTUAL_MISSING!>fun bar(): String<!> = "bar"
+    fun <!ACTUAL_MISSING!>bar<!>(): String = "bar"
 }

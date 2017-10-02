@@ -576,17 +576,17 @@ public interface Errors {
     DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory3<KtDeclaration, MemberDescriptor, ModuleDescriptor,
+    DiagnosticFactory3<KtNamedDeclaration, MemberDescriptor, ModuleDescriptor,
             Map<Incompatible, Collection<MemberDescriptor>>> NO_ACTUAL_FOR_EXPECT =
             DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory2<KtDeclaration, MemberDescriptor,
+    DiagnosticFactory2<KtNamedDeclaration, MemberDescriptor,
             Map<Incompatible, Collection<MemberDescriptor>>> ACTUAL_WITHOUT_EXPECT =
             DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory2<KtDeclaration, ClassDescriptor,
+    DiagnosticFactory2<KtNamedDeclaration, ClassDescriptor,
             List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS =
-            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> ACTUAL_MISSING = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+            DiagnosticFactory2.create(ERROR, ACTUAL_DECLARATION_NAME);
+    DiagnosticFactory0<KtNamedDeclaration> ACTUAL_MISSING = DiagnosticFactory0.create(ERROR, ACTUAL_DECLARATION_NAME);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
