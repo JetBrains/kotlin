@@ -22,6 +22,6 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class UninitializedStoresMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        UninitializedStoresProcessor(methodNode, forCoroutines = false).run()
+        UninitializedStoresProcessor(methodNode).run()
     }
 }
