@@ -21,9 +21,13 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 class AssignToPropertyFix(element: KtNameReferenceExpression) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
 
@@ -34,7 +38,12 @@ class AssignToPropertyFix(element: KtNameReferenceExpression) : KotlinQuickFixAc
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val psiFactory = KtPsiFactory(element)
-        element.replace(psiFactory.createExpressionByPattern("this.$0", element))
+        if (element.getResolutionScope().getImplicitReceiversHierarchy().size == 1)
+            element.replace(psiFactory.createExpressionByPattern("this.$0", element))
+        else
+            element.containingClass()?.name?.also {
+                element.replace(psiFactory.createExpressionByPattern("this@$0.$1", it, element))
+            }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -46,12 +55,19 @@ class AssignToPropertyFix(element: KtNameReferenceExpression) : KotlinQuickFixAc
             val type = expression.analyze().getType(right) ?: return null
             val name = expression.getReferencedNameAsName()
 
+            val inSecondaryConstructor = expression.getStrictParentOfType<KtSecondaryConstructor>() != null
             val hasAssignableProperty = containingClass.getProperties().any {
                 it.nameAsName == name &&
-                it.isVar &&
+                (inSecondaryConstructor || it.isVar) &&
                 (it.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as CallableDescriptor).returnType == type
             }
-            if (!hasAssignableProperty) return null
+            val hasAssignablePropertyInPrimaryConstructor = containingClass.primaryConstructor?.valueParameters?.any {
+                it.nameAsName == name &&
+                it.valOrVarKeyword?.node?.elementType == KtTokens.VAR_KEYWORD &&
+                (it.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as CallableDescriptor).returnType == type
+            } ?: false
+
+            if (!hasAssignableProperty && !hasAssignablePropertyInPrimaryConstructor) return null
 
             return AssignToPropertyFix(expression)
         }

@@ -1,9 +1,6 @@
 // "Assign to property" "false"
-// ACTION: Remove redundant assignment
 // ERROR: Val cannot be reassigned
-class Test {
-    var bar = 1
-
+class Test(foo: Int) {
     fun test(foo: Int) {
         <caret>foo = foo
     }
