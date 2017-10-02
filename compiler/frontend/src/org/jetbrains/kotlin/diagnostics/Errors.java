@@ -578,10 +578,10 @@ public interface Errors {
 
     DiagnosticFactory3<KtNamedDeclaration, MemberDescriptor, ModuleDescriptor,
             Map<Incompatible, Collection<MemberDescriptor>>> NO_ACTUAL_FOR_EXPECT =
-            DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE);
+            DiagnosticFactory3.create(ERROR, INCOMPATIBLE_DECLARATION);
     DiagnosticFactory2<KtNamedDeclaration, MemberDescriptor,
             Map<Incompatible, Collection<MemberDescriptor>>> ACTUAL_WITHOUT_EXPECT =
-            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
+            DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
 
     DiagnosticFactory2<KtNamedDeclaration, ClassDescriptor,
             List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS =

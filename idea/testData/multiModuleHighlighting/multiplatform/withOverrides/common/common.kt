@@ -1,3 +1,3 @@
 expect fun foo(arg: Int): Int
 
-<error>expect fun foo(): Int</error>
+expect fun foo<error>()</error>: Int
