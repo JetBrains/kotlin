@@ -65,8 +65,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             checkExpectedDeclarationHasActual(declaration, descriptor, diagnosticHolder, descriptor.module)
         }
         else {
-            val checkExpected = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
-            checkActualDeclarationHasExpected(declaration, descriptor, diagnosticHolder, checkExpected)
+            val checkActual = !languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
+            checkActualDeclarationHasExpected(declaration, descriptor, diagnosticHolder, checkActual)
         }
     }
 
@@ -120,20 +120,20 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     }
 
     private fun checkActualDeclarationHasExpected(
-            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkExpected: Boolean
+            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkActual: Boolean
     ) {
         // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
         // However, it would be clearer to find the common module this platform module implements and look for expected there instead.
         // TODO: use common module here
         val compatibility = findExpectedForActual(descriptor, descriptor.module) ?: return
 
-        val hasExpectedModifier = descriptor.isActual && reportOn.hasActualModifier()
-        if (!hasExpectedModifier) {
+        val hasActualModifier = descriptor.isActual && reportOn.hasActualModifier()
+        if (!hasActualModifier) {
             if (Compatible !in compatibility) return
 
             // we suppress error, because annotation classes can only have one constructor and it's a 100% boilerplate
             // to require every annotation constructor with additional parameters with default values be marked with the `actual` modifier
-            if (checkExpected && !descriptor.isAnnotationConstructor()) {
+            if (checkActual && !descriptor.isAnnotationConstructor()) {
                 diagnosticHolder.report(Errors.ACTUAL_MISSING.on(reportOn))
             }
         }
