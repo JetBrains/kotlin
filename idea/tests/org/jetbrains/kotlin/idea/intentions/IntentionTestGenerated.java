@@ -12620,6 +12620,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("necessaryBrackets6.kt")
+        public void testNecessaryBrackets6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeCurlyBracesFromTemplate/necessaryBrackets6.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unnecessaryBrackets1.kt")
         public void testUnnecessaryBrackets1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeCurlyBracesFromTemplate/unnecessaryBrackets1.kt");

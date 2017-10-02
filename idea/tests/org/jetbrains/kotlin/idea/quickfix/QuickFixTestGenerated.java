@@ -8879,6 +8879,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("necessaryBrackets1.kt")
+        public void testNecessaryBrackets1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/necessaryBrackets1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("necessaryBrackets2.kt")
+        public void testNecessaryBrackets2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/necessaryBrackets2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/simple.kt");
