@@ -6212,6 +6212,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("doNotAddExpectForVal.kt")
+        public void testDoNotAddExpectForVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/doNotAddExpectForVal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("doNotAddHeader.kt")
         public void testDoNotAddHeader() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/doNotAddHeader.kt");
