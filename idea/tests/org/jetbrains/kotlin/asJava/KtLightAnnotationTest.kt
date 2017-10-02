@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.psi.*
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.facet.configureFacet
+import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
@@ -202,6 +207,25 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         assertTextAndRange("\"def\"", annotationAttributeVal.initializers[1])
     }
 
+    fun testKotlinAnnotationWithStringArrayLiteral() {
+        configureKotlinVersion("1.2")
+        myFixture.configureByText("AnnotatedClass.kt", """
+            annotation class Anno(val params: Array<String>)
+            @Anno(params = ["abc", "def"])
+            class AnnotatedClass
+        """.trimIndent())
+        myFixture.testHighlighting("AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("params") as PsiElement
+        assertTextAndRange("[\"abc\", \"def\"]", annotationAttributeVal)
+
+        annotationAttributeVal as PsiArrayInitializerMemberValue
+        assertTextAndRange("\"abc\"", annotationAttributeVal.initializers[0])
+        assertTextAndRange("\"def\"", annotationAttributeVal.initializers[1])
+    }
+
+
     fun testKotlinAnnotationsArray() {
         myFixture.configureByText("AnnotatedClass.kt", """
             annotation class Anno1(val anno2: Array<Anno2>)
@@ -375,5 +399,14 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
                 TestCase.assertEquals("expected one annotation, found ${this.joinToString(", ") { it.qualifiedName ?: "unknown" }}",
                                       number, size)
             }
+
+    private fun configureKotlinVersion(version: String) {
+        WriteAction.run<Throwable> {
+            val modelsProvider = IdeModifiableModelsProviderImpl(project)
+            val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
+            facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider)
+            modelsProvider.commit()
+        }
+    }
 
 }
