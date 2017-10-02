@@ -92,7 +92,9 @@ class DebuggerClassNameProvider(
     }
 
     private fun doGetClassesForPosition(position: SourcePosition): Set<String> {
-        val relevantElement = runReadAction { getRelevantElement(position.elementAt) }
+        val relevantElement = runReadAction {
+            position.elementAt?.let { getRelevantElement(it) }
+        }
 
         val result = getOrComputeClassNames(relevantElement) { element ->
             getOuterClassNamesForElement(element)

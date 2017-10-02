@@ -24,6 +24,8 @@ sourceSets {
 }
 
 runtimeJar()
+sourcesJar()
+javadocJar()
 
 testsJar()
 

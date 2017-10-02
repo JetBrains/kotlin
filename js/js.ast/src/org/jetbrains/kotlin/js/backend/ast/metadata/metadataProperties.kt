@@ -147,6 +147,10 @@ enum class SpecialFunction(val suggestedName: String) {
     WRAP_FUNCTION("wrapFunction"),
     TO_BOXED_CHAR("toBoxedChar"),
     UNBOX_CHAR("unboxChar"),
+    SUSPEND_CALL("suspendCall"),
+    COROUTINE_RESULT("coroutineResult"),
+    COROUTINE_CONTROLLER("coroutineController"),
+    COROUTINE_RECEIVER("coroutineReceiver")
 }
 
 enum class BoxingKind {

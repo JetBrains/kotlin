@@ -646,6 +646,9 @@ class DeclarationsChecker(
             if (inInterface) {
                 trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate))
             }
+            else if (isExpect) {
+                trace.report(EXPECTED_DELEGATED_PROPERTY.on(delegate))
+            }
         }
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
@@ -667,9 +670,14 @@ class DeclarationsChecker(
             else if (noExplicitTypeOrGetterType(property)) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
-            if (backingFieldRequired && !inInterface && propertyDescriptor.isLateInit && !isUninitialized &&
-                trace[MUST_BE_LATEINIT, propertyDescriptor] != true) {
-                trace.report(UNNECESSARY_LATEINIT.on(property))
+
+            if (propertyDescriptor.isLateInit) {
+                if (propertyDescriptor.isExpect) {
+                    trace.report(EXPECTED_LATEINIT_PROPERTY.on(property.modifierList?.getModifier(KtTokens.LATEINIT_KEYWORD) ?: property))
+                }
+                if (backingFieldRequired && !inInterface && !isUninitialized && trace[MUST_BE_LATEINIT, propertyDescriptor] != true) {
+                    trace.report(UNNECESSARY_LATEINIT.on(property))
+                }
             }
         }
     }

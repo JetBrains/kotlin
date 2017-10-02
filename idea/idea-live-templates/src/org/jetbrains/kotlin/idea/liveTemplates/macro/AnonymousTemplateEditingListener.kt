@@ -38,8 +38,8 @@ internal class AnonymousTemplateEditingListener(private val psiFile: PsiFile, pr
     private var classRef: KtReferenceExpression? = null
     private var classDescriptor: ClassDescriptor? = null
 
-    override fun currentVariableChanged(templateState: TemplateState?, template: Template?, oldIndex: Int, newIndex: Int) {
-        assert(templateState!!.template != null)
+    override fun currentVariableChanged(templateState: TemplateState, template: Template?, oldIndex: Int, newIndex: Int) {
+        if (templateState.template == null) return
         val variableRange = templateState.getVariableRange("SUPERTYPE") ?: return
         val name = psiFile.findElementAt(variableRange.startOffset)
         if (name != null && name.parent is KtReferenceExpression) {

@@ -270,13 +270,16 @@ public class DefaultErrorMessages {
         MAP.put(EXPECTED_ENUM_CONSTRUCTOR, "Expected enum class cannot have a constructor");
         MAP.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "Expected enum entry cannot have a body");
         MAP.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer");
+        MAP.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated");
+        MAP.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be lateinit");
+        MAP.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes");
 
         MAP.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias");
         MAP.put(ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, "Aliased class should not have type parameters with declaration-site variance");
         MAP.put(ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, "Right-hand side of actual type alias cannot contain use-site variance or star projections");
         MAP.put(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, "Type arguments in the right-hand side of actual type alias should be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'");
 
-        MAP.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual in module{1}{2}", DECLARATION_NAME_WITH_KIND,
+        MAP.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual declaration in module{1}{2}", DECLARATION_NAME_WITH_KIND,
                 PLATFORM, PlatformIncompatibilityDiagnosticRenderer.TEXT);
         MAP.put(ACTUAL_WITHOUT_EXPECT, "Actual {0} has no corresponding expected declaration{1}", DECLARATION_NAME_WITH_KIND,
                 PlatformIncompatibilityDiagnosticRenderer.TEXT);
@@ -553,8 +556,8 @@ public class DefaultErrorMessages {
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
         MAP.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as supertypes");
-        MAP.put(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE, "Suspend function type is not allowed as supertypes");
         MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
+        MAP.put(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE, "Suspend function type is not allowed as supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
         MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'");
@@ -757,7 +760,8 @@ public class DefaultErrorMessages {
         MAP.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''", NAME);
         MAP.put(MISSING_RECEIVER, "A receiver of type {0} is required", RENDER_TYPE);
         MAP.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property");
-        MAP.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM, "Assigning single elements to varargs in named form is deprecated");
+        MAP.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION, "Assigning single elements to varargs in named form is deprecated", TO_STRING);
+        MAP.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION, "Assigning single elements to varargs in named form is deprecated");
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
 

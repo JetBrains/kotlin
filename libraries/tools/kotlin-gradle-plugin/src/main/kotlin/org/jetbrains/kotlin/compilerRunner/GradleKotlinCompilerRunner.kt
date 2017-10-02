@@ -255,7 +255,9 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 reportSeverity = reportSeverity(verbose),
                 requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),
                 compilerMode = CompilerMode.INCREMENTAL_COMPILER,
-                targetPlatform = targetPlatform
+                targetPlatform = targetPlatform,
+                resultDifferenceFile = environment.buildHistoryFile,
+                friendDifferenceFile = environment.friendBuildHistoryFile
         )
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
         val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()

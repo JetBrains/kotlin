@@ -11,16 +11,16 @@
 
 annotation class Ann(vararg val s: String)
 
-@Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM!>"value"<!>)
+@Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>"value"<!>)
 fun test1() {}
 
-@Ann(s = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM!>arrayOf("value")<!>)
+@Ann(s = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>arrayOf("value")<!>)
 fun test2() {}
 
-@Ann(s = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM!>["value"]<!>)
+@Ann(s = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>["value"]<!>)
 fun test3() {}
 
-@JavaAnn(value = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM!>"value"<!>)
+@JavaAnn(value = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>"value"<!>)
 fun test4() {}
 
 @JavaAnn("value", path = arrayOf("path"))

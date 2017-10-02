@@ -90,6 +90,7 @@ import org.junit.Assert;
 
 import javax.tools.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -438,7 +439,21 @@ public class KotlinTestUtils {
     }
 
     public static String doLoadFile(@NotNull File file) throws IOException {
-        return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
+        try {
+            return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
+        }
+        catch (FileNotFoundException fileNotFoundException) {
+            /*
+             * Unfortunately, the FileNotFoundException will only show the relative path in it's exception message.
+             * This clarifies the exception by showing the full path.
+             */
+            String messageWithFullPath = file.getAbsolutePath() + " (No such file or directory)";
+            throw new IOException(
+                    "Ensure you have your 'Working Directory' configured correctly as the root " +
+                    "Kotlin project directory in your test configuration\n\t" +
+                    messageWithFullPath,
+                    fileNotFoundException);
+        }
     }
 
     public static String getFilePath(File file) {

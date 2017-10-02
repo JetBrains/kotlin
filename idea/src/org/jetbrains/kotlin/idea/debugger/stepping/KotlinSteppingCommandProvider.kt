@@ -108,7 +108,8 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
                 val file = sourcePosition.file as? KtFile ?: return null
                 if (sourcePosition.line < 0) return null
 
-                val containingFunction = sourcePosition.elementAt.parents
+                val elementAt = sourcePosition.elementAt ?: return null
+                val containingFunction = elementAt.parents
                                                  .filterIsInstance<KtNamedFunction>()
                                                  .firstOrNull { !it.isLocal } ?: return null
 

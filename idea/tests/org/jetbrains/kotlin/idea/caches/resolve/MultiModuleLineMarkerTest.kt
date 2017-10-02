@@ -20,7 +20,9 @@ import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.TestJdkKind
 
 class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
 
@@ -62,5 +64,24 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
                                     }
                                 }
                             })
+    }
+
+    fun testTransitive() {
+        val commonModule = module("common", TestJdkKind.MOCK_JDK)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
+        val jvmPlatform = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+
+        val baseModule = module("jvm_base", TestJdkKind.MOCK_JDK)
+        baseModule.createFacet(jvmPlatform, implementedModuleName = "common")
+        baseModule.enableMultiPlatform()
+        baseModule.addDependency(commonModule)
+
+        val userModule = module("jvm_user", TestJdkKind.MOCK_JDK)
+        userModule.createFacet(jvmPlatform)
+        userModule.enableMultiPlatform()
+        userModule.addDependency(commonModule)
+        userModule.addDependency(baseModule)
+
+        checkHighlightingInAllFiles()
     }
 }

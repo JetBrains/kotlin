@@ -299,6 +299,27 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler DECLARES_VARIABLE = new DirectiveHandler("DECLARES_VARIABLE") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String functionName = arguments.getNamedArgument("function");
+            String varName = arguments.getNamedArgument("name");
+            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
+            boolean[] varDeclared = new boolean[1];
+            function.accept(new RecursiveJsVisitor() {
+                @Override
+                public void visit(@NotNull JsVars.JsVar x) {
+                    super.visit(x);
+                    if (x.getName().getIdent().equals(varName)) {
+                        varDeclared[0] = true;
+                    }
+                }
+            });
+
+            assertTrue("Function " + functionName + " does not declare variable " + varName, varDeclared[0]);
+        }
+    };
+
     private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
             FUNCTION_CONTAINS_NO_CALLS,
             FUNCTION_NOT_CALLED,
@@ -319,7 +340,8 @@ public class DirectiveTestUtils {
             NOT_REFERENCED,
             HAS_INLINE_METADATA,
             HAS_NO_INLINE_METADATA,
-            HAS_NO_CAPTURED_VARS
+            HAS_NO_CAPTURED_VARS,
+            DECLARES_VARIABLE
     );
 
     public static void processDirectives(@NotNull JsNode ast, @NotNull String sourceCode) throws Exception {

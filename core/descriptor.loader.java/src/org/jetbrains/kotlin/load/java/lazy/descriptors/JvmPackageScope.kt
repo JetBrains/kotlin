@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.flatMapClassifierNamesOrNull
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
@@ -46,7 +47,7 @@ class JvmPackageScope(
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        recordLookup(location, name)
+        recordLookup(name, location)
 
         val javaClassifier = javaScope.getContributedClassifier(name, location)
         if (javaClassifier != null) return javaClassifier
@@ -55,12 +56,12 @@ class JvmPackageScope(
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        recordLookup(location, name)
+        recordLookup(name, location)
         return getFromAllScopes(javaScope, kotlinScopes) { it.getContributedVariables(name, location) }
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-        recordLookup(location, name)
+        recordLookup(name, location)
         return getFromAllScopes(javaScope, kotlinScopes) { it.getContributedFunctions(name, location) }
     }
 
@@ -74,6 +75,10 @@ class JvmPackageScope(
     }
     override fun getVariableNames() = kotlinScopes.flatMapTo(mutableSetOf()) { it.getVariableNames() }.apply {
         addAll(javaScope.getVariableNames())
+    }
+
+    override fun getClassifierNames(): Set<Name>? = kotlinScopes.flatMapClassifierNamesOrNull()?.apply {
+        addAll(javaScope.getClassifierNames())
     }
 
     override fun printScopeStructure(p: Printer) {
@@ -91,7 +96,7 @@ class JvmPackageScope(
         p.println("}")
     }
 
-    private fun recordLookup(location: LookupLocation, name: Name) {
+    override fun recordLookup(name: Name, location: LookupLocation) {
         c.components.lookupTracker.record(location, packageFragment, name)
     }
 }

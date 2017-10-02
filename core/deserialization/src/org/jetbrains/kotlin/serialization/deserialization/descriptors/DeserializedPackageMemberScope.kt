@@ -55,8 +55,12 @@ open class DeserializedPackageMemberScope(
 
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        c.components.lookupTracker.record(location, packageDescriptor, name)
+        recordLookup(name, location)
         return super.getContributedClassifier(name, location)
+    }
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.components.lookupTracker.record(location, packageDescriptor, name)
     }
 
     override fun getNonDeclaredFunctionNames(): Set<Name> = emptySet()

@@ -75,8 +75,8 @@ private class GlobalSyntheticPackageViewDescriptor(override val fqName: FqName, 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = shouldNotBeCalled()
 
         override fun getFunctionNames(): Set<Name> = shouldNotBeCalled()
-
         override fun getVariableNames(): Set<Name> = shouldNotBeCalled()
+        override fun getClassifierNames(): Set<Name> = shouldNotBeCalled()
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = shouldNotBeCalled()
 

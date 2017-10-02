@@ -85,12 +85,6 @@ public class ErrorUtils {
                 return emptyList();
             }
 
-            @NotNull
-            @Override
-            public Set<ModuleDescriptor> getAllImplementingModules() {
-                return emptySet();
-            }
-
             @Override
             public <R, D> R accept(@NotNull DeclarationDescriptorVisitor<R, D> visitor, D data) {
                 return null;
@@ -213,10 +207,26 @@ public class ErrorUtils {
 
         @NotNull
         @Override
+        public Set<Name> getClassifierNames() {
+            return emptySet();
+        }
+
+        @Override
+        public void recordLookup(@NotNull Name name, @NotNull LookupLocation location) {
+
+        }
+
+        @NotNull
+        @Override
         public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, Boolean> nameFilter
         ) {
             return Collections.emptyList();
+        }
+
+        @Override
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
+            return false;
         }
 
         @Override
@@ -277,6 +287,21 @@ public class ErrorUtils {
         @Override
         public Set<Name> getVariableNames() {
             throw new IllegalStateException();
+        }
+
+        @Override
+        public Set<Name> getClassifierNames() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public void recordLookup(@NotNull Name name, @NotNull LookupLocation location) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
+            return false;
         }
 
         @Override

@@ -4,4 +4,5 @@ fun foo() {
     val c: Any? = null
     a == b // YES
     a == c // NO
+    a != b
 }

@@ -6,11 +6,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
-    val repos = listOf(
+    val repos = listOfNotNull(
             System.getProperty("bootstrap.kotlin.repo"),
             "https://repo.gradle.org/gradle/repo",
             "https://plugins.gradle.org/m2",
-            "http://repository.jetbrains.com/utils/").filterNotNull()
+            "http://repository.jetbrains.com/utils/")
 
     extra["bootstrapKotlinVersion"] = bootstrapKotlinVersion
 
@@ -105,7 +105,6 @@ extra["JDK_9"] = jdkPathIfFound("9")
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
-extra["versions.cli-parser"] = "1.1.2"
 extra["versions.jansi"] = "1.16"
 extra["versions.jline"] = "3.3.1"
 extra["versions.junit"] = "4.12"

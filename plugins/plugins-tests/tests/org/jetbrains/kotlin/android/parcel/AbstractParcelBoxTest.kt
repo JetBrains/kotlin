@@ -117,9 +117,12 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         val junitCoreResourceName = JUnitCore::class.java.name.replace('.', '/') + ".class"
         val junitJar = File(JUnitCore::class.java.classLoader.getResource(junitCoreResourceName).file.substringBeforeLast('!'))
 
-        val androidExtensionsRuntime = File("out/production/android-extensions-runtime")
+        val androidExtensionsRuntimeCP =
+                (System.getenv("ANDROID_EXTENSIONS_RUNTIME_CLASSES")?.split(File.pathSeparator)
+                    ?: listOf("out/production/android-extensions-runtime")
+                ).map { File(it) }
 
-        return listOf(kotlinRuntimeJar) + layoutLibJars + robolectricJars + junitJar + androidExtensionsRuntime
+        return listOf(kotlinRuntimeJar) + layoutLibJars + robolectricJars + junitJar + androidExtensionsRuntimeCP
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {

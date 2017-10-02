@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -161,4 +162,8 @@ object CodegenUtil {
                 (1..arity).joinToString(prefix = "callableReferenceFakeCall(", separator = ", ", postfix = ")") { "p$it" }
         return KtPsiFactory(project, markGenerated = false).createExpression(fakeFunctionCall) as KtCallExpression
     }
+
+    @JvmStatic
+    fun getActualDeclarations(file: KtFile): List<KtDeclaration> =
+            file.declarations.filterNot(KtDeclaration::hasExpectModifier)
 }

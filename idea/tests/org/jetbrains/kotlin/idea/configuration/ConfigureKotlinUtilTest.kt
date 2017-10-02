@@ -32,6 +32,8 @@ class ConfigureKotlinUtilTest : UsefulTestCase() {
         Assert.assertFalse(useEapRepository(1, "1.1.2"))
         Assert.assertFalse(useEapRepository(1, "1.1.2-3"))
         Assert.assertFalse(useEapRepository(1, "1.1.0-dev-1234"))
+        Assert.assertTrue(useEapRepository(1, "1.1.50-eap-28"))
+        Assert.assertFalse(useEapRepository(1, "1.1.50"))
         Assert.assertTrue(useEapRepository(2, "1.2-M01"))
         Assert.assertTrue(useEapRepository(2, "1.2-M1"))
         Assert.assertFalse(useEapRepository(2, "1.2"))

@@ -208,13 +208,14 @@ class ClassTranslator private constructor(
     private fun createMetadataRef() = JsNameRef(Namer.METADATA, context().getInnerReference(descriptor))
 
     private fun addMetadataType() {
-        val kotlinType = JsNameRef(Namer.CLASS_KIND_ENUM, Namer.KOTLIN_NAME)
-        val typeRef = when {
-            DescriptorUtils.isInterface(descriptor) -> JsNameRef(Namer.CLASS_KIND_INTERFACE, kotlinType)
-            DescriptorUtils.isObject(descriptor) -> JsNameRef(Namer.CLASS_KIND_OBJECT, kotlinType)
-            else -> JsNameRef(Namer.CLASS_KIND_CLASS, kotlinType)
-        }
+        val kindBuilder = StringBuilder(Namer.CLASS_KIND_ENUM + ".")
+        kindBuilder.append(when {
+            DescriptorUtils.isInterface(descriptor) -> Namer.CLASS_KIND_INTERFACE
+            DescriptorUtils.isObject(descriptor) -> Namer.CLASS_KIND_OBJECT
+            else -> Namer.CLASS_KIND_CLASS
+        })
 
+        val typeRef = context().getReferenceToIntrinsic(kindBuilder.toString())
         metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef(Namer.METADATA_CLASS_KIND), typeRef)
 
         val simpleName = descriptor.name

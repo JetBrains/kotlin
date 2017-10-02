@@ -131,6 +131,7 @@ class SyntheticClassOrObjectDescriptor(
         override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry> = emptyList()
         override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> = emptyList()
         override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> = emptyList()
+        override fun getDeclarationNames() = emptySet<Name>()
     }
 
     internal inner class SyntheticDeclaration(

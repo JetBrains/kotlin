@@ -82,7 +82,7 @@ public inline fun <T> T.takeUnless(predicate: (T) -> Boolean): T? = if (!predica
  */
 @kotlin.internal.InlineOnly
 public inline fun repeat(times: Int, action: (Int) -> Unit) {
-    for (index in 0..times - 1) {
+    for (index in 0 until times) {
         action(index)
     }
 }

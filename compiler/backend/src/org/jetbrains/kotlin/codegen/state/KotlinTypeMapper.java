@@ -831,11 +831,11 @@ public class KotlinTypeMapper {
                JvmCodegenUtil.isJvm8InterfaceWithDefaults(ownerForDefault, isJvm8Target, isJvm8TargetWithDefaults);
     }
 
-    public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
+    public static boolean isAccessor(@Nullable CallableMemberDescriptor descriptor) {
         return descriptor instanceof AccessorForCallableDescriptor<?>;
     }
 
-    public static boolean isStaticAccessor(@NotNull CallableMemberDescriptor descriptor) {
+    public static boolean isStaticAccessor(@Nullable CallableMemberDescriptor descriptor) {
         if (descriptor instanceof AccessorForConstructorDescriptor) return false;
         return isAccessor(descriptor);
     }

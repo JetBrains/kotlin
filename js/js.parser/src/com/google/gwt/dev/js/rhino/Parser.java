@@ -37,6 +37,8 @@
 
 package com.google.gwt.dev.js.rhino;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -890,8 +892,13 @@ public class Parser {
             case TokenStream.DEC:
                 return nf.createUnary(tt, TokenStream.PRE, memberExpr(ts, true), position);
 
-            case TokenStream.DELPROP:
-                return nf.createUnary(TokenStream.DELPROP, unaryExpr(ts), position);
+            case TokenStream.DELPROP: {
+                Node argument = unaryExpr(ts);
+                if (!isValidDeleteArgument(argument)) {
+                    Context.reportError("msg.wrong.delete argument", argument.getPosition(), ts.lastPosition);
+                }
+                return nf.createUnary(TokenStream.DELPROP, argument, position);
+            }
 
             case TokenStream.ERROR:
                 break;
@@ -920,6 +927,10 @@ public class Parser {
                 return pn;
         }
         return nf.createName("err", position); // Only reached on error. Try to continue.
+    }
+
+    private static boolean isValidDeleteArgument(@NotNull Node node) {
+        return node.type == TokenStream.GETPROP || node.type == TokenStream.GETELEM;
     }
 
     private Node argumentList(TokenStream ts, Node listNode) throws IOException, JavaScriptException {

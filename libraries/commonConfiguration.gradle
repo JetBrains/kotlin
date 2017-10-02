@@ -216,7 +216,6 @@ ext.createScriptTask = { Project project, def name, Closure<JavaExec> configureC
     return project.configure(task) {
 //        dependsOn(rootProject.prepareBootstrap)
         classpath = rootProject.configurations.scriptCompile
-        println(rootProject.configurations.scriptCompile.files)
         main = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
         args = [
                 "-script",

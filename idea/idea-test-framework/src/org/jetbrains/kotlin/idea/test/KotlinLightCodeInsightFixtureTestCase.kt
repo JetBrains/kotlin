@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,11 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -32,7 +35,10 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import org.apache.log4j.Logger
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
+import org.jetbrains.kotlin.idea.facet.configureFacet
+import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
@@ -169,5 +175,21 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     override fun getTestDataPath(): String {
         return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
+    }
+}
+
+fun configureLanguageVersion(fileText: String, project: Project, module: Module) {
+    val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// LANGUAGE_VERSION: ")
+    if (version != null) {
+        val accessToken = WriteAction.start()
+        try {
+            val modelsProvider = IdeModifiableModelsProviderImpl(project)
+            val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
+            facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider)
+            modelsProvider.commit()
+        }
+        finally {
+            accessToken.finish()
+        }
     }
 }

@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -199,6 +197,13 @@ class LocalLazyDeclarationResolver(
             return localClassDescriptorManager.getClassDescriptor(classOrObject, scopeProvider)
         }
         return super.getClassDescriptor(classOrObject, location)
+    }
+
+    override fun getClassDescriptorIfAny(classOrObject: KtClassOrObject, location: LookupLocation): ClassDescriptor? {
+        if (localClassDescriptorManager.isMyClass(classOrObject)) {
+            return localClassDescriptorManager.getClassDescriptor(classOrObject, scopeProvider)
+        }
+        return super.getClassDescriptorIfAny(classOrObject, location)
     }
 }
 

@@ -21,6 +21,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
@@ -56,6 +57,8 @@ class MoveDeclarationsCopyPasteProcessor : CopyPastePostProcessor<MoveDeclaratio
             startOffsets: IntArray,
             endOffsets: IntArray
     ): List<MoveDeclarationsTransferableData> {
+        if (DumbService.isDumb(file.project)) return emptyList()
+
         if (file !is KtFile) return emptyList()
         if (startOffsets.size != 1) return emptyList()
 

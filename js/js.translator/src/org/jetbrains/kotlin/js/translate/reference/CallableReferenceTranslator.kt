@@ -135,7 +135,7 @@ object CallableReferenceTranslator {
         function.body.statements += JsReturn(TranslationUtils.coerce(context, invocation, context.currentModule.builtIns.anyType))
 
         val rawCallableRef = bindIfNecessary(function, receiver)
-        return wrapFunctionCallableRef(expression.callableReference.getReferencedName(), rawCallableRef)
+        return context.wrapFunctionCallableRef(expression.callableReference.getReferencedName(), rawCallableRef)
     }
 
     private fun translateForProperty(
@@ -168,7 +168,7 @@ object CallableReferenceTranslator {
             null
         }
 
-        return wrapPropertyCallableRef(receiver, descriptor, expression.callableReference.getReferencedName(), getter, setter)
+        return context.wrapPropertyCallableRef(receiver, descriptor, expression.callableReference.getReferencedName(), getter, setter)
     }
 
     private fun isSetterVisible(descriptor: PropertyDescriptor, context: TranslationContext): Boolean {
@@ -225,7 +225,7 @@ object CallableReferenceTranslator {
         }
     }
 
-    private fun wrapPropertyCallableRef(
+    private fun TranslationContext.wrapPropertyCallableRef(
             receiver: JsExpression?,
             descriptor: PropertyDescriptor,
             name: String,
@@ -238,7 +238,7 @@ object CallableReferenceTranslator {
         }
         val nameLiteral = JsStringLiteral(name)
         val argCountLiteral = JsIntLiteral(argCount)
-        val invokeFun = JsNameRef(Namer.PROPERTY_CALLABLE_REF, Namer.kotlinObject())
+        val invokeFun = getReferenceToIntrinsic(Namer.PROPERTY_CALLABLE_REF)
         val invocation = JsInvocation(invokeFun, nameLiteral, argCountLiteral, getter)
         if (setter != null) {
             invocation.arguments += setter
@@ -246,13 +246,12 @@ object CallableReferenceTranslator {
         return invocation
     }
 
-    private fun wrapFunctionCallableRef(
+    private fun TranslationContext.wrapFunctionCallableRef(
             name: String,
             function: JsExpression
     ): JsExpression {
         val nameLiteral = JsStringLiteral(name)
-        val invokeName = Namer.FUNCTION_CALLABLE_REF
-        val invokeFun = JsNameRef(invokeName, Namer.kotlinObject())
+        val invokeFun = getReferenceToIntrinsic(Namer.FUNCTION_CALLABLE_REF)
         invokeFun.sideEffects = SideEffectKind.PURE
         val invocation = JsInvocation(invokeFun, nameLiteral, function)
         invocation.isCallableReference = true

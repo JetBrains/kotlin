@@ -204,13 +204,19 @@ class KotlinCoreEnvironment private constructor(
         val javaModuleFinder = CliJavaModuleFinder(jdkHome?.path?.let { path ->
             jrtFileSystem?.findFileByPath(path + URLUtil.JAR_SEPARATOR)
         })
+
+        val outputDirectory =
+                configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
+                ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
+
         classpathRootsResolver = ClasspathRootsResolver(
                 PsiManager.getInstance(project),
                 messageCollector,
                 configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
                 this::contentRootToVirtualFile,
                 javaModuleFinder,
-                !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
+                !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
+                outputDirectory?.let(this::findLocalFile)
         )
 
         val (initialRoots, javaModules) =
@@ -331,7 +337,8 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    internal fun findLocalFile(path: String) = applicationEnvironment.localFileSystem.findFileByPath(path)
+    internal fun findLocalFile(path: String): VirtualFile? =
+            applicationEnvironment.localFileSystem.findFileByPath(path)
 
     private fun findLocalFile(root: JvmContentRoot): VirtualFile? {
         return findLocalFile(root.file.absolutePath).also {

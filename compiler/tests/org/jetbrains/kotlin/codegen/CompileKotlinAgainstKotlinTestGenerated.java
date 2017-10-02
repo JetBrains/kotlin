@@ -168,6 +168,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("multifileClassWithTypealias.kt")
+    public void testMultifileClassWithTypealias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/multifileClassWithTypealias.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/nestedClass.kt");

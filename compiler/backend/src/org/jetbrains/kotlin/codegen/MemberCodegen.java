@@ -813,27 +813,37 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         );
 
         boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) && !isNonDefaultInterfaceMember(functionDescriptor, state);
-        int reg = hasDispatchReceiver ? 1 : 0;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
+
+        int accessorParam = (hasDispatchReceiver && !accessorIsConstructor) ? 1 : 0;
+        int reg = hasDispatchReceiver ? 1 : 0;
         if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
+            accessorParam = 0;
         }
-        else if (accessorIsConstructor || (accessorDescriptor != null && KotlinTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
+        else if (KotlinTypeMapper.isAccessor(accessorDescriptor) && (hasDispatchReceiver || accessorIsConstructor)) {
             if (!CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor)) {
                 iv.load(0, OBJECT_TYPE);
             }
         }
 
-        for (Type argType : callableMethod.getParameterTypes()) {
-            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(argType)) {
+        Type[] calleeParameterTypes = callableMethod.getParameterTypes();
+        Type[] accessorParameterTypes = accessorDescriptor != null
+                                        ? typeMapper.mapToCallableMethod(accessorDescriptor, false).getParameterTypes()
+                                        : calleeParameterTypes;
+        for (Type calleeArgType: calleeParameterTypes) {
+            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(calleeArgType)) {
                 iv.aconst(null);
             }
             else {
-                iv.load(reg, argType);
-                reg += argType.getSize();
+                Type accessorParameterType = accessorParameterTypes[accessorParam];
+                iv.load(reg, accessorParameterType);
+                StackValue.coerce(accessorParameterType, calleeArgType, iv);
+                reg += accessorParameterType.getSize();
             }
+            accessorParam++;
         }
 
         callableMethod.genInvokeInstruction(iv);

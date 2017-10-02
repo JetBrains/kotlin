@@ -316,6 +316,9 @@ public class BodyResolver {
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(SUPERTYPE_INITIALIZED_IN_INTERFACE.on(elementToMark));
                 }
+                if (descriptor.isExpect()) {
+                    trace.report(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS.on(elementToMark));
+                }
                 KtTypeReference typeReference = call.getTypeReference();
                 if (typeReference == null) return;
                 if (primaryConstructor == null) {

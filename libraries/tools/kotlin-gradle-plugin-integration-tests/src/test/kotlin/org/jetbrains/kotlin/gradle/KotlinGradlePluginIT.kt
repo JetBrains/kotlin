@@ -20,10 +20,7 @@ import org.gradle.api.logging.LogLevel
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
-import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
@@ -487,6 +484,27 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build", "clean", options = options) {
             assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testIncrementalTestCompile() {
+        val project = Project("kotlinProject", GRADLE_VERSION)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val joinerKt = project.projectDir.getFileByName("KotlinGreetingJoiner.kt")
+        joinerKt.modify {
+            it.replace("class KotlinGreetingJoiner", "internal class KotlinGreetingJoiner")
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            val testJoinerKt = project.projectDir.getFileByName("TestKotlinGreetingJoiner.kt")
+            assertCompiledKotlinSources(project.relativize(joinerKt, testJoinerKt))
         }
     }
 

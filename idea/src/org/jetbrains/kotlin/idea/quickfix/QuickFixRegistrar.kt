@@ -158,7 +158,7 @@ class QuickFixRegistrar : QuickFixContributor {
         FUNCTION_EXPECTED.registerFactory(InvokeImportFix)
 
         DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(DelegateAccessorsImportFix)
-        COMPONENT_FUNCTION_MISSING.registerFactory(ComponentsImportFix)
+        COMPONENT_FUNCTION_MISSING.registerFactory(ComponentsImportFix, AddDataModifierFix)
 
         NO_GET_METHOD.registerFactory(ArrayAccessorImportFix)
         NO_SET_METHOD.registerFactory(ArrayAccessorImportFix)
@@ -517,5 +517,8 @@ class QuickFixRegistrar : QuickFixContributor {
         NO_CONSTRUCTOR.registerFactory(RemoveNoConstructorFix)
 
         ANNOTATION_USED_AS_ANNOTATION_ARGUMENT.registerFactory(RemoveAtFromAnnotationArgument)
+
+        ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION.registerFactory(ReplaceWithArrayCallInAnnotationFix)
+        ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.registerFactory(SurroundWithArrayOfWithSpreadOperatorInFunctionFix)
     }
 }

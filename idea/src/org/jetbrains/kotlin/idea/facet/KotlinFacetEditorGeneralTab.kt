@@ -243,10 +243,7 @@ class KotlinFacetEditorGeneralTab(
 
     private fun restrictAPIVersions() {
         with(editor.compilerConfigurable) {
-            val targetPlatform = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
-            val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
-            val versionUpperBound = minOf(selectedLanguageVersion, libraryLevel)
-            restrictAPIVersions(versionUpperBound)
+            restrictAPIVersions(selectedLanguageVersion)
         }
     }
 

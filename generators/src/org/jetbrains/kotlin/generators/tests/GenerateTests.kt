@@ -517,6 +517,14 @@ fun main(args: Array<String>) {
             model("foreignAnnotationsJava8/tests")
         }
 
+        testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest> {
+            model("foreignAnnotationsJava8/tests")
+        }
+
+        testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTest> {
+            model("foreignAnnotationsJava8/tests")
+        }
+
         testClass<AbstractLoadJava8Test> {
             model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
             model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
@@ -525,6 +533,10 @@ fun main(args: Array<String>) {
         testClass<AbstractLoadJava8UsingJavacTest> {
             model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
             model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
+        }
+
+        testClass<AbstractLoadJava8WithFastClassReadingTest> {
+            model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
         }
 
         testClass<AbstractEnhancedSignaturesResolvedCallsTest> {

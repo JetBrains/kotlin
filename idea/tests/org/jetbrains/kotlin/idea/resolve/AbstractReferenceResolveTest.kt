@@ -99,8 +99,6 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
 
     override fun getProjectDescriptor(): LightProjectDescriptor? = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    override fun getTestDataPath() = "./"
-
     open val refMarkerText: String = "REF"
 
     companion object {

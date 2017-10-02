@@ -86,9 +86,9 @@ object ModifierCheckerCore {
             CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY),
             OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
             INFIX_KEYWORD     to EnumSet.of(FUNCTION),
-            HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
+            HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
             IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS),
-            EXPECT_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
+            EXPECT_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
             ACTUAL_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
     )
 
@@ -190,9 +190,6 @@ object ModifierCheckerCore {
         // 2. subclasses of a non-top-level sealed class must be declared inside the class
         // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
         result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
-
-        // lateinit is incompatible with header / expect
-        result += incompatibilityRegister(LATEINIT_KEYWORD, HEADER_KEYWORD, EXPECT_KEYWORD)
 
         // header / expect / impl / actual are all incompatible
         result += incompatibilityRegister(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD, ACTUAL_KEYWORD)

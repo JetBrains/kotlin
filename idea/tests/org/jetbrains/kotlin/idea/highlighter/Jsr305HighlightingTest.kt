@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -46,13 +45,36 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
                 super.configureModule(module, model)
                 module.createFacet(TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
                 val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
-                (facetSettings.compilerArguments as K2JVMCompilerArguments).jsr305 = Jsr305State.STRICT.description
+
+                facetSettings.apply {
+                    val jsrStateByTestName =
+                            Jsr305State.findByDescription(getTestName(true)) ?: return@apply
+
+                    compilerSettings!!.additionalArguments += " -Xjsr305=${jsrStateByTestName.description}"
+                    updateMergedArguments()
+                }
             }
         }
     }
 
-    fun testSimple() {
-        myFixture.configureByFile("A.kt")
+    fun testIgnore() {
+        doTest()
+    }
+
+    fun testWarn() {
+        doTest()
+    }
+
+    fun testStrict() {
+        doTest()
+    }
+
+    fun testDefault() {
+        doTest()
+    }
+
+    private fun doTest() {
+        myFixture.configureByFile("${getTestName(false)}.kt")
         myFixture.checkHighlighting()
     }
 

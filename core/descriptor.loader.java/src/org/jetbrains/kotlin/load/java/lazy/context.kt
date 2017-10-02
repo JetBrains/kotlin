@@ -76,12 +76,16 @@ class JavaTypeQualifiersByElementType(
         internal val nullabilityQualifiers: QualifierByApplicabilityType
 ) {
     operator fun get(
-            applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
-    ): JavaTypeQualifiers? =
-        (
-                nullabilityQualifiers[applicabilityType]
-                ?: nullabilityQualifiers[AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE]
-        )?.let { JavaTypeQualifiers(it.qualifier, null, isNotNullTypeParameter = false, isNullabilityQualifierForWarning = it.isForWarningOnly) }
+            applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType?
+    ): JavaTypeQualifiers? {
+        val nullabilityQualifierWithMigrationStatus = nullabilityQualifiers[applicabilityType] ?: return null
+
+        return JavaTypeQualifiers(
+                nullabilityQualifierWithMigrationStatus.qualifier, null,
+                isNotNullTypeParameter = false,
+                isNullabilityQualifierForWarning = nullabilityQualifierWithMigrationStatus.isForWarningOnly
+        )
+    }
 }
 
 class LazyJavaResolverContext internal constructor(
@@ -197,3 +201,13 @@ fun LazyJavaResolverContext.childForClassOrPackage(
         containingDeclaration, typeParameterOwner, typeParametersIndexOffset,
         lazy(LazyThreadSafetyMode.NONE) { computeNewDefaultTypeQualifiers(containingDeclaration.annotations) }
 )
+
+fun LazyJavaResolverContext.copyWithNewDefaultTypeQualifiers(
+        additionalAnnotations: Annotations
+) = if (additionalAnnotations.isEmpty())
+        this
+    else
+        LazyJavaResolverContext(
+            components, typeParameterResolver,
+            lazy(LazyThreadSafetyMode.NONE) { computeNewDefaultTypeQualifiers(additionalAnnotations) }
+        )

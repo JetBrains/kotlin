@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.config.JsConfig;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.translate.declaration.ClassModelGenerator;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
@@ -315,6 +316,27 @@ public class TranslationContext {
         }
 
         return name;
+    }
+
+    @NotNull
+    public JsExpression getReferenceToIntrinsic(@NotNull String intrinsicName) {
+        JsExpression result;
+        if (inlineFunctionContext == null || !isPublicInlineFunction()) {
+            result = staticContext.getReferenceToIntrinsic(intrinsicName);
+        }
+        else {
+            String tag = "intrinsic:" + intrinsicName;
+            result = pureFqn(inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
+                JsExpression imported = TranslationUtils.getIntrinsicFqn(intrinsicName);
+
+                JsName name = JsScope.declareTemporaryName(NameSuggestion.sanitizeName(intrinsicName));
+                MetadataProperties.setImported(name, true);
+                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(name, imported));
+                return name;
+            }), null);
+        }
+
+        return result;
     }
 
     @NotNull

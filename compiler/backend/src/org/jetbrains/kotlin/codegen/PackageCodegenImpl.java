@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -98,9 +98,7 @@ public class PackageCodegenImpl implements PackageCodegen {
 
         List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
-        for (KtDeclaration declaration : file.getDeclarations()) {
-            if (PsiUtilsKt.hasExpectModifier(declaration)) continue;
-
+        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(file)) {
             if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
                 generatePackagePart = true;
             }

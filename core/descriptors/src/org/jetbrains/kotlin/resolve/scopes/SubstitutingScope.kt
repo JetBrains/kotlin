@@ -81,6 +81,9 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
 
     override fun getFunctionNames() = workerScope.getFunctionNames()
     override fun getVariableNames() = workerScope.getVariableNames()
+    override fun getClassifierNames() = workerScope.getClassifierNames()
+
+    override fun definitelyDoesNotContainName(name: Name) = workerScope.definitelyDoesNotContainName(name)
 
     override fun printScopeStructure(p: Printer) {
         p.println(this::class.java.simpleName, " {")

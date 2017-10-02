@@ -3,19 +3,19 @@ fun bar(f: () -> Unit) = f()
 ---------------------
 L0:
   1 <START>                                           INIT: in: {} out: {}
-    v(f: () -> Unit)                                  INIT: in: {} out: {f=D}
-    magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>    INIT: in: {f=D} out: {f=D}
-    w(f|<v0>)                                         INIT: in: {f=D} out: {f=ID}     USE: in: {f=READ} out: {f=READ}
-    r(f) -> <v1>                                      INIT: in: {f=ID} out: {f=ID}    USE: in: {} out: {f=READ}
+    v(f: () -> Unit)                                  INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>    INIT: in: {} out: {}
+    w(f|<v0>)                                         INIT: in: {} out: {}
+    r(f) -> <v1>                                      INIT: in: {} out: {}
     mark(f())
     call(f(), invoke|<v1>) -> <v2>
     ret(*|<v2>) L1
 L1:
     <END>
 error:
-    <ERROR>                                           INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                            INIT: in: {f=I?} out: {f=I?}    USE: in: {} out: {}
+    <SINK>                                                                    USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {

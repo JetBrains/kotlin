@@ -78,7 +78,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
                 }
             }
 
-            doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, testPath + ".after")
+            doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, File(testPath).name + ".after")
         }
         finally {
             settingManager.dropTemporarySettings()

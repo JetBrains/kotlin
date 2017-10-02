@@ -23,11 +23,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
+import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.getSourceRoot
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -117,7 +120,11 @@ class MoveDeclarationsProcessor(
                 mover
         )
 
-        val declarationUsages = declarationProcessor.findUsages().toList()
+        val declarationUsages = project.runSynchronouslyWithProgress(RefactoringBundle.message("progress.text"), true) {
+            runReadAction {
+                declarationProcessor.findUsages().toList()
+            }
+        } ?: return
 
         project.executeWriteCommand(commandName, commandGroupId) {
             project.runRefactoringAndKeepDelayedRequests { declarationProcessor.execute(declarationUsages) }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.util.projectStructure
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootManager
@@ -25,6 +26,8 @@ import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import java.io.File
 
 fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
@@ -67,6 +70,7 @@ fun Library.ModifiableModel.replaceFileRoot(oldFile: File, newFile: File) {
     replaceInRootType(OrderRootType.SOURCES)
 }
 
+fun VirtualFile.getModule(project: Project) = ModuleUtilCore.findModuleForFile(this, project)
 
-
-
+val PsiElement.module
+    get() = ModuleUtilCore.findModuleForPsiElement(this)
