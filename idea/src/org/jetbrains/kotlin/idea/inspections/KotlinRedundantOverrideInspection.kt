@@ -19,11 +19,17 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.actions.generate.findDeclaredFunction
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 
 class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
@@ -59,6 +65,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
                     val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
                     if (!isSameFunctionName(superCallElement, function)) return
                     if (!isSameArguments(superCallElement, function)) return
+                    if (function.isDefinedInDelegatedSuperType()) return
 
                     val descriptor = holder.manager.createProblemDescriptor(
                             function,
@@ -97,5 +104,22 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
 
     companion object {
         private val MODIFIER_EXCLUDE_OVERRIDE = KtTokens.MODIFIER_KEYWORDS_ARRAY.asList() - KtTokens.OVERRIDE_KEYWORD
+    }
+}
+
+private fun KtNamedFunction.isDefinedInDelegatedSuperType(): Boolean {
+    val context = analyze()
+    return containingClassOrObject?.superTypeListEntries?.any { entry ->
+        val superType = (entry as? KtDelegatedSuperTypeEntry)?.typeReference?.let { context[BindingContext.TYPE, it] }
+        val superTypeDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor
+        superTypeDescriptor?.let { isDefinedIn(listOf(it)) } ?: false
+    } ?: false
+}
+
+private fun KtNamedFunction.isDefinedIn(classDescriptors: List<ClassDescriptor>): Boolean {
+    val functionName = name ?: return false
+    return classDescriptors.any {
+        it.findDeclaredFunction(functionName, false) { it.valueParameters == valueParameters } != null
+        || isDefinedIn(it.getSuperInterfaces())
     }
 }

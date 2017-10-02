@@ -1,0 +1,14 @@
+// PROBLEM: none
+interface Foo {
+    fun test()
+}
+
+open class Bar : Foo {
+    override fun test() {}
+    open fun test(a: String) {}
+    open fun test2() {}
+}
+
+class Baz(val foo: Foo) : Bar(), Foo by foo {
+    override <caret>fun test() = super.test()
+}
