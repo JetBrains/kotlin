@@ -65,7 +65,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
         get() = compilerClasspath?.takeIf { it.isNotEmpty() }
                 ?: compilerJarFile?.let {
                     // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
-                    listOf(it) + findKotlinCompilerClasspath(project).filter { it.name.startsWith("kotlin-compiler") }
+                    listOf(it) + findKotlinCompilerClasspath(project).filter { !it.name.startsWith("kotlin-compiler") }
                 }
                 ?: findKotlinCompilerClasspath(project).takeIf { it.isNotEmpty() }
                 ?: throw IllegalStateException("Could not find Kotlin Compiler classpath. Please specify $name.compilerClasspath")

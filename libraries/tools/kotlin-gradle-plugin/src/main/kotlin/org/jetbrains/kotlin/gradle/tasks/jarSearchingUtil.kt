@@ -91,7 +91,7 @@ private fun findJarByClass(klass: Class<*>): File? {
 private fun findKotlinModuleJar(project: Project, expectedClassName: String, moduleId: String): List<File> {
     val pluginVersion = pluginVersionFromAppliedPlugin(project)
 
-    val filesToCheck = sequenceOf(pluginVersion?.let(::getCompilerFromClassLoader)) +
+    val filesToCheck = sequenceOf(pluginVersion?.let { version -> getModuleFromClassLoader(moduleId, version) }) +
                        Sequence { findPotentialModuleJars(project, moduleId).iterator() } //call the body only when queried
     val entryToFind = expectedClassName.replace(".", "/") + ".class"
     return filesToCheck.filterNotNull().firstOrNull { it.hasEntry(entryToFind) }?.let { listOf(it) } ?: emptyList()
@@ -100,10 +100,10 @@ private fun findKotlinModuleJar(project: Project, expectedClassName: String, mod
 private fun pluginVersionFromAppliedPlugin(project: Project): String? =
         project.plugins.filterIsInstance<KotlinBasePluginWrapper>().firstOrNull()?.kotlinPluginVersion
 
-private fun getCompilerFromClassLoader(pluginVersion: String): File? {
+private fun getModuleFromClassLoader(moduleId: String, moduleVersion: String): File? {
     val urlClassLoader = KotlinPlugin::class.java.classLoader as? URLClassLoader ?: return null
     return urlClassLoader.urLs
-            .firstOrNull { it.toString().endsWith("kotlin-compiler-embeddable-$pluginVersion.jar") }
+            .firstOrNull { it.toString().endsWith("$moduleId-$moduleVersion.jar") }
             ?.let { File(it.toURI()) }
             ?.takeIf(File::exists)
 }
