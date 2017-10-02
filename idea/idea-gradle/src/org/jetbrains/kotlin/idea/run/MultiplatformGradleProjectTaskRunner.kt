@@ -73,7 +73,7 @@ class MultiplatformGradleProjectTaskRunner : GradleProjectTaskRunner() {
     ) {
         val configuration = context.runConfiguration
         if (configuration is ModuleBasedConfiguration<*> &&
-            (configuration.configurationModule is JavaRunConfigurationModule || configuration is JetRunConfiguration)) {
+            (configuration.configurationModule is JavaRunConfigurationModule || configuration is KotlinRunConfiguration)) {
 
             val module = configuration.configurationModule.module
             if (module?.targetPlatform == TargetPlatformKind.Common) {

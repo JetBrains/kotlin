@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfiguration>(JetRunConfigurationType.getInstance()) {
+class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfiguration>(KotlinRunConfigurationType.getInstance()) {
 
-    override fun setupConfigurationFromContext(configuration: JetRunConfiguration,
+    override fun setupConfigurationFromContext(configuration: KotlinRunConfiguration,
                                                context: ConfigurationContext,
                                                sourceElement: Ref<PsiElement>): Boolean {
         val location = context.location ?: return false
@@ -70,7 +70,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfigurat
         return getEntryPointContainer(locationElement)
     }
 
-    override fun isConfigurationFromContext(configuration: JetRunConfiguration, context: ConfigurationContext): Boolean {
+    override fun isConfigurationFromContext(configuration: KotlinRunConfiguration, context: ConfigurationContext): Boolean {
         val startClassFQName = getStartClassFqName(getEntryPointContainer(context.location)) ?: return false
 
         return configuration.runClass == startClassFQName &&

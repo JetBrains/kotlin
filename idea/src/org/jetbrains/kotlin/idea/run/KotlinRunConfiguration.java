@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.util.*;
 
-public class JetRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
+public class KotlinRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
     implements CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
 
     public String MAIN_CLASS_NAME;
@@ -77,7 +77,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigu
     private Map<String, String> myEnvs = new LinkedHashMap<String, String>();
     public boolean PASS_PARENT_ENVS = true;
 
-    public JetRunConfiguration(String name, JavaRunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
+    public KotlinRunConfiguration(String name, JavaRunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
         super(name, runConfigurationModule, factory);
         runConfigurationModule.init();
     }
@@ -96,10 +96,10 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigu
     @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        SettingsEditorGroup<JetRunConfiguration> group = new SettingsEditorGroup<JetRunConfiguration>();
-        group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new JetRunConfigurationEditor(getProject()));
+        SettingsEditorGroup<KotlinRunConfiguration> group = new SettingsEditorGroup<KotlinRunConfiguration>();
+        group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new KotlinRunConfigurationEditor(getProject()));
         JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
-        group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<JetRunConfiguration>());
+        group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<KotlinRunConfiguration>());
         return group;
     }
 
@@ -337,8 +337,8 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigu
         return null;
     }
 
-    private static class MyJavaCommandLineState extends BaseJavaApplicationCommandLineState<JetRunConfiguration> {
-        public MyJavaCommandLineState(@NotNull JetRunConfiguration configuration, ExecutionEnvironment environment) {
+    private static class MyJavaCommandLineState extends BaseJavaApplicationCommandLineState<KotlinRunConfiguration> {
+        public MyJavaCommandLineState(@NotNull KotlinRunConfiguration configuration, ExecutionEnvironment environment) {
             super(environment, configuration);
         }
 

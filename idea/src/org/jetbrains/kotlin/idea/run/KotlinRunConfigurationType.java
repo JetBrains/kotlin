@@ -22,25 +22,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinIcons;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 
-public class JetRunConfigurationType extends ConfigurationTypeBase {
-    public static JetRunConfigurationType getInstance() {
-        return ConfigurationTypeUtil.findConfigurationType(JetRunConfigurationType.class);
+public class KotlinRunConfigurationType extends ConfigurationTypeBase {
+    public static KotlinRunConfigurationType getInstance() {
+        return ConfigurationTypeUtil.findConfigurationType(KotlinRunConfigurationType.class);
     }
 
-    public JetRunConfigurationType() {
-        super("JetRunConfigurationType", KotlinLanguage.NAME, KotlinLanguage.NAME, KotlinIcons.SMALL_LOGO_13);
-        addFactory(new JetRunConfigurationFactory(this));
+    public KotlinRunConfigurationType() {
+        super("KotlinRunConfigurationType", KotlinLanguage.NAME, KotlinLanguage.NAME, KotlinIcons.SMALL_LOGO_13);
+        addFactory(new KotlinRunConfigurationFactory(this));
     }
 
-    private static class JetRunConfigurationFactory extends ConfigurationFactory {
-        protected JetRunConfigurationFactory(@NotNull ConfigurationType type) {
+    private static class KotlinRunConfigurationFactory extends ConfigurationFactory {
+        protected KotlinRunConfigurationFactory(@NotNull ConfigurationType type) {
             super(type);
         }
 
         @NotNull
         @Override
         public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-            return new JetRunConfiguration("", new JavaRunConfigurationModule(project, true), this);
+            return new KotlinRunConfiguration("", new JavaRunConfigurationModule(project, true), this);
         }
     }
 }

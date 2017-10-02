@@ -35,7 +35,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguration> implements PanelWithAnchor {
+public class KotlinRunConfigurationEditor extends SettingsEditor<KotlinRunConfiguration> implements PanelWithAnchor {
     private JPanel mainPanel;
     private LabeledComponent<JTextField> mainClass;
 
@@ -46,7 +46,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     private final ConfigurationModuleSelector moduleSelector;
     private JComponent anchor;
 
-    public JetRunConfigurationEditor(Project project) {
+    public KotlinRunConfigurationEditor(Project project) {
         moduleSelector = new ConfigurationModuleSelector(project, moduleChooser.getComponent());
         jrePathEditor.setDefaultJreSelector(DefaultJreSelector.fromModuleDependencies(moduleChooser.getComponent(), false));
         commonProgramParameters.setModuleContext(moduleSelector.getModule());
@@ -61,7 +61,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     }
 
     @Override
-    protected void applyEditorTo(JetRunConfiguration configuration) throws ConfigurationException {
+    protected void applyEditorTo(KotlinRunConfiguration configuration) throws ConfigurationException {
         commonProgramParameters.applyTo(configuration);
         moduleSelector.applyTo(configuration);
 
@@ -74,7 +74,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     }
 
     @Override
-    protected void resetEditorFrom(JetRunConfiguration configuration) {
+    protected void resetEditorFrom(KotlinRunConfiguration configuration) {
         commonProgramParameters.reset(configuration);
         moduleSelector.reset(configuration);
         mainClass.getComponent().setText(configuration.MAIN_CLASS_NAME != null ? configuration.MAIN_CLASS_NAME.replaceAll("\\$", "\\.") : "");

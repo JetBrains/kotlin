@@ -33,7 +33,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.idea.run.JetRunConfiguration
+import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -42,7 +42,7 @@ import java.io.File
 class KotlinCoverageExtension : JavaCoverageEngineExtension() {
     private val LOG = Logger.getInstance(KotlinCoverageExtension::class.java)
 
-    override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is JetRunConfiguration
+    override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is KotlinRunConfiguration
 
     override fun suggestQualifiedName(sourceFile: PsiFile, classes: Array<out PsiClass>, names: MutableSet<String>): Boolean {
         if (sourceFile is KtFile) {

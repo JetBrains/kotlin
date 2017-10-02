@@ -123,10 +123,10 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
         ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
 
-        val jetRunConfiguration = createConfigurationFromMain("some.test.main")
-        jetRunConfiguration.setModule(moduleWithDependency)
+        val kotlinRunConfiguration = createConfigurationFromMain("some.test.main")
+        kotlinRunConfiguration.setModule(moduleWithDependency)
 
-        val javaParameters = getJavaRunParameters(jetRunConfiguration)
+        val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
 
         Assert.assertTrue(javaParameters.classPath.rootDirs.contains(dependencyModuleSrcDir))
         Assert.assertTrue(javaParameters.classPath.rootDirs.contains(moduleWithDependencySrcDir))
@@ -212,7 +212,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                             val dataContext = MapDataContext()
                             dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
                             val context = ConfigurationContext.getFromContext(dataContext)
-                            val actualClass = (context.configuration?.configuration as? JetRunConfiguration)?.runClass
+                            val actualClass = (context.configuration?.configuration as? KotlinRunConfiguration)?.runClass
                             if (actualClass != null) {
                                 actualClasses.add(actualClass)
                             }
@@ -226,16 +226,16 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
         }
     }
 
-    private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
+    private fun createConfigurationFromMain(mainFqn: String): KotlinRunConfiguration {
         val mainFunction = KotlinTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
 
-        return createConfigurationFromElement(mainFunction) as JetRunConfiguration
+        return createConfigurationFromElement(mainFunction) as KotlinRunConfiguration
     }
 
-    private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): JetRunConfiguration {
+    private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): KotlinRunConfiguration {
         val obj = KotlinFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
         val mainFunction = obj.declarations.single { it is KtFunction && it.getName() == "main" }
-        return createConfigurationFromElement(mainFunction, save) as JetRunConfiguration
+        return createConfigurationFromElement(mainFunction, save) as KotlinRunConfiguration
     }
 
     private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
