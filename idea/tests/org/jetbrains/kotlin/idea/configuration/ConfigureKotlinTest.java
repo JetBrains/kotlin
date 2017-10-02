@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.RootPolicy;
@@ -234,6 +235,19 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("1.7", arguments.getJvmTarget());
         assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    public void testImplementsDependency() {
+        ModuleManager moduleManager = ModuleManager.getInstance(myProject);
+
+        Module module1 = moduleManager.findModuleByName("module1");
+        assert module1 != null;
+
+        Module module2 = moduleManager.findModuleByName("module2");
+        assert module2 != null;
+
+        assertEquals(KotlinFacet.Companion.get(module1).getConfiguration().getSettings().getImplementedModuleName(), null);
+        assertEquals(KotlinFacet.Companion.get(module2).getConfiguration().getSettings().getImplementedModuleName(), "module1");
     }
 
     private void configureFacetAndCheckJvm(JvmTarget jvmTarget) {

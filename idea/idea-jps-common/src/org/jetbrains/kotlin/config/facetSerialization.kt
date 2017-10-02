@@ -97,7 +97,7 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         val platformName = element.getAttributeValue("platform")
         val platformKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
         element.getChild("implements")?.let {
-            implementedModuleName = (element.content.firstOrNull() as? Text)?.textTrim
+            implementedModuleName = (it.content.firstOrNull() as? Text)?.textTrim
         }
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
