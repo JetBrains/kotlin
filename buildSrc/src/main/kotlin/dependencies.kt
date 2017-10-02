@@ -8,9 +8,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.*
 import java.io.File
-import java.util.*
 
-val Project.bootstrapKotlinVersion: String get() = this.property("bootstrap.kotlin.version") as String
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
