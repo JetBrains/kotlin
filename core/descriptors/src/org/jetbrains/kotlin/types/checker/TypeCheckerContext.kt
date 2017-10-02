@@ -52,7 +52,7 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowe
         supertypesLocked = true
 
         if (supertypesDeque == null) {
-            supertypesDeque = ArrayDeque()
+            supertypesDeque = ArrayDeque(4)
         }
         if (supertypesSet == null) {
             supertypesSet = SmartSet.create()
