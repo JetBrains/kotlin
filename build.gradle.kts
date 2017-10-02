@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
     val repos = listOfNotNull(
-            System.getProperty("bootstrap.kotlin.repo"),
+            property("bootstrap.kotlin.repo") as String,
             "https://repo.gradle.org/gradle/repo",
             "https://plugins.gradle.org/m2",
             "http://repository.jetbrains.com/utils/")
@@ -26,7 +26,7 @@ buildscript {
 
     dependencies {
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
-        classpath(kotlinDep("gradle-plugin"))
+        classpath(kotlinDep("gradle-plugin", bootstrapKotlinVersion))
     }
 }
 
@@ -70,7 +70,7 @@ repositories {
 }
 
 dependencies {
-    bootstrapCompileCfg(kotlinDep("compiler-embeddable"))
+    bootstrapCompileCfg(kotlinDep("compiler-embeddable", bootstrapKotlinVersion))
 }
 
 val commonBuildDir = File(rootDir, "build")

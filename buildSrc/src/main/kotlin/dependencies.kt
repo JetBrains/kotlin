@@ -7,15 +7,10 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.*
-import org.gradle.plugin.use.PluginDependenciesSpec
-import org.gradle.plugin.use.PluginDependencySpec
 import java.io.File
 import java.util.*
 
-val bootstrapKotlinVersion: String = System.getProperty("bootstrap.kotlin.version") ?: embeddedKotlinVersion
-
-fun PluginDependenciesSpec.kotlin(module: String, version: String? = null): PluginDependencySpec =
-        id("org.jetbrains.kotlin.$module") version (version ?: bootstrapKotlinVersion)
+val Project.bootstrapKotlinVersion: String get() = this.property("bootstrap.kotlin.version") as String
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
@@ -63,7 +58,7 @@ fun Project.ideaPluginDeps(vararg artifactBaseNames: String, plugin: String, sub
 fun Project.ideaUltimatePluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib"): ConfigurableFileCollection =
         ideaUltimateSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir")
 
-fun Project.kotlinDep(artifactBaseName: String, version: String? = null): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:${version ?: bootstrapKotlinVersion}"
+fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
 fun DependencyHandler.projectDist(name: String): Dependency = project(name, configuration = "distJar").apply { isTransitive = false }
 fun DependencyHandler.projectTests(name: String): Dependency = project(name, configuration = "tests-jar").apply { isTransitive = false }
