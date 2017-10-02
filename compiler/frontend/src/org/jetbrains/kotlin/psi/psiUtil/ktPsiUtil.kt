@@ -460,7 +460,7 @@ fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
 
 fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
 
-private val BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN = Regex("[a-zA-Z0-9_].*")
+private val BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN = Regex("([a-zA-Z0-9_]|[^\\p{ASCII}]).*")
 
 fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
     val entryText = element?.text ?: return true
