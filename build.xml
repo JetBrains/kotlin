@@ -1022,6 +1022,9 @@
         <copy file="${basedir}/libraries/stdlib/src/kotlin/jvm/JvmVersion.kt" todir="${output}/mock-runtime-src"/>
         <copy file="${basedir}/libraries/stdlib/src/kotlin/util/Standard.kt" todir="${output}/mock-runtime-src"/>
         <copy file="${basedir}/libraries/stdlib/src/kotlin/internal/Annotations.kt" todir="${output}/mock-runtime-src"/>
+        <!-- Contracts -->
+        <copy file="${basedir}/libraries/stdlib/src/kotlin/internal/contracts/ContractBuilder.kt" todir="${output}/mock-runtime-src"/>
+        <copy file="${basedir}/libraries/stdlib/src/kotlin/internal/contracts/Effect.kt" todir="${output}/mock-runtime-src"/>
 
         <new-kotlinc output="${output}/classes/mock-runtime" moduleName="kotlin-stdlib">
             <src>

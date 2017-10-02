@@ -36,7 +36,9 @@ val copySources by task<Copy> {
             .include("kotlin/collections/TypeAliases.kt",
                     "kotlin/jvm/JvmVersion.kt",
                     "kotlin/util/Standard.kt",
-                    "kotlin/internal/Annotations.kt")
+                    "kotlin/internal/Annotations.kt",
+                    "kotlin/internal/contracts/ContractBuilder.kt",
+                    "kotlin/internal/contracts/Effect.kt")
     into(File(buildDir, "src"))
 }
 
