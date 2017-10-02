@@ -1466,6 +1466,30 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("delegatedMemberHidesSuperTypeOverride.kt")
+        public void testDelegatedMemberHidesSuperTypeOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/delegatedMemberHidesSuperTypeOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatedMemberHidesSuperTypeOverride2.kt")
+        public void testDelegatedMemberHidesSuperTypeOverride2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/delegatedMemberHidesSuperTypeOverride2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatedMemberHidesSuperTypeOverride3.kt")
+        public void testDelegatedMemberHidesSuperTypeOverride3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/delegatedMemberHidesSuperTypeOverride3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatedMemberHidesSuperTypeOverride4.kt")
+        public void testDelegatedMemberHidesSuperTypeOverride4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/delegatedMemberHidesSuperTypeOverride4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notCallSuper.kt")
         public void testNotCallSuper() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantOverride/notCallSuper.kt");

@@ -19,11 +19,17 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
@@ -59,6 +65,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
                     val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
                     if (!isSameFunctionName(superCallElement, function)) return
                     if (!isSameArguments(superCallElement, function)) return
+                    if (function.isDefinedInDelegatedSuperType(qualifiedExpression)) return
 
                     val descriptor = holder.manager.createProblemDescriptor(
                             function,
@@ -97,5 +104,26 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
 
     companion object {
         private val MODIFIER_EXCLUDE_OVERRIDE = KtTokens.MODIFIER_KEYWORDS_ARRAY.asList() - KtTokens.OVERRIDE_KEYWORD
+    }
+}
+
+private fun KtNamedFunction.isDefinedInDelegatedSuperType(superQualifiedExpression: KtDotQualifiedExpression): Boolean {
+    val delegatedSuperTypeEntries =
+            containingClassOrObject?.superTypeListEntries?.filterIsInstance<KtDelegatedSuperTypeEntry>() ?: return false
+    if (delegatedSuperTypeEntries.isEmpty()) return false
+
+    val context = superQualifiedExpression.analyze()
+    val delegatedSuperTypes = delegatedSuperTypeEntries.mapNotNull { entry ->
+        context[BindingContext.TYPE, entry.typeReference]
+    }
+
+    val superResolvedCall = superQualifiedExpression.getResolvedCall(context) ?: return false
+    val superCallResolvedDescriptor = superResolvedCall.resultingDescriptor
+    val superCallResolvedReceiverTypes = superCallResolvedDescriptor.overriddenDescriptors.mapNotNull { it.dispatchReceiverParameter?.type }
+
+    return delegatedSuperTypes.any { delegatedSuperType ->
+        superCallResolvedReceiverTypes.any { superCallReceiverType ->
+            delegatedSuperType.isSubtypeOf(superCallReceiverType)
+        }
     }
 }
