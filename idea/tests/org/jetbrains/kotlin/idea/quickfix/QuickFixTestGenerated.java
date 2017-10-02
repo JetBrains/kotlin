@@ -954,6 +954,87 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/assignToProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AssignToProperty extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAssignToProperty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignToProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("differentNameProperty.kt")
+        public void testDifferentNameProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/differentNameProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentNameProperty2.kt")
+        public void testDifferentNameProperty2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/differentNameProperty2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentTypeProperty.kt")
+        public void testDifferentTypeProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/differentTypeProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentTypeProperty2.kt")
+        public void testDifferentTypeProperty2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/differentTypeProperty2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inSecondaryConstructor.kt")
+        public void testInSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/inSecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noProperty.kt")
+        public void testNoProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/noProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("qualifiedThis.kt")
+        public void testQualifiedThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/qualifiedThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameProperty.kt")
+        public void testSameProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/sameProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameProperty2.kt")
+        public void testSameProperty2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/sameProperty2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameProperty3.kt")
+        public void testSameProperty3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/sameProperty3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valProperty.kt")
+        public void testValProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/valProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valProperty2.kt")
+        public void testValProperty2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/assignToProperty/valProperty2.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/autoImports")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
