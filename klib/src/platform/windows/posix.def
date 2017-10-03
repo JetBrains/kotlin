@@ -1,3 +1,31 @@
 package = platform.posix
-headers = stdio.h
+headers = stdio.h Windef.h Winsock2.h Ws2tcpip.h Ws2def.h io.h
 compilerOpts = -DUNICODE -Wno-incompatible-pointer-types -Wno-deprecated-declarations
+linkerOpts = -lWs2_32
+
+---
+// Wrapper to access errno variable.
+static int posix_errno() {
+    return errno;
+}
+
+// Wrapper to access h_errno variable.
+static int posix_h_errno() {
+    return h_errno;
+}
+
+static short posix_htons(short x) {
+    return htons(x);
+}
+
+static void posix_FD_ZERO(fd_set *set) {
+    FD_ZERO(set);
+}
+
+static void posix_FD_SET(int bit, fd_set *set) {
+    FD_SET(bit, set);
+}
+
+static int posix_FD_ISSET(int bit, fd_set *set) {
+    return FD_ISSET(bit, set);
+}
