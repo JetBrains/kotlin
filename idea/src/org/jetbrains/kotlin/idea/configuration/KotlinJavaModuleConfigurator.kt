@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -113,6 +112,18 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
                 }
             }
         }
+    }
+
+    override fun configureModule(
+            module: Module,
+            classesPath: String,
+            sourcesPath: String,
+            collector: NotificationMessageCollector,
+            forceJarState: FileState?,
+            useBundled: Boolean
+    ) {
+        super.configureModule(module, classesPath, sourcesPath, collector, forceJarState, useBundled)
+        addStdlibToJavaModuleInfo(module, collector)
     }
 
     companion object {

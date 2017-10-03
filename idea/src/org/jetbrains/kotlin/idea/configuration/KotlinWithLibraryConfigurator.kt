@@ -17,21 +17,17 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.libraries.*
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiJavaModule
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -41,16 +37,12 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
-import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
 import org.jetbrains.kotlin.idea.quickfix.askUpdateRuntime
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
-import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.findAllUsedLibraries
 import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
-import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
 import java.io.File
 import java.util.*
 
@@ -115,7 +107,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
         val collector = createConfigureKotlinNotificationCollector(project)
         for (module in modulesToConfigure) {
-            configureModuleWithLibrary(module, defaultPathToJar, copyLibraryIntoPath, collector)
+            configureModule(module, defaultPathToJar, copyLibraryIntoPath, collector)
         }
 
         configureKotlinSettings(modulesToConfigure)
@@ -128,11 +120,11 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         val defaultPathToJar = getDefaultPathToJarFile(project)
         val collector = createConfigureKotlinNotificationCollector(project)
         for (module in ModuleManager.getInstance(project).modules) {
-            configureModuleWithLibrary(module, defaultPathToJar, null, collector)
+            configureModule(module, defaultPathToJar, null, collector)
         }
     }
 
-    protected fun configureModuleWithLibrary(
+    protected fun configureModule(
             module: Module,
             defaultPath: String,
             pathFromDialog: String?,
@@ -140,10 +132,21 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     ) {
         val classesPath = getPathToCopyFileTo(module.project, OrderRootType.CLASSES, defaultPath, pathFromDialog)
         val sourcesPath = getPathToCopyFileTo(module.project, OrderRootType.SOURCES, defaultPath, pathFromDialog)
-        configureModuleWithLibrary(module, classesPath, sourcesPath, collector, useBundled = pathFromDialog == null)
+        configureModule(module, classesPath, sourcesPath, collector, useBundled = pathFromDialog == null)
     }
 
-    fun configureModuleWithLibrary(
+    open fun configureModule(
+            module: Module,
+            classesPath: String,
+            sourcesPath: String,
+            collector: NotificationMessageCollector,
+            forceJarState: FileState? = null,
+            useBundled: Boolean = false
+    ) {
+        configureModuleWithLibrary(module, classesPath, sourcesPath, collector, forceJarState, useBundled)
+    }
+
+    private fun configureModuleWithLibrary(
             module: Module,
             classesPath: String,
             sourcesPath: String,
@@ -176,24 +179,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         ApplicationManager.getApplication().runWriteAction { model.commit() }
 
         addLibraryToModuleIfNeeded(module, library, collector)
-
-        updateModuleInfo(module, collector)
     }
 
-    private fun updateModuleInfo(module: Module, collector: NotificationMessageCollector) {
-        if (module.sdk?.version?.isAtLeast(JavaSdkVersion.JDK_1_9) != true) return
-
-        val project = module.project
-        val javaModule: PsiJavaModule = findFirstPsiJavaModule(module) ?: return
-
-        val success = WriteCommandAction.runWriteCommandAction(project, Computable<Boolean> {
-            KotlinAddRequiredModuleFix.addModuleRequirement(javaModule, KOTLIN_STDLIB_MODULE_NAME)
-        })
-
-        if (success) {
-            collector.addMessage("Added $KOTLIN_STDLIB_MODULE_NAME requirement to module-info in ${module.name}")
-        }
-    }
 
     fun configureLibraryJar(
             library: Library.ModifiableModel,

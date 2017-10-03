@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -28,6 +30,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -35,12 +38,17 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.util.projectStructure.sdk
+import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
 import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
+import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.utils.ifEmpty
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
@@ -273,5 +281,20 @@ private class LibraryKindSearchScope(val module: Module,
             return (orderEntry.library as LibraryEx).kind == libraryKind
         }
         return true
+    }
+}
+
+fun addStdlibToJavaModuleInfo(module: Module, collector: NotificationMessageCollector) {
+    if (module.sdk?.version?.isAtLeast(JavaSdkVersion.JDK_1_9) != true) return
+
+    val project = module.project
+    val javaModule: PsiJavaModule = findFirstPsiJavaModule(module) ?: return
+
+    val success = WriteCommandAction.runWriteCommandAction(project, Computable<Boolean> {
+        KotlinAddRequiredModuleFix.addModuleRequirement(javaModule, KOTLIN_STDLIB_MODULE_NAME)
+    })
+
+    if (success) {
+        collector.addMessage("Added ${KOTLIN_STDLIB_MODULE_NAME} requirement to module-info in ${module.name}")
     }
 }
