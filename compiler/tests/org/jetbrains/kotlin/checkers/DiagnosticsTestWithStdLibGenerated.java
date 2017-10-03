@@ -1031,6 +1031,45 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FromStdlib extends AbstractDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInFromStdlib() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("check.kt")
+            public void testCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/check.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fromStandardKt.kt")
+            public void testFromStandardKt() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/fromStandardKt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNullOrBlank.kt")
+            public void testIsNullOrBlank() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/isNullOrBlank.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNullOrEmpty.kt")
+            public void testIsNullOrEmpty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/isNullOrEmpty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("require.kt")
+            public void testRequire() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/require.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
