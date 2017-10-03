@@ -137,7 +137,8 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
             val d = DiagnosticFactory.cast(diagnostic, Errors.NO_ACTUAL_FOR_EXPECT)
             val declaration = d.psiElement as? KtNamedDeclaration ?: return null
             val compatibility = d.c
-            if (compatibility.isNotEmpty()) return null
+            // For function we allow it, because overloads are possible
+            if (compatibility.isNotEmpty() && declaration !is KtFunction) return null
             val actualPlatform = d.b.getMultiTargetPlatform() as? MultiTargetPlatform.Specific ?: return null
             return when (declaration) {
                 is KtClassOrObject -> CreateActualClassFix(declaration, actualPlatform)
