@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix.createImpl
+package org.jetbrains.kotlin.idea.quickfix.expectactual
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.util.EditorHelper

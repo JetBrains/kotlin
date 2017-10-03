@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.Cr
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
-import org.jetbrains.kotlin.idea.quickfix.createImpl.CreateActualFix
+import org.jetbrains.kotlin.idea.quickfix.expectactual.CreateActualFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateExternalExtensionFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateTypeParameterListFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
