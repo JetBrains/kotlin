@@ -30,17 +30,10 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 class SmartCastManager {
-
-    private fun getSmartCastVariants(
-            receiverToCast: ReceiverValue,
-            context: ResolutionContext<*>
-    ): List<KotlinType> =
-            getSmartCastVariants(receiverToCast, context.trace.bindingContext, context.scope.ownerDescriptor, context.dataFlowInfo)
 
     fun getSmartCastVariants(
             receiverToCast: ReceiverValue,
@@ -81,29 +74,40 @@ class SmartCastManager {
         return dataFlowInfo.getCollectedTypes(dataFlowValue)
     }
 
-    fun isSubTypeBySmartCastIgnoringNullability(
+    fun getSmartCastReceiverResult(
             receiverArgument: ReceiverValue,
             receiverParameterType: KotlinType,
             context: ResolutionContext<*>
-    ): Boolean {
-        val smartCastTypes = getSmartCastVariants(receiverArgument, context)
-        return getSmartCastSubType(TypeUtils.makeNullable(receiverParameterType), smartCastTypes) != null
+    ): ReceiverSmartCastResult? {
+        getSmartCastReceiverResultWithGivenNullability(receiverArgument, receiverParameterType, context)?.let {
+            return it
+        }
+
+        val nullableParameterType = TypeUtils.makeNullable(receiverParameterType)
+        return when {
+            getSmartCastReceiverResultWithGivenNullability(receiverArgument, nullableParameterType, context) == null -> null
+            else -> ReceiverSmartCastResult.SMARTCAST_NEEDED_OR_NOT_NULL_EXPECTED
+        }
     }
 
-    private fun getSmartCastSubType(
+    private fun getSmartCastReceiverResultWithGivenNullability(
+            receiverArgument: ReceiverValue,
             receiverParameterType: KotlinType,
-            smartCastTypes: Collection<KotlinType>
-    ): KotlinType? {
-        val subTypes = smartCastTypes
-                .filter { ArgumentTypeResolver.isSubtypeOfForArgumentType(it, receiverParameterType) }
-                .distinct()
-        if (subTypes.isEmpty()) return null
+            context: ResolutionContext<*>
+    ): ReceiverSmartCastResult? =
+            when {
+                ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, receiverParameterType) ->
+                    ReceiverSmartCastResult.OK
+                getSmartCastVariantsExcludingReceiver(context, receiverArgument).any {
+                    ArgumentTypeResolver.isSubtypeOfForArgumentType(it, receiverParameterType)
+                } ->
+                    ReceiverSmartCastResult.SMARTCAST_NEEDED_OR_NOT_NULL_EXPECTED
+                else -> null
+            }
 
-        val intersection = TypeIntersector.intersectTypes(subTypes)
-        if (intersection == null || !intersection.constructor.isDenotable) {
-            return receiverParameterType
-        }
-        return intersection
+    enum class ReceiverSmartCastResult {
+        OK,
+        SMARTCAST_NEEDED_OR_NOT_NULL_EXPECTED
     }
 
     companion object {
