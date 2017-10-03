@@ -96,32 +96,42 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         return implementsProjectDependency?.dependencyProject
     }
 
+    private val Project.isCommon get() = plugins.hasPlugin(kotlinPlatformCommonPluginId)
+
     private fun transitiveCommonDependencies(startingProject: Project): Set<String> {
-        val toProcess = LinkedList<Project>()
-        toProcess.add(startingProject)
+        val toProcess = LinkedList<Pair<Project, Boolean>>()
+        toProcess.add(startingProject to false)
         val processed = HashSet<String>()
         val result = HashSet<String>()
-        result.add(startingProject.pathOrName())
 
-        while (toProcess.isNotEmpty()) {
-            val project = toProcess.pollFirst()
-            processed.add(project.path)
+        fun enqueueDependencies(project: Project, isReachableViaImpl: Boolean, collectImpls: Boolean) {
+            val isCommonProject = project.isCommon
+            if (isCommonProject && collectImpls) return
 
-            if (!project.plugins.hasPlugin(kotlinPlatformCommonPluginId)) continue
-
-            result.add(project.pathOrName())
-
-            val compileConfiguration = project.configurations.findByName("compile") ?: continue
+            val configName = if (collectImpls) "implement" else "compile"
+            val compileConfiguration = project.configurations.findByName(configName) ?: return
             val dependencies = compileConfiguration
                     .dependencies
                     .filterIsInstance<ProjectDependency>()
                     .map { it.dependencyProject }
 
             for (dep in dependencies) {
-                if (dep.path !in processed) {
-                    toProcess.add(dep)
-                }
+                if (dep.path in processed) continue
+                if (!dep.isCommon && (collectImpls || isCommonProject)) continue
+                toProcess.add(dep to (isReachableViaImpl || collectImpls))
             }
+        }
+
+        while (toProcess.isNotEmpty()) {
+            val (project, isReachableViaImpl) = toProcess.pollFirst()
+            processed.add(project.path)
+
+            if (isReachableViaImpl) {
+                result.add(project.pathOrName())
+            }
+
+            enqueueDependencies(project, isReachableViaImpl, false)
+            enqueueDependencies(project, isReachableViaImpl, true)
         }
 
         return result
@@ -196,7 +206,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
 
         val platform = platformPluginId ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value
         val implementedProject = getImplements(project)
-        val transitiveCommon = implementedProject?.let { transitiveCommonDependencies(it) } ?: emptySet()
+        val transitiveCommon = transitiveCommonDependencies(project)
 
         return KotlinGradleModelImpl(
                 kotlinPluginId != null || platformPluginId != null,

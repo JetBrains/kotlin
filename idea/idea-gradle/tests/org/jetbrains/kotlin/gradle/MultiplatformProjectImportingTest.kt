@@ -183,4 +183,71 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         assertModuleModuleDepScope("js-app_main", "common-lib_main", DependencyScope.COMPILE)
         assertModuleModuleDepScope("js-app_main", "js-lib_main", DependencyScope.COMPILE)
     }
+
+    @Test
+    fun testDependenciesReachableViaImpl() {
+        createProjectSubFile(
+                "settings.gradle",
+                "include ':common-lib1', ':common-lib2', ':jvm-lib1', ':jvm-lib2', ':jvm-app'"
+        )
+
+        val kotlinVersion = "1.1.0"
+
+        createProjectSubFile("build.gradle", """
+             buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                }
+            }
+
+            project('common-lib1') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('common-lib2') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('jvm-lib1') {
+                apply plugin: 'kotlin-platform-jvm'
+
+                dependencies {
+                    implement project(':common-lib1')
+                }
+            }
+
+            project('jvm-lib2') {
+                apply plugin: 'kotlin-platform-jvm'
+
+                dependencies {
+                    implement project(':common-lib2')
+                    compile project(':jvm-lib1')
+                }
+            }
+
+            project('jvm-app') {
+                apply plugin: 'kotlin-platform-jvm'
+
+                dependencies {
+                    compile project(':jvm-lib2')
+                }
+            }
+        """)
+
+        importProject()
+
+        assertModuleModuleDepScope("jvm-app_main", "jvm-lib2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm-app_main", "jvm-lib1_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm-app_main", "common-lib1_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm-app_main", "common-lib2_main", DependencyScope.COMPILE)
+
+        assertModuleModuleDepScope("jvm-app_test", "jvm-lib2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm-app_test", "jvm-lib1_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm-app_test", "common-lib1_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm-app_test", "common-lib2_test", DependencyScope.COMPILE)
+    }
 }
