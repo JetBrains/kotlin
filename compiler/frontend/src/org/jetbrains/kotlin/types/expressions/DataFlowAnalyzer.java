@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
+import org.jetbrains.kotlin.contracts.EffectSystem;
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -59,6 +60,7 @@ public class DataFlowAnalyzer {
     private final SmartCastManager smartCastManager;
     private final ExpressionTypingFacade facade;
     private final LanguageVersionSettings languageVersionSettings;
+    private final EffectSystem effectSystem;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
@@ -66,7 +68,8 @@ public class DataFlowAnalyzer {
             @NotNull KotlinBuiltIns builtIns,
             @NotNull SmartCastManager smartCastManager,
             @NotNull ExpressionTypingFacade facade,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull EffectSystem effectSystem
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
@@ -74,6 +77,7 @@ public class DataFlowAnalyzer {
         this.smartCastManager = smartCastManager;
         this.facade = facade;
         this.languageVersionSettings = languageVersionSettings;
+        this.effectSystem = effectSystem;
     }
 
     // NB: use this method only for functions from 'Any'
@@ -234,10 +238,16 @@ public class DataFlowAnalyzer {
                 }
             }
         });
+
+        DataFlowInfo infoFromEffectSystem = effectSystem.extractDataFlowInfoFromCondition(
+                condition, conditionValue, context.trace, DescriptorUtils.getContainingModule(context.scope.getOwnerDescriptor())
+        );
+
         if (result.get() == null) {
-            return context.dataFlowInfo;
+            return context.dataFlowInfo.and(infoFromEffectSystem);
         }
-        return context.dataFlowInfo.and(result.get());
+
+        return context.dataFlowInfo.and(result.get()).and(infoFromEffectSystem);
     }
 
     @Nullable
