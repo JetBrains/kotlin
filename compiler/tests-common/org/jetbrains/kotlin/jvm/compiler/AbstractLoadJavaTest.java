@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.ContentRootsKt;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -120,6 +118,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
+        updateConfigurationWithLanguageVersionDirective(ktFile, configuration);
+
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         registerJavacIfNeeded(environment);
@@ -129,7 +129,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Assert.assertEquals("test", packageFromSource.getName().asString());
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), getJdkKind(), configurationKind, true, false, useJavacWrapper()
+                tmpdir, getTestRootDisposable(), getJdkKind(), configurationKind, true, false, useJavacWrapper(),
+                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
         ).first;
 
         for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(packageFromBinary.getMemberScope())) {
@@ -140,8 +141,19 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         DescriptorValidator.validate(errorTypesForbidden(), packageFromSource);
         DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
-        Configuration comparatorConfiguration = COMPARATOR_CONFIGURATION.checkPrimaryConstructors(true).checkPropertyAccessors(true);
+        Configuration comparatorConfiguration = COMPARATOR_CONFIGURATION.checkPrimaryConstructors(true).checkPropertyAccessors(true).checkFunctionContracts(true);
         compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
+    }
+
+    private static void updateConfigurationWithLanguageVersionDirective(File file, CompilerConfiguration configuration) throws IOException {
+        String version = InTextDirectivesUtils.findStringWithPrefixes(FileUtil.loadFile(file, true), "// LANGUAGE_VERSION:");
+        if (version != null) {
+            LanguageVersion explicitVersion = LanguageVersion.fromVersionString(version);
+            CommonConfigurationKeysKt.setLanguageVersionSettings(
+                    configuration,
+                    new LanguageVersionSettingsImpl(explicitVersion, ApiVersion.createByLanguageVersion(explicitVersion))
+            );
+        }
     }
 
     protected boolean useFastClassFilesReading() {
@@ -222,7 +234,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false,
-                false, useJavacWrapper());
+                false, useJavacWrapper(), null);
 
         checkJavaPackage(
                 expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
@@ -267,7 +279,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     ) throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
         return loadTestPackageAndBindingContextFromJavaRoot(outDir, myTestRootDisposable, getJdkKind(), configurationKind, true,
-                                                            useFastClassFilesReading(), useJavacWrapper());
+                                                            useFastClassFilesReading(), useJavacWrapper(), null);
     }
 
     private static void checkJavaPackage(

@@ -1,0 +1,10 @@
+package test
+
+public inline fun callsEffectExplicitUnknown(/*0*/ x: kotlin.Int, /*1*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, UNKNOWN)
+
+public inline fun callsEffectImplicitUnknown(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, UNKNOWN)
+
+public fun </*0*/ X, /*1*/ Y, /*2*/ Z, /*3*/ R> callsEffectWithKind(/*0*/ block: (X, Y, Z) -> R): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)

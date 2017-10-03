@@ -1,0 +1,25 @@
+package test
+
+public inline fun repeat(/*0*/ times: kotlin.Int, /*1*/ action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(action, UNKNOWN)
+
+public inline fun </*0*/ R> run(/*0*/ block: () -> R): R
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ block: T.() -> R): R
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun </*0*/ T> T.also(/*0*/ block: (T) -> kotlin.Unit): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun </*0*/ T> T.apply(/*0*/ block: T.() -> kotlin.Unit): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun </*0*/ T, /*1*/ R> T.let(/*0*/ block: (T) -> R): R
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun </*0*/ T, /*1*/ R> T.run(/*0*/ block: T.() -> R): R
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun </*0*/ T> T.takeIf(/*0*/ predicate: (T) -> kotlin.Boolean): T?
+    CallsInPlace(predicate, EXACTLY_ONCE)
