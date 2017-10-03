@@ -79,6 +79,12 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/rcVersion/");
             doTestGradle(fileName);
         }
+
+        @TestMetadata("withJava9ModuleInfo")
+        public void testWithJava9ModuleInfo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/withJava9ModuleInfo/");
+            doTestGradle(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/configuration/gsk")

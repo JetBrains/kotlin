@@ -56,9 +56,19 @@ class ModuleSourceRootMap(val modules: Collection<Module>) {
     }
 
     fun toModuleGroup(module: Module): ModuleSourceRootGroup = groupByBaseModules(listOf(module)).single()
+
+    fun getWholeModuleGroup(module: Module): ModuleSourceRootGroup {
+        val externalPath = module.externalProjectPath
+        val baseModule = (if (externalPath != null) baseModuleByExternalPath[externalPath] else null) ?:
+                         return ModuleSourceRootGroup(module, listOf(module))
+
+        val externalPathModules = allModulesByExternalPath[externalPath] ?: listOf()
+        return ModuleSourceRootGroup(baseModule, if (externalPathModules.size > 1) externalPathModules - module else externalPathModules)
+    }
 }
 
 fun Module.toModuleGroup() = ModuleSourceRootMap(project).toModuleGroup(this)
+fun Module.getWholeModuleGroup() = ModuleSourceRootMap(project).getWholeModuleGroup(this)
 
 private fun isSourceRootPrefix(externalId: String, previousModuleExternalId: String)
         = externalId.length < previousModuleExternalId.length && previousModuleExternalId.startsWith(externalId)
@@ -68,6 +78,13 @@ val Module.externalProjectId: String?
 
 val Module.externalProjectPath: String?
     get() = ExternalSystemApiUtil.getExternalProjectPath(this)
+
+fun ModuleSourceRootGroup.allModules(): Set<Module> {
+    val result = LinkedHashSet<Module>()
+    result.add(baseModule)
+    result.addAll(sourceRootModules)
+    return result
+}
 
 fun List<ModuleSourceRootGroup>.exclude(excludeModules: Collection<Module>): List<ModuleSourceRootGroup> {
     return mapNotNull {
