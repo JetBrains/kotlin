@@ -1,0 +1,18 @@
+package
+
+public fun falseWhenInt(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x is Int
+
+public fun falseWhenString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x is String
+
+public fun falsefalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun falsetrue(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun trueWhenInt(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is Int
+
+public fun trueWhenString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String
+
+public fun truefalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun truetrue(/*0*/ x: kotlin.Any?): kotlin.Unit

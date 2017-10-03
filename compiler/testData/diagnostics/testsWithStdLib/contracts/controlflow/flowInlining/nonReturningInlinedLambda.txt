@@ -1,0 +1,8 @@
+package
+
+public fun getBool(): kotlin.Boolean
+public inline fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun withLabeledReturn(): kotlin.Unit
+public fun withLabeledReturn2(/*0*/ y: kotlin.Int): kotlin.Unit

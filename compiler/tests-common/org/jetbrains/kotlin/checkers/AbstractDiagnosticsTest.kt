@@ -465,7 +465,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             true
         }
 
-        return RECURSIVE.filterRecursion(stepIntoFilter).withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed())
+        return RECURSIVE.filterRecursion(stepIntoFilter)
+                .withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed())
+                .checkFunctionContracts(true)
     }
 
     private fun getTopLevelPackagesFromFileList(files: List<KtFile>): Set<Name> =
