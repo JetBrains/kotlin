@@ -25,6 +25,9 @@ inline fun <R> autoreleasepool(block: () -> R): R {
     }
 }
 
+// FIXME: implement a checked cast instead.
+fun <T : ObjCObject> ObjCObject.reinterpret() = this.uncheckedCast<T>()
+
 // TODO: null checks
 var <T : ObjCObject?> ObjCObjectVar<T>.value: T
     get() = interpretObjCPointerOrNull<T>(nativeMemUtils.getNativePtr(this)).uncheckedCast<T>()
