@@ -542,10 +542,21 @@ public class BodyResolver {
                         trace.report(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES.on(typeReference));
                         addSupertype = false;
                     }
-                    else if (DescriptorUtils.isSubclass(classDescriptor, builtIns.getThrowable()) &&
-                             !supertypeOwner.getDeclaredTypeParameters().isEmpty()) {
-                        trace.report(GENERIC_THROWABLE_SUBCLASS.on(ktClassOrObject.getTypeParameterList()));
-                        addSupertype = false;
+                    else if (DescriptorUtils.isSubclass(classDescriptor, builtIns.getThrowable())) {
+                        if (!supertypeOwner.getDeclaredTypeParameters().isEmpty()) {
+                            trace.report(GENERIC_THROWABLE_SUBCLASS.on(ktClassOrObject.getTypeParameterList()));
+                            addSupertype = false;
+                        }
+                        else if (!supertypeOwner.getTypeConstructor().getParameters().isEmpty()) {
+                            if (languageVersionSettings
+                                    .supportsFeature(LanguageFeature.ProhibitInnerClassesOfGenericClassExtendingThrowable)) {
+                                trace.report(INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS.on(ktClassOrObject));
+                                addSupertype = false;
+                            }
+                            else {
+                                trace.report(INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS_WARNING.on(ktClassOrObject));
+                            }
+                        }
                     }
 
                     if (classAppeared) {
