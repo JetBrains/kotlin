@@ -39,7 +39,7 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
         get() = if (!skipCurrentDir) File.userDir else null
 
     private val repoRoots: List<File> by lazy {
-        repositories.map{File(it).klib}
+        repositories.map{File(it)}
     }
 
     // This is the place where we specify the order of library search.

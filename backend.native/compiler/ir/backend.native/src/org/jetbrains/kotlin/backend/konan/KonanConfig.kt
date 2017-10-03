@@ -104,6 +104,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 .map { it.dependencies } .flatten()
                 .map { resolver.resolve(it) }
                 .map { LibraryReaderImpl(it, currentAbiVersion, targetManager.target) }
+                .distinctBy { it.libraryFile.absolutePath }
 
             val newDependencies = dependencies.deleteMatching(result, { it.libraryFile.absolutePath })
             result.addAll(newDependencies)
