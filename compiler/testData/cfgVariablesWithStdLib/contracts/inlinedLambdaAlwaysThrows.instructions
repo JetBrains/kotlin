@@ -1,0 +1,96 @@
+== myRun ==
+inline fun myRun(block: () -> Unit): Unit {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    block()
+}
+---------------------
+L0:
+  1 <START>                                                                                       INIT: in: {} out: {}
+    v(block: () -> Unit)                                                                          INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>                                            INIT: in: {} out: {}
+    w(block|<v0>)                                                                                 INIT: in: {} out: {}
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } block() })               INIT: in: {} out: {}
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    jmp?(L2)
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+    r(block) -> <v3>
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+L3:
+  3 <START>                                                                                          INIT: in: {} out: {}
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+L4:
+  3 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                   USE: in: {} out: {}
+=====================
+== test ==
+fun test() {
+    myRun { throw java.lang.IllegalArgumentException() }
+    val x: Int = 42
+}
+---------------------
+L0:
+  1 <START>                                                                           INIT: in: {} out: {}
+  2 mark({ myRun { throw java.lang.IllegalArgumentException() } val x: Int = 42 })
+    mark({ throw java.lang.IllegalArgumentException() })
+    r({ throw java.lang.IllegalArgumentException() }) -> <v0>
+    mark(myRun { throw java.lang.IllegalArgumentException() })
+    call(myRun { throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
+L2 [before inlined declaration]:
+    inlined({ throw java.lang.IllegalArgumentException() })                                                   USE: in: {} out: {}
+L3 [after inlined declaration]:
+-   v(val x: Int = 42)
+-   r(42) -> <v2>
+-   w(x|<v2>)
+L1:
+  1 <END>                                                                             INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                    USE: in: {} out: {}
+=====================
+== inlined anonymous_1 ==
+{ throw java.lang.IllegalArgumentException() }
+---------------------
+L4:
+  3 <START>                                                    INIT: in: {} out: {}
+  4 mark(throw java.lang.IllegalArgumentException())
+    mark(throw java.lang.IllegalArgumentException())
+    mark(java.lang.IllegalArgumentException())
+    mark(IllegalArgumentException())
+    call(IllegalArgumentException(), <init>) -> <v0>
+    throw (throw java.lang.IllegalArgumentException()|<v0>)                            USE: in: {} out: {}
+L5:
+- 3 <END>
+error:
+    <ERROR>                                                    INIT: in: {} out: {}
+sink:
+    <SINK>                                                                             USE: in: {} out: {}
+=====================
