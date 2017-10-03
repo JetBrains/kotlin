@@ -78,12 +78,8 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator, function: LLVMVa
 inline private fun <R> generateFunctionBody(functionGenerationContext: FunctionGenerationContext, code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
     functionGenerationContext.prologue()
     functionGenerationContext.code(functionGenerationContext)
-    if (!functionGenerationContext.isAfterTerminator()) {
-        if (functionGenerationContext.returnType == voidType)
-            functionGenerationContext.ret(null)
-        else
-            functionGenerationContext.unreachable()
-    }
+    if (!functionGenerationContext.isAfterTerminator())
+        functionGenerationContext.unreachable()
     functionGenerationContext.epilogue()
     functionGenerationContext.resetDebugLocation()
 }

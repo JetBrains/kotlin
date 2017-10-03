@@ -133,6 +133,9 @@ internal class KonanLower(val context: Context) {
             validateIrFile(context, irFile)
             Autoboxing(context).lower(irFile)
         }
+        phaser.phase(KonanPhase.RETURNS_INSERTION) {
+            ReturnsInsertionLowering(context).lower(irFile)
+        }
     }
 
 }

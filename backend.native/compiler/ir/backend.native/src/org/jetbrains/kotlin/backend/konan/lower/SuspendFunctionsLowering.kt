@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.backend.common.ir.createOverriddenDescriptor
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.IrSuspendableExpressionImpl
+import org.jetbrains.kotlin.backend.konan.ir.IrSuspensionPoint
+import org.jetbrains.kotlin.backend.konan.ir.IrSuspensionPointImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl

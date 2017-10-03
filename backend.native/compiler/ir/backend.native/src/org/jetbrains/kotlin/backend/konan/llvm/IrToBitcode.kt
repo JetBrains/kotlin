@@ -338,6 +338,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!   // Create constructor function.
         generateFunction(codegen, ctorFunction) {
             call(context.llvm.appendToInitalizersTail, listOf(initNodePtr))             // Add node to the tail of initializers list.
+            ret(null)
         }
         context.llvm.staticInitializers.add(ctorFunction)                                   // Push newly created constructor in staticInitializers list.
     }
@@ -2333,6 +2334,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             // this function.
             val parameter = LLVMGetParam(selector, 0)!!
             callAtFunctionScope(entryPoint, listOf(parameter), Lifetime.IRRELEVANT)
+            ret(null)
         }
         return selector
     }

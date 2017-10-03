@@ -943,6 +943,18 @@ task coroutines_simple(type: RunKonanTest) {
     source = "codegen/coroutines/simple.kt"
 }
 
+task coroutines_degenerate1(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // llvm: 'WebAssembly hasn't implemented computed gotos'
+    goldValue = "s1\n"
+    source = "codegen/coroutines/degenerate1.kt"
+}
+
+task coroutines_degenerate2(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // llvm: 'WebAssembly hasn't implemented computed gotos'
+    goldValue = "s2\ns1\n"
+    source = "codegen/coroutines/degenerate2.kt"
+}
+
 task coroutines_withReceiver(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // llvm: 'WebAssembly hasn't implemented computed gotos'
     goldValue = "42\n"
