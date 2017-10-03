@@ -221,7 +221,9 @@ class FunctionDescriptorResolver(
         val emptyContract = LazyContractProvider.createInitialized(null)
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect) ||
-                                 languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)
+                                 languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect) ||
+                                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
+                                 languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
 
         if (!isContractsEnabled || !contractParsingServices.fastCheckIfContractPresent(function)) return emptyContract
 
