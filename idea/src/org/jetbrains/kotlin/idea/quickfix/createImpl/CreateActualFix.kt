@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createImpl
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.ide.util.EditorHelper
 import com.intellij.ide.util.PackageUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
@@ -81,7 +82,8 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
             }
             val actualDeclaration = actualFile.add(generated) as KtElement
             val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
-            ShortenReferences.DEFAULT.process(reformatted as KtElement)
+            val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
+            EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
         }
     }
 
