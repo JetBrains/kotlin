@@ -61,7 +61,7 @@ object ArrayFIF : CompositeFIF() {
     val LENGTH_PROPERTY_INTRINSIC = BuiltInPropertyIntrinsic("length")
 
     @JvmStatic
-    fun typedArraysEnabled(config: JsConfig) = config.configuration.getBoolean(JSConfigurationKeys.TYPED_ARRAYS_ENABLED)
+    fun typedArraysEnabled(config: JsConfig) = config.configuration.get(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
 
     fun castOrCreatePrimitiveArray(ctx: TranslationContext, type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
         if (type == null || !typedArraysEnabled(ctx.config)) return arg
