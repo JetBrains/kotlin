@@ -206,6 +206,9 @@ public class ControlStructureTypingUtils {
             dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
         }
 
+        @Override
+        public void updateResultInfo(@NotNull DataFlowInfo dataFlowInfo) { }
+
         @NotNull
         @Override
         public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {

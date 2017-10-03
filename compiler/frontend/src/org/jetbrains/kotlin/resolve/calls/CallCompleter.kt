@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -61,7 +63,8 @@ class CallCompleter(
         private val callCheckers: Iterable<CallChecker>,
         private val builtIns: KotlinBuiltIns,
         private val languageVersionSettings: LanguageVersionSettings,
-        private val deprecationResolver: DeprecationResolver
+        private val deprecationResolver: DeprecationResolver,
+        private val effectSystem: EffectSystem
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -131,6 +134,7 @@ class CallCompleter(
     ) {
         if (resolvedCall == null || resolvedCall.isCompleted || resolvedCall.constraintSystem == null) {
             completeArguments(context, results)
+            resolvedCall?.updateResultDataFlowInfoUsingEffects(context.trace)
             resolvedCall?.markCallAsCompleted()
             return
         }
@@ -140,6 +144,7 @@ class CallCompleter(
         completeArguments(context, results)
 
         resolvedCall.updateResolutionStatusFromConstraintSystem(context, tracing)
+        resolvedCall.updateResultDataFlowInfoUsingEffects(context.trace)
         resolvedCall.markCallAsCompleted()
     }
 
@@ -392,5 +397,15 @@ class CallCompleter(
         //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
         val expressionType = trace.getType(expression.receiverExpression)
         return expressionType != null && TypeUtils.isNullableType(expressionType)
+    }
+
+    private fun MutableResolvedCall<*>.updateResultDataFlowInfoUsingEffects(bindingTrace: BindingTrace) {
+        if (dataFlowInfoForArguments is MutableDataFlowInfoForArguments.WithoutArgumentsCheck) return
+
+        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
+        val resultDFIfromES = effectSystem.getDataFlowInfoForFinishedCall(this, bindingTrace, moduleDescriptor)
+        dataFlowInfoForArguments.updateResultInfo(resultDFIfromES)
+
+        effectSystem.recordDefiniteInvocations(this, bindingTrace, moduleDescriptor)
     }
 }
