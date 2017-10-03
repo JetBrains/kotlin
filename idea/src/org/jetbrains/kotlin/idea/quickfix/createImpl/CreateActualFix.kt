@@ -253,15 +253,15 @@ private fun KtPsiFactory.generateFunction(
         }
     }
 
-    return if (expectedFunction is KtSecondaryConstructor) {
+    return (if (expectedFunction is KtSecondaryConstructor) {
         createSecondaryConstructor(expectedFunction.text + " " + body)
     }
     else {
-        createFunction(expectedFunction.text + " " + body).apply {
-            replaceExpectModifier(actualNeeded)
-            if (returnType != null && KotlinBuiltIns.isUnit(returnType)) {
-                typeReference = null
-            }
+        createFunction(expectedFunction.text + " " + body)
+    } as KtFunction).apply {
+        replaceExpectModifier(actualNeeded)
+        if (returnType != null && KotlinBuiltIns.isUnit(returnType)) {
+            typeReference = null
         }
     }
 }
