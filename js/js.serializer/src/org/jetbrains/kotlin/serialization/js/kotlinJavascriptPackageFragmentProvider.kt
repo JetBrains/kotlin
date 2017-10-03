@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -58,6 +59,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
             DynamicTypeDeserializer,
             emptyList(),
             notFoundClasses,
+            ContractDeserializerImpl(configuration),
             platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent
     )
 

@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclara
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.platform.JvmBuiltIns
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierTypeSettings
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
@@ -40,7 +37,8 @@ class DeserializationComponentsForJava(
         packageFragmentProvider: LazyJavaPackageFragmentProvider,
         notFoundClasses: NotFoundClasses,
         errorReporter: ErrorReporter,
-        lookupTracker: LookupTracker
+        lookupTracker: LookupTracker,
+        contractDeserializer: ContractDeserializer
 ) {
     val components: DeserializationComponents
 
@@ -50,7 +48,7 @@ class DeserializationComponentsForJava(
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
                 LocalClassifierTypeSettings.Default, errorReporter, lookupTracker, JavaFlexibleTypeDeserializer,
-                emptyList(), notFoundClasses,
+                emptyList(), notFoundClasses, contractDeserializer,
                 additionalClassPartsProvider = jvmBuiltIns?.settings ?: AdditionalClassPartsProvider.None,
                 platformDependentDeclarationFilter = jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent
         )

@@ -26,5 +26,11 @@ interface DeserializationConfiguration {
     val isJvmPackageNameSupported: Boolean
         get() = true
 
+    val returnsEffectAllowed: Boolean
+        get() = false
+
+    val callsInPlaceEffectAllowed: Boolean
+        get() = false
+
     object Default : DeserializationConfiguration
 }

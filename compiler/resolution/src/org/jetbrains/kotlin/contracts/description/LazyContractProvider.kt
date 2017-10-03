@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.contracts.description
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.ContractProvider
 
 /**
  * Essentially, this is a composition of two fields: value of type 'ContractDescription' and
  * 'computation', which guarantees to initialize this field.
  */
-class LazyContractProvider(private val computation: () -> Any?) {
+class LazyContractProvider(private val computation: () -> Any?) : ContractProvider {
     @Volatile
     private var isComputed: Boolean = false
 

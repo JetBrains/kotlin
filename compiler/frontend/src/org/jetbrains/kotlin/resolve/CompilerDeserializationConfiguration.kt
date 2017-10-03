@@ -27,4 +27,8 @@ class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVers
     override val skipMetadataVersionCheck = languageVersionSettings.getFlag(AnalysisFlag.skipMetadataVersionCheck)
 
     override val isJvmPackageNameSupported = languageVersionSettings.supportsFeature(LanguageFeature.JvmPackageName)
+
+    override val returnsEffectAllowed: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)
+
+    override val callsInPlaceEffectAllowed: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect)
 }

@@ -82,8 +82,9 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
                 FlexibleTypeDeserializer.ThrowException,
                 classDescriptorFactories,
                 notFoundClasses,
-                additionalClassPartsProvider = additionalClassPartsProvider,
-                platformDependentDeclarationFilter = platformDependentDeclarationFilter
+                ContractDeserializer.DEFAULT,
+                additionalClassPartsProvider,
+                platformDependentDeclarationFilter
         )
 
         for (packageFragment in packageFragments) {

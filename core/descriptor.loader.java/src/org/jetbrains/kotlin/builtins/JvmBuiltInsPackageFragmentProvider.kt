@@ -51,7 +51,9 @@ class JvmBuiltInsPackageFragmentProvider(
                         BuiltInFictitiousFunctionClassFactory(storageManager, moduleDescriptor),
                         JvmBuiltInClassDescriptorFactory(storageManager, moduleDescriptor)
                 ),
-                notFoundClasses, additionalClassPartsProvider, platformDependentDeclarationFilter
+                notFoundClasses,
+                ContractDeserializer.DEFAULT,
+                additionalClassPartsProvider, platformDependentDeclarationFilter
         )
     }
 

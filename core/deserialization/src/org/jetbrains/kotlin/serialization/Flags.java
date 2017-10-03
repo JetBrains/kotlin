@@ -83,6 +83,11 @@ public class Flags {
     public static final BooleanFlagField IS_EXTERNAL_ACCESSOR = FlagField.booleanAfter(IS_NOT_DEFAULT);
     public static final BooleanFlagField IS_INLINE_ACCESSOR = FlagField.booleanAfter(IS_EXTERNAL_ACCESSOR);
 
+    // Contracts expressions
+    public static final BooleanFlagField IS_NEGATED = FlagField.booleanFirst();
+    public static final BooleanFlagField IS_NULL_CHECK_PREDICATE = FlagField.booleanAfter(IS_NEGATED);
+
+
     // ---
 
     public static int getTypeFlags(boolean isSuspend) {
@@ -217,6 +222,14 @@ public class Flags {
                ;
     }
 
+    public static int getContractExpressionFlags(
+            @NotNull boolean isNegated,
+            @NotNull boolean isNullCheckPredicate
+    ) {
+        return IS_NEGATED.toFlags(isNegated)
+                | IS_NULL_CHECK_PREDICATE.toFlags(isNullCheckPredicate);
+    }
+
     @NotNull
     private static ProtoBuf.Visibility visibility(@NotNull Visibility visibility) {
         if (visibility == Visibilities.INTERNAL) {
@@ -339,6 +352,8 @@ public class Flags {
         public int toFlags(Boolean value) {
             return value ? 1 << offset : 0;
         }
+
+        public int invert(int flags) { return (flags ^ (1 << offset)); }
     }
 
     private static class EnumLiteFlagField<E extends Internal.EnumLite> extends FlagField<E> {
