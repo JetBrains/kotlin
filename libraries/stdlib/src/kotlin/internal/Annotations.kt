@@ -102,3 +102,9 @@ internal enum class RequireKotlinVersionKind {
     COMPILER_VERSION,
     API_VERSION,
 }
+
+/**
+ * Specifies that this declaration is a part of special DSL, used for constructing function's contract.
+ */
+@Retention(AnnotationRetention.BINARY)
+internal annotation class ContractsDsl

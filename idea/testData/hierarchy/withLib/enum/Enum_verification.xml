@@ -9,9 +9,11 @@
     <node text="PrintMode in JTable (javax.swing)"/>
     <node text="ElementType (java.lang.annotation)"/>
     <node text="State in Thread (java.lang)"/>
-    <node text="RetentionPolicy (java.lang.annotation)"/>
     <node text="Type in Window (java.awt)"/>
-    <node text="Kind in KParameter (kotlin.reflect)"/>
+    <node text="RetentionPolicy (java.lang.annotation)"/>
+    <node text="InvocationKind (kotlin.internal.contracts)"/>
+    <node text="One ()"/>
+    <node text="G ()"/>
     <node text="FileWalkDirection (kotlin.io)"/>
     <node text="OnErrorAction (kotlin.io)"/>
     <node text="RegexOption (kotlin.text)"/>
@@ -22,9 +24,8 @@
     <node text="AnnotationTarget (kotlin.annotation)"/>
     <node text="AnnotationRetention (kotlin.annotation)"/>
     <node text="State (kotlin.collections)"/>
-    <node text="DeprecationLevel (kotlin)"/>
     <node text="LazyThreadSafetyMode (kotlin)"/>
-    <node text="One ()"/>
-    <node text="G ()"/>
+    <node text="DeprecationLevel (kotlin)"/>
+    <node text="Kind in KParameter (kotlin.reflect)"/>
   </node>
 </node>
