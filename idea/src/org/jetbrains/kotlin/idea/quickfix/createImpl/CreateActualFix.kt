@@ -235,6 +235,15 @@ private fun KtPsiFactory.generateClassOrObject(
             }
             actualClass.addDeclaration(actualDeclaration)
         }
+
+        actualClass.primaryConstructor?.let {
+            it.addModifier(KtTokens.ACTUAL_KEYWORD)
+            for (parameter in it.valueParameters) {
+                if (parameter.hasValOrVar()) {
+                    parameter.addModifier(KtTokens.ACTUAL_KEYWORD)
+                }
+            }
+        }
     }
 
     return actualClass.apply {

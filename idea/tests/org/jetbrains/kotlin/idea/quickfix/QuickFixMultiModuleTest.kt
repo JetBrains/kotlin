@@ -130,6 +130,11 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testPrimaryConstructor() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testProperty() {
         doMultiPlatformTest()
     }
