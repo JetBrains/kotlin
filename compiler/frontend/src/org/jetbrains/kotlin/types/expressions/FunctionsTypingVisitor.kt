@@ -193,7 +193,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         )
         components.functionDescriptorResolver.
                 initializeFunctionDescriptorAndExplicitReturnType(context.scope.ownerDescriptor, context.scope, functionLiteral,
-                                                                  functionDescriptor, context.trace, context.expectedType)
+                                                                  functionDescriptor, context.trace, context.expectedType, context.dataFlowInfo)
         for (parameterDescriptor in functionDescriptor.valueParameters) {
             ForceResolveUtil.forceResolveAllContents(parameterDescriptor.annotations)
         }
