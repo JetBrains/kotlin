@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Iterator;
 import java.util.List;
@@ -260,7 +261,20 @@ public class ExpressionTypingServices {
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;
+
+        boolean isFirstStatement = true;
         for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
+            // Use filtering trace to keep effect system cache only for one statement
+            AbstractFilteringTrace traceForSingleStatement = new AbstractFilteringTrace(context.trace, "trace for single statement") {
+                @Override
+                protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
+                    return slice == BindingContext.EXPRESSION_EFFECTS;
+                }
+            };
+
+            newContext = newContext.replaceBindingTrace(traceForSingleStatement);
+
+
             KtElement statement = iterator.next();
             if (!(statement instanceof KtExpression)) {
                 continue;
@@ -295,6 +309,12 @@ public class ExpressionTypingServices {
                 // We take current data flow info if jump there is not possible
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
+
+            expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope, isFirstStatement);
+
+            if (isFirstStatement) {
+                isFirstStatement = false;
+            }
         }
         return result.replaceJumpOutPossible(jumpOutPossible).replaceJumpFlowInfo(beforeJumpInfo);
     }
