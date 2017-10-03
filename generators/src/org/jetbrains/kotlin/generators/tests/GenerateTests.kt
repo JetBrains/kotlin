@@ -447,15 +447,19 @@ fun main(args: Array<String>) {
 
         testClass<AbstractControlFlowTest> {
             model("cfg")
+            model("cfgWithStdLib", testMethod = "doTestWithStdLib")
         }
 
         testClass<AbstractDataFlowTest> {
             model("cfg-variables")
+            model("cfgVariablesWithStdLib", testMethod = "doTestWithStdLib")
         }
 
         testClass<AbstractPseudoValueTest> {
             model("cfg")
+            model("cfgWithStdLib", testMethod = "doTestWithStdLib")
             model("cfg-variables")
+            model("cfgVariablesWithStdLib", testMethod = "doTestWithStdLib")
         }
 
         testClass<AbstractAnnotationParameterTest> {
