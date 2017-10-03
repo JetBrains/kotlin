@@ -60,6 +60,21 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testClassFunction() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testClassOverloadedFunction() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testClassSomeProperties() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testDeprecatedHeader() {
         doMultiPlatformTest()
     }
@@ -95,6 +110,11 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testNested() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testObject() {
         doMultiPlatformTest()
     }
@@ -125,12 +145,12 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
-    fun testNested() {
+    fun testPrimaryConstructor() {
         doMultiPlatformTest()
     }
 
     @Test
-    fun testPrimaryConstructor() {
+    fun testPrimaryConstructorAbsence() {
         doMultiPlatformTest()
     }
 
@@ -142,6 +162,11 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     @Test
     fun testSealed() {
         doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
+    }
+
+    @Test
+    fun testSecondaryConstructorAbsence() {
+        doMultiPlatformTest()
     }
 
     @Test
