@@ -457,7 +457,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
         args.friendModules = friendDependency
 
-        args.sourceMapSourceRoots = source.orEmpty()
+        args.sourceMapBaseDirs = source.orEmpty()
                 .asSequence()
                 .filterIsInstance<SourceDirectorySet>()
                 .flatMap { it.srcDirs.asSequence() }
