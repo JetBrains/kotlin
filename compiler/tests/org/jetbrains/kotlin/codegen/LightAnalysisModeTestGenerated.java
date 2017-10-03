@@ -4283,6 +4283,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/constructorCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("breakInConstructorArguments.kt")
+        public void testBreakInConstructorArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/breakInConstructorArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("continueInConstructorArguments.kt")
+        public void testContinueInConstructorArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/continueInConstructorArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("earlyReturnInConstructorArguments.kt")
+        public void testEarlyReturnInConstructorArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/earlyReturnInConstructorArguments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineFunInConstructorCallEvaluationOrder.kt")
         public void testInlineFunInConstructorCallEvaluationOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallEvaluationOrder.kt");
@@ -4298,6 +4316,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("inlineFunInLocalClassConstructorCall.kt")
         public void testInlineFunInLocalClassConstructorCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInLocalClassConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedConstructorCallWithJumpOutInConstructorArguments.kt")
+        public void testNestedConstructorCallWithJumpOutInConstructorArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/nestedConstructorCallWithJumpOutInConstructorArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonLocalReturnInConstructorArguments.kt")
+        public void testNonLocalReturnInConstructorArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/nonLocalReturnInConstructorArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("possiblyPoppedUnitializedValueInArguments.kt")
+        public void testPossiblyPoppedUnitializedValueInArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/possiblyPoppedUnitializedValueInArguments.kt");
             doTest(fileName);
         }
 
