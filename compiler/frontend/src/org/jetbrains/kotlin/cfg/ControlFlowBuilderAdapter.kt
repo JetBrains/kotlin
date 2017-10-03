@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -134,11 +135,12 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.exitTryFinally()
     }
 
-    override fun enterSubroutine(subroutine: KtElement) {
-        delegateBuilder.enterSubroutine(subroutine)
+    override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
+        delegateBuilder.enterSubroutine(subroutine, invocationKind)
     }
 
-    override fun exitSubroutine(subroutine: KtElement): Pseudocode = delegateBuilder.exitSubroutine(subroutine)
+    override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode =
+            delegateBuilder.exitSubroutine(subroutine, invocationKind)
 
     override val currentSubroutine: KtElement
         get() = delegateBuilder.currentSubroutine
@@ -176,6 +178,10 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
 
     override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
         delegateBuilder.declareFunction(subroutine, pseudocode)
+    }
+
+    override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind) {
+        delegateBuilder.declareInlinedFunction(subroutine, pseudocode, invocationKind)
     }
 
     override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

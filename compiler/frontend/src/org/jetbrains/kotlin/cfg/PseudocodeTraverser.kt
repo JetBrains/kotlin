@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg.pseudocodeTraverser
 import org.jetbrains.kotlin.cfg.ControlFlowInfo
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.InlinedLocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
@@ -96,8 +97,13 @@ private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
         if (instruction is LocalFunctionDeclarationInstruction) {
             val subroutinePseudocode = instruction.body
             subroutinePseudocode.collectDataFromSubgraph(
-                    traversalOrder, edgesMap, mergeEdges, updateEdge, previousInstructions, changed, true)
-            val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
+                    traversalOrder, edgesMap, mergeEdges, updateEdge, previousInstructions, changed, true
+            )
+            // Special case for inlined functions: take flow from EXIT instructions (it contains flow which exits declaration normally)
+            val lastInstruction = if (instruction is InlinedLocalFunctionDeclarationInstruction && traversalOrder == FORWARD)
+                subroutinePseudocode.exitInstruction
+            else
+                subroutinePseudocode.getLastInstruction(traversalOrder)
             val previousValue = edgesMap[instruction]
             val newValue = edgesMap[lastInstruction]
             val updatedValue = newValue?.let {

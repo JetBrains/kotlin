@@ -369,7 +369,8 @@ class ControlFlowInformationProvider private constructor(
         // Do not consider top-level properties
         if (containingDeclarationDescriptor is PackageFragmentDescriptor) return false
         var parentDeclaration = getElementParentDeclaration(writeValueInstruction.element)
-        while (true) {
+
+        loop@ while (true) {
             val context = trace.bindingContext
             val parentDescriptor = getDeclarationDescriptorIncludingConstructors(context, parentDeclaration)
             if (parentDescriptor == containingDeclarationDescriptor) {
@@ -381,6 +382,13 @@ class ControlFlowInformationProvider private constructor(
                     parentDeclaration = getElementParentDeclaration(parentDeclaration)
                 }
                 is KtDeclarationWithBody -> {
+                    // If it is captured write in lambda that is called in-place, then skip it (treat as parent)
+                    val maybeEnclosingLambdaExpr = parentDeclaration.parent
+                    if (maybeEnclosingLambdaExpr is KtLambdaExpression && trace[BindingContext.LAMBDA_INVOCATIONS, maybeEnclosingLambdaExpr] != null) {
+                        parentDeclaration = getElementParentDeclaration(parentDeclaration)
+                        continue@loop
+                    }
+
                     if (parentDeclaration is KtFunction && parentDeclaration.isLocal) return true
                     // miss non-local function or accessor just once
                     parentDeclaration = getElementParentDeclaration(parentDeclaration)

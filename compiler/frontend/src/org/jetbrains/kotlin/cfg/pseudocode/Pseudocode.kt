@@ -45,6 +45,7 @@ interface Pseudocode {
 
     val enterInstruction: SubroutineEnterInstruction
 
+    val isInlined: Boolean
     val containsDoWhile: Boolean
     val rootPseudocode: Pseudocode
 
