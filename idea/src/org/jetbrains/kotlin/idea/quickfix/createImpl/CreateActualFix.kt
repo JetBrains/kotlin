@@ -201,7 +201,6 @@ private fun KtPsiFactory.generateClassOrObject(
     if (expectedClass !is KtClass || !expectedClass.isInterface()) {
         actualClass.declarations.forEach {
             if (it !is KtEnumEntry &&
-                it !is KtClassOrObject &&
                 !it.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 it.delete()
             }
@@ -211,6 +210,13 @@ private fun KtPsiFactory.generateClassOrObject(
             if (expectedDeclaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) continue
             val descriptor = expectedDeclaration.toDescriptor() ?: continue
             val actualDeclaration: KtDeclaration = when (expectedDeclaration) {
+                is KtClassOrObject ->
+                    if (expectedDeclaration !is KtEnumEntry) {
+                        generateClassOrObject(project, expectedDeclaration, actualNeeded = true)
+                    }
+                    else {
+                        continue@declLoop
+                    }
                 is KtFunction -> generateFunction(project, expectedDeclaration, descriptor as FunctionDescriptor, actualNeeded = true)
                 is KtProperty -> generateProperty(project, expectedDeclaration, descriptor as PropertyDescriptor, actualNeeded = true)
                 else -> continue@declLoop
