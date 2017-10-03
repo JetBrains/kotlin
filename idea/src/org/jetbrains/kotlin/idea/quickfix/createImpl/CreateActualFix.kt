@@ -156,7 +156,19 @@ class CreateActualClassFix(
     generateClassOrObject(project, element, actualNeeded = true)
 }) {
 
-    override val elementType = if ((element as? KtClass)?.isInterface() == true) "interface" else "class"
+    override val elementType = run {
+        val element = element
+        when (element) {
+            is KtObjectDeclaration -> "object"
+            is KtClass -> when {
+                element.isInterface() -> "interface"
+                element.isEnum() -> "enum class"
+                element.isAnnotation() -> "annotation class"
+                else -> "class"
+            }
+            else -> "class"
+        }
+    }
 }
 
 class CreateActualPropertyFix(

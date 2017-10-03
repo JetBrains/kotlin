@@ -50,6 +50,11 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testAnnotation() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testClass() {
         doMultiPlatformTest()
     }

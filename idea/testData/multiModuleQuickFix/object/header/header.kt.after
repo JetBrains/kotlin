@@ -1,4 +1,4 @@
-// "Create actual class for platform JVM" "true"
+// "Create actual object for platform JVM" "true"
 
 expect object Object {
     fun foo(): String
