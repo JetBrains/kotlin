@@ -1,9 +1,9 @@
 // Abstract: to be implemented
 actual abstract class Abstract {
 
-    abstract fun String.bar(y: Double): Boolean
+    actual abstract fun String.bar(y: Double): Boolean
 
-    abstract var status: Int
+    actual abstract var status: Int
     actual fun foo(param: String): Int {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

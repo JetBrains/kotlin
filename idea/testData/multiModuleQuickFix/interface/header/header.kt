@@ -8,4 +8,8 @@ expect interface <caret>Interface {
     val isGood: Boolean
 
     var status: Int
+
+    class Nested {
+        fun bar()
+    }
 }
