@@ -448,7 +448,7 @@ class CandidateResolver(
 
         val erasedReceiverType = getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor)
 
-        if (!smartCastManager.isSubTypeBySmartCastIgnoringNullability(receiverArgument, erasedReceiverType, this)) {
+        if (smartCastManager.getSmartCastReceiverResult(receiverArgument, erasedReceiverType, this) == null) {
             RECEIVER_TYPE_ERROR
         } else {
             SUCCESS
@@ -505,22 +505,21 @@ class CandidateResolver(
         val candidateDescriptor = candidateCall.candidateDescriptor
         if (TypeUtils.dependsOnTypeParameters(receiverParameter.type, candidateDescriptor.typeParameters)) return SUCCESS
 
-        val isSubtypeBySmartCastIgnoringNullability = smartCastManager.isSubTypeBySmartCastIgnoringNullability(
-                receiverArgument, receiverParameter.type, this)
+        // Here we know that receiver is OK ignoring nullability and check that nullability is OK too
+        // Doing it simply as full subtyping check (receiverValueType <: receiverParameterType)
+        val call = candidateCall.call
+        val safeAccess = isExplicitReceiver && !implicitInvokeCheck && call.isExplicitSafeCall()
+        val expectedReceiverParameterType = if (safeAccess) TypeUtils.makeNullable(receiverParameter.type) else receiverParameter.type
 
-        if (!isSubtypeBySmartCastIgnoringNullability) {
+        val smartCastSubtypingResult = smartCastManager.getSmartCastReceiverResult(receiverArgument, expectedReceiverParameterType, this)
+        if (smartCastSubtypingResult == null) {
             tracing.wrongReceiverType(
                     trace, receiverParameter, receiverArgument,
                     this.replaceCallPosition(CallPosition.ExtensionReceiverPosition(candidateCall)))
             return OTHER_ERROR
         }
 
-        // Here we know that receiver is OK ignoring nullability and check that nullability is OK too
-        // Doing it simply as full subtyping check (receiverValueType <: receiverParameterType)
-        val call = candidateCall.call
-        val safeAccess = isExplicitReceiver && !implicitInvokeCheck && call.isExplicitSafeCall()
-        val expectedReceiverParameterType = if (safeAccess) TypeUtils.makeNullable(receiverParameter.type) else receiverParameter.type
-        val notNullReceiverExpected = !ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, expectedReceiverParameterType)
+        val notNullReceiverExpected = smartCastSubtypingResult != SmartCastManager.ReceiverSmartCastResult.OK
         val smartCastNeeded =
                 notNullReceiverExpected || !isCandidateVisibleOrExtensionReceiver(receiverArgument, null, isDispatchReceiver)
         var reportUnsafeCall = false
