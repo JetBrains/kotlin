@@ -158,7 +158,15 @@ internal val FunctionDescriptor.functionName: String
     get() {
         with(this.original) { // basic support for generics
             this.getObjCMethodInfo()?.let {
-                return "objc:${it.selector}"
+                return buildString {
+                    if (extensionReceiverParameter != null) {
+                        append(TypeUtils.getClassDescriptor(extensionReceiverParameter!!.type)!!.name)
+                        append(".")
+                    }
+
+                    append("objc:")
+                    append(it.selector)
+                }
             }
 
             return "$name$signature"
