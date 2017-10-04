@@ -52,7 +52,13 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SuppressABINotification">
-    <option name="isSuppressed" value="true" />
+    <option name="modulesWithSuppressedNotConfigured">
+      <set>
+        <option value="kotlin-stdlib-common" />
+        <option value="kotlin-stdlib-js" />
+        <option value="kotlin-test-common" />
+      </set>
+    </option>
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.sixrr.metrics.MetricsReloaded">

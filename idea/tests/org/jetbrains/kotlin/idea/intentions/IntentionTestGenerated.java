@@ -6479,6 +6479,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("getterTypeInferred.kt")
+        public void testGetterTypeInferred() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/getterTypeInferred.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("getterWithThrow.kt")
         public void testGetterWithThrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/getterWithThrow.kt");
@@ -12614,6 +12620,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("necessaryBrackets6.kt")
+        public void testNecessaryBrackets6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeCurlyBracesFromTemplate/necessaryBrackets6.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unnecessaryBrackets1.kt")
         public void testUnnecessaryBrackets1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeCurlyBracesFromTemplate/unnecessaryBrackets1.kt");
@@ -13412,6 +13424,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("elvisRhs.kt")
+        public void testElvisRhs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/elvisRhs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("elvisRhsEmptyReturn.kt")
+        public void testElvisRhsEmptyReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/elvisRhsEmptyReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("necessaryParentheses1.kt")
         public void testNecessaryParentheses1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/necessaryParentheses1.kt");
@@ -13559,6 +13583,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("arrayEQEQ.kt")
         public void testArrayEQEQ() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceArrayEqualityOpWithArraysEquals/arrayEQEQ.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayEXCLEQ.kt")
+        public void testArrayEXCLEQ() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceArrayEqualityOpWithArraysEquals/arrayEXCLEQ.kt");
             doTest(fileName);
         }
 
@@ -14673,6 +14703,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class SimplifyBooleanWithConstants extends AbstractIntentionTest {
         public void testAllFilesPresentInSimplifyBooleanWithConstants() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/simplifyBooleanWithConstants"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("assert.kt")
+        public void testAssert() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/assert.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("deeplyParenthesized.kt")

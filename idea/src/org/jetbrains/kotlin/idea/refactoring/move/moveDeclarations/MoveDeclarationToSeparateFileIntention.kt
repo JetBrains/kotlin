@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
-import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -108,9 +106,6 @@ class MoveDeclarationToSeparateFileIntention :
                 }
         )
 
-        val move = { MoveKotlinDeclarationsProcessor(descriptor).run() }
-        val optimizeImports = { OptimizeImportsProcessor(project, file).run() }
-
-        move.runRefactoringWithPostprocessing(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID, optimizeImports)
+        MoveKotlinDeclarationsProcessor(descriptor).run()
     }
 }

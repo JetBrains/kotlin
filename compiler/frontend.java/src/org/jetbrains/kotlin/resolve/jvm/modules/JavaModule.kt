@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.modules
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.name.FqName
 
@@ -28,11 +29,11 @@ interface JavaModule {
     val name: String
 
     /**
-     * A directory or the root of a .jar file on the module path. Can also be the path to the `module-info.java` file if that path
-     * was passed as an explicit argument to the compiler.
-     * In case of an explicit module, module-info.class file can be found in its children.
+     * A non-empty list of directories or roots of .jar files on the module path. Can also contain the path to the `module-info.java` file
+     * if that path was passed as an explicit argument to the compiler.
+     * In case of an explicit module, module-info.class or module-info.java file must exist in at least one of these roots (the first wins).
      */
-    val moduleRoot: VirtualFile
+    val moduleRoots: List<Root>
 
     /**
      * A module-info.class or module-info.java file where this module was loaded from.
@@ -40,10 +41,11 @@ interface JavaModule {
     val moduleInfoFile: VirtualFile?
 
     /**
-     * `true` if this module is either an automatic module on the module path, or an explicit module loaded from module-info.class.
-     * `false` if this module is an explicit module loaded from module-info.java.
+     * `true` if this module is an explicit module loaded from module-info.java, `false` otherwise. This usually corresponds to the module
+     * currently being compiled.
+     * Note that in case of partial/incremental compilation, the source module may contain both binary roots and non-binary roots.
      */
-    val isBinary: Boolean
+    val isSourceModule: Boolean
 
     /**
      * `true` if this module exports the package with the given FQ name to all dependent modules.
@@ -64,10 +66,12 @@ interface JavaModule {
      */
     fun exportsTo(packageFqName: FqName, moduleName: String): Boolean
 
-    class Automatic(override val name: String, override val moduleRoot: VirtualFile) : JavaModule {
+    data class Root(val file: VirtualFile, val isBinary: Boolean)
+
+    class Automatic(override val name: String, override val moduleRoots: List<Root>) : JavaModule {
         override val moduleInfoFile: VirtualFile? get() = null
 
-        override val isBinary: Boolean get() = true
+        override val isSourceModule: Boolean get() = false
 
         override fun exports(packageFqName: FqName): Boolean = true
 
@@ -78,12 +82,14 @@ interface JavaModule {
 
     class Explicit(
             val moduleInfo: JavaModuleInfo,
-            override val moduleRoot: VirtualFile,
-            override val moduleInfoFile: VirtualFile,
-            override val isBinary: Boolean
+            override val moduleRoots: List<Root>,
+            override val moduleInfoFile: VirtualFile
     ) : JavaModule {
         override val name: String
             get() = moduleInfo.moduleName
+
+        override val isSourceModule: Boolean
+            get() = moduleInfoFile.fileType == JavaFileType.INSTANCE
 
         override fun exports(packageFqName: FqName): Boolean {
             return moduleInfo.exports.any { (fqName, toModules) ->
@@ -100,3 +106,5 @@ interface JavaModule {
         override fun toString(): String = name
     }
 }
+
+const val KOTLIN_STDLIB_MODULE_NAME = "kotlin.stdlib"

@@ -59,7 +59,7 @@ class RuntimeModuleData private constructor(
             val runtimePackagePartProvider = RuntimePackagePartProvider(classLoader)
             val javaResolverCache = JavaResolverCache.EMPTY
             val notFoundClasses = NotFoundClasses(storageManager, module)
-            val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(storageManager, Jsr305State.IGNORE)
+            val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(storageManager, Jsr305State.DISABLED)
             val globalJavaResolverContext = JavaResolverComponents(
                     storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
                     ExternalAnnotationResolver.EMPTY, SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, javaResolverCache,

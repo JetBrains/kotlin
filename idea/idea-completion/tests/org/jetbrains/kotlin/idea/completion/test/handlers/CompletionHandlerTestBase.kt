@@ -25,7 +25,6 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.test.KotlinTestUtils
 
 abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCase() {
     protected val fixture: JavaCodeInsightTestFixture
@@ -105,8 +104,6 @@ abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCa
         }
         return foundElement
     }
-
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     protected fun selectItem(item: LookupElement?, completionChar: Char) {
         val lookup = (fixture.lookup as LookupImpl)

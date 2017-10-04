@@ -243,6 +243,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     internal open val sourceRootsContainer = FilteringSourceRootsContainer()
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
+    val buildHistoryFile: File = File(taskBuildDirectory, "build-history.bin")
 
     val kaptOptions = KaptOptions()
 
@@ -316,10 +317,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             !incremental -> GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
             else -> {
                 logger.info(USING_INCREMENTAL_COMPILATION_MESSAGE)
+                val friendTask = friendTaskName?.let { project.tasks.findByName(it) as? KotlinCompile }
                 GradleIncrementalCompilerEnvironment(computedCompilerClasspath, changedFiles, reporter, taskBuildDirectory,
                         messageCollector, outputItemCollector, args, kaptAnnotationsFileUpdater,
                         artifactDifferenceRegistryProvider,
-                        artifactFile)
+                        artifactFile = artifactFile,
+                        buildHistoryFile = buildHistoryFile,
+                        friendBuildHistoryFile = friendTask?.buildHistoryFile)
             }
         }
 
@@ -453,7 +457,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
         args.friendModules = friendDependency
 
-        args.sourceMapSourceRoots = source.orEmpty()
+        args.sourceMapBaseDirs = source.orEmpty()
                 .asSequence()
                 .filterIsInstance<SourceDirectorySet>()
                 .flatMap { it.srcDirs.asSequence() }

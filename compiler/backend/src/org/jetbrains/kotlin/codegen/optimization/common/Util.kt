@@ -214,3 +214,6 @@ internal inline fun <reified T : AbstractInsnNode> AbstractInsnNode.isInsn(opcod
 internal inline fun <reified T : AbstractInsnNode> AbstractInsnNode.takeInsnIf(opcode: Int, condition: T.() -> Boolean): T? =
         takeIf { it.opcode == opcode }?.safeAs<T>()?.takeIf { it.condition() }
 
+fun InsnList.removeAll(nodes: Collection<AbstractInsnNode>) {
+    for (node in nodes) remove(node)
+}

@@ -183,7 +183,13 @@ class KtLightAnnotationForSourceEntry(
         private val _initializers by lazyPub {
             delegate.initializers.mapIndexed { i, it ->
                 wrapAnnotationValue(it, this, {
-                    (originalExpression as KtCallElement).valueArguments[i].getArgumentExpression()!!
+                    originalExpression.let {
+                        when (it) {
+                            is KtCallElement -> it.valueArguments[i].getArgumentExpression()!!
+                            is KtCollectionLiteralExpression -> it.getInnerExpressions()[i]
+                            else -> throw UnsupportedOperationException("cant process $it of type ${it?.javaClass}")
+                        }
+                    }
                 })
             }.toTypedArray()
         }

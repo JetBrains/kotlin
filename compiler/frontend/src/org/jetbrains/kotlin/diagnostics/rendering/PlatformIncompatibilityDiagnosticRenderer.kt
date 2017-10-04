@@ -101,7 +101,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
 
         if (incompatibility is Incompatible.ClassScopes) {
             append(indent)
-            append("No actuals are found for expected members listed below:")
+            append("No actual members are found for expected members listed below:")
             mode.newLine(this)
             renderIncompatibleClassScopes(incompatibility.unfulfilled, indent, context, mode)
         }

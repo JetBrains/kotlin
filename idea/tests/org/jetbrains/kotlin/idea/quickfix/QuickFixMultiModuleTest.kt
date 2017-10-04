@@ -32,7 +32,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
         impls.forEach { (implName, implKind) ->
             val implModule = module(implName, hasTestRoot = withTests)
-            implModule.createFacet(implKind)
+            implModule.createFacet(implKind, implementedModuleName = expectName)
             implModule.enableMultiPlatform()
             implModule.addDependency(commonModule)
         }
@@ -189,4 +189,13 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testImplementMembersInImplClassNonImplInheritor() = doMultiPlatformTest()
+
+    @Test
+    fun testAddActualToClass() = doMultiPlatformTest()
+
+    @Test
+    fun testAddActualToClassMember() = doMultiPlatformTest()
+
+    @Test
+    fun testAddActualToTopLevelMember() = doMultiPlatformTest()
 }

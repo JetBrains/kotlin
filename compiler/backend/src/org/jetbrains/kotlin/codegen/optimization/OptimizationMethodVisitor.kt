@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
-import org.jetbrains.kotlin.codegen.optimization.boxing.StackPeepholeOptimizationsTransformer
-import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.PopBackwardPropagationTransformer
+import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.boxing.StackPeepholeOptimizationsTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
@@ -35,11 +35,10 @@ class OptimizationMethodVisitor(
         signature: String?,
         exceptions: Array<String>?
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
-
     override fun performTransformations(methodNode: MethodNode) {
-        MANDATORY_METHOD_TRANSFORMER.transform("fake", methodNode)
+        normalizationMethodTransformer.transform("fake", methodNode)
         if (canBeOptimized(methodNode) && !disableOptimization) {
-            OPTIMIZATION_TRANSFORMER.transform("fake", methodNode)
+            optimizationTransformer.transform("fake", methodNode)
         }
         methodNode.prepareForEmitting()
     }
@@ -47,12 +46,13 @@ class OptimizationMethodVisitor(
     companion object {
         private val MEMORY_LIMIT_BY_METHOD_MB = 50
 
-        private val MANDATORY_METHOD_TRANSFORMER = CompositeMethodTransformer(
+        val normalizationMethodTransformer = CompositeMethodTransformer(
                 FixStackWithLabelNormalizationMethodTransformer(),
+                UninitializedStoresMethodTransformer(),
                 MethodVerifier("AFTER mandatory stack transformations")
         )
 
-        private val OPTIMIZATION_TRANSFORMER = CompositeMethodTransformer(
+        val optimizationTransformer = CompositeMethodTransformer(
                 CapturedVarsOptimizationMethodTransformer(),
                 RedundantNullCheckMethodTransformer(),
                 RedundantCheckCastEliminationMethodTransformer(),

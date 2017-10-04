@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException;
 import org.jetbrains.kotlin.js.facade.exceptions.UnsupportedFeatureException;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
@@ -253,10 +254,11 @@ public final class Translation {
             @NotNull Collection<TranslationUnit> units,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull JsConfig config
+            @NotNull JsConfig config,
+            @NotNull SourceFilePathResolver sourceFilePathResolver
     ) throws TranslationException {
         try {
-            return doGenerateAst(bindingTrace, units, mainCallParameters, moduleDescriptor, config);
+            return doGenerateAst(bindingTrace, units, mainCallParameters, moduleDescriptor, config, sourceFilePathResolver);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -272,7 +274,8 @@ public final class Translation {
             @NotNull Collection<TranslationUnit> units,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull JsConfig config
+            @NotNull JsConfig config,
+            @NotNull SourceFilePathResolver sourceFilePathResolver
     ) {
         JsProgram program = new JsProgram();
         JsFunction rootFunction = new JsFunction(program.getRootScope(), new JsBlock(), "root function");
@@ -290,7 +293,7 @@ public final class Translation {
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
                 KtFile file = ((TranslationUnit.SourceFile) unit).getFile();
-                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor);
+                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
                 TranslationContext context = TranslationContext.rootContext(staticContext);
                 List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
                 translateFile(context, file, fileMemberScope);
@@ -308,7 +311,7 @@ public final class Translation {
             }
         }
 
-        JsProgramFragment testFragment = mayBeGenerateTests(config, bindingTrace, moduleDescriptor);
+        JsProgramFragment testFragment = mayBeGenerateTests(config, bindingTrace, moduleDescriptor, sourceFilePathResolver);
         fragments.add(testFragment);
         newFragments.add(testFragment);
         merger.addFragment(testFragment);
@@ -316,7 +319,7 @@ public final class Translation {
 
         if (mainCallParameters.shouldBeGenerated()) {
             JsProgramFragment mainCallFragment = generateCallToMain(
-                    bindingTrace, config, moduleDescriptor, mainCallParameters.arguments());
+                    bindingTrace, config, moduleDescriptor, sourceFilePathResolver, mainCallParameters.arguments());
             if (mainCallFragment != null) {
                 fragments.add(mainCallFragment);
                 newFragments.add(mainCallFragment);
@@ -400,9 +403,9 @@ public final class Translation {
     @NotNull
     private static JsProgramFragment mayBeGenerateTests(
             @NotNull JsConfig config, @NotNull BindingTrace trace,
-            @NotNull ModuleDescriptor moduleDescriptor
+            @NotNull ModuleDescriptor moduleDescriptor, @NotNull SourceFilePathResolver sourceFilePathResolver
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor);
+        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
         TranslationContext context = TranslationContext.rootContext(staticContext);
 
         new JSTestGenerator(context).generateTestCalls(moduleDescriptor);
@@ -414,9 +417,10 @@ public final class Translation {
     @Nullable
     private static JsProgramFragment generateCallToMain(
             @NotNull BindingTrace trace, @NotNull JsConfig config, @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull SourceFilePathResolver sourceFilePathResolver,
             @NotNull List<String> arguments
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor);
+        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
         TranslationContext context = TranslationContext.rootContext(staticContext);
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
         FunctionDescriptor functionDescriptor = mainFunctionDetector.getMainFunction(moduleDescriptor);

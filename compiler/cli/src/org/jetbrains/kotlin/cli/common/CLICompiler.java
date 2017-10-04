@@ -175,8 +175,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             configuration.put(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT, true);
         }
 
+        MessageCollector collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
         if (apiVersion.compareTo(languageVersion) > 0) {
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+            collector.report(
                     ERROR,
                     "-api-version (" + apiVersion.getVersionString() + ") cannot be greater than " +
                     "-language-version (" + languageVersion.getVersionString() + ")",
@@ -185,7 +186,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         }
 
         if (!languageVersion.isStable()) {
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+            collector.report(
                     STRONG_WARNING,
                     "Language version " + languageVersion.getVersionString() + " is experimental, there are " +
                     "no backwards compatibility guarantees for new language and library features",
@@ -206,7 +207,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
                 languageVersion,
                 ApiVersion.createByLanguageVersion(apiVersion),
-                arguments.configureAnalysisFlags(configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)),
+                arguments.configureAnalysisFlags(collector),
                 extraLanguageFeatures
         ));
     }

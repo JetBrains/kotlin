@@ -19,21 +19,42 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.load.java.lazy.NullabilityQualifierWithApplicability
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.ReportLevel
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
 private val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
 private val TYPE_QUALIFIER_DEFAULT_FQNAME = FqName("javax.annotation.meta.TypeQualifierDefault")
 
-class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305State: Jsr305State) {
+private val MIGRATION_ANNOTATION_FQNAME = FqName("kotlin.annotations.jvm.UnderMigration")
+
+private val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
+        FqName("javax.annotation.ParametersAreNullableByDefault") to
+                NullabilityQualifierWithApplicability(
+                        NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
+                        listOf(AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER)
+                ),
+        FqName("javax.annotation.ParametersAreNonnullByDefault") to
+                NullabilityQualifierWithApplicability(
+                        NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
+                        listOf(AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER)
+                )
+)
+
+class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val jsr305State: Jsr305State) {
     enum class QualifierApplicabilityType {
         METHOD_RETURN_TYPE, VALUE_PARAMETER, FIELD, TYPE_USE
     }
@@ -42,10 +63,14 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305
             private val typeQualifier: AnnotationDescriptor,
             private val applicability: Int
     ) {
-        private fun isApplicableTo(elementType: QualifierApplicabilityType) = (applicability and (1 shl elementType.ordinal)) != 0
-
         operator fun component1() = typeQualifier
         operator fun component2() = QualifierApplicabilityType.values().filter(this::isApplicableTo)
+
+        private fun isApplicableTo(elementType: QualifierApplicabilityType) =
+                isApplicableConsideringMask(QualifierApplicabilityType.TYPE_USE) || isApplicableConsideringMask(elementType)
+
+        private fun isApplicableConsideringMask(elementType: QualifierApplicabilityType) =
+                (applicability and (1 shl elementType.ordinal)) != 0
     }
 
     private val resolvedNicknames =
@@ -64,7 +89,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305
     }
 
     fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor? {
-        if (jsr305State.isIgnored()) {
+        if (jsr305State.disabled) {
             return null
         }
 
@@ -74,8 +99,19 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305
         return resolveTypeQualifierNickname(annotationClass)
     }
 
+    fun resolveQualifierBuiltInDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): NullabilityQualifierWithApplicability? {
+        if (jsr305State.disabled) {
+            return null
+        }
+
+        return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS[annotationDescriptor.fqName]?.let { (qualifier, applicability) ->
+            val state = resolveJsr305AnnotationState(annotationDescriptor).takeIf { it != ReportLevel.IGNORE } ?: return null
+            return NullabilityQualifierWithApplicability(qualifier.copy(isForWarningOnly = state.isWarning), applicability)
+        }
+    }
+
     fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
-        if (jsr305State.isIgnored()) {
+        if (jsr305State.disabled) {
             return null
         }
 
@@ -95,10 +131,34 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305
                         }
                         .fold(0) { acc: Int, applicabilityType -> acc or (1 shl applicabilityType.ordinal) }
 
-        val typeQualifier =
-                typeQualifierDefaultAnnotatedClass.annotations.firstNotNullResult(this::resolveTypeQualifierAnnotation)
-                ?: return null
+        val typeQualifier = typeQualifierDefaultAnnotatedClass.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null }
+                            ?: return null
+
         return TypeQualifierWithApplicability(typeQualifier, elementTypesMask)
+    }
+
+    fun resolveJsr305AnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
+        resolveJsr305CustomState(annotationDescriptor)?.let { return it }
+        return jsr305State.global
+    }
+
+    fun resolveJsr305CustomState(annotationDescriptor: AnnotationDescriptor): ReportLevel? {
+        jsr305State.user[annotationDescriptor.fqName?.asString()]?.let { return it }
+        return annotationDescriptor.annotationClass?.migrationAnnotationStatus()
+    }
+
+    private fun ClassDescriptor.migrationAnnotationStatus(): ReportLevel? {
+        val stateDescriptor = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgumentValue()?.safeAs<ClassDescriptor>()
+                              ?: return null
+
+        jsr305State.migration?.let { return jsr305State.migration }
+
+        return when (stateDescriptor.name.asString()) {
+            "STRICT" -> ReportLevel.STRICT
+            "WARN" -> ReportLevel.WARN
+            "IGNORE" -> ReportLevel.IGNORE
+            else -> null
+        }
     }
 
     private fun ConstantValue<*>.mapConstantToQualifierApplicabilityTypes(): List<QualifierApplicabilityType> =
@@ -115,6 +175,8 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, val jsr305
             )
             else -> emptyList()
         }
+
+    val disabled: Boolean = jsr305State.disabled
 }
 
 val BUILT_IN_TYPE_QUALIFIER_FQ_NAMES = setOf(JAVAX_NONNULL_ANNOTATION, JAVAX_CHECKFORNULL_ANNOTATION)

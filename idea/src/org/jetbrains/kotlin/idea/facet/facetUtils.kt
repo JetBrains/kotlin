@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -24,11 +25,17 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -84,7 +91,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
             LanguageVersion.fromVersionString(commonArguments.apiVersion) ?: languageLevel
         }
         else {
-            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind))
         }
     }
 }
@@ -110,6 +117,47 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .sortedByDescending { it.first.length }
             .toMap()
 }
+
+private fun Module.findImplementedModuleName(modelsProvider: IdeModifiableModelsProvider): String? {
+    val facetModel = modelsProvider.getModifiableFacetModel(this)
+    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
+    return facet?.configuration?.settings?.implementedModuleName
+}
+
+private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
+    return modelsProvider.modules.filter { module ->
+        module.findImplementedModuleName(modelsProvider) == name
+    }
+}
+
+private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
+    val modelsProvider = IdeModifiableModelsProviderImpl(project)
+    val implementingModules = findImplementingModules(modelsProvider)
+    return implementingModules.mapNotNull {
+        when (moduleSourceInfo) {
+            is ModuleProductionSourceInfo -> it.productionSourceInfo()
+            is ModuleTestSourceInfo -> it.testSourceInfo()
+            else -> null
+        }
+    }
+}
+
+val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
+    get() {
+        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
+        val module = moduleSourceInfo.module
+        return module.cached(CachedValueProvider {
+            val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo)
+            val implementingModuleDescriptors = implementingModuleInfos.mapNotNull {
+                KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+            }
+            CachedValueProvider.Result(
+                    implementingModuleDescriptors,
+                    *(implementingModuleInfos.map { it.createModificationTracker() } +
+                      ProjectRootModificationTracker.getInstance(module.project)).toTypedArray()
+            )
+        })
+    }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider,
                             useProjectSettings: Boolean,

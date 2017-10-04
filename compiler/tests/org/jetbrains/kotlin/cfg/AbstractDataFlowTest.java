@@ -39,28 +39,29 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @NotNull BindingContext bindingContext
     ) {
         PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode.getRootPseudocode(), bindingContext);
-        Map<Instruction, Edges<InitControlFlowInfo>> variableInitializers =
+        Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> variableInitializers =
                 pseudocodeVariablesData.getVariableInitializers();
-        Map<Instruction, Edges<UseControlFlowInfo>> useStatusData =
+        Map<Instruction, Edges<ReadOnlyControlFlowInfo<VariableUseState>>> useStatusData =
                 pseudocodeVariablesData.getVariableUseStatusData();
         String initPrefix = "    INIT:";
         String usePrefix = "    USE:";
-        int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers);
+        int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers,
+                                                           pseudocodeVariablesData);
 
         dumpInstructions(pseudocode, out, (instruction, next, prev) -> {
             StringBuilder result = new StringBuilder();
-            Edges<InitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
-            Edges<InitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
+            Edges<ReadOnlyInitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
+            Edges<ReadOnlyInitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
             String initializersData = "";
             if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
-                initializersData = dumpEdgesData(initPrefix, initializersEdges);
+                initializersData = dumpEdgesData(initPrefix, initializersEdges, pseudocodeVariablesData);
             }
             result.append(String.format("%1$-" + initializersColumnWidth + "s", initializersData));
 
-            Edges<UseControlFlowInfo> useStatusEdges = useStatusData.get(instruction);
-            Edges<UseControlFlowInfo> nextUseStatusEdges = useStatusData.get(next);
+            Edges<ReadOnlyControlFlowInfo<VariableUseState>> useStatusEdges = useStatusData.get(instruction);
+            Edges<ReadOnlyControlFlowInfo<VariableUseState>> nextUseStatusEdges = useStatusData.get(next);
             if (useStatusEdges != null && !useStatusEdges.equals(nextUseStatusEdges)) {
-                result.append(dumpEdgesData(usePrefix, useStatusEdges));
+                result.append(dumpEdgesData(usePrefix, useStatusEdges, pseudocodeVariablesData));
             }
             return result.toString();
         });
@@ -69,13 +70,14 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     private static int countDataColumnWidth(
             @NotNull String prefix,
             @NotNull List<Instruction> instructions,
-            @NotNull Map<Instruction, Edges<InitControlFlowInfo>> data
+            @NotNull Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> data,
+            @NotNull PseudocodeVariablesData variablesData
     ) {
         int maxWidth = 0;
         for (Instruction instruction : instructions) {
-            Edges<InitControlFlowInfo> edges = data.get(instruction);
+            Edges<ReadOnlyInitControlFlowInfo> edges = data.get(instruction);
             if (edges == null) continue;
-            int length = dumpEdgesData(prefix, edges).length();
+            int length = dumpEdgesData(prefix, edges, variablesData).length();
             if (maxWidth < length) {
                 maxWidth = length;
             }
@@ -85,17 +87,27 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     }
 
     @NotNull
-    private static <S, I extends ControlFlowInfo<?, S>> String dumpEdgesData(String prefix, @NotNull Edges<I> edges) {
+    private static <S, I extends ReadOnlyControlFlowInfo<S>> String dumpEdgesData(
+            String prefix,
+            @NotNull Edges<I> edges,
+            @NotNull PseudocodeVariablesData variablesData
+    ) {
         return prefix +
-               " in: " + renderVariableMap(edges.getIncoming()) +
-               " out: " + renderVariableMap(edges.getOutgoing());
+               " in: " + renderVariableMap(edges.getIncoming().asMap(), variablesData) +
+               " out: " + renderVariableMap(edges.getOutgoing().asMap(), variablesData);
     }
 
-    private static <S> String renderVariableMap(javaslang.collection.Map<VariableDescriptor, S> map) {
+    private static <S> String renderVariableMap(
+            javaslang.collection.Map<VariableDescriptor, S> map,
+            PseudocodeVariablesData variablesData
+    ) {
         List<String> result = Lists.newArrayList();
         for (Tuple2<VariableDescriptor, S> entry : map) {
             VariableDescriptor variable = entry._1;
             S state = entry._2;
+
+            if (variablesData.isVariableWithTrivialInitializer(variable)) continue;
+
             result.add(variable.getName() + "=" + state);
         }
         Collections.sort(result);

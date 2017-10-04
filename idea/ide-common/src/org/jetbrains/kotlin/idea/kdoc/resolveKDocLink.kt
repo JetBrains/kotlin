@@ -253,6 +253,8 @@ private class ExtensionsScope(
                 .toSet()
     }
 
+    override fun getClassifierNames() = null
+
     override fun printScopeStructure(p: Printer) {
         p.println("Extensions for ${receiverClass.name} in:")
         contextScope.printStructure(p)

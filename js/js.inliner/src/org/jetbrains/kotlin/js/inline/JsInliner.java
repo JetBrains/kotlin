@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.getImportTag;
+import static org.jetbrains.kotlin.js.translate.declaration.InlineCoroutineUtilKt.transformSpecialFunctionsToCoroutineMetadata;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 
@@ -348,6 +349,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
 
         JsFunction function = functionWithWrapper.getFunction().deepCopy();
+        function.setBody(transformSpecialFunctionsToCoroutineMetadata(function.getBody()));
         if (functionWithWrapper.getWrapperBody() != null) {
             applyWrapper(functionWithWrapper.getWrapperBody(), function, functionWithWrapper.getFunction(), inliningContext);
         }
@@ -359,6 +361,22 @@ public class JsInliner extends JsVisitorWithContextImpl {
         // body of inline function can contain call to lambdas that need to be inlined
         JsStatement inlineableBodyWithLambdasInlined = accept(inlineableBody);
         assert inlineableBody == inlineableBodyWithLambdasInlined;
+
+        // Support non-local return from secondary constructor
+        // Returns from secondary constructors should return `$this` object.
+        JsFunction currentFunction = getCurrentNamedFunction();
+        if (currentFunction != null) {
+            JsName returnVariable = MetadataProperties.getForcedReturnVariable(currentFunction);
+            if (returnVariable != null) {
+                inlineableBody.accept(new RecursiveJsVisitor() {
+                    @Override
+                    public void visitReturn(@NotNull JsReturn x) {
+                        x.setExpression(returnVariable.makeRef());
+                    }
+                });
+            }
+        }
+
         statementContext.addPrevious(flattenStatement(inlineableBody));
 
         /*

@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.ArrayUtil
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -241,7 +242,7 @@ class MultifileClassCodegenImpl(
     private fun addDelegateGenerationTasksForDeclarationsInFile(file: KtFile, packageFragment: PackageFragmentDescriptor, partType: Type) {
         val facadeContext = state.rootContext.intoMultifileClass(packageFragment, facadeClassType, partType)
         val memberCodegen = createCodegenForDelegatesInMultifileFacade(facadeContext)
-        for (declaration in file.declarations) {
+        for (declaration in CodegenUtil.getActualDeclarations(file)) {
             if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 if (descriptor !is MemberDescriptor) {
@@ -367,7 +368,7 @@ class MultifileClassCodegenImpl(
         }
 
         private fun KtFile.hasDeclarationsForPartClass() =
-                declarations.any { it is KtProperty || it is KtFunction }
+                CodegenUtil.getActualDeclarations(this).any { it is KtProperty || it is KtFunction || it is KtTypeAlias }
 
         private fun getCompiledPackageFragment(
                 facadeFqName: FqName, state: GenerationState

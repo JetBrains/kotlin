@@ -168,7 +168,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         arguments.setDestination(output);
 
         arguments.setModuleName(moduleName);
-        getLog().info("Module name is " + moduleName);
+        getLog().debug("Module name is " + moduleName);
 
         if (arguments.getNoOptimize()) {
             getLog().info("Optimization is turned off");

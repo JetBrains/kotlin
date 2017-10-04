@@ -95,6 +95,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             if (element !is KtSimpleNameExpression) return false
             val propertyAccessor = element.getParentOfType<KtDeclarationWithBody>(true) as? KtPropertyAccessor ?: return false
             if (element.text != propertyAccessor.property.name) return false
+            if (element.parent is KtCallableReferenceExpression) return false
             val bindingContext = element.analyze()
             val target = bindingContext[REFERENCE_TARGET, element]
             if (target != bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, propertyAccessor.property]) return false
@@ -112,6 +113,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             val isGetter = name == "get$referencedName"
             val isSetter = name == "set$referencedName"
             if (!isGetter && !isSetter) return false
+            if (element.parent is KtCallableReferenceExpression) return false
             val bindingContext = element.analyze()
             val syntheticDescriptor = bindingContext[REFERENCE_TARGET, element] as? SyntheticJavaPropertyDescriptor ?: return false
             val namedFunctionDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, namedFunction]

@@ -11,39 +11,39 @@ L0:
   1 <START>                                                      INIT: in: {} out: {}
   2 mark({ "before" for (i in 1..10) { val a = i } "after" })
     mark("before")
-    r("before") -> <v0>                                                                                     USE: in: {} out: {}
+    r("before") -> <v0>
   3 r(1) -> <v1>
     r(10) -> <v2>
     mark(1..10)
     call(1..10, rangeTo|<v1>, <v2>) -> <v3>
     mark(1..10)
     call(1..10, iterator|<v3>) -> <v4>
-    v(i)                                                         INIT: in: {} out: {i=D}
+    v(i)                                                         INIT: in: {} out: {}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    mark(1..10)                                                  INIT: in: {i=I?D} out: {i=I?D}
+    mark(1..10)                                                  INIT: in: {} out: {}
     call(1..10, hasNext) -> <v5>
     jmp?(L3)
     mark(1..10)
     call(1..10, next) -> <v6>
     magic[LOOP_RANGE_ITERATION](1..10|<v6>) -> <v7>
-    w(i|<v7>)                                                    INIT: in: {i=I?D} out: {i=ID}
-    mark(for (i in 1..10) { val a = i })                         INIT: in: {i=ID} out: {i=ID}
+    w(i|<v7>)                                                    INIT: in: {} out: {}
+    mark(for (i in 1..10) { val a = i })                         INIT: in: {} out: {}
 L4 [body entry point]:
   4 mark({ val a = i })
-    v(val a = i)                                                 INIT: in: {i=ID} out: {a=D, i=ID}
-    r(i) -> <v8>                                                 INIT: in: {a=D, i=ID} out: {a=D, i=ID}
-    w(a|<v8>)                                                    INIT: in: {a=D, i=ID} out: {a=ID, i=ID}
-  3 jmp(L2)                                                      INIT: in: {i=ID} out: {i=ID}               USE: in: {i=READ} out: {i=READ}
+    v(val a = i)                                                 INIT: in: {} out: {}
+    r(i) -> <v8>                                                 INIT: in: {} out: {}
+    w(a|<v8>)                                                    INIT: in: {} out: {}
+  3 jmp(L2)                                                      INIT: in: {} out: {}
 L3 [loop exit point]:
 L5 [body exit point]:
-    read (Unit)                                                  INIT: in: {i=I?D} out: {i=I?D}
-  2 mark("after")                                                INIT: in: {} out: {}
+    read (Unit)
+  2 mark("after")
     r("after") -> <v9>
 L1:
   1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                  USE: in: {} out: {}
+    <SINK>                                                                               USE: in: {} out: {}
 =====================

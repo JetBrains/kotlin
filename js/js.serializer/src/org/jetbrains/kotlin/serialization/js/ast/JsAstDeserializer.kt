@@ -522,6 +522,10 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         JsAstProtoBuf.SpecialFunction.WRAP_FUNCTION -> SpecialFunction.WRAP_FUNCTION
         JsAstProtoBuf.SpecialFunction.TO_BOXED_CHAR -> SpecialFunction.TO_BOXED_CHAR
         JsAstProtoBuf.SpecialFunction.UNBOX_CHAR -> SpecialFunction.UNBOX_CHAR
+        JsAstProtoBuf.SpecialFunction.SUSPEND_CALL -> SpecialFunction.SUSPEND_CALL
+        JsAstProtoBuf.SpecialFunction.COROUTINE_RESULT -> SpecialFunction.COROUTINE_RESULT
+        JsAstProtoBuf.SpecialFunction.COROUTINE_CONTROLLER -> SpecialFunction.COROUTINE_CONTROLLER
+        JsAstProtoBuf.SpecialFunction.COROUTINE_RECEIVER -> SpecialFunction.COROUTINE_RECEIVER
     }
 
     private fun <T : JsNode> withLocation(fileId: Int?, location: Location?, action: () -> T): T {

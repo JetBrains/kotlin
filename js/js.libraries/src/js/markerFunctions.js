@@ -61,3 +61,16 @@ Kotlin.andPredicate = function (a, b) {
 
 Kotlin.kotlinModuleMetadata = function (abiVersion, moduleName, data) {
 };
+
+Kotlin.suspendCall = function(value) {
+    return value;
+};
+
+Kotlin.coroutineResult = function(qualifier) {
+};
+
+Kotlin.coroutineController = function(qualifier) {
+};
+
+Kotlin.coroutineReceiver = function(qualifier) {
+};

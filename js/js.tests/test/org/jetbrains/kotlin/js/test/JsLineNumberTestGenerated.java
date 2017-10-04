@@ -90,6 +90,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("coroutineNullAssertion.kt")
+    public void testCoroutineNullAssertion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/coroutineNullAssertion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/dataClass.kt");
@@ -207,6 +213,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
     @TestMetadata("isOperator.kt")
     public void testIsOperator() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/isOperator.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jsCode.kt")
+    public void testJsCode() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/jsCode.kt");
         doTest(fileName);
     }
 

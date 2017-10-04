@@ -36,5 +36,7 @@ internal class GradleIncrementalCompilerEnvironment(
         compilerArgs: CommonCompilerArguments,
         val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
         val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
-        val artifactFile: File? = null
+        val artifactFile: File? = null,
+        val buildHistoryFile: File? = null,
+        val friendBuildHistoryFile: File? = null
 ) : GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemsCollector, compilerArgs)

@@ -115,7 +115,7 @@ class CallableReferenceResolver(
     ): Set<CallableReferenceCandidate> {
         val factory = CallableReferencesCandidateFactory(callableReference, callComponents, scopeTower, compatibilityChecker, expectedType)
         val processor = createCallableReferenceProcessor(factory)
-        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = true)
+        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = true, name = callableReference.rhsName)
         return callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(
                 candidates,
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,

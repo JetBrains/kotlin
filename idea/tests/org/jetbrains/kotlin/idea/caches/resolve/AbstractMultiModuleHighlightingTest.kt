@@ -40,7 +40,8 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
             configureModule: (Module, TargetPlatformKind<*>) -> Unit = { _, _ -> },
             jdk: TestJdkKind = TestJdkKind.MOCK_JDK
     ) {
-        val commonModule = module("common", jdk)
+        val commonModuleName = "common"
+        val commonModule = module(commonModuleName, jdk)
         commonModule.createFacet(TargetPlatformKind.Common, false)
         if (withStdlibCommon) {
             commonModule.addLibrary(ForTestCompileRuntime.stdlibCommonForTests(), kind = CommonLibraryKind)
@@ -53,7 +54,7 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
                 else -> error("Unsupported platform: $platform")
             }
             val platformModule = module(path, jdk)
-            platformModule.createFacet(platform)
+            platformModule.createFacet(platform, implementedModuleName = commonModuleName)
             platformModule.enableMultiPlatform()
             platformModule.addDependency(commonModule)
             configureModule(platformModule, platform)

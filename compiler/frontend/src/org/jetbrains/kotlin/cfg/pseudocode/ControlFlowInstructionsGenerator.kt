@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.cfg.pseudocode
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-
 import java.util.*
 
 class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
@@ -113,6 +112,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun createUnboundLabel(name: String): Label = pseudocode.createLabel("L" + labelCount++, name)
 
         override fun enterLoop(expression: KtLoopExpression): LoopInfo {
+            if (expression is KtDoWhileExpression) {
+                (pseudocode.rootPseudocode as PseudocodeImpl).containsDoWhile = true
+            }
+
             val info = LoopInfo(
                     expression,
                     createUnboundLabel("loop entry point"),

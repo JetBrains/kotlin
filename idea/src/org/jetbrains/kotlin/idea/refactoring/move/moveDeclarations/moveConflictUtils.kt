@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.not
+import org.jetbrains.kotlin.idea.util.projectStructure.getModule
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -164,11 +166,11 @@ class MoveConflictChecker(
     // Based on RefactoringConflictsUtil.analyzeModuleConflicts
     fun analyzeModuleConflictsInUsages(project: Project,
                                        usages: Collection<UsageInfo>,
-                                       sourceRoot: VirtualFile,
+                                       targetFile: VirtualFile,
                                        conflicts: MultiMap<PsiElement, String>) {
-        val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
+        val targetModule = targetFile.getModule(project) ?: return
 
-        val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContent(sourceRoot)
+        val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContent(targetFile)
         NextUsage@ for (usage in usages) {
             val element = usage.element ?: continue
             if (PsiTreeUtil.getParentOfType(element, PsiImportStatement::class.java, false) != null) continue
@@ -177,9 +179,7 @@ class MoveConflictChecker(
             val resolveScope = element.resolveScope
             if (resolveScope.isSearchInModuleContent(targetModule, isInTestSources)) continue
 
-            val usageFile = element.containingFile
-            val usageVFile = usageFile.virtualFile ?: continue
-            val usageModule = ModuleUtilCore.findModuleForFile(usageVFile, project) ?: continue
+            val usageModule = element.module ?: continue
             val scopeDescription = RefactoringUIUtil.getDescription(element.getUsageContext(), true)
             val referencedElement = (if (usage is MoveRenameUsageInfo) usage.referencedElement else usage.element) ?: error(usage)
             val message = if (usageModule == targetModule && isInTestSources) {
@@ -200,9 +200,9 @@ class MoveConflictChecker(
 
     fun checkModuleConflictsInUsages(externalUsages: MutableSet<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
         val newConflicts = MultiMap<PsiElement, String>()
-        val sourceRoot = moveTarget.targetFile ?: return
+        val targetFile = moveTarget.targetFile ?: return
 
-        analyzeModuleConflictsInUsages(project, externalUsages, sourceRoot, newConflicts)
+        analyzeModuleConflictsInUsages(project, externalUsages, targetFile, newConflicts)
         if (!newConflicts.isEmpty) {
             val referencedElementsToSkip = newConflicts.keySet().mapNotNullTo(HashSet()) { it.namedUnwrappedElement }
             externalUsages.removeIf {
@@ -242,8 +242,8 @@ class MoveConflictChecker(
             internalUsages: MutableSet<UsageInfo>,
             conflicts: MultiMap<PsiElement, String>
     ) {
-        val sourceRoot = moveTarget.targetFile ?: return
-        val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
+        val targetFile = moveTarget.targetFile ?: return
+        val targetModule = targetFile.getModule(project) ?: return
         val resolveScope = targetModule.getScopeWithPlatformAwareDependencies()
 
         fun isInScope(targetElement: PsiElement, targetDescriptor: DeclarationDescriptor): Boolean {
@@ -255,7 +255,7 @@ class MoveConflictChecker(
             val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
             val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
 
-            val targetModuleInfo = getModuleInfoByVirtualFile(project, sourceRoot)
+            val targetModuleInfo = getModuleInfoByVirtualFile(project, targetFile)
             val dummyFile = KtPsiFactory(targetElement.project).createFile("dummy.kt", "").apply {
                 moduleInfo = targetModuleInfo
                 targetPlatform = TargetPlatformDetector.getPlatform(targetModule)
@@ -288,6 +288,8 @@ class MoveConflictChecker(
 
         val referencesToSkip = HashSet<KtReferenceExpression>()
         for (declaration in elementsToMove - doNotGoIn) {
+            if (declaration.module == targetModule) continue
+
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
                 val targetDescriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
 
@@ -328,15 +330,19 @@ class MoveConflictChecker(
             val referencedElement = usage.referencedElement?.namedUnwrappedElement as? KtNamedDeclaration ?: continue
             val referencedDescriptor = resolutionFacade.resolveToDescriptor(referencedElement)
 
+            if (referencedDescriptor is DeclarationDescriptorWithVisibility
+                && referencedDescriptor.visibility == Visibilities.PUBLIC) continue
+
             val container = element.getUsageContext()
             if (!declarationToContainers.getOrPut(referencedElement) { HashSet<PsiElement>() }.add(container)) continue
+
+            val targetContainer = moveTarget.getContainerDescriptor() ?: continue
 
             val referencingDescriptor = when (container) {
                                             is KtDeclaration -> container.unsafeResolveToDescriptor()
                                             is PsiMember -> container.getJavaMemberDescriptor()
                                             else -> null
                                         } ?: continue
-            val targetContainer = moveTarget.getContainerDescriptor() ?: continue
             val descriptorToCheck = referencedDescriptor.asPredicted(targetContainer) ?: continue
 
             if (referencedDescriptor.isVisibleIn(referencingDescriptor) && !descriptorToCheck.isVisibleIn(referencingDescriptor)) {

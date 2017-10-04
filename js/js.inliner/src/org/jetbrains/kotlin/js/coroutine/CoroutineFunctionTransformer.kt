@@ -43,11 +43,14 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
         val globalCatchBlockIndex = coroutineBlocks.indexOf(context.globalCatchBlock)
 
         coroutineBlocks.forEach { it.jsBlock.collectAdditionalLocalVariables() }
-        coroutineBlocks.forEach { it.jsBlock.replaceLocalVariables(context, localVariables) }
+
+        val survivingLocalVars = coroutineBlocks.collectVariablesSurvivingBetweenBlocks(
+                localVariables, function.parameters.map { it.name }.toSet())
+        coroutineBlocks.forEach { it.jsBlock.replaceLocalVariables(context, survivingLocalVars) }
 
         val additionalStatements = mutableListOf<JsStatement>()
         generateDoResume(coroutineBlocks, context, additionalStatements)
-        generateContinuationConstructor(context, additionalStatements, globalCatchBlockIndex)
+        generateContinuationConstructor(context, additionalStatements, globalCatchBlockIndex, survivingLocalVars)
 
         generateCoroutineInstantiation(context)
 
@@ -57,7 +60,8 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
     private fun generateContinuationConstructor(
             context: CoroutineTransformationContext,
             statements: MutableList<JsStatement>,
-            globalCatchBlockIndex: Int
+            globalCatchBlockIndex: Int,
+            survivingLocalVars: Set<JsName>
     ) {
         val psiElement = context.metadata.psiElement
 
@@ -93,7 +97,7 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
             if (context.metadata.hasReceiver) {
                 assignToField(context.receiverFieldName, context.receiverFieldName.makeRef(), psiElement)
             }
-            for (localVariable in localVariables) {
+            for (localVariable in survivingLocalVars) {
                 val value = if (localVariable !in parameterNames) Namer.getUndefinedExpression() else localVariable.makeRef()
                 assignToField(context.getFieldName(localVariable), value, psiElement)
             }

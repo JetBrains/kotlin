@@ -1,10 +1,8 @@
-import java.util.Arrays
-
 // WITH_RUNTIME
-// INTENTION_TEXT: Replace '==' with 'Arrays.equals'
+// INTENTION_TEXT: Replace '==' with 'contentEquals'
 fun foo() {
     val a = charArrayOf('a', 'b', 'c')
     val b = charArrayOf('a', 'b', 'c')
-    if (Arrays.equals(a, b)) {
+    if (a.contentEquals(b)) {
     }
 }

@@ -109,7 +109,7 @@
         <sequential>
             <mkdir dir="${dependencies}/@{target.dir}"/>
 
-            <java classname="org.apache.ivy.Main">
+            <java classname="org.apache.ivy.Main" fork="true">
                 <arg value="-dependency"/>
                 <arg value="@{group}"/>
                 <arg value="@{artifact}"/>

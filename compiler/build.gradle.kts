@@ -32,7 +32,8 @@ val testDistProjects = listOf(
         ":kotlin-daemon-client",
         ":kotlin-preloader",
         ":plugins:android-extensions-compiler",
-        ":kotlin-ant")
+        ":kotlin-ant",
+        ":kotlin-annotations-jvm")
 
 dependencies {
     depDistProjects.forEach {
@@ -82,36 +83,85 @@ projectTest {
 
 evaluationDependsOn(":compiler:tests-common-jvm6")
 
-fun Project.codegenTest(taskName: String, body: Test.() -> Unit): Test = projectTest(taskName) {
+fun Project.codegenTest(taskName: String, jdk: String, body: Test.() -> Unit): Test = projectTest(taskName) {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
-    environment("TEST_SERVER_CLASSES_DIRS", project(":compiler:tests-common-jvm6").the<JavaPluginConvention>().sourceSets.getByName("main").output.classesDirs.asPath)
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.CodegenJdkCommonTestSuite*")
+
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.BlackBoxCodegenTestGenerated*")
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.BlackBoxInlineCodegenTestGenerated*")
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.CompileKotlinAgainstInlineKotlinTestGenerated*")
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.CompileKotlinAgainstKotlinTestGenerated*")
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.BlackBoxAgainstJavaCodegenTestGenerated*")
+
+    if (jdk == "JDK_9") {
+        jvmArgs = listOf("--add-opens", "java.desktop/javax.swing=ALL-UNNAMED", "--add-opens", "java.base/java.io=ALL-UNNAMED")
+    }
     body()
+    doFirst {
+        val jdkPath = project.property(jdk) ?: error("$jdk is not optional to run this test")
+        executable = "$jdkPath/bin/java"
+        println("Running test with $executable")
+    }
+}.also {
+    task(taskName.replace(Regex("-[a-z]"), { it.value.takeLast(1).toUpperCase() })) {
+        dependsOn(it)
+        group = "verification"
+    }
 }
 
-codegenTest("codegen-target6-jvm6-test") {
+codegenTest("codegen-target6-jvm6-test", "JDK_18") {
+    dependsOn(":compiler:tests-common-jvm6:build")
+
+    //TODO make port flexible
+    val port = "5100"
+    var jdkProcess: Process? = null
+
+    doFirst {
+        logger.info("Configuring JDK 6 server...")
+        val jdkPath = project.property("JDK_16") ?: error("JDK_16 is not optional to run this test")
+        val executable = "$jdkPath/bin/java"
+        val main = "org.jetbrains.kotlin.test.clientserver.TestProcessServer"
+
+        val classpath = getSourceSetsFrom(":compiler:tests-common-jvm6")["main"].output.asPath + ":" +
+                getSourceSetsFrom(":kotlin-stdlib")["main"].output.asPath + ":" +
+                getSourceSetsFrom(":kotlin-stdlib")["builtins"].output.asPath + ":" +
+                getSourceSetsFrom(":kotlin-test:kotlin-test-jvm")["main"].output.asPath
+
+        logger.debug("Server classpath: $classpath")
+
+        val builder = ProcessBuilder(executable, "-cp", classpath, main, port)
+        builder.directory(rootDir)
+
+        builder.inheritIO()
+        builder.redirectErrorStream(true)
+
+        logger.info("Starting JDK 6 server $executable")
+        jdkProcess = builder.start()
+
+    }
     systemProperty("kotlin.test.default.jvm.target", "1.6")
     systemProperty("kotlin.test.java.compilation.target", "1.6")
-    systemProperty("kotlin.test.box.in.separate.process.port", "5100")
+    systemProperty("kotlin.test.box.in.separate.process.port", port)
+
+    doLast {
+        logger.info("Stopping JDK 6 server...")
+        jdkProcess?.destroy()
+    }
 }
 
-codegenTest("codegen-target6-jvm9-test") {
+codegenTest("codegen-target6-jvm9-test", "JDK_9") {
     systemProperty("kotlin.test.default.jvm.target", "1.6")
-    jvmArgs = listOf("--add-opens", "java.desktop/javax.swing=ALL-UNNAMED", "--add-opens", "java.base/java.io=ALL-UNNAMED")
 }
 
-codegenTest("codegen-target8-jvm8-test") {
+codegenTest("codegen-target8-jvm8-test", "JDK_18") {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
 }
 
-codegenTest("codegen-target8-jvm9-test") {
+codegenTest("codegen-target8-jvm9-test", "JDK_9") {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
-    jvmArgs = listOf("--add-opens", "java.desktop/javax.swing=ALL-UNNAMED", "--add-opens", "java.base/java.io=ALL-UNNAMED")
 }
 
-codegenTest("codegen-target9-jvm9-test") {
+codegenTest("codegen-target9-jvm9-test", "JDK_9") {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.1.9", "true")
-    jvmArgs = listOf("--add-opens", "java.desktop/javax.swing=ALL-UNNAMED", "--add-opens", "java.base/java.io=ALL-UNNAMED")
 }

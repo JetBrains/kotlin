@@ -159,6 +159,22 @@ public final class JsAstProtoBuf {
      * <code>UNBOX_CHAR = 4;</code>
      */
     UNBOX_CHAR(3, 4),
+    /**
+     * <code>SUSPEND_CALL = 5;</code>
+     */
+    SUSPEND_CALL(4, 5),
+    /**
+     * <code>COROUTINE_RESULT = 6;</code>
+     */
+    COROUTINE_RESULT(5, 6),
+    /**
+     * <code>COROUTINE_CONTROLLER = 7;</code>
+     */
+    COROUTINE_CONTROLLER(6, 7),
+    /**
+     * <code>COROUTINE_RECEIVER = 8;</code>
+     */
+    COROUTINE_RECEIVER(7, 8),
     ;
 
     /**
@@ -177,6 +193,22 @@ public final class JsAstProtoBuf {
      * <code>UNBOX_CHAR = 4;</code>
      */
     public static final int UNBOX_CHAR_VALUE = 4;
+    /**
+     * <code>SUSPEND_CALL = 5;</code>
+     */
+    public static final int SUSPEND_CALL_VALUE = 5;
+    /**
+     * <code>COROUTINE_RESULT = 6;</code>
+     */
+    public static final int COROUTINE_RESULT_VALUE = 6;
+    /**
+     * <code>COROUTINE_CONTROLLER = 7;</code>
+     */
+    public static final int COROUTINE_CONTROLLER_VALUE = 7;
+    /**
+     * <code>COROUTINE_RECEIVER = 8;</code>
+     */
+    public static final int COROUTINE_RECEIVER_VALUE = 8;
 
 
     public final int getNumber() { return value; }
@@ -187,6 +219,10 @@ public final class JsAstProtoBuf {
         case 2: return WRAP_FUNCTION;
         case 3: return TO_BOXED_CHAR;
         case 4: return UNBOX_CHAR;
+        case 5: return SUSPEND_CALL;
+        case 6: return COROUTINE_RESULT;
+        case 7: return COROUTINE_CONTROLLER;
+        case 8: return COROUTINE_RECEIVER;
         default: return null;
       }
     }

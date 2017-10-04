@@ -2,7 +2,7 @@ apply { plugin("kotlin") }
 
 dependencies {
 
-    compileOnly(ideaSdkDeps("openapi", "idea", "external-system-rt"))
+    compileOnly(ideaSdkDeps("openapi", "idea", "external-system-rt", "forms_rt"))
     compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", "gradle-base-services", plugin = "gradle"))
     compileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
 
@@ -56,3 +56,5 @@ testsJar()
 projectTest {
     workingDir = rootDir
 }
+
+configureInstrumentation()

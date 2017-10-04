@@ -672,8 +672,8 @@ class LazyJavaClassMemberScope(
         }
     }
 
-    private fun recordLookup(name: Name, from: LookupLocation) {
-        c.components.lookupTracker.record(from, ownerDescriptor, name)
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.components.lookupTracker.record(location, ownerDescriptor, name)
     }
 
     override fun toString() = "Lazy Java member scope for " + jClass.fqName

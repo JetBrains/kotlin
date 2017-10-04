@@ -103,9 +103,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.CodegenUtilKt.extractReificationArgument;
-import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isPossiblyUninitializedSingleton;
-import static org.jetbrains.kotlin.codegen.CodegenUtilKt.unwrapInitialSignatureDescriptor;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
@@ -1611,7 +1609,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return null;
     }
 
-    public void returnExpression(KtExpression expr) {
+    public void returnExpression(@NotNull KtExpression expr) {
         boolean isBlockedNamedFunction = expr instanceof KtBlockExpression && expr.getParent() instanceof KtNamedFunction;
 
         FunctionDescriptor originalSuspendLambdaDescriptor = getOriginalSuspendLambdaDescriptorFromContext(context);
@@ -1644,7 +1642,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    private static boolean endsWithReturn(KtElement bodyExpression) {
+    private static boolean endsWithReturn(@NotNull KtElement bodyExpression) {
         if (bodyExpression instanceof KtBlockExpression) {
             List<KtExpression> statements = ((KtBlockExpression) bodyExpression).getStatements();
             return statements.size() > 0 && statements.get(statements.size() - 1) instanceof KtReturnExpression;
@@ -1653,7 +1651,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return bodyExpression instanceof KtReturnExpression;
     }
 
-    private static boolean isLambdaVoidBody(KtElement bodyExpression, Type returnType) {
+    private static boolean isLambdaVoidBody(@NotNull KtElement bodyExpression, @NotNull Type returnType) {
         if (bodyExpression instanceof KtBlockExpression) {
             PsiElement parent = bodyExpression.getParent();
             if (parent instanceof KtFunctionLiteral) {
@@ -2658,6 +2656,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return cur;
     }
 
+    private boolean canSkipArrayCopyForSpreadArgument(KtExpression spreadArgument) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(spreadArgument, bindingContext);
+        if (resolvedCall == null) return false;
+
+        CallableDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
+        return (calleeDescriptor instanceof ConstructorDescriptor) ||
+               CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall) ||
+               (DescriptorUtils.getFqName(calleeDescriptor).asString().equals("kotlin.arrayOfNulls"));
+    }
 
     @NotNull
     public StackValue genVarargs(@NotNull VarargValueArgument valueArgument, @NotNull KotlinType outType) {
@@ -2680,10 +2687,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (size == 1) {
                 Type arrayType = getArrayType(arrayOfReferences ? AsmTypes.OBJECT_TYPE : elementType);
                 return StackValue.operation(type, adapter -> {
-                    gen(arguments.get(0).getArgumentExpression(), type);
-                    v.dup();
-                    v.arraylength();
-                    v.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false);
+                    KtExpression spreadArgument = arguments.get(0).getArgumentExpression();
+                    gen(spreadArgument, type);
+                    if (!canSkipArrayCopyForSpreadArgument(spreadArgument)) {
+                        v.dup();
+                        v.arraylength();
+                        v.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false);
+                    }
                     if (arrayOfReferences) {
                         v.checkcast(type);
                     }
@@ -3904,7 +3914,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             boolean isGetter = OperatorNameConventions.GET.equals(operationDescriptor.getName());
 
-            Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall);
+            ResolvedCall<FunctionDescriptor> resolvedCall = isGetter ? resolvedGetCall : resolvedSetCall;
+            assert resolvedCall != null : "No resolved call for " + operationDescriptor;
+            Callable callable = resolveToCallable(accessibleFunctionDescriptor(resolvedCall), false, resolvedCall);
             Callable callableMethod = resolveToCallableMethod(operationDescriptor, false);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 

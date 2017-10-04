@@ -46,7 +46,7 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
         val result = ArrayList<AbstractTreeNode<out Any>>()
 
         for (child in children) {
-            val childValue = child.value.asKtFile()
+            val childValue = child.value?.asKtFile()
 
             if (childValue != null) {
                 val declarations = childValue.declarations

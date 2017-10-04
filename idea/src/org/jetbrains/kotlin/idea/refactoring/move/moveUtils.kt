@@ -70,12 +70,20 @@ sealed class ContainerInfo {
         override fun matches(descriptor: DeclarationDescriptor): Boolean {
             return descriptor is PackageFragmentDescriptor && descriptor.fqName == fqName
         }
+
+        override fun equals(other: Any?) = other is Package && other.fqName == fqName
+
+        override fun hashCode() = fqName.hashCode()
     }
 
     class Class(override val fqName: FqName) : ContainerInfo() {
         override fun matches(descriptor: DeclarationDescriptor): Boolean {
             return descriptor is ClassDescriptor && descriptor.importableFqName == fqName
         }
+
+        override fun equals(other: Any?) = other is Class && other.fqName == fqName
+
+        override fun hashCode() = fqName.hashCode()
     }
 }
 

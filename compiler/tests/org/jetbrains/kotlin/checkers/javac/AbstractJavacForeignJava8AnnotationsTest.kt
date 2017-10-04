@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.checkers.javac
 
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsTest
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 abstract class AbstractJavacForeignJava8AnnotationsTest : AbstractForeignJava8AnnotationsTest() {
 
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
+        if (files.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_JAVAC") }) return
+
         val groupedByModule = files.groupBy(TestFile::module)
         val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }
         environment.registerJavac(kotlinFiles = allKtFiles)

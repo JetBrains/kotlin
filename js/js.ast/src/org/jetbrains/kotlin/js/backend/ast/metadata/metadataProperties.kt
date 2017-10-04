@@ -53,6 +53,8 @@ var JsNameRef.psiElement: PsiElement? by MetadataProperty(default = null)
 
 var JsFunction.isLocal: Boolean by MetadataProperty(default = false)
 
+var JsFunction.forcedReturnVariable: JsName? by MetadataProperty(default = null)
+
 var JsParameter.hasDefaultValue: Boolean by MetadataProperty(default = false)
 
 var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
@@ -147,6 +149,10 @@ enum class SpecialFunction(val suggestedName: String) {
     WRAP_FUNCTION("wrapFunction"),
     TO_BOXED_CHAR("toBoxedChar"),
     UNBOX_CHAR("unboxChar"),
+    SUSPEND_CALL("suspendCall"),
+    COROUTINE_RESULT("coroutineResult"),
+    COROUTINE_CONTROLLER("coroutineController"),
+    COROUTINE_RECEIVER("coroutineReceiver")
 }
 
 enum class BoxingKind {

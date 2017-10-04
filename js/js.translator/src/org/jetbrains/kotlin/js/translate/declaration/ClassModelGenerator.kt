@@ -54,7 +54,7 @@ class ClassModelGenerator(val context: TranslationContext) {
 
         // Traverse fake non-abstract member. Current class does not provide their implementation,
         // it can be inherited from interface.
-        for (member in members.filter { !it.kind.isReal && it.modality != Modality.ABSTRACT }) {
+        for (member in members.filter { !it.kind.isReal }) {
             if (member is FunctionDescriptor) {
                 tryCopyWhenImplementingInterfaceWithDefaultArgs(member, model)
             }
@@ -63,7 +63,7 @@ class ClassModelGenerator(val context: TranslationContext) {
 
             // Copy *implementation* functions (i.e. those ones which end with `$default` suffix)
             // of Kotlin functions with optional parameters.
-            if (member is FunctionDescriptor && !hasImplementationInPrototype(member)) {
+            if (member is FunctionDescriptor && !hasImplementationInPrototype(member) && member.modality != Modality.ABSTRACT) {
                 copyMemberWithOptionalArgs(descriptor, member, model, Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
             }
         }
@@ -155,7 +155,10 @@ class ClassModelGenerator(val context: TranslationContext) {
         // When none found, we have nothing to copy, ignore.
         // When multiple found, our current class should provide implementation, ignore.
         val memberToCopy = member.findNonRepeatingOverriddenDescriptors({ overriddenDescriptors }, { original })
-                                   .singleOrNull { it.modality != Modality.ABSTRACT } ?: return null
+                                   .singleOrNull {
+                                       it.modality != Modality.ABSTRACT ||
+                                       (it is FunctionDescriptor && it.hasOwnParametersWithDefaultValue())
+                                   } ?: return null
 
         // If found member is not from interface, we don't need to copy it, it's already in prototype
         if ((memberToCopy.containingDeclaration as ClassDescriptor).kind != ClassKind.INTERFACE) return null

@@ -16,11 +16,17 @@
 
 package org.jetbrains.kotlin.idea.test;
 
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
@@ -39,6 +45,12 @@ public class PluginTestCaseBase {
     }
 
     @NotNull
+    @TestOnly
+    private static Sdk createMockJdk(@NotNull String name, String path) {
+        return ((JavaSdkImpl)JavaSdk.getInstance()).createMockJdk(name, path, false);
+    }
+
+    @NotNull
     private static Sdk getSdk(String sdkHome, String name) {
         return JavaSdk.getInstance().createJdk(name, sdkHome, true);
     }
@@ -46,6 +58,23 @@ public class PluginTestCaseBase {
     @NotNull
     public static Sdk mockJdk() {
         return getSdk("compiler/testData/mockJDK/jre", "Mock JDK");
+    }
+
+    @NotNull
+    public static Sdk mockJdk6() {
+        return getSdk("compiler/testData/mockJDK/jre", "1.6");
+    }
+
+    @NotNull
+    public static Sdk mockJdk8() {
+        // Using JDK 6, but with version 1.8
+        return getSdk("compiler/testData/mockJDK/jre", "1.8");
+    }
+
+    @TestOnly
+    @NotNull
+    public static Sdk mockJdk9() {
+        return createMockJdk("9", "compiler/testData/mockJDK9/jre");
     }
 
     @NotNull
@@ -74,5 +103,15 @@ public class PluginTestCaseBase {
 
     public static boolean isAllFilesPresentTest(@NotNull String testName) {
         return StringUtil.startsWithIgnoreCase(testName, "allFilesPresentIn");
+    }
+
+    @TestOnly
+    public static void clearSdkTable(@NotNull Disposable disposable) {
+        Disposer.register(disposable, () -> ApplicationManager.getApplication().runWriteAction(() -> {
+            ProjectJdkTable jdkTable = ProjectJdkTable.getInstance();
+            for (Sdk sdk : jdkTable.getAllJdks()) {
+                jdkTable.removeJdk(sdk);
+            }
+        }));
     }
 }

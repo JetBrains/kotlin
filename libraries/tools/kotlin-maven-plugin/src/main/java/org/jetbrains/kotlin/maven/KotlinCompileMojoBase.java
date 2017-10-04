@@ -197,7 +197,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        getLog().info("Kotlin version " + KotlinCompilerVersion.VERSION +
+        getLog().debug("Kotlin version " + KotlinCompilerVersion.VERSION +
                 " (JRE " + System.getProperty("java.runtime.version") + ")");
 
         if (!hasKotlinFilesInSources()) {
@@ -433,7 +433,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         if (sourceRoots.isEmpty()) {
             throw new MojoExecutionException("No source roots to compile");
         }
-        getLog().info("Compiling Kotlin sources from " + sourceRoots);
+        getLog().debug("Compiling Kotlin sources from " + sourceRoots);
         return sourceRoots;
     }
 

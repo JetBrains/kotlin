@@ -19,8 +19,5 @@
   "bugs": {
     "url": "kotl.in/issue"
   },
-  "homepage": "kotlinlang.org",
-  "publishConfig" : {
-    "tag" : "dev"
-  }
+  "homepage": "kotlinlang.org"
 }

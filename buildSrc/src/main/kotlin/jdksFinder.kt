@@ -19,7 +19,8 @@ data class JdkId(val explicit: Boolean, val majorVersion: JdkMajorVersion, var v
 fun Project.getConfiguredJdks(): List<JdkId> {
     val res = arrayListOf<JdkId>()
     for (jdkMajorVersion in JdkMajorVersion.values()) {
-        val explicitJdkEnvVal = System.getenv(jdkMajorVersion.name)
+        val explicitJdkEnvVal = findProperty(jdkMajorVersion.name)?.toString()
+                ?: System.getenv(jdkMajorVersion.name)
                 ?: jdkAlternativeVarNames[jdkMajorVersion]?.mapNotNull { System.getenv(it) }?.firstOrNull()
                 ?: continue
         val explicitJdk = File(explicitJdkEnvVal)

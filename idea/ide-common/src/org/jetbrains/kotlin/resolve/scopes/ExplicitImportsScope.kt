@@ -38,6 +38,8 @@ class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescri
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean)
             = descriptors
 
+    override fun computeImportedNames() = descriptors.mapTo(hashSetOf()) { it.name }
+
     override fun printStructure(p: Printer) {
         p.println(this::class.java.name)
     }

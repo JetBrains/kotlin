@@ -507,9 +507,12 @@ class CompileServiceImpl(
                                           workingDir,
                                           enabled = true)
 
-        return IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater,
-                                            artifactChanges, changesRegistry)
-                .compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, { changedFiles })
+        val compiler = IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions,
+                                                    reporter, annotationFileUpdater,
+                                                    artifactChanges, changesRegistry,
+                                                    buildHistoryFile = incrementalCompilationOptions.resultDifferenceFile,
+                                                    friendBuildHistoryFile = incrementalCompilationOptions.friendDifferenceFile)
+        return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, { changedFiles })
     }
 
     override fun leaseReplSession(

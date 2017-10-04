@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory;
-import org.jetbrains.kotlin.codegen.ClassBuilderMode;
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 

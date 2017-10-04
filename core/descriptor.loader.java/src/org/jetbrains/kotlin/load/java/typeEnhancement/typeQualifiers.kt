@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 enum class NullabilityQualifier {
     NULLABLE,
-    NOT_NULL
+    NOT_NULL,
+    FORCE_FLEXIBILITY
 }
 
 enum class MutabilityQualifier {

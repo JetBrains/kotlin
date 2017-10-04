@@ -392,9 +392,7 @@ public class JsAstMapper {
                     JsUnaryOperator.DELETE, to);
         }
         else {
-            throw createParserException(
-                    "'delete' can only operate on property names and array elements",
-                    from);
+            return new JsNullLiteral();
         }
     }
 
@@ -464,7 +462,7 @@ public class JsAstMapper {
         }
     }
 
-    private JsExpression mapExpression(Node exprNode) throws JsParserException {
+    public JsExpression mapExpression(Node exprNode) throws JsParserException {
         JsNode unknown = map(exprNode);
 
         if (unknown instanceof JsExpression) {

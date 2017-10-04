@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Sets
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve
@@ -37,6 +38,7 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
         val classesAndObjects = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
         val typeAliases = ArrayListMultimap.create<Name, KtTypeAlias>()
         val destructuringDeclarationsEntries = ArrayListMultimap.create<Name, KtDestructuringDeclarationEntry>()
+        val names = Sets.newHashSet<Name>()
 
         fun putToIndex(declaration: KtDeclaration) {
             if (declaration is KtAnonymousInitializer || declaration is KtSecondaryConstructor) return
@@ -57,7 +59,9 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                 }
                 is KtDestructuringDeclaration -> {
                     for (entry in declaration.entries) {
-                        destructuringDeclarationsEntries.put(safeNameForLazyResolve(entry.nameAsName), entry)
+                        val name = safeNameForLazyResolve(entry.nameAsName)
+                        destructuringDeclarationsEntries.put(name, entry)
+                        names.add(name)
                     }
                 }
                 is KtParameter -> {
@@ -65,10 +69,16 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                 }
                 else -> throw IllegalArgumentException("Unknown declaration: " + declaration)
             }
+
+            when (declaration) {
+                is KtNamedDeclaration -> names.add(safeNameForLazyResolve(declaration))
+            }
         }
 
         override fun toString() = "allDeclarations: " + allDeclarations.mapNotNull { it.name }
     }
+
+    override fun getDeclarationNames() = index().names
 
     private val index = storageManager.createLazyValue<Index> {
         val index = Index()

@@ -13934,6 +13934,18 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class HeaderClass extends AbstractDiagnosticsUsingJavacTest {
+                @TestMetadata("actualClassWithDefaultValuesInAnnotationViaTypealias.kt")
+                public void testActualClassWithDefaultValuesInAnnotationViaTypealias() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualClassWithDefaultValuesInAnnotationViaTypealias.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("actualMissing.kt")
+                public void testActualMissing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualMissing.kt");
+                    doTest(fileName);
+                }
+
                 public void testAllFilesPresentInHeaderClass() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/headerClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
@@ -13983,6 +13995,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("implOpenClass.kt")
                 public void testImplOpenClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/implOpenClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberPropertyKinds.kt")
+                public void testMemberPropertyKinds() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/memberPropertyKinds.kt");
                     doTest(fileName);
                 }
 

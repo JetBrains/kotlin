@@ -30,6 +30,42 @@ fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: Strin
     }
 }
 
+fun parseExpressionOrStatement(
+        code: String,
+        reporter: ErrorReporter, scope: JsScope,
+        startPosition: CodePosition, fileName: String
+): List<JsStatement>? {
+    val accumulatingReporter = AccumulatingReporter()
+    val exprNode = try {
+        parse(code, startPosition, 0, accumulatingReporter, true) {
+            val result = expr(it, false)
+            if (it.token != TokenStream.EOF) {
+                accumulatingReporter.hasErrors = true
+            }
+            result
+        }
+    }
+    catch (e: JavaScriptException) {
+        null
+    }
+
+    return if (!accumulatingReporter.hasErrors) {
+        for (warning in accumulatingReporter.warnings) {
+            reporter.warning(warning.message, warning.startPosition, warning.endPosition)
+        }
+        val expr = exprNode?.toJsAst(scope, fileName) {
+            mapExpression(it)
+        }
+        expr?.let { listOf(JsExpressionStatement(it)) }
+    }
+    else {
+        val node = parse(code, startPosition, 0, reporter, true, Parser::parse)
+        node?.toJsAst(scope, fileName) {
+            mapStatements(it)
+        }
+    }
+}
+
 fun parseFunction(code: String, fileName: String, position: CodePosition, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction? {
     val rootNode = parse(code, position, offset, reporter, insideFunction = false) {
         addListener(FunctionParsingObserver())
@@ -81,3 +117,19 @@ private fun StringReader(string: String, offset: Int): Reader {
     reader.skip(offset.toLong())
     return reader
 }
+
+private class AccumulatingReporter : ErrorReporter {
+    var hasErrors = false
+    val warnings = mutableListOf<Warning>()
+
+    override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {
+        warnings += Warning(message, startPosition, endPosition)
+    }
+
+    override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) {
+        hasErrors = true
+    }
+
+    class Warning(val message: String, val startPosition: CodePosition, val endPosition: CodePosition)
+}
+

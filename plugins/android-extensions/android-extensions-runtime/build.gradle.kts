@@ -18,4 +18,6 @@ runtimeJar()
 sourcesJar()
 javadocJar()
 
+dist(targetName = "android-extensions-runtime.jar")
+
 publish()

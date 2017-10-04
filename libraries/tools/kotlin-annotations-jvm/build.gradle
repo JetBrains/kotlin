@@ -1,0 +1,36 @@
+description = 'Kotlin annotations for JVM'
+
+apply plugin: 'kotlin'
+
+configureJvm6Project(project)
+configurePublishing(project)
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir 'src'
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions.jdkHome = JDK_16
+    kotlinOptions.jvmTarget = 1.6
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-module-name", project.name
+    ]
+}
+

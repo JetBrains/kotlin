@@ -72,6 +72,30 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyFIleFromDefaultPackage/copyFIleFromDefaultPackage.test")
+    public void testCopyFIleFromDefaultPackage_CopyFIleFromDefaultPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleFromDefaultPackage/copyFIleFromDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyFIleRetainContent/copyFIleRetainContent.test")
+    public void testCopyFIleRetainContent_CopyFIleRetainContent() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleRetainContent/copyFIleRetainContent.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyFIleToDefaultPackage/copyFIleToDefaultPackage.test")
+    public void testCopyFIleToDefaultPackage_CopyFIleToDefaultPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleToDefaultPackage/copyFIleToDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyFIleWithPackageAndDirUnmatched/copyFIleWithPackageAndDirUnmatched.test")
+    public void testCopyFIleWithPackageAndDirUnmatched_CopyFIleWithPackageAndDirUnmatched() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFIleWithPackageAndDirUnmatched/copyFIleWithPackageAndDirUnmatched.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyFunCallQualificationWithParentheses/copyFunCallQualificationWithParentheses.test")
     public void testCopyFunCallQualificationWithParentheses_CopyFunCallQualificationWithParentheses() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFunCallQualificationWithParentheses/copyFunCallQualificationWithParentheses.test");
@@ -144,9 +168,21 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copySingleClass/copySingleClass.test")
+    public void testCopySingleClass_CopySingleClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copySingleClass/copySingleClass.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copySingleClassFile/copySingleClassFile.test")
     public void testCopySingleClassFile_CopySingleClassFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copySingleClassFile/copySingleClassFile.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copySingleClassWithRename/copySingleClassWithRename.test")
+    public void testCopySingleClassWithRename_CopySingleClassWithRename() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copySingleClassWithRename/copySingleClassWithRename.test");
         doTest(fileName);
     }
 
@@ -171,6 +207,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
     @TestMetadata("copyTopLevelPropertyWithRename/copyTopLevelPropertyWithRename.test")
     public void testCopyTopLevelPropertyWithRename_CopyTopLevelPropertyWithRename() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyTopLevelPropertyWithRename/copyTopLevelPropertyWithRename.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyWithImportInsertion/copyWithImportInsertion.test")
+    public void testCopyWithImportInsertion_CopyWithImportInsertion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyWithImportInsertion/copyWithImportInsertion.test");
         doTest(fileName);
     }
 

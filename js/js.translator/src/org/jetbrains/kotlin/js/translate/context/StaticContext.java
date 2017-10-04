@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.util.Factory;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
 import org.jetbrains.kotlin.js.translate.declaration.ClassModelGenerator;
@@ -85,8 +84,6 @@ public final class StaticContext {
     @NotNull
     private final Generator<JsName> innerNames = new InnerNameGenerator();
     @NotNull
-    private final Map<FqName, JsName> packageNames = Maps.newHashMap();
-    @NotNull
     private final Generator<JsScope> scopes = new ScopeGenerator();
     @NotNull
     private final Generator<JsName> objectInstanceNames = new ObjectInstanceNameGenerator();
@@ -124,9 +121,6 @@ public final class StaticContext {
     private final Map<JsImportedModuleKey, JsImportedModule> importedModules = new LinkedHashMap<>();
 
     @NotNull
-    private final JsScope rootPackageScope;
-
-    @NotNull
     private final DeclarationExporter exporter = new DeclarationExporter(this);
 
     @NotNull
@@ -142,10 +136,16 @@ public final class StaticContext {
 
     private final Map<SpecialFunction, JsName> specialFunctions = new EnumMap<>(SpecialFunction.class);
 
+    private final Map<String, JsName> intrinsicNames = new HashMap<>();
+
+    @NotNull
+    private final SourceFilePathResolver sourceFilePathResolver;
+
     public StaticContext(
             @NotNull BindingTrace bindingTrace,
             @NotNull JsConfig config,
-            @NotNull ModuleDescriptor moduleDescriptor
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull SourceFilePathResolver sourceFilePathResolver
     ) {
         program = new JsProgram();
         JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
@@ -153,16 +153,16 @@ public final class StaticContext {
 
         this.bindingTrace = bindingTrace;
         this.namer = Namer.newInstance(program.getRootScope());
-        this.intrinsics = new Intrinsics(this);
+        this.intrinsics = new Intrinsics();
         this.rootScope = fragment.getScope();
         this.config = config;
         this.currentModule = moduleDescriptor;
-        rootPackageScope = new JsObjectScope(rootScope, "<root package>");
 
         JsName kotlinName = rootScope.declareName(Namer.KOTLIN_NAME);
         createImportedModule(new JsImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null), Namer.KOTLIN_LOWER_NAME, kotlinName, null);
 
         classModelGenerator = new ClassModelGenerator(TranslationContext.rootContext(this));
+        this.sourceFilePathResolver = sourceFilePathResolver;
     }
 
     @NotNull
@@ -193,6 +193,11 @@ public final class StaticContext {
     @NotNull
     public Namer getNamer() {
         return namer;
+    }
+
+    @NotNull
+    public SourceFilePathResolver getSourceFilePathResolver() {
+        return sourceFilePathResolver;
     }
 
     @NotNull
@@ -330,12 +335,6 @@ public final class StaticContext {
     }
 
     @NotNull
-    public JsNameRef getQualifiedReference(@NotNull FqName packageFqName) {
-        JsName packageName = getNameForPackage(packageFqName);
-        return pureFqn(packageName, packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
-    }
-
-    @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isAny((ClassDescriptor) descriptor)) {
             JsName result = rootScope.declareName("Object");
@@ -439,46 +438,12 @@ public final class StaticContext {
     }
 
     @NotNull
-    private JsName getNameForPackage(@NotNull FqName packageFqName) {
-        return ContainerUtil.getOrCreate(packageNames, packageFqName, (Factory<JsName>) () -> {
-            String name = Namer.generatePackageName(packageFqName);
-            return rootPackageScope.declareName(name);
-        });
-    }
-
-    @NotNull
-    private JsNameRef getQualifierForParentPackage(@NotNull FqName packageFqName) {
-        JsNameRef result = null;
-        JsNameRef qualifier = null;
-
-        FqName fqName = packageFqName;
-
-        while (true) {
-            JsNameRef ref = pureFqn(getNameForPackage(fqName), null);
-
-            if (qualifier == null) {
-                result = ref;
-            }
-            else {
-                qualifier.setQualifier(ref);
-            }
-
-            qualifier = ref;
-
-            if (fqName.isRoot()) break;
-            fqName = fqName.parent();
-        }
-
-        return result;
-    }
-
-    @NotNull
     public JsConfig getConfig() {
         return config;
     }
 
     @NotNull
-    public JsName importDeclaration(@NotNull String suggestedName, @NotNull String tag, @NotNull JsExpression declaration) {
+    private JsName importDeclaration(@NotNull String suggestedName, @NotNull String tag, @NotNull JsExpression declaration) {
         JsName result = importDeclarationImpl(suggestedName, tag, declaration);
         fragment.getNameBindings().add(new JsNameBinding(tag, result));
         return result;
@@ -870,5 +835,14 @@ public final class StaticContext {
             MetadataProperties.setSpecialFunction(name, f);
             return name;
         });
+    }
+
+
+    @NotNull
+    public JsExpression getReferenceToIntrinsic(@NotNull String name) {
+        JsName resultName = intrinsicNames.computeIfAbsent(name, k ->
+                importDeclaration(NameSuggestion.sanitizeName(name), "intrinsic:" + name, TranslationUtils.getIntrinsicFqn(name)));
+
+        return pureFqn(resultName, null);
     }
 }

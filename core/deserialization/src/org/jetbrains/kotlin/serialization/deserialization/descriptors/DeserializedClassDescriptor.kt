@@ -294,8 +294,8 @@ class DeserializedClassDescriptor(
             result.addAll(classDescriptor.enumEntries?.all().orEmpty())
         }
 
-        private fun recordLookup(name: Name, from: LookupLocation) {
-            c.components.lookupTracker.record(from, classDescriptor, name)
+        override fun recordLookup(name: Name, location: LookupLocation) {
+            c.components.lookupTracker.record(location, classDescriptor, name)
         }
     }
 

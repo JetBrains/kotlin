@@ -298,7 +298,8 @@ abstract class BasicBoxTest(
         val outputFile = File(outputFileName)
 
         val incrementalData = IncrementalData()
-        translateFiles(psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData)
+        translateFiles(psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
+                       mainCallParameters, incrementalData)
 
         if (module.hasFilesToRecompile) {
             checkIncrementalCompilation(sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, outputFile,
@@ -334,7 +335,7 @@ abstract class BasicBoxTest(
                 .sortedBy { it.canonicalPath }
                 .map { sourceToTranslationUnit[it]!! }
 
-        val recompiledConfig = createConfig(sourceDirs,module, dependencies, friends, multiModule, incrementalData)
+        val recompiledConfig = createConfig(sourceDirs, module, dependencies, friends, multiModule, incrementalData)
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
@@ -348,6 +349,13 @@ abstract class BasicBoxTest(
         val recompiledSourceMap = removeRecompiledSuffix(
                 FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
         TestCase.assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
+
+        if (multiModule) {
+            val originalMetadata = FileUtil.loadFile(File(outputFile.parentFile, outputFile.nameWithoutExtension + ".meta.js"))
+            val recompiledMetadata = removeRecompiledSuffix(
+                    FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + ".meta.js")))
+            TestCase.assertEquals("Metadata file changed after recompilation", originalMetadata, recompiledMetadata)
+        }
     }
 
     private fun removeRecompiledSuffix(text: String): String = text.replace("-recompiled.js", ".js")
@@ -475,7 +483,8 @@ abstract class BasicBoxTest(
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
     private fun createConfig(
-            sourceDirs: List<String>,module: TestModule, dependencies: List<String>, friends: List<String>, multiModule: Boolean, incrementalData: IncrementalData?
+            sourceDirs: List<String>,module: TestModule, dependencies: List<String>, friends: List<String>,
+            multiModule: Boolean, incrementalData: IncrementalData?
     ): JsConfig {
         val configuration = environment.configuration.copy()
 

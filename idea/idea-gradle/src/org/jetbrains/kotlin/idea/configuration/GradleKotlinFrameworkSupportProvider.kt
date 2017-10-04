@@ -138,7 +138,7 @@ open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOT
 }
 
 open class GradleKotlinMPPCommonFrameworkSupportProvider :
-        GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform - Common)", KotlinIcons.SMALL_LOGO) {
+        GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.SMALL_LOGO) {
     override fun getPluginId() = "kotlin-platform-common"
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_COMMON_STDLIB_ID)
@@ -148,7 +148,7 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
 }
 
 class GradleKotlinMPPJavaFrameworkSupportProvider
-    : GradleKotlinJavaFrameworkSupportProvider("KOTLIN_MPP_JVM", "Kotlin (Multiplatform - JVM)") {
+    : GradleKotlinJavaFrameworkSupportProvider("KOTLIN_MPP_JVM", "Kotlin (Multiplatform JVM - Experimental)") {
 
     override fun getPluginId() = "kotlin-platform-jvm"
     override fun getDescription() = "JVM-specific code for a Kotlin multiplatform project"
@@ -156,7 +156,7 @@ class GradleKotlinMPPJavaFrameworkSupportProvider
 }
 
 class GradleKotlinMPPJSFrameworkSupportProvider
-    : GradleKotlinJSFrameworkSupportProvider("KOTLIN_MPP_JS", "Kotlin (Multiplatform - JS)") {
+    : GradleKotlinJSFrameworkSupportProvider("KOTLIN_MPP_JS", "Kotlin (Multiplatform JS - Experimental)") {
 
     override fun getPluginId() = "kotlin-platform-js"
     override fun getDescription() = "JavaScript-specific code for a Kotlin multiplatform project"

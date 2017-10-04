@@ -112,7 +112,7 @@ fun TranslationContext.wrapWithInlineMetadata(
         if (descriptor.shouldBeExported(config)) {
             val metadata = InlineMetadata.compose(function, descriptor, this)
             val functionWithMetadata = metadata.functionWithMetadata(outerContext, sourceInfo)
-                config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.apply {
+            config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.apply {
                 val psiFile = (descriptor.source.containingFile as? PsiSourceFile)?.psiFile ?: return@apply
                 val file = VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
 

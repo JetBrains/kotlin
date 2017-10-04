@@ -21,8 +21,11 @@ plugins {
     `java`
 }
 
-// Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build
-val shrink = true
+// You can run Gradle with "-Pkotlin.build.proguard=true" to enable ProGuard run on kotlin-compiler.jar (on TeamCity, ProGuard always runs)
+val shrink =
+        findProperty("kotlin.build.proguard")?.toString()?.toBoolean()
+        ?: hasProperty("teamcity")
+
 val compilerManifestClassPath =
         "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
@@ -64,7 +67,6 @@ dependencies {
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(commonDep("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
-    fatJarContents(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
     fatJarContents(preloadedDeps("json-org"))
@@ -121,11 +123,12 @@ noDefaultJar()
 
 cleanArtifacts()
 
-dist(targetName = compilerBaseName + ".jar",
-     fromTask = if (shrink) proguard
-                else packCompiler)
+val pack = if (shrink) proguard else packCompiler
 
-runtimeJarArtifactBy(proguard, proguard.outputs.files.singleFile) {
+dist(targetName = compilerBaseName + ".jar",
+     fromTask = pack)
+
+runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
     name = compilerBaseName
     classifier = ""
 }

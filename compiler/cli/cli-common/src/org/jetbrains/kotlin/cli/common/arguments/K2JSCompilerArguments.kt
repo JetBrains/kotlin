@@ -48,11 +48,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var sourceMapPrefix: String? by FreezableVar(null)
 
     @Argument(
-            value = "-source-map-source-roots",
+            value = "-source-map-base-dirs",
+            deprecatedName = "-source-map-source-roots",
             valueDescription = "<path>",
             description = "Base directories which are used to calculate relative paths to source files in source map"
     )
-    var sourceMapSourceRoots: String? by FreezableVar(null)
+    var sourceMapBaseDirs: String? by FreezableVar(null)
 
     @GradleOption(DefaultValues.JsSourceMapContentModes::class)
     @Argument(

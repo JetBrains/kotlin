@@ -312,6 +312,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
+        public Set<Name> getClassifierNames() {
+            return Collections.emptySet();
+        }
+
+        @NotNull
+        @Override
         public Set<Name> getVariableNames() {
             return enumMemberNames.invoke();
         }

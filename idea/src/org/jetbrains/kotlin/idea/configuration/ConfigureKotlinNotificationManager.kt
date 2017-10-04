@@ -76,7 +76,7 @@ fun checkHideNonConfiguredNotifications(project: Project) {
         if (!checkInProgress.compareAndSet(false, true)) return@executeOnPooledThread
 
         DumbService.getInstance(project).waitForSmartMode()
-        if (getConfigurableModulesWithKotlinFiles(project).all(::isModuleConfigured)) {
+        if (getConfigurableModulesWithKotlinFiles(project).all(::isNotConfiguredNotificationRequired)) {
             ApplicationManager.getApplication().invokeLater {
                 ConfigureKotlinNotificationManager.expireOldNotifications(project)
                 checkInProgress.set(false)

@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.psi.*
 
-class RedundantGetterInspection : AbstractKotlinInspection() {
+class RedundantGetterInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {

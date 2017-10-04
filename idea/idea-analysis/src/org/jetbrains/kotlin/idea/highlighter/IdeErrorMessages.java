@@ -175,7 +175,7 @@ public class IdeErrorMessages {
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING, true));
         MAP.put(EXPERIMENTAL_FEATURE_ERROR, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR, true));
 
-        MAP.put(NO_ACTUAL_FOR_EXPECT, "<html>Expected {0} has no actual in module{1}{2}</html>", DECLARATION_NAME_WITH_KIND,
+        MAP.put(NO_ACTUAL_FOR_EXPECT, "<html>Expected {0} has no actual declaration in module{1}{2}</html>", DECLARATION_NAME_WITH_KIND,
                 PLATFORM, new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
         MAP.put(ACTUAL_WITHOUT_EXPECT, "<html>Actual {0} has no corresponding expected declaration{1}</html>", DECLARATION_NAME_WITH_KIND,
                 new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));

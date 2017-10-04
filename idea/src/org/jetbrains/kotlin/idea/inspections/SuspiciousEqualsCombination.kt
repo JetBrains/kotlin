@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-class SuspiciousEqualsCombination : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+class SuspiciousEqualsCombination : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
             object : KtVisitorVoid() {
                 override fun visitBinaryExpression(expression: KtBinaryExpression) {

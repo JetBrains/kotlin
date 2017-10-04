@@ -1,6 +1,6 @@
 [![official project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 <a href="http://slack.kotlinlang.org/"><img src="http://slack.kotlinlang.org/badge.svg" height="20"></a>
-[![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/bt345.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=bt345&branch_Kotlin=%3Cdefault%3E&tab=buildTypeStatusDiv)
+[![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_dev_Compiler.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=Kotlin_dev_Compiler&branch_Kotlin_dev=%3Cdefault%3E&tab=buildTypeStatusDiv)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
@@ -39,6 +39,8 @@ In order to build Kotlin distribution you need to have:
         JDK_18="path to JDK 1.8"
 
 For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 8 installed, and to point all of the environment variables mentioned above to your JDK 8 installation.
+
+You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_properties_and_system_properties) to setup JDK_* variables.
 
 > Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572). 
 
@@ -85,8 +87,6 @@ Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 Working with the Kotlin project requires IntelliJ IDEA 2017.3. You can download an Early Access Preview version of IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/nextversion/).
 
-The [root Kotlin project](https://github.com/JetBrains/kotlin) should be imported into IDEA as gradle project.
-
 To import the project in Intellij choose project directory in Open project dialog. Then, after project opened, Select 
 `File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
 
@@ -126,6 +126,11 @@ macro to include code from a test function. The benefits of this approach are tw
 Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
 
 Some of the code in the standard library is created by generating code from templates. See the [README](libraries/stdlib/ReadMe.md) in the stdlib section for how run the code generator. The existing templates can be used as examples for creating new ones.
+
+### Running specific generated tests
+
+If you need to debug a specific generated test, ensure that you have the `Working directory` in your IntelliJ run configuration set
+to the root directory of this project. If you don't, every test you try to run will fail with a `No such file or directory` exception.
 
 ## Submitting patches
 

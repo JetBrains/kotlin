@@ -26,6 +26,37 @@ dependencies {
     testCompile 'org.jetbrains.kotlin:gradle-api:2.2'
 }
 
+test.dependsOn(":kotlin-allopen:install",
+               ":kotlin-android-extensions:install",
+               ":kotlin-build-common:install",
+               ":kotlin-compiler-embeddable:install",
+               ":kotlin-gradle-plugin:install",
+               ":kotlin-reflect:install",
+               ":kotlin-test:kotlin-test-jvm:install",
+               ":kotlin-gradle-subplugin-example:install",
+               ":kotlin-stdlib-jre8:install")
+
+// Validate that all dependencies 'install' tasks are added to 'test' dependencies
+// Test dependencies are specified as paths to avoid forcing dependency resolution
+// and also to avoid specifying evaluationDependsOn for each testCompile dependency.
+gradle.taskGraph.whenReady {
+    def notAddedTestTasks = []
+    def testDependencies = test.dependsOn
+
+    for (dependency in configurations.getByName("testCompile").allDependencies) {
+        if (!(dependency instanceof ProjectDependency)) continue
+
+        def task = dependency.dependencyProject.tasks.findByName("install")
+        if (task != null && !testDependencies.contains(task.path)) {
+            notAddedTestTasks.add("\"${task.path}\"")
+        }
+    }
+
+    if (!notAddedTestTasks.isEmpty()) {
+        throw new GradleException("Add the following tasks to ${test.path} dependencies:\n  ${notAddedTestTasks.join(",\n  ")}")
+    }
+}
+
 processResources {
     expand(project.properties)
 }

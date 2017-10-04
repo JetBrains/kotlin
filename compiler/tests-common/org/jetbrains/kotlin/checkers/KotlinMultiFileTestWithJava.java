@@ -86,20 +86,15 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
 
-        KotlinCoreEnvironment environment =
-                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
-        performCustomConfiguration(
-                environment
-        );
-
-        return environment;
+        performCustomConfiguration(configuration);
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
     }
 
     protected boolean isJavaSourceRootNeeded() {
         return true;
     }
 
-    protected void performCustomConfiguration(@NotNull KotlinCoreEnvironment environment) {
+    protected void performCustomConfiguration(@NotNull CompilerConfiguration configuration) {
 
     }
 

@@ -132,10 +132,14 @@ class SpecifyTypeExplicitlyIntention :
                 }
             }.ifEmpty { return null }
 
-            return object : ChooseValueExpression<KotlinType>(types, types.first()) {
-                override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
-                override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
-            }
+            return TypeChooseValueExpression(types, types.first())
+        }
+
+        // Explicit class is used because of KT-20460
+        private class TypeChooseValueExpression(items: List<KotlinType>, defaultItem: KotlinType) :
+                ChooseValueExpression<KotlinType>(items, defaultItem) {
+            override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
+            override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
         }
 
         fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
