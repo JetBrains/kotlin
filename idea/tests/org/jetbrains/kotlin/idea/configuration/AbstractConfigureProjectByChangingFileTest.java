@@ -24,7 +24,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaModule;
+//import com.intellij.psi.PsiJavaModule;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightCodeInsightTestCase;
@@ -77,6 +77,8 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         checkModuleInfoFile(beforeFile);
     }
 
+    /*
+
     private void prepareModuleInfoFile(@NotNull String beforeFile) throws IOException {
         File file = new File(beforeFile);
         String parent = file.getParent();
@@ -104,6 +106,16 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         }
     }
 
+    */
+
+    private void prepareModuleInfoFile(@NotNull String beforeFile) {
+        // Do nothing in AS branch as there're no Java9 modules checks
+    }
+
+    private void checkModuleInfoFile(@NotNull String beforeFile) {
+        // Do nothing in AS branch as there're no Java9 modules checks
+    }
+
     protected abstract void runConfigurator(
             Module module, @NotNull PsiFile file,
             @NotNull C configurator,
@@ -117,11 +129,16 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         return "";
     }
 
+    /*
+    // LightCodeInsightTestCase doesn't have this method. And it's not needed as there's no Java9 checks
+
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return new SimpleLightProjectDescriptor(getModuleType(), getProjectJDK());
     }
+
+    */
 
     private static class SimpleLightProjectDescriptor extends LightProjectDescriptor {
         @NotNull private final ModuleType myModuleType;

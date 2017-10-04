@@ -15,6 +15,7 @@
  */
 
 package org.jetbrains.kotlin.idea.test
+/*
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
@@ -31,10 +32,12 @@ import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.test.TestJdkKind
 
+*/
 /**
  * Dependencies: 'main' -> 'm2', 'main' -> 'm4', 'main' -> 'm5', 'main' -> 'm6' => 'm7'
  */
-object KotlinMultiModuleJava9ProjectDescriptor : DefaultLightProjectDescriptor() {
+ /*
+ object KotlinMultiModuleJava9ProjectDescriptor : DefaultLightProjectDescriptor() {
     enum class ModuleDescriptor(internal val moduleName: String, internal val rootName: String) {
         // Dependent for: none, Depends on: M2, M4, M5, M6
         MAIN(TEST_MODULE_NAME, "/not_used/"),
@@ -116,3 +119,4 @@ object KotlinMultiModuleJava9ProjectDescriptor : DefaultLightProjectDescriptor()
                 .forEach { it.delete(this) }
     }
 }
+*/

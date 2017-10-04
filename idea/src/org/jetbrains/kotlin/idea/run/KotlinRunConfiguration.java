@@ -402,6 +402,7 @@ public class KotlinRunConfiguration extends ModuleBasedConfiguration<JavaRunConf
             return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());
         }
 
+        /*
         private static void setupModulePath(JavaParameters params, JavaRunConfigurationModule module) {
             if (JavaSdkUtil.isJdkAtLeast(params.getJdk(), JavaSdkVersion.JDK_1_9)) {
                 PsiJavaModule mainModule = DumbService.getInstance(module.getProject()).computeWithAlternativeResolveEnabled(
@@ -416,5 +417,7 @@ public class KotlinRunConfiguration extends ModuleBasedConfiguration<JavaRunConf
                 }
             }
         }
+        */
+        private static void setupModulePath(JavaParameters params, JavaRunConfigurationModule module) {}
     }
 }
