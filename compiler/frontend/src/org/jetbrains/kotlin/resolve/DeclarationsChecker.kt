@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
+import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -585,7 +585,7 @@ class DeclarationsChecker(
         if (modifierList != null) {
             if (modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 //has abstract modifier
-                if (!classCanHaveAbstractMembers(classDescriptor)) {
+                if (!classCanHaveAbstractDeclaration(classDescriptor)) {
                     trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, property.name ?: "", classDescriptor))
                     return
                 }
@@ -705,7 +705,7 @@ class DeclarationsChecker(
         if (containingDescriptor is ClassDescriptor) {
             val inInterface = containingDescriptor.kind == ClassKind.INTERFACE
             val isExpectClass = containingDescriptor.isExpect
-            if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
+            if (hasAbstractModifier && !classCanHaveAbstractDeclaration(containingDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
             }
             val hasBody = function.hasBody()

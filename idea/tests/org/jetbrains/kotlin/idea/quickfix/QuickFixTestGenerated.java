@@ -8072,6 +8072,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("dontOfferToImplementMembersForExpectedClass.kt")
+        public void testDontOfferToImplementMembersForExpectedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/dontOfferToImplementMembersForExpectedClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("implemenAsConstructorParameter.kt")
         public void testImplemenAsConstructorParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/implemenAsConstructorParameter.kt");
