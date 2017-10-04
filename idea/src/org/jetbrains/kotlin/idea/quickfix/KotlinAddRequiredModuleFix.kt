@@ -97,18 +97,12 @@ class KotlinAddRequiredModuleFix(module: PsiJavaModule, private val requiredName
 */
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.psi.PsiJavaModule
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 
 class KotlinAddRequiredModuleFix {
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             return null
-        }
-
-        fun addModuleRequirement(module: PsiJavaModule, requiredName: String): Boolean {
-            return false
         }
     }
 }

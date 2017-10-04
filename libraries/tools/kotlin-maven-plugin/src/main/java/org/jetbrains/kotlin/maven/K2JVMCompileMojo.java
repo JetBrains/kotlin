@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.psi.PsiJavaModule;
+//import com.intellij.psi.PsiJavaModule;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
