@@ -179,12 +179,14 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     }
 
     private fun checkModuleInfoName(moduleName: String?, sdk: Sdk) {
+        /*
         val module = configureModule(moduleDirPath("module"), getTestProject().baseDir!!).module
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, sdk)
 
         val javaParameters = getJavaRunParameters(createConfigurationFromMain("some.main"))
 
         Assert.assertEquals(moduleName, javaParameters.moduleName)
+        */
     }
 
     private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
