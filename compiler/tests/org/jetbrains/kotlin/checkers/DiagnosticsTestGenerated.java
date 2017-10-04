@@ -13011,9 +13011,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/signatureAnnotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("defaultEnum.kt")
+                public void testDefaultEnum() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/defaultEnum.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultLongLiteral.kt")
+                public void testDefaultLongLiteral() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/defaultLongLiteral.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultNull.kt")
+                public void testDefaultNull() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/defaultNull.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultNullAndParameter.kt")
+                public void testDefaultNullAndParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/defaultNullAndParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultParameter.kt")
+                public void testDefaultParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/defaultParameter.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("emptyParameterName.kt")
                 public void testEmptyParameterName() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/emptyParameterName.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("overridesDefaultValue.kt")
+                public void testOverridesDefaultValue() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/overridesDefaultValue.kt");
                     doTest(fileName);
                 }
 
@@ -13044,6 +13080,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("stableParameterName.kt")
                 public void testStableParameterName() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/stableParameterName.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("staticMethodWithDefaultValue.kt")
+                public void testStaticMethodWithDefaultValue() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/signatureAnnotations/staticMethodWithDefaultValue.kt");
                     doTest(fileName);
                 }
             }

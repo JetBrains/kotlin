@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.extractRadix
 import java.math.BigInteger
 import java.util.*
 
@@ -874,11 +875,8 @@ private fun parseLong(text: String): Long? {
         fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length - 1) else s
         fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringLongSuffix(text), radix)
 
-        return when {
-            text.startsWith("0x") || text.startsWith("0X") -> parseLong(text.substring(2), 16)
-            text.startsWith("0b") || text.startsWith("0B") -> parseLong(text.substring(2), 2)
-            else -> parseLong(text, 10)
-        }
+        val (number, radix) = extractRadix(text)
+        return parseLong(number, radix)
     }
     catch (e: NumberFormatException) {
         return null

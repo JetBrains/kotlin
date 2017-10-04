@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package kotlin.annotations.jvm.internal
+package org.jetbrains.kotlin.utils
 
-/**
- * Defines parameter name.
- */
-@Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-public annotation class ParameterName(val value: String)
+data class NumberWithRadix(val number: String, val radix: Int)
 
-/**
- * Default value for java method parameter.
- */
-@Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-public annotation class DefaultValue(val value: String)
-
-/**
- * Define that null is default value for method parameter.
- */
-@Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-public annotation class DefaultNull
+fun extractRadix(value: String): NumberWithRadix = when {
+    value.startsWith("0x") || value.startsWith("0X") -> NumberWithRadix(value.substring(2), 16)
+    value.startsWith("0b") || value.startsWith("0B") -> NumberWithRadix(value.substring(2), 2)
+    else -> NumberWithRadix(value, 10)
+}

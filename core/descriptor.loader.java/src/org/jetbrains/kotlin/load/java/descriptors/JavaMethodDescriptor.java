@@ -141,11 +141,11 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     @NotNull
     public JavaMethodDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<KotlinType> enhancedValueParametersTypes,
+            @NotNull List<ValueParameterData> enhancedValueParametersData,
             @NotNull KotlinType enhancedReturnType
     ) {
         List<ValueParameterDescriptor> enhancedValueParameters =
-                UtilKt.copyValueParameters(enhancedValueParametersTypes, getValueParameters(), this);
+                UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), this);
 
         JavaMethodDescriptor enhancedMethod =
                 (JavaMethodDescriptor) newCopyBuilder()

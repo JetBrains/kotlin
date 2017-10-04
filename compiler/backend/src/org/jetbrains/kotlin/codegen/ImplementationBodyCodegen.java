@@ -1467,7 +1467,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (isAnonymousObject(descriptor)) {
             List<JvmMethodParameterSignature> superValues = superParameters.subList(superIndex, superParameters.size());
-            return new ObjectSuperCallArgumentGenerator(superValues, iv, offset, superConstructorCall);
+            return new ObjectSuperCallArgumentGenerator(
+                    superValues, iv,
+                    superConstructor.getValueParameters(), codegen.typeMapper,
+                    offset, superConstructorCall
+            );
         }
         else {
             return new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, superConstructor.getValueParameters(),

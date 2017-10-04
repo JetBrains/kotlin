@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForNonStaticMembers
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.copyValueParameters
+import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.childForMethod
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
@@ -50,6 +47,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.NotNullLazyValue
@@ -359,7 +357,9 @@ class LazyJavaClassMemberScope(
         }?.let {
             override ->
             override.newCopyBuilder().apply {
-                setValueParameters(copyValueParameters(overridden.valueParameters.map { it.type }, override.valueParameters, overridden))
+                setValueParameters(copyValueParameters(
+                        overridden.valueParameters.map { ValueParameterData(it.type, it.hasDefaultValue()) },
+                        override.valueParameters, overridden))
                 setSignatureChange()
                 setPreserveSourceElement()
             }.build()

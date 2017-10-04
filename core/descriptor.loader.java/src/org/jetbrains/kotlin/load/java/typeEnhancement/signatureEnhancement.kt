@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.load.java.*
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
@@ -34,6 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isFlexible
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.unwrapEnhancement
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 data class NullabilityQualifierWithMigrationStatus(
         val qualifier: NullabilityQualifier,
@@ -139,9 +137,16 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             }
         }
 
-        val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map { p ->
-            partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
-                    .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
+        val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map {
+            p ->
+                val enhancementResult =partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
+                        .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
+
+            val actualType = if (enhancementResult.wereChanges) enhancementResult.type else p.type
+            val hasDefaultValue = p.hasDefaultValueInAnnotation(actualType)
+            val wereChanges = enhancementResult.wereChanges || (hasDefaultValue != p.declaresDefaultValue())
+
+            ValueParameterEnhancementResult(enhancementResult.type, hasDefaultValue, wereChanges)
         }
 
         val returnTypeEnhancement =
@@ -155,13 +160,24 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                             AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
                 ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
-        if ((receiverTypeEnhancement?.wereChanges ?: false)
+        if ((receiverTypeEnhancement?.wereChanges == true)
             || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }) {
             @Suppress("UNCHECKED_CAST")
-            return this.enhance(receiverTypeEnhancement?.type, valueParameterEnhancements.map { it.type }, returnTypeEnhancement.type) as D
+            return this.enhance(receiverTypeEnhancement?.type,
+                                valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) }, returnTypeEnhancement.type) as D
         }
 
         return this
+    }
+
+    private fun ValueParameterDescriptor.hasDefaultValueInAnnotation(type: KotlinType): Boolean {
+        val defaultValue = getDefaultValueFromAnnotation()
+
+        return when (defaultValue) {
+                is StringDefaultValue -> type.lexicalCastFrom(defaultValue.value) != null
+                NullDefaultValue -> TypeUtils.acceptsNullable(type)
+                null -> declaresDefaultValue()
+        } && overriddenDescriptors.isEmpty()
     }
 
     private inner class SignatureParts(
@@ -355,7 +371,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
     }
 
-    private data class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
+    private open class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
+    private class ValueParameterEnhancementResult(
+            type: KotlinType,
+            val hasDefaultValue: Boolean,
+            wereChanges: Boolean
+    ) : PartEnhancementResult(type, wereChanges)
 
     private fun CallableMemberDescriptor.partsForValueParameter(
             // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
@@ -388,7 +409,6 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
                 containerApplicabilityType
         )
     }
-
 }
 
 private fun createJavaTypeQualifiers(

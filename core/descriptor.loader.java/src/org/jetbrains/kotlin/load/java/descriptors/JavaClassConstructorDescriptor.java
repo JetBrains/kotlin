@@ -120,7 +120,7 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
     @NotNull
     public JavaClassConstructorDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<KotlinType> enhancedValueParametersTypes,
+            @NotNull List<ValueParameterData> enhancedValueParametersData,
             @NotNull KotlinType enhancedReturnType
     ) {
         JavaClassConstructorDescriptor enhanced = createSubstitutedCopy(
@@ -130,7 +130,7 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
                 enhancedReceiverType,
                 getDispatchReceiverParameter(),
                 getTypeParameters(),
-                UtilKt.copyValueParameters(enhancedValueParametersTypes, getValueParameters(), enhanced),
+                UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), enhanced),
                 enhancedReturnType,
                 getModality(),
                 getVisibility()
