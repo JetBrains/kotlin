@@ -419,7 +419,16 @@ abstract class BaseGradleIT {
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
             params.toMutableList().apply {
                 add("--stacktrace")
-                add("--${minLogLevel.name.toLowerCase()}")
+                when (minLogLevel) {
+                    // Do not allow to configure Gradle project with `ERROR` log level (error logs visible on all log levels)
+                    LogLevel.ERROR -> error("Log level ERROR is not supported by Gradle command-line")
+                    // Omit log level argument for default `LIFECYCLE` log level,
+                    // because there is no such command-line option `--lifecycle`
+                    // see https://docs.gradle.org/current/userguide/logging.html#sec:choosing_a_log_level
+                    LogLevel.LIFECYCLE -> Unit
+                    //Command line option for other log levels
+                    else -> add("--${minLogLevel.name.toLowerCase()}")
+                }
                 if (options.daemonOptionSupported) {
                     add(if (options.withDaemon) "--daemon" else "--no-daemon")
                 }
