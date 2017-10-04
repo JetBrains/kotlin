@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.tooling.ModelBuilder
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -92,7 +91,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     override fun canBuild(modelName: String?): Boolean = modelName == KotlinGradleModel::class.java.name
 
     private fun getImplements(project: Project): Project? {
-        val implementsConfiguration = project.configurations.findByName("implement") ?: return null
+        val implementsConfiguration = project.configurations.run { findByName("expectedBy") ?: findByName("implement") } ?: return null
         val implementsProjectDependency = implementsConfiguration.dependencies.filterIsInstance<ProjectDependency>().firstOrNull()
         return implementsProjectDependency?.dependencyProject
     }

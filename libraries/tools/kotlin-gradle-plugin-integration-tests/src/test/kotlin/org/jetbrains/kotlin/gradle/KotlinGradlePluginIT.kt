@@ -20,7 +20,7 @@ import org.gradle.api.logging.LogLevel
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
-import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_WARNING
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
@@ -410,20 +410,19 @@ class KotlinGradleIT: BaseGradleIT() {
     @Test
     fun testDeprecatedImplementWarning() {
         val project = Project("multiplatformProject", GRADLE_VERSION)
-        val warningText = IMPLEMENT_CONFIG_WARNING
 
         project.build("build") {
             assertSuccessful()
-            assertNotContains(warningText)
+            assertNotContains(IMPLEMENT_DEPRECATION_WARNING)
         }
 
         project.projectDir.walk().filter { it.name == "build.gradle" }.forEach { buildGradle ->
-            buildGradle.modify { it.replace("expectedBy", "implement") }
+            buildGradle.modify { it.replace(EXPECTED_BY_CONFIG_NAME, IMPLEMENT_CONFIG_NAME) }
         }
 
         project.build("build") {
             assertSuccessful()
-            assertContains(warningText)
+            assertContains(IMPLEMENT_DEPRECATION_WARNING)
         }
     }
 
