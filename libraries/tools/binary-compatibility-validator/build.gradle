@@ -27,9 +27,11 @@ sourceSets {
     }
 }
 
+def testCasesDeclarationsDump = "${buildDir}/cases-declarations.json".toString()
+
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xdump-declarations-to', "${buildDir}/cases-declarations.json"]
+        freeCompilerArgs = ["-Xdump-declarations-to=$testCasesDeclarationsDump"]
     }
 }
 
@@ -39,11 +41,9 @@ test {
 
     systemProperty 'overwrite.output', System.getProperty("overwrite.output", "false")
     systemProperty 'kotlinVersion', project.version
+    systemProperty 'testCasesClassesDirs', sourceSets.test.output.classesDirs.asPath
+    systemProperty 'testCasesDeclarations', testCasesDeclarationsDump
     jvmArgs '-ea'
 
     ignoreFailures = System.getenv("kotlin_build_ignore_test_failures") == 'yes'
-    environment("PROJECT_CLASSES_DIRS", sourceSets.test.output.classesDirs.asPath)
-    environment("PROJECT_BUILD_DIR", buildDir)
-
-    workingDir = projectDir
 }

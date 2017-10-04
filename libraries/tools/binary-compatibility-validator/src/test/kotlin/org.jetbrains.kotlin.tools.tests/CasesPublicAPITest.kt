@@ -8,13 +8,12 @@ import java.io.File
 class CasesPublicAPITest {
 
     companion object {
-        val visibilities by lazy { readKotlinVisibilities(File(System.getenv("PROJECT_BUILD_DIR") ?: "build", "cases-declarations.json")) }
+        val visibilities by lazy { readKotlinVisibilities(File(System.getProperty("testCasesDeclarations")!!)) }
         val baseClassPaths: List<File> =
-                (System.getenv("PROJECT_CLASSES_DIRS")?.let { it.split(File.pathSeparator) }
-                ?: listOf("build/classes/kotlin/test/cases", "build/classes/java/test/cases"))
-                        .mapNotNull { File(it, "cases").canonicalFile.takeIf { it.isDirectory } }
-                        .takeIf { it.isNotEmpty() }
-                ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
+                System.getProperty("testCasesClassesDirs")
+                        .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property"} }
+                        .split(File.pathSeparator)
+                        .map { File(it, "cases").canonicalFile }
         val baseOutputPath = File("src/test/kotlin/cases")
     }
 
@@ -48,7 +47,9 @@ class CasesPublicAPITest {
 
     private fun snapshotAPIAndCompare(testClassRelativePath: String) {
         val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
-        val testClasses = testClassPaths.flatMap { it.listFiles()?.asIterable() ?: emptyList() }
+        val testClasses = testClassPaths.flatMap { it.listFiles().orEmpty().asIterable() }
+        check(testClasses.isNotEmpty()) { "No class files are found in paths: $testClassPaths" }
+
         val testClassStreams = testClasses.asSequence().filter { it.name.endsWith(".class") }.map { it.inputStream() }
 
         val api = getBinaryAPI(testClassStreams, visibilities).filterOutNonPublic()
