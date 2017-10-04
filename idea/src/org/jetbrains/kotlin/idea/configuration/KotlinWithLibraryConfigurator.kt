@@ -181,6 +181,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     }
 
     private fun updateModuleInfo(module: Module, collector: NotificationMessageCollector) {
+        /*
         if (module.sdk?.version?.isAtLeast(JavaSdkVersion.JDK_1_9) != true) return
 
         val project = module.project
@@ -193,6 +194,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         if (success) {
             collector.addMessage("Added $KOTLIN_STDLIB_MODULE_NAME requirement to module-info in ${module.name}")
         }
+        */
     }
 
     fun configureLibraryJar(

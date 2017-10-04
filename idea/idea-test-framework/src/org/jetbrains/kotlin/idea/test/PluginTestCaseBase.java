@@ -47,7 +47,7 @@ public class PluginTestCaseBase {
     @NotNull
     @TestOnly
     private static Sdk createMockJdk(@NotNull String name, String path) {
-        return ((JavaSdkImpl)JavaSdk.getInstance()).createMockJdk(name, path, false);
+        return getSdk(path, name);
     }
 
     @NotNull

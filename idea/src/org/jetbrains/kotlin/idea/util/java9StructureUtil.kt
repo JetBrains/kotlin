@@ -23,6 +23,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiRequiresStatement
 import com.intellij.psi.search.FilenameIndex
 
+/*
 fun findFirstPsiJavaModule(module: Module): PsiJavaModule? {
     val project = module.project
 
@@ -33,7 +34,14 @@ fun findFirstPsiJavaModule(module: Module): PsiJavaModule? {
             .filterIsInstance<PsiJavaFile>()
             .map { it.moduleDeclaration }
             .firstOrNull { it != null }
+
+
+    return null
 }
 
 fun findRequireDirective(module: PsiJavaModule, requiredName: String): PsiRequiresStatement? =
         module.requires.find { it.moduleName == requiredName }
+*/
+
+fun findFirstPsiJavaModule(module: Module): PsiJavaModule? = null
+fun findRequireDirective(module: PsiJavaModule, requiredName: String): PsiRequiresStatement? = null
