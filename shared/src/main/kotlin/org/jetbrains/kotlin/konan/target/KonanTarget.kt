@@ -24,19 +24,41 @@ enum class Family(name:String, val exeSuffix:String) {
     WASM("wasm", "wasm")
 }
 
+enum class Bitness {
+    BITSNESS_32,
+    BITNESS_64
+}
 
-enum class KonanTarget(val family: Family, val detailedName: String, var enabled: Boolean = false) {
-    ANDROID_ARM32(Family.ANDROID, "android_arm32"),
-    ANDROID_ARM64(Family.ANDROID, "android_arm64"),
-    IPHONE(Family.OSX, "ios"),
-    IPHONE_SIM(Family.OSX, "ios_sim"),
-    LINUX(Family.LINUX, "linux"),
-    MINGW(Family.WINDOWS, "mingw"),
-    MACBOOK(Family.OSX, "osx"),
-    RASPBERRYPI(Family.LINUX, "raspberrypi"),
-    LINUX_MIPS32(Family.LINUX, "linux_mips32"),
-    LINUX_MIPSEL32(Family.LINUX, "linux_mipsel32"),
-    WASM32(Family.WASM, "wasm32");
+enum class Architecture(val bitness: Int) {
+    X86_64(64),
+    ARM64(64),
+    ARM32(32),
+    RASPBERRYPI(32),
+    MIPS32(32),
+    MIPSEL32(32),
+    WASM32(32);
+
+    val userName: String
+        get() {
+            return if (this == X86_64) 
+                "x86-64" // Dash instead of underscore.
+            else 
+                this.name.toLowerCase()
+        }
+}
+
+enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) {
+    ANDROID_ARM32(  Family.ANDROID,     Architecture.ARM32,     "android_arm32"),
+    ANDROID_ARM64(  Family.ANDROID,     Architecture.ARM64,     "android_arm64"),
+    IPHONE(         Family.OSX,         Architecture.ARM32,     "ios"),
+    IPHONE_SIM(     Family.OSX,         Architecture.X86_64,    "ios_sim"),
+    LINUX(          Family.LINUX,       Architecture.X86_64,    "linux"),
+    MINGW(          Family.WINDOWS,     Architecture.X86_64,    "mingw"),
+    MACBOOK(        Family.OSX,         Architecture.X86_64,    "osx"),
+    RASPBERRYPI(    Family.LINUX,       Architecture.RASPBERRYPI, "raspberrypi"),
+    LINUX_MIPS32(   Family.LINUX,       Architecture.MIPS32,    "linux_mips32"),
+    LINUX_MIPSEL32( Family.LINUX,       Architecture.MIPSEL32,  "linux_mipsel32"),
+    WASM32(         Family.WASM,        Architecture.WASM32,    "wasm32");
 
     val userName get() = name.toLowerCase()
 }

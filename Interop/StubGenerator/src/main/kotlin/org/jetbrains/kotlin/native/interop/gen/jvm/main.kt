@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.native.interop.gen.HeadersInclusionPolicyImpl
 import org.jetbrains.kotlin.native.interop.gen.ImportsImpl
@@ -28,13 +29,8 @@ import kotlin.reflect.KFunction
 fun main(args: Array<String>) = interop(args, null)
 
 fun interop(args: Array<String>, argsToCompiler: MutableList<String>? = null) {
-    val konanHome = File(System.getProperty("konan.home")).absolutePath
 
-    val substitutions = mapOf(
-            "arch" to (System.getenv("TARGET_ARCH") ?: "x86-64"),
-            "os" to (System.getenv("TARGET_OS") ?: host)
-    )
-    processLib(konanHome, substitutions, parseArgs(args), argsToCompiler)
+    processLib(parseArgs(args), argsToCompiler)
 }
 
 // Options, whose values are space-separated and can be escaped.
@@ -61,46 +57,6 @@ private fun parseArgs(args: Array<String>): Map<String, List<String>> {
     }
     return commandLine
 }
-
-private val host: String by lazy {
-    val os = System.getProperty("os.name")
-    when {
-        os == "Linux" -> "linux"
-        os.startsWith("Windows") -> "mingw"
-        os == "Mac OS X" -> "osx"
-        os == "FreeBSD" -> "freebsd"
-        else -> {
-            throw IllegalArgumentException("we don't know ${os} value")
-        }
-    }
-}
-
-private val defaultTarget: String by lazy {
-    host
-}
-
-// TODO: share KonanTarget class here.
-private val knownTargets = mapOf(
-        "host" to host,
-        "linux" to "linux",
-        "macbook" to "osx",
-        "osx" to "osx",
-        "iphone" to "ios",
-        "ios" to "ios",
-        "iphone_sim" to "ios_sim",
-        "ios_sim" to "ios_sim",
-        "raspberrypi" to "raspberrypi",
-        "linux_mips32" to "linux_mips32",
-        "linux_mipsel32" to "linux_mipsel32",
-        "android_arm32" to "android_arm32",
-        "android_arm64" to "android_arm64",
-        "mingw" to "mingw",
-        "wasm32" to "wasm32"
-)
-
-
-private fun String.targetSuffix(): String =
-        knownTargets[this] ?: error("Unsupported target $this.")
 
 // Performs substitution similar to:
 //  foo = ${foo} ${foo.${arch}} ${foo.${os}}
@@ -133,18 +89,6 @@ private fun <T> Collection<T>.atMostOne(): T? {
         else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
-
-private fun Properties.getHostSpecific(
-        name: String) = getProperty("$name.$host")
-
-private fun Properties.getTargetSpecific(
-        name: String, target: String) = getProperty("$name.$target")
-
-private fun Properties.getHostTargetSpecific(
-        name: String, target: String) = if (host != target)
-    getProperty("$name.$host-$target")
-else
-    getProperty("$name.$host")
 
 private fun List<String>?.isTrue(): Boolean {
     // The rightmost wins, null != "true".
@@ -183,75 +127,6 @@ private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = fal
     }
 }
 
-private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties, dependencies: List<String>) {
-    try {
-        val kClass = Class.forName("org.jetbrains.kotlin.konan.util.Helper0").kotlin
-        @Suppress("UNCHECKED_CAST")
-        val ctor = kClass.constructors.single() as KFunction<Runnable>
-        val result = ctor.call(dependenciesRoot, properties, dependencies)
-        result.run()
-    } catch (notFound: ClassNotFoundException) {
-        // Just ignore, no helper.
-    } catch (e: Throwable) {
-        throw IllegalStateException("Cannot download dependencies.", e)
-    }
-}
-
-private fun Properties.getClangFlags(target: String, targetSysRoot: String): List<String> {
-    val flags = getTargetSpecific("clangFlags", target)
-    if (flags == null) return emptyList()
-    return flags.replace("<sysrootDir>", targetSysRoot).split(' ')
-}
-
-private fun Properties.defaultCompilerOpts(target: String, dependencies: String): List<String> {
-    val targetToolchainDir = getHostTargetSpecific("targetToolchain", target)!!
-    val targetToolchain = "$dependencies/$targetToolchainDir"
-    val targetSysRootDir = getTargetSpecific("targetSysRoot", target)!!
-    val targetSysRoot = "$dependencies/$targetSysRootDir"
-    val llvmHomeDir = getHostSpecific("llvmHome")!!
-    val llvmHome = "$dependencies/$llvmHomeDir"
-
-    val libclang = when (host) {
-        "mingw" -> "$llvmHome/bin/libclang.dll"
-        else -> "$llvmHome/lib/${System.mapLibraryName("clang")}"
-    }
-    System.load(libclang)
-
-    val llvmVersion = getHostSpecific("llvmVersion")!!
-
-    // StubGenerator passes the arguments to libclang which
-    // works not exactly the same way as the clang binary and
-    // (in particular) uses different default header search path.
-    // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
-    // We workaround the problem with -isystem flag below.
-    val isystem = "$llvmHome/lib/clang/$llvmVersion/include"
-    val quadruple = getTargetSpecific("quadruple", target)
-    val arch = getTargetSpecific("arch", target)
-    val archSelector = if (quadruple != null)
-        listOf("-target", quadruple) else listOf("-arch", arch!!)
-    val commonArgs = listOf("-isystem", isystem, "--sysroot=$targetSysRoot") + getClangFlags(target, targetSysRoot)
-    when (host) {
-        "osx" -> {
-            val osVersionMinFlag = getTargetSpecific("osVersionMinFlagClang", target)
-            val osVersionMinValue = getTargetSpecific("osVersionMin", target)
-            return archSelector + commonArgs + listOf("-B$targetToolchain/bin") +
-                    (if (osVersionMinFlag != null && osVersionMinValue != null)
-                        listOf("$osVersionMinFlag=$osVersionMinValue") else emptyList())
-        }
-        "linux" -> {
-            val libGcc = getTargetSpecific("libGcc", target)
-            val binDir = "$targetSysRoot/${libGcc ?: "bin"}"
-            return archSelector + commonArgs + listOf(
-                    "-B$binDir", "--gcc-toolchain=$targetToolchain",
-                    "-fuse-ld=$targetToolchain/bin/ld")
-        }
-        "mingw" -> {
-            return archSelector + commonArgs + listOf("-B$targetSysRoot/bin")
-        }
-        else -> error("Unexpected target: ${target}")
-    }
-}
-
 private fun loadProperties(file: File?, substitutions: Map<String, String>): Properties {
     val result = Properties()
     file?.bufferedReader()?.use { reader ->
@@ -279,11 +154,6 @@ Following flags are supported:
   -pkg <fully qualified package name> place the resulting definitions into the package
   -h <file>.h header files to parse
 """)
-}
-
-private fun downloadDependencies(dependenciesRoot: String, target: String, konanProperties: Properties) {
-    val dependencyList = konanProperties.getHostTargetSpecific("dependencies", target)?.split(' ') ?: listOf<String>()
-    maybeExecuteHelper(dependenciesRoot, konanProperties, dependencyList)
 }
 
 private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
@@ -329,9 +199,7 @@ private fun parseImports(args: Map<String, List<String>>): ImportsImpl {
     return ImportsImpl(headerIdToPackage)
 }
 
-private fun processLib(konanHome: String,
-                       substitutions: Map<String, String>,
-                       args: Map<String, List<String>>, 
+private fun processLib(args: Map<String, List<String>>, 
                        argsToCompiler: MutableList<String>?) {
 
     val userDir = System.getProperty("user.dir")
@@ -339,39 +207,36 @@ private fun processLib(konanHome: String,
     val nativeLibsDir = args["-natives"]?.single() ?: userDir
     val flavorName = args["-flavor"]?.single() ?: "jvm"
     val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
-    val target = args["-target"]?.single()?.targetSuffix() ?: defaultTarget
     val defFile = args["-def"]?.single()?.let { File(it) }
     val manifestAddend = args["-manifest"]?.single()?.let { File(it) }
-
+    
     if (defFile == null && args["-pkg"] == null) {
         usage()
         return
     }
 
-    val def = DefFile(defFile, substitutions)
+    val tool = ToolConfig(
+        args["-target"]?.single(),
+        args["-properties"]?.single(),
+        System.getProperty("konan.home")
+    )
+    tool.downloadDependencies()
 
-    val konanFileName = args["-properties"]?.single() ?:
-            "${konanHome}/konan/konan.properties"
-    val konanFile = File(konanFileName)
-    val konanProperties = loadProperties(konanFile, mapOf())
-    val dependencies = "$konanHome/dependencies"
-    downloadDependencies(dependencies, target, konanProperties)
+    val def = DefFile(defFile, tool.substitutions)
 
-    // TODO: We can provide a set of flags to find the components in the absence of 'dist' or 'dist/dependencies'.
-    val llvmHome = konanProperties.getHostSpecific("llvmHome")!!
-    val llvmInstallPath = "$dependencies/$llvmHome"
     val additionalHeaders = args["-h"].orEmpty()
     val additionalCompilerOpts = args["-copt"].orEmpty() + args["-compilerOpts"].orEmpty()
     val additionalLinkerOpts = args["-lopt"].orEmpty() + args["-linkerOpts"].orEmpty()
     val generateShims = args["-shims"].isTrue()
     val verbose = args["-verbose"].isTrue()
 
-    val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies)
+    System.load(tool.libclang)
+
     val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
-        addAll(defaultOpts)
+        addAll(tool.defaultCompilerOpts)
         addAll(additionalCompilerOpts)
         addAll(when (language) {
             Language.C -> emptyList()
@@ -385,14 +250,18 @@ private fun processLib(konanHome: String,
             }
         })
     }
-    val compiler = "clang"
+
     val excludeSystemLibs = def.config.excludeSystemLibs
     val excludeDependentModules = def.config.excludeDependentModules
 
     val entryPoint = def.config.entryPoints.atMostOne()
     val linkerOpts =
-            def.config.linkerOpts.toTypedArray() + defaultOpts + additionalLinkerOpts
-    val linker = args["-linker"]?.atMostOne() ?: def.config.linker
+            def.config.linkerOpts.toTypedArray() + 
+            tool.defaultCompilerOpts + 
+            additionalLinkerOpts
+    val linkerName = args["-linker"]?.atMostOne() ?: def.config.linker
+    val linker = "${tool.llvmHome}/bin/$linkerName"
+    val compiler = "${tool.llvmHome}/bin/clang"
     val excludedFunctions = def.config.excludedFunctions.toSet()
     val staticLibraries = def.config.staticLibraries + args["-staticLibrary"].orEmpty()
     val libraryPaths = def.config.libraryPaths + args["-libraryPath"].orEmpty()
@@ -462,14 +331,14 @@ private fun processLib(konanHome: String,
 
         val outOFile = createTempFile(suffix = ".o")
 
-        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *gen.libraryForCStubs.compilerArgs.toTypedArray(),
+        val compilerCmd = arrayOf(compiler, *gen.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
 
         runCmd(compilerCmd, workDir, verbose)
 
         val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
 
-        val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker",
+        val linkerCmd = arrayOf(linker,
                 outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
                 *linkerOpts)
 
@@ -479,7 +348,7 @@ private fun processLib(konanHome: String,
     } else if (flavor == KotlinPlatform.NATIVE) {
         val outBcName = libName + ".bc"
         val outLib = File(nativeLibsDir, outBcName)
-        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *gen.libraryForCStubs.compilerArgs.toTypedArray(),
+        val compilerCmd = arrayOf(compiler, *gen.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
 
         runCmd(compilerCmd, workDir, verbose)
