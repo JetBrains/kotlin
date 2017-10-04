@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// IGNORE_BACKEND: JS
 import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
