@@ -52,7 +52,7 @@ RUNTIME_USED KInt Konan_DebugObjectToUtf8Array(KRef obj, char* buffer, KInt buff
   if (data == nullptr) return 0;
   KInt toCopy = data->count_ > bufferSize - 1 ? bufferSize - 1 : data->count_;
   ::memcpy(buffer, ByteArrayAddressOfElementAt(data, 0), toCopy);
-  buffer[toCopy + 1] = '\0';
+  buffer[toCopy] = '\0';
   return toCopy + 1;
 }
 
