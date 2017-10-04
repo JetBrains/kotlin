@@ -20,6 +20,7 @@ import org.gradle.api.logging.LogLevel
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_WARNING
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
@@ -403,6 +404,26 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("libJvm/build/classes/test/foo/PlatformTest.class")
             assertFileExists("libJs/build/classes/main/libJs.js")
             assertFileExists("libJs/build/classes/test/libJs_test.js")
+        }
+    }
+
+    @Test
+    fun testDeprecatedImplementWarning() {
+        val project = Project("multiplatformProject", GRADLE_VERSION)
+        val warningText = IMPLEMENT_CONFIG_WARNING
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains(warningText)
+        }
+
+        project.projectDir.walk().filter { it.name == "build.gradle" }.forEach { buildGradle ->
+            buildGradle.modify { it.replace("expectedBy", "implement") }
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(warningText)
         }
     }
 

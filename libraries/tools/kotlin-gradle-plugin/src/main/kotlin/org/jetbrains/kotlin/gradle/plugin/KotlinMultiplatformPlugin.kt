@@ -35,6 +35,8 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     }
 }
 
+const val IMPLEMENT_CONFIG_WARNING = "The 'implement' configuration is deprecated and will be removed. Use 'expectedBy' instead."
+
 open class KotlinPlatformImplementationPluginBase(platformName: String) : KotlinPlatformPluginBase(platformName) {
     private val commonProjects = arrayListOf<Project>()
     private val platformKotlinTasksBySourceSetName = hashMapOf<String, AbstractKotlinCompile<*>>()
@@ -47,13 +49,29 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         project.tasks.filterIsInstance<AbstractKotlinCompile<*>>().associateByTo(platformKotlinTasksBySourceSetName) { it.sourceSetName }
 
         val implementConfig = project.configurations.create("implement")
-        implementConfig.isTransitive = false
-        implementConfig.dependencies.whenObjectAdded { dep ->
-            if (dep is ProjectDependency) {
-                addCommonProject(dep.dependencyProject, project)
+        val expectedByConfig = project.configurations.create("expectedBy").apply {
+            extendsFrom(implementConfig)
+        }
+
+        listOf(implementConfig, expectedByConfig).forEach { config ->
+            config.isTransitive = false
+
+            config.dependencies.whenObjectAdded { dep ->
+                if (dep is ProjectDependency) {
+                    addCommonProject(dep.dependencyProject, project)
+                }
+                else {
+                    throw GradleException("$project '${config.name}' dependency is not a project: $dep")
+                }
             }
-            else {
-                throw GradleException("$project `implement` dependency is not a project: $dep")
+        }
+
+        var implementDeprecationWarningShown = false
+
+        implementConfig.dependencies.whenObjectAdded {
+            if (!implementDeprecationWarningShown) {
+                implementDeprecationWarningShown = true
+                project.logger.kotlinWarn(IMPLEMENT_CONFIG_WARNING)
             }
         }
     }
@@ -61,12 +79,12 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     private fun addCommonProject(commonProject: Project, platformProject: Project) {
         commonProjects.add(commonProject)
         if (commonProjects.size > 1) {
-            throw GradleException("Platform project $platformProject implements more than one common project: ${commonProjects.joinToString()}")
+            throw GradleException("Platform project $platformProject is expected by more than one common project: ${commonProjects.joinToString()}")
         }
 
         commonProject.whenEvaluated {
             if ((!commonProject.plugins.hasPlugin(KotlinPlatformCommonPlugin::class.java))) {
-                throw GradleException("Platform project $platformProject implements non-common project $commonProject (`apply plugin 'kotlin-platform-kotlin'`)")
+                throw GradleException("Platform project $platformProject is expected by non-common project $commonProject (`apply plugin 'kotlin-platform-kotlin'`)")
             }
 
             commonProject.sourceSets.all { commonSourceSet ->
