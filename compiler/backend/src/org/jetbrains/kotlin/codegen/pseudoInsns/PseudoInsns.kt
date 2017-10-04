@@ -31,7 +31,8 @@ enum class PseudoInsn(val signature: String = "()V") {
     FAKE_ALWAYS_FALSE_IFEQ("()I"),
     SAVE_STACK_BEFORE_TRY,
     RESTORE_STACK_IN_TRY_CATCH,
-    STORE_NOT_NULL
+    STORE_NOT_NULL,
+    AS_NOT_NULL("(Ljava/lang/Object;)Ljava/lang/Object;")
     ;
 
     fun emit(iv: InstructionAdapter) {
@@ -70,6 +71,10 @@ fun InstructionAdapter.fakeAlwaysFalseIfeq(label: Label) {
 
 fun InstructionAdapter.storeNotNull() {
     PseudoInsn.STORE_NOT_NULL.emit(this)
+}
+
+fun InstructionAdapter.asNotNull() {
+    PseudoInsn.AS_NOT_NULL.emit(this)
 }
 
 fun AbstractInsnNode.isPseudo(pseudoInsn: PseudoInsn) =

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.codegen.optimization.nullCheck
 import org.jetbrains.kotlin.codegen.optimization.boxing.*
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.kotlin.codegen.pseudoInsns.isPseudo
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -72,6 +74,8 @@ class NullabilityInterpreter : OptimizationBasicInterpreter() {
                 ProgressionIteratorBasicValue.byProgressionClassType(values[0].type)
             insn.isNextMethodCallOfProgressionIterator(values) ->
                 NotNullBasicValue(resultType)
+            insn.isPseudo(PseudoInsn.AS_NOT_NULL) ->
+                NotNullBasicValue(values[0].type)
             else ->
                 defaultResult
         }
