@@ -19,6 +19,13 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
 
     override fun getName() = toolName
 
+    // We need to unset some environment variables which are set by XCode and may potentially affect the tool executed.
+    protected val blacklistEnvironment: List<String> by lazy {
+        KonanPlugin::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
+            stream.reader().use { it.readLines() }
+        } ?: emptyList<String>()
+    }
+
     override val classpath: FileCollection =
             project.fileTree("${project.konanHome}/konan/lib/")
             .apply { include("*.jar")  }
@@ -39,12 +46,13 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
                     "Please change it to the compiler root directory and rerun the build.")
         }
 
-        project.javaexec {
-            it.main = mainClass
-            it.classpath = classpath
-            it.jvmArgs(jvmArgs)
-            it.args(listOf(toolName) + args)
-            it.environment(environment)
+        project.javaexec { spec ->
+            spec.main = mainClass
+            spec.classpath = classpath
+            spec.jvmArgs(jvmArgs)
+            spec.args(listOf(toolName) + args)
+            blacklistEnvironment.forEach { spec.environment.remove(it) }
+            spec.environment(environment)
         }
     }
 }

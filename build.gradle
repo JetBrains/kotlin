@@ -191,6 +191,10 @@ task distCompiler(type: Copy) {
         into('tools')
     }
 
+    from(project(':utilities').file('env_blacklist')) {
+        into('tools')
+    }
+
     from(project(':utilities').file('build/libs')) {
         into('konan/lib')
     }

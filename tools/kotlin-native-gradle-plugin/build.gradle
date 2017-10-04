@@ -103,6 +103,7 @@ jar {
 
 processResources {
     expand('konanVersion': konanVersion)
+    from(rootProject.project(':utilities').file('env_blacklist'))
 }
 
 publishing {
