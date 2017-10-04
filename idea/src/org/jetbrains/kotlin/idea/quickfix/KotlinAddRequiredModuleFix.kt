@@ -18,14 +18,12 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil
-import com.intellij.codeInsight.daemon.impl.quickfix.AddRequiredModuleFix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.idea.util.findRequireDirective
@@ -33,15 +31,18 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class KotlinAddRequiredModuleFix(module: PsiJavaModule, private val requiredName: String) : LocalQuickFixAndIntentionActionOnPsiElement(module) {
+    @Suppress("InvalidBundleOrProperty")
     override fun getFamilyName(): String = QuickFixBundle.message("module.info.add.requires.family.name")
-    override fun getText(): String = QuickFixBundle.message("module.info.add.requires.name", requiredName);
+    @Suppress("InvalidBundleOrProperty")
+    override fun getText(): String = QuickFixBundle.message("module.info.add.requires.name", requiredName)
+
     override fun startInWriteAction() = true
 
     override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
         return PsiUtil.isLanguageLevel9OrHigher(file) &&
                startElement is PsiJavaModule &&
                startElement.getManager().isInProject(startElement) &&
-               getLBrace(startElement) != null;
+               getLBrace(startElement) != null
     }
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
