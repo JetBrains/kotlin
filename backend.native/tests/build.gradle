@@ -2070,7 +2070,7 @@ kotlinNativeInterop {
     }
 
     sockets {
-        defFile '../../samples/socket/src/main/c_interop/sockets.def'
+        defFile 'interop/basics/sockets.def'
         flavor 'native'
     }
 

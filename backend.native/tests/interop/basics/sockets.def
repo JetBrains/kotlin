@@ -7,6 +7,6 @@ static int interop_errno() {
         return errno;
 }
 
-static int interop_htons(int x) {
+static short interop_htons(short x) {
 	return htons(x);
 }
