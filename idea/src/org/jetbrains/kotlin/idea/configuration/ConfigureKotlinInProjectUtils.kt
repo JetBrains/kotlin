@@ -30,7 +30,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaModule
+//import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinN
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
+//import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
@@ -285,6 +285,8 @@ private class LibraryKindSearchScope(val module: Module,
 }
 
 fun addStdlibToJavaModuleInfo(module: Module, collector: NotificationMessageCollector): Boolean {
+    /*
+
     if (module.sdk?.version?.isAtLeast(JavaSdkVersion.JDK_1_9) != true) return false
 
     val project = module.project
@@ -298,4 +300,8 @@ fun addStdlibToJavaModuleInfo(module: Module, collector: NotificationMessageColl
 
     collector.addMessage("Added $KOTLIN_STDLIB_MODULE_NAME requirement to module-info in ${module.name}")
     return true
+
+    */
+
+    return false
 }

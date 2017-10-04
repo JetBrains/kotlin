@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.run;
 
-import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.BaseJavaApplicationCommandLineState;
