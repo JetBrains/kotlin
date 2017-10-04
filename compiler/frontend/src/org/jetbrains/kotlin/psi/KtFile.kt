@@ -50,6 +50,9 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     @Volatile
     private var hasTopLeveCallables: Boolean? = null
 
+    @Volatile
+    private var pathCached: String? = null
+
     val importList: KtImportList?
         get() = findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
 
@@ -102,6 +105,15 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             }
 
             return result
+        }
+
+    val virtualFilePath
+        get(): String {
+            pathCached?.let { return it }
+
+            return virtualFile.path.also {
+                pathCached = it
+            }
         }
 
     val isScriptByTree: Boolean
@@ -170,6 +182,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         super<PsiFileBase>.clearCaches()
         isScript = null
         hasTopLeveCallables = null
+        pathCached = null
     }
 
     fun isScript(): Boolean = stub?.isScript() ?: isScriptByTree
