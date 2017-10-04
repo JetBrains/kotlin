@@ -6011,6 +6011,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("if1.kt")
+        public void testIf1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/if1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("if2.kt")
+        public void testIf2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/if2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("if3.kt")
+        public void testIf3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/if3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("if4.kt")
+        public void testIf4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/if4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inner.kt")
         public void testInner() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/inner.kt");
@@ -6098,6 +6122,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unwrap.kt")
         public void testUnwrap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/unwrap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when1.kt")
+        public void testWhen1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/when1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when2.kt")
+        public void testWhen2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/when2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when3.kt")
+        public void testWhen3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/when3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when4.kt")
+        public void testWhen4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/when4.kt");
             doTest(fileName);
         }
     }
