@@ -75,10 +75,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
             val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
             val isExternal = proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
             val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(getterFlags)
+            val annotations = getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER)
             val getter = if (isNotDefault) {
                 PropertyGetterDescriptorImpl(
                         property,
-                        getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
+                        annotations,
                         Deserialization.modality(Flags.MODALITY.get(getterFlags)),
                         Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
                         /* isDefault = */ !isNotDefault,
@@ -88,7 +89,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 )
             }
             else {
-                DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
+                DescriptorFactory.createDefaultGetter(property, annotations)
             }
             getter.initialize(property.returnType)
             getter
@@ -102,10 +103,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             val isExternal = proto.hasSetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
             val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(setterFlags)
+            val annotations = getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER)
             if (isNotDefault) {
                 val setter = PropertySetterDescriptorImpl(
                         property,
-                        getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
+                        annotations,
                         Deserialization.modality(Flags.MODALITY.get(setterFlags)),
                         Deserialization.visibility(Flags.VISIBILITY.get(setterFlags)),
                         /* isDefault = */ !isNotDefault,
@@ -121,7 +123,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 setter
             }
             else {
-                DescriptorFactory.createDefaultSetter(property, Annotations.EMPTY)
+                DescriptorFactory.createDefaultSetter(property, annotations)
             }
         }
         else {
