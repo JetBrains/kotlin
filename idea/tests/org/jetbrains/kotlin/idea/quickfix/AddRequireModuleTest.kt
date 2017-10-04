@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/*
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.daemon.QuickFixBundle
@@ -102,3 +102,4 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
         myFixture.launchAction(action)
     }
 }
+*/
