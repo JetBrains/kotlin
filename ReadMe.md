@@ -104,6 +104,29 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * Run the "IDEA" run configuration in the project
 * a child IntelliJ IDEA with the Kotlin plugin will then startup
 
+###Latest plugin
+
+You probably want to have locally the same version of plugin that build server is using for building.
+As this version is constantly moving, the best way to always be updated is to let IntelliJ IDEA notify you when it is time to renew your plugin.
+
+To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](https://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
+you should setup IDEA to update the plugin directly from the build server.
+
+**For IDEA 2017.3**
+
+Open:
+
+    Preferences -> Plugins -> Browse Repositories -> Manage Repositories...
+
+and add the following URL to your repositories:
+
+    https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_CompilerAllPlugins),status:SUCCESS/artifacts/content/updatePlugins-IJ2017.3.xml
+    
+Then update the list of plugins in "Browse Repositories", you'll see two versions of Kotlin there, install the one with the higher version number.
+
+If you want to keep an IntelliJ IDEA installation with that bleeding edge Kotlin plugin for working Kotlin project sources only separate to your default IntelliJ IDEA installation with the stable Kotlin
+plugin [see this document](https://intellij-support.jetbrains.com/hc/en-us/articles/207240985-Changing-IDE-default-directories-used-for-config-plugins-and-caches-storage), which describes how to have multiple IntelliJ IDEA installations using different configurations and plugin directories.
+
 # Contributing
 
 We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
