@@ -31,11 +31,6 @@ projectTest {
     workingDir = projectDir
 }
 
-val jar by tasks
-jar.apply {
-    enabled = false
-}
-
 runtimeJar(task<ShadowJar>("shadowJar")) {
     from(packedJars)
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
