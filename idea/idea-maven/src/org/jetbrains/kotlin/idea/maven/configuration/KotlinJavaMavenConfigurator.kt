@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.idea.maven.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.psi.PsiFile
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
+import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
+import org.jetbrains.kotlin.idea.configuration.addStdlibToJavaModuleInfo
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJvmRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
@@ -28,17 +31,14 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfigurator.TEST_LIB_ID, false, KotlinJavaMavenConfigurator.NAME, KotlinJavaMavenConfigurator.PRESENTABLE_TEXT) {
 
-    override fun isKotlinModule(module: Module): Boolean {
-        return hasKotlinJvmRuntimeInScope(module)
-    }
+    override fun isKotlinModule(module: Module) =
+            hasKotlinJvmRuntimeInScope(module)
 
-    override fun isRelevantGoal(goalName: String): Boolean {
-        return goalName == PomFile.KotlinGoals.Compile
-    }
+    override fun isRelevantGoal(goalName: String) =
+            goalName == PomFile.KotlinGoals.Compile
 
-    override fun getStdlibArtifactId(module: Module, version: String): String {
-        return getStdlibArtifactId(ModuleRootManager.getInstance(module).sdk, version)
-    }
+    override fun getStdlibArtifactId(module: Module, version: String): String =
+            getStdlibArtifactId(ModuleRootManager.getInstance(module).sdk, version)
 
     override fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module) {
         createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.Compile, module, false)
@@ -51,6 +51,15 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfi
         if (jvmTarget != null) {
             pom.addPluginConfiguration(plugin, "jvmTarget", jvmTarget.description)
         }
+    }
+
+    override fun configureModule(module: Module, file: PsiFile, version: String, collector: NotificationMessageCollector): Boolean {
+        if (!super.configureModule(module, file, version, collector)) {
+            return false
+        }
+
+        addStdlibToJavaModuleInfo(module, collector)
+        return true
     }
 
     override val targetPlatform: TargetPlatform

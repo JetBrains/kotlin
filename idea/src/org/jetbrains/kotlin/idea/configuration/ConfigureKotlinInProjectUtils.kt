@@ -284,17 +284,18 @@ private class LibraryKindSearchScope(val module: Module,
     }
 }
 
-fun addStdlibToJavaModuleInfo(module: Module, collector: NotificationMessageCollector) {
-    if (module.sdk?.version?.isAtLeast(JavaSdkVersion.JDK_1_9) != true) return
+fun addStdlibToJavaModuleInfo(module: Module, collector: NotificationMessageCollector): Boolean {
+    if (module.sdk?.version?.isAtLeast(JavaSdkVersion.JDK_1_9) != true) return false
 
     val project = module.project
-    val javaModule: PsiJavaModule = findFirstPsiJavaModule(module) ?: return
+    val javaModule: PsiJavaModule = findFirstPsiJavaModule(module) ?: return false
 
     val success = WriteCommandAction.runWriteCommandAction(project, Computable<Boolean> {
         KotlinAddRequiredModuleFix.addModuleRequirement(javaModule, KOTLIN_STDLIB_MODULE_NAME)
     })
 
-    if (success) {
-        collector.addMessage("Added ${KOTLIN_STDLIB_MODULE_NAME} requirement to module-info in ${module.name}")
-    }
+    if (!success) return false
+
+    collector.addMessage("Added $KOTLIN_STDLIB_MODULE_NAME requirement to module-info in ${module.name}")
+    return true
 }

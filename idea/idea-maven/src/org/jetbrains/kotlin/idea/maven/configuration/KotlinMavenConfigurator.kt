@@ -118,7 +118,7 @@ abstract class KotlinMavenConfigurator
             for (module in excludeMavenChildrenModules(project, dialog.modulesToConfigure)) {
                 val file = findModulePomFile(module)
                 if (file != null && canConfigureFile(file)) {
-                    changePomFile(module, file, dialog.kotlinVersion, collector)
+                    configureModule(module, file, dialog.kotlinVersion, collector)
                     OpenFileAction.openFile(file.virtualFile, project)
                 }
                 else {
@@ -137,20 +137,23 @@ abstract class KotlinMavenConfigurator
     protected abstract fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module)
     protected abstract fun getStdlibArtifactId(module: Module, version: String): String
 
-    fun changePomFile(
+    open fun configureModule(module: Module, file: PsiFile, version: String, collector: NotificationMessageCollector): Boolean =
+            changePomFile(module, file, version, collector)
+
+    private fun changePomFile(
             module: Module,
             file: PsiFile,
             version: String,
-            collector: NotificationMessageCollector) {
-
+            collector: NotificationMessageCollector
+    ): Boolean {
         val virtualFile = file.virtualFile ?: error("Virtual file should exists for psi file " + file.name)
         val domModel = MavenDomUtil.getMavenDomProjectModel(module.project, virtualFile)
         if (domModel == null) {
             showErrorMessage(module.project, null)
-            return
+            return false
         }
 
-        val pom = PomFile.forFileOrNull(file as XmlFile) ?: return
+        val pom = PomFile.forFileOrNull(file as XmlFile) ?: return false
         pom.addProperty(KOTLIN_VERSION_PROPERTY, version)
 
         pom.addDependency(MavenId(GROUP_ID, getStdlibArtifactId(module, version), "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
@@ -176,6 +179,7 @@ abstract class KotlinMavenConfigurator
         CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement<PsiFile>(file)
 
         collector.addMessage(virtualFile.path + " was modified")
+        return true
     }
 
     protected open fun configurePlugin(pom: PomFile, plugin: MavenDomPlugin, module: Module, version: String) {

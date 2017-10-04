@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.maven
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.SourceFolder
@@ -33,6 +35,7 @@ import org.jetbrains.idea.maven.dom.MavenDomUtil
 import org.jetbrains.idea.maven.dom.model.*
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.model.MavenPlugin
+import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -214,7 +217,16 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
     fun addJavacExecutions(module: Module, kotlinPlugin: MavenDomPlugin) {
         val javacPlugin = ensurePluginAfter(addPlugin(MavenId("org.apache.maven.plugins", "maven-compiler-plugin", null)), kotlinPlugin)
 
-        val project = MavenProjectsManager.getInstance(module.project).findProject(module) ?: error("Can't find maven project for $module")
+        val project: MavenProject =
+                MavenProjectsManager.getInstance(module.project).findProject(module) ?:
+                run {
+                    if (ApplicationManager.getApplication().isUnitTestMode) {
+                        LOG.warn("WARNING: Bad project configuration in tests. Javac execution configuration was skipped.")
+                        return
+                    }
+                    error("Can't find maven project for $module")
+                }
+
         val plugin = project.findPlugin("org.apache.maven.plugins", "maven-compiler-plugin")
 
         if (isExecutionEnabled(plugin, "default-compile")) {
@@ -501,6 +513,8 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
     }
 
     companion object {
+        private val LOG = Logger.getInstance(PomFile::class.java)
+
         fun forFileOrNull(xmlFile: XmlFile): PomFile? = MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile)?.let { PomFile(xmlFile, it) }
 
         @Deprecated("We shouldn't use phase but additional compiler configuration in most cases")
