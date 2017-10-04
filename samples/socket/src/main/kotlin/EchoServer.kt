@@ -15,7 +15,7 @@
  */
 
 import kotlinx.cinterop.*
-import sockets.*
+import posix.*
 
 fun main(args: Array<String>) {
     if (args.size < 1) {
@@ -37,8 +37,8 @@ fun main(args: Array<String>) {
         with(serverAddr) {
             memset(this.ptr, 0, sockaddr_in.size)
             sin_family = AF_INET.narrow()
-            sin_addr.s_addr = htons(0).toInt()
-            sin_port = htons(port)
+            sin_addr.s_addr = posix_htons(0).toInt()
+            sin_port = posix_htons(port)
         }
 
         bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toInt())
@@ -64,21 +64,16 @@ fun main(args: Array<String>) {
     }
 }
 
-val errno: Int
-    get() = interop_errno()
-
-fun htons(value: Short) = interop_htons(value.toInt()).toShort()
-
 inline fun Int.ensureUnixCallResult(predicate: (Int) -> Boolean): Int {
     if (!predicate(this)) {
-        throw Error(strerror(errno)!!.toKString())
+        throw Error(strerror(posix_errno())!!.toKString())
     }
     return this
 }
 
 inline fun Long.ensureUnixCallResult(predicate: (Long) -> Boolean): Long {
     if (!predicate(this)) {
-        throw Error(strerror(errno)!!.toKString())
+        throw Error(strerror(posix_errno())!!.toKString())
     }
     return this
 }

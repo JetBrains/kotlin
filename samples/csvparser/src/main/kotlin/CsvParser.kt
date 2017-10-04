@@ -15,7 +15,7 @@
  */
 
 import kotlinx.cinterop.*
-import stdio.*
+import posix.*
 
 fun parseLine(line: String, separator: Char) : List<String> {
     val result = mutableListOf<String>()

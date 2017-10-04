@@ -1,11 +1,5 @@
 apply plugin: 'konan'
 
-konanInterop {
-    stdio { }
-}
-
 konanArtifacts {
-    CsvParser {
-        useInterop 'stdio'
-    }
+    CsvParser
 }

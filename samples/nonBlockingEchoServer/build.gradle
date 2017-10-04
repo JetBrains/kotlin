@@ -1,11 +1,5 @@
 apply plugin: 'konan'
 
-konanInterop {
-    sockets { }
-}
-
 konanArtifacts {
-    EchoServer {
-        useInterop "sockets"
-    }
+    EchoServer
 }

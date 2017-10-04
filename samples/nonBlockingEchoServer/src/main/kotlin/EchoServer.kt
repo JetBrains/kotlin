@@ -15,7 +15,7 @@
  */
 
 import kotlinx.cinterop.*
-import sockets.*
+import posix.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -37,8 +37,8 @@ fun main(args: Array<String>) {
         with(serverAddr) {
             memset(this.ptr, 0, sockaddr_in.size)
             sin_family = AF_INET.narrow()
-            sin_addr.s_addr = htons(0).toInt()
-            sin_port = htons(port)
+            sin_addr.s_addr = posix_htons(0).toInt()
+            sin_port = posix_htons(port)
         }
 
         bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toInt())
@@ -93,7 +93,7 @@ class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
         val length = read(clientFd, data, dataLength)
         if (length >= 0)
             return length
-        if (errno != EWOULDBLOCK)
+        if (posix_errno() != EWOULDBLOCK)
             throw IOException(getUnixError())
         // Save continuation and suspend.
         return suspendCoroutineOrReturn { continuation ->
@@ -106,7 +106,7 @@ class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
         val written = write(clientFd, data, length)
         if (written >= 0)
             return
-        if (errno != EWOULDBLOCK)
+        if (posix_errno() != EWOULDBLOCK)
             throw IOException(getUnixError())
         // Save continuation and suspend.
         return suspendCoroutineOrReturn { continuation ->
@@ -130,23 +130,25 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
         val errorfds = alloc<fd_set>()
         var maxfd = serverFd
         while (true) {
-            FD_ZERO(readfds)
-            FD_ZERO(writefds)
-            FD_ZERO(errorfds)
+            posix_FD_ZERO(readfds.ptr)
+            posix_FD_ZERO(writefds.ptr)
+            posix_FD_ZERO(errorfds.ptr)
             for ((socketFd, watingFor) in waitingList) {
                 when (watingFor) {
-                    is WaitingFor.Accept -> FD_SET(socketFd, readfds)
-                    is WaitingFor.Read   -> FD_SET(socketFd, readfds)
-                    is WaitingFor.Write  -> FD_SET(socketFd, writefds)
+                    is WaitingFor.Accept -> posix_FD_SET(socketFd, readfds.ptr)
+                    is WaitingFor.Read   -> posix_FD_SET(socketFd, readfds.ptr)
+                    is WaitingFor.Write  -> posix_FD_SET(socketFd, writefds.ptr)
                 }
-                FD_SET(socketFd, errorfds)
+                posix_FD_SET(socketFd, errorfds.ptr)
             }
             pselect(maxfd + 1, readfds.ptr, writefds.ptr, errorfds.ptr, null, null)
                     .ensureUnixCallResult { it >= 0 }
             loop@for (socketFd in 0..maxfd) {
                 val waitingFor = waitingList[socketFd]
-                val errorOccured = FD_ISSET(socketFd, errorfds)
-                if (FD_ISSET(socketFd, readfds) || FD_ISSET(socketFd, writefds) || errorOccured) {
+                val errorOccured = posix_FD_ISSET(socketFd, errorfds.ptr) != 0
+                if (posix_FD_ISSET(socketFd, readfds.ptr) != 0
+		    || posix_FD_ISSET(socketFd, writefds.ptr) != 0
+		    || errorOccured) {
                     when (waitingFor) {
                         is WaitingFor.Accept -> {
                             if (errorOccured)
@@ -155,7 +157,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
                             // Accept new client.
                             val clientFd = accept(serverFd, null, null)
                             if (clientFd < 0) {
-                                if (errno != EWOULDBLOCK)
+                                if (posix_errno() != EWOULDBLOCK)
                                     throw Error(getUnixError())
                                 break@loop
                             }
@@ -196,18 +198,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
 
 class IOException(message: String): RuntimeException(message)
 
-val errno: Int
-    get() = interop_errno()
-
-fun FD_ZERO(set: fd_set): Unit = interop_FD_ZERO(set.ptr)
-
-fun FD_SET(bit: Int, set: fd_set): Unit = interop_FD_SET(bit, set.ptr)
-
-fun FD_ISSET(bit: Int, set: fd_set) = interop_FD_ISSET(bit, set.ptr) != 0
-
-fun htons(value: Short) = interop_htons(value.toInt()).toShort()
-
-fun getUnixError() = strerror(errno)!!.toKString()
+fun getUnixError() = strerror(posix_errno())!!.toKString()
 
 inline fun Int.ensureUnixCallResult(predicate: (Int) -> Boolean): Int {
     if (!predicate(this)) {

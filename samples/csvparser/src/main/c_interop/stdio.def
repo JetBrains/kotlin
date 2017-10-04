@@ -1,2 +1,0 @@
-headers = stdio.h stdlib.h string.h
-compilerOpts = -D_ANSI_SOURCE
