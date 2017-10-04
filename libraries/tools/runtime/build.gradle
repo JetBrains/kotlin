@@ -1,4 +1,4 @@
-description 'Kotlin Runtime (deprecated, use koltin-stdlib artifact instead)'
+description 'Kotlin Runtime (deprecated, use kotlin-stdlib artifact instead)'
 
 apply plugin: 'kotlin'
 
