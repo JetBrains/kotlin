@@ -14,8 +14,20 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":idea:idea-android"))
+    testCompile(project(":idea:idea-test-framework"))
     testRuntime(ideaSdkDeps("*.jar"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
+    testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
+    testRuntime(project(":idea:idea-android"))
+    testRuntime(project(":idea:idea-gradle"))
+    testRuntime(project(":sam-with-receiver-ide-plugin"))
+    testRuntime(project(":allopen-ide-plugin"))
+    testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":plugins:android-extensions-ide"))
 }
 
 sourceSets {

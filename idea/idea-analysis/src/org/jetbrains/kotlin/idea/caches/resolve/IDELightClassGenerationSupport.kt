@@ -129,7 +129,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                     return SourceNavigationHelper.getOriginalClass(classOrObject) as? KtLightClass
             }
         }
-        if ((classOrObject.containingFile as? KtFile)?.analysisContext != null) {
+        if ((classOrObject.containingFile as? KtFile)?.analysisContext != null ||
+            classOrObject.containingFile.originalFile.virtualFile != null) {
             // explicit request to create light class from dummy.kt
             return KtLightClassForSourceDeclaration.create(classOrObject)
         }
