@@ -57,7 +57,7 @@ class PluginsDslIT : BaseGradleIT() {
         private const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
 
         // Workaround for the restriction that snapshot versions are not supported
-        private val MARKER_VERSION = KOTLIN_VERSION + (System.getProperty("pluginMarkerVersionSuffix") ?: "-test")
+        private val MARKER_VERSION = KOTLIN_VERSION + (System.getProperty("pluginMarkerVersionSuffix") ?: "")
     }
 
     private fun projectWithMavenLocalPlugins(
