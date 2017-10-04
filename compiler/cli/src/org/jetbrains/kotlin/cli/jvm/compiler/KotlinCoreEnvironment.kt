@@ -145,8 +145,6 @@ class KotlinCoreEnvironment private constructor(
             }
 
             super.registerJavaPsiFacade()
-
-            project.registerService(JvmFacade::class.java, JvmFacadeImpl(project, myMessageBus))
         }
     }
 
