@@ -46,6 +46,8 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
         private var changes = false
 
         fun run(): Boolean {
+            if (methodNode.instructions.toArray().none { it.isOptimizable() }) return false
+
             val checkedReferenceTypes = analyzeTypesAndRemoveDeadCode()
             eliminateRedundantChecks(checkedReferenceTypes)
 
@@ -119,6 +121,12 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             }
             return nullabilityMap
         }
+
+        private fun AbstractInsnNode.isOptimizable() =
+                opcode == Opcodes.IFNULL ||
+                opcode == Opcodes.IFNONNULL ||
+                opcode == Opcodes.INSTANCEOF ||
+                isCheckExpressionValueIsNotNull()
 
         private fun transformTrivialChecks(nullabilityMap: Map<AbstractInsnNode, StrictBasicValue>) {
             for ((insn, value) in nullabilityMap) {
