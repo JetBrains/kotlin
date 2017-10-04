@@ -33,7 +33,7 @@ open class FakeFileForLightClass(
         private val lightClass: () -> KtLightClass,
         private val stub: () -> PsiClassHolderFileStub<*>,
         private val packageFqName: FqName = ktFile.packageFqName
-) : ClsFileImpl(ClassFileViewProvider(ktFile.manager, ktFile.virtualFile)) {
+) : ClsFileImpl(ClassFileViewProvider(ktFile.manager, ktFile.viewProvider.virtualFile)) {
     override fun getPackageName() = packageFqName.asString()
 
     override fun getStub() = stub()
