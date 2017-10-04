@@ -58,6 +58,7 @@ messages/**)
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn org.jline.builtins.Nano$Buffer
 -dontwarn net.jpountz.lz4.LZ4Factory
+-dontwarn com.intellij.util.io.TarUtil
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
