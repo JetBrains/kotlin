@@ -113,6 +113,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             type.constructor.isDenotable && !type.isDynamic() && type.lowerIfFlexible().constructor == type.upperIfFlexible().constructor
 
     fun TypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
+        if (subType === superType) return true
         val newSubType = transformToNewType(subType)
         val newSuperType = transformToNewType(superType)
 
