@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
 
 abstract class KonanTest extends JavaExec {
-    protected String source
+    public String source
     def targetManager = new TargetManager(project.testTarget)
     def target = targetManager.target
     def backendNative = project.project(":backend.native")
