@@ -199,7 +199,7 @@ class SerializableCodegenImpl(
         if (!it.hasDefaultValue()) throw CompilationException("Optional field ${it.name} in primary constructor of serializable " +
                                                                  "$serializableDescriptor must have default value", null, it)
         this.gen(it.defaultValue, prop.asmType)
-        this.v.putfield(thisAsmType.internalName, prop.name, prop.asmType.descriptor)
+        this.v.putfield(thisAsmType.internalName, prop.descriptor.name.asString(), prop.asmType.descriptor)
     }
               ?: throw IllegalStateException()
 
