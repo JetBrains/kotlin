@@ -461,6 +461,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         currentPositionHolder.setAfterTerminator()
         return indirectBr
     }
+
+    fun switch(value: LLVMValueRef, cases: Collection<Pair<LLVMValueRef, LLVMBasicBlockRef>>, elseBB: LLVMBasicBlockRef): LLVMValueRef? {
+        val switch = LLVMBuildSwitch(builder, value, elseBB, cases.size)
+        cases.forEach { LLVMAddCase(switch, it.first, it.second) }
+        currentPositionHolder.setAfterTerminator()
+        return switch
+    }
+
     fun resetDebugLocation() {
         if (!context.shouldContainDebugInfo()) return
         if (!currentPositionHolder.isAfterTerminator)

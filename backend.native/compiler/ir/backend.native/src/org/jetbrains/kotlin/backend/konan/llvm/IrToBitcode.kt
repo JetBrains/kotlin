@@ -189,7 +189,7 @@ internal interface CodeContext {
      */
     fun classScope(): CodeContext?
 
-    fun addResumePoint(bbLabel: LLVMBasicBlockRef)
+    fun addResumePoint(bbLabel: LLVMBasicBlockRef): Int
 }
 
 //-------------------------------------------------------------------------//
@@ -1747,8 +1747,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private inner class SuspendableExpressionScope(val resumePoints: MutableList<LLVMBasicBlockRef>) : InnerScopeImpl() {
-        override fun addResumePoint(bbLabel: LLVMBasicBlockRef) {
+        override fun addResumePoint(bbLabel: LLVMBasicBlockRef): Int {
+            val result = resumePoints.size
             resumePoints.add(bbLabel)
+            return result
         }
     }
 
@@ -1765,26 +1767,40 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val result = evaluateExpression(expression.result)
 
             functionGenerationContext.appendingTo(bbDispatch) {
-                functionGenerationContext.indirectBr(suspensionPointId, resumePoints)
+                if (context.config.indirectBranchesAreAllowed)
+                    functionGenerationContext.indirectBr(suspensionPointId, resumePoints)
+                else {
+                    val bbElse = functionGenerationContext.basicBlock("else", null) {
+                        functionGenerationContext.unreachable()
+                    }
+
+                    val cases = resumePoints.withIndex().map { Int32(it.index + 1).llvm to it.value }
+                    functionGenerationContext.switch(functionGenerationContext.ptrToInt(suspensionPointId, int32Type), cases, bbElse)
+                }
             }
             return result
         }
     }
 
     private inner class SuspensionPointScope(val suspensionPointId: VariableDescriptor,
-                                             val bbResume: LLVMBasicBlockRef): InnerScopeImpl() {
+                                             val bbResume: LLVMBasicBlockRef,
+                                             val bbResumeId: Int): InnerScopeImpl() {
         override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
-            if (descriptor == suspensionPointId)
-                return functionGenerationContext.blockAddress(bbResume)
+            if (descriptor == suspensionPointId) {
+                return if (context.config.indirectBranchesAreAllowed)
+                           functionGenerationContext.blockAddress(bbResume)
+                       else
+                           functionGenerationContext.intToPtr(Int32(bbResumeId + 1).llvm, int8TypePtr)
+            }
             return super.genGetValue(descriptor)
         }
     }
 
     private fun evaluateSuspensionPoint(expression: IrSuspensionPoint): LLVMValueRef {
         val bbResume = functionGenerationContext.basicBlock("resume", expression.resumeResult.startLocation)
-        currentCodeContext.addResumePoint(bbResume)
+        val id = currentCodeContext.addResumePoint(bbResume)
 
-        using (SuspensionPointScope(expression.suspensionPointIdParameter.descriptor, bbResume)) {
+        using (SuspensionPointScope(expression.suspensionPointIdParameter.descriptor, bbResume, id)) {
             continuationBlock(expression.type, expression.result.startLocation).run {
                 val normalResult = evaluateExpression(expression.result)
                 jump(this, normalResult)
