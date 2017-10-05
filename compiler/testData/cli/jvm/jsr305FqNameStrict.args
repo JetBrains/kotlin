@@ -1,4 +1,4 @@
--Xjsr305=@MyNonnull:strict
+-Xjsr305=@MyNonnull\:strict
 $TESTDATA_DIR$/jsr305Migration.kt
 $TESTDATA_DIR$/jsr305
 $FOREIGN_ANNOTATIONS_DIR$

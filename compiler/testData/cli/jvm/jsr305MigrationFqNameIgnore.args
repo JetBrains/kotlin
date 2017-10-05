@@ -1,4 +1,4 @@
--Xjsr305=@MyMigrationNonnull:ignore
+-Xjsr305=@MyMigrationNonnull\:ignore
 $TESTDATA_DIR$/jsr305Migration.kt
 $TESTDATA_DIR$/jsr305
 $FOREIGN_ANNOTATIONS_DIR$
