@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.checker.TypeCheckerContext.LowerCapturedTypePo
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SeveralSupertypesWithSameConstructorPolicy.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -216,6 +217,10 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         if (!NullabilityChecker.isPossibleSubtype(this, subType, superType)) return false
 
         val superConstructor = superType.constructor
+
+        if (subType.constructor == superConstructor && superConstructor.parameters.isEmpty()) return true
+        if (superType.isAnyOrNullableAny()) return true
+
         val supertypesWithSameConstructor = findCorrespondingSupertypes(subType, superConstructor)
         when (supertypesWithSameConstructor.size) {
             0 -> return hasNothingSupertype(subType) // todo Nothing & Array<Number> <: Array<String>
