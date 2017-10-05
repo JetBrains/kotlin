@@ -50,11 +50,11 @@ object KotlinTypeFactory {
             return constructor.declarationDescriptor!!.defaultType
         }
 
-        return simpleType(annotations, constructor, arguments, nullable, computeMemberScope(constructor, arguments))
+        return simpleTypeWithNonTrivialMemberScope(annotations, constructor, arguments, nullable, computeMemberScope(constructor, arguments))
     }
 
     @JvmStatic
-    fun simpleType(
+    fun simpleTypeWithNonTrivialMemberScope(
             annotations: Annotations,
             constructor: TypeConstructor,
             arguments: List<TypeProjection>,

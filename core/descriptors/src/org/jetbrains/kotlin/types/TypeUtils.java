@@ -197,7 +197,7 @@ public class TypeUtils {
         }
         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.Companion.getEMPTY(),
                 typeConstructor,
                 arguments,

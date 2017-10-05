@@ -125,7 +125,7 @@ internal object RawSubstitution : TypeSubstitution() {
 
         if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}") to false
 
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 type.annotations, type.constructor,
                 type.constructor.parameters.map {
                     parameter ->

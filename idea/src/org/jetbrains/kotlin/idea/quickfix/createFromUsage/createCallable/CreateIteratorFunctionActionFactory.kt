@@ -51,7 +51,7 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
-        val newReturnJetType = KotlinTypeFactory.simpleType(returnJetType.annotations,
+        val newReturnJetType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(returnJetType.annotations,
                                                             returnJetType.constructor,
                                                             returnJetTypeArguments,
                                                             returnJetType.isMarkedNullable,

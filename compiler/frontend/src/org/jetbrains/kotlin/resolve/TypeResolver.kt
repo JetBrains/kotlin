@@ -369,11 +369,11 @@ class TypeResolver(
         return if (scopeForTypeParameter is ErrorUtils.ErrorScope)
             ErrorUtils.createErrorType("?")
         else
-            KotlinTypeFactory.simpleType(annotations,
-                                         typeParameter.typeConstructor,
-                                         listOf(),
-                                         false,
-                                         scopeForTypeParameter)
+            KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations,
+                                                                  typeParameter.typeConstructor,
+                                                                  listOf(),
+                                                                  false,
+                                                                  scopeForTypeParameter)
     }
 
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
