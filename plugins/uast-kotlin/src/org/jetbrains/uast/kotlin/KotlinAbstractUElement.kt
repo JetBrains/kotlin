@@ -51,7 +51,7 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
             }
         }
 
-        if (parent is KtStringTemplateExpression && parent.entries.size == 1) {
+        if ((parent is KtStringTemplateExpression && parent.entries.size == 1) || parent is KtWhenConditionWithExpression) {
             parent = parent.parent
         }
 
