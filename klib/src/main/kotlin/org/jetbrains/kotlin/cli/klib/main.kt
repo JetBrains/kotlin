@@ -74,7 +74,7 @@ fun error(text: String) {
 }
 
 // TODO: Get rid of the hardcoded path.
-val defaultRepository = File(File.userHome, ".konan")
+val defaultRepository = File(File.userHome, ".konan/klib")
 
 class Library(val name: String, val requestedRepository: String?, val target: String) {
 
@@ -97,8 +97,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
         Library(File(name).name.removeSuffix(".klib"), requestedRepository, target).remove(true)
 
         val library = ZippedKonanLibrary(libraryInCurrentDir(name))
-        val newLocation = File(repository, "klib")
-        val newLibDir = File(newLocation, library.libraryName.File().name)
+        val newLibDir = File(repository, library.libraryName.File().name)
         newLibDir.mkdirs()
         library.unpackTo(newLibDir)
     }
