@@ -45,55 +45,72 @@
 extern "C" KInt Konan_start(const ObjHeader*);
 
 namespace {
-int pipeC, pipeKonan;
 
-NativeActivityState nativeActivityState;
+typedef struct {
+    int pipeC;
+    int pipeKonan;
+    NativeActivityState nativeActivityState;
+} LauncherState;
+
+LauncherState* launcherState = nullptr;
+
 }
 
 extern "C" void getNativeActivityState(NativeActivityState* state) {
-  state->activity = nativeActivityState.activity;
-  state->savedState = nativeActivityState.savedState;
-  state->savedStateSize = nativeActivityState.savedStateSize;
-  state->looper = nativeActivityState.looper;
+  state->activity = launcherState->nativeActivityState.activity;
+  state->savedState = launcherState->nativeActivityState.savedState;
+  state->savedStateSize = launcherState->nativeActivityState.savedStateSize;
+  state->looper = launcherState->nativeActivityState.looper;
 }
 
 extern "C" void notifySysEventProcessed() {
   int8_t message;
-  write(pipeKonan, &message, sizeof(message));
+  write(launcherState->pipeKonan, &message, sizeof(message));
 }
 
 namespace {
-void* entry(void* param) {
-  ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
-  ALooper_addFd(looper, pipeKonan, LOOPER_ID_SYS, ALOOPER_EVENT_INPUT, NULL, NULL);
-  nativeActivityState.looper = looper;
 
+void launchMain() {
   RuntimeState* state = InitRuntime();
-
   if (state == nullptr) {
     LOGE("Unable to init runtime\n");
-    return nullptr;
+    return;
   }
 
-  KInt exitStatus;
   {
     ObjHolder args;
     AllocArrayInstance(theArrayTypeInfo, 0, args.slot());
-    exitStatus = Konan_start(args.obj());
+    Konan_start(args.obj());
   }
 
   DeinitRuntime(state);
+}
+
+void* entry(void* param) {
+  ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+  ALooper_addFd(looper, launcherState->pipeKonan, LOOPER_ID_SYS, ALOOPER_EVENT_INPUT, NULL, NULL);
+  launcherState->nativeActivityState.looper = looper;
+
+  launchMain();
+
   return nullptr;
 }
 
-void runKonan_start() {
+void runKonan_start(bool startThread) {
+  if (!startThread) {
+     launchMain();
+     return;
+  }
+
   int pipes[2];
   if (socketpair(AF_UNIX, SOCK_STREAM, 0, pipes)) {
     LOGE("Could not create pipe: %s", strerror(errno));
     return;
   }
-  pipeC = pipes[0];
-  pipeKonan = pipes[1];
+  launcherState->pipeC = pipes[0];
+  launcherState->pipeKonan = pipes[1];
+
+  LOGE("runKonan_start() %d %d", launcherState->pipeC, launcherState->pipeKonan);
 
   pthread_attr_t attr;
   pthread_attr_init(&attr);
@@ -104,13 +121,17 @@ void runKonan_start() {
 
 void putEventSynchronously(void* event) {
   auto value = reinterpret_cast<uintptr_t>(event);
-  if (write(pipeC, &value, sizeof(value)) != sizeof(value)) {
+
+  LOGE("putEventSynchronously() %d %d", launcherState->pipeC, launcherState->pipeKonan);
+
+  if (write(launcherState->pipeC, &value, sizeof(value)) != sizeof(value)) {
     LOGE("Failure writing event: %s\n", strerror(errno));
   }
   int8_t response;
-  if (read(pipeC, &response, sizeof(response)) != sizeof(response)) {
+  if (read(launcherState->pipeC, &response, sizeof(response)) != sizeof(response)) {
     LOGE("Failure reading response: %s\n", strerror(errno));
   }
+  LOGE("putEventSynchronously() done");
 }
 
 void onDestroy(ANativeActivity* activity) {
@@ -196,23 +217,30 @@ void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) {
 
 extern "C" void RUNTIME_USED Konan_main(
     ANativeActivity* activity, void* savedState, size_t savedStateSize) {
-  nativeActivityState = {activity, savedState, savedStateSize};
+  bool launchThread = activity->instance == nullptr;
+  if (launchThread) {
+    launcherState = (LauncherState*)calloc(sizeof(LauncherState), 1);
+    launcherState->nativeActivityState = {activity, savedState, savedStateSize, nullptr};
 
-  activity->callbacks->onDestroy = onDestroy;
-  activity->callbacks->onStart = onStart;
-  activity->callbacks->onResume = onResume;
-  activity->callbacks->onSaveInstanceState = onSaveInstanceState;
-  activity->callbacks->onPause = onPause;
-  activity->callbacks->onStop = onStop;
-  activity->callbacks->onConfigurationChanged = onConfigurationChanged;
-  activity->callbacks->onLowMemory = onLowMemory;
-  activity->callbacks->onWindowFocusChanged = onWindowFocusChanged;
-  activity->callbacks->onNativeWindowCreated = onNativeWindowCreated;
-  activity->callbacks->onNativeWindowDestroyed = onNativeWindowDestroyed;
-  activity->callbacks->onInputQueueCreated = onInputQueueCreated;
-  activity->callbacks->onInputQueueDestroyed = onInputQueueDestroyed;
+    activity->instance = launcherState;
+    activity->callbacks->onDestroy = onDestroy;
+    activity->callbacks->onStart = onStart;
+    activity->callbacks->onResume = onResume;
+    activity->callbacks->onSaveInstanceState = onSaveInstanceState;
+    activity->callbacks->onPause = onPause;
+    activity->callbacks->onStop = onStop;
+    activity->callbacks->onConfigurationChanged = onConfigurationChanged;
+    activity->callbacks->onLowMemory = onLowMemory;
+    activity->callbacks->onWindowFocusChanged = onWindowFocusChanged;
+    activity->callbacks->onNativeWindowCreated = onNativeWindowCreated;
+    activity->callbacks->onNativeWindowDestroyed = onNativeWindowDestroyed;
+    activity->callbacks->onInputQueueCreated = onInputQueueCreated;
+    activity->callbacks->onInputQueueDestroyed = onInputQueueDestroyed;
+  } else {
+    launcherState = (LauncherState*)activity->instance;
+  }
 
-  runKonan_start();
+  runKonan_start(launchThread);
 }
 
 #endif // KONAN_ANDROID
