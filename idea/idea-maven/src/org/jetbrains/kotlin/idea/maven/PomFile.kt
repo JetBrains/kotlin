@@ -214,7 +214,7 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
     fun addJavacExecutions(module: Module, kotlinPlugin: MavenDomPlugin) {
         val javacPlugin = ensurePluginAfter(addPlugin(MavenId("org.apache.maven.plugins", "maven-compiler-plugin", null)), kotlinPlugin)
 
-        val project = MavenProjectsManager.getInstance(module.project).findProject(module)!!
+        val project = MavenProjectsManager.getInstance(module.project).findProject(module) ?: error("Can't find maven project for $module")
         val plugin = project.findPlugin("org.apache.maven.plugins", "maven-compiler-plugin")
 
         if (isExecutionEnabled(plugin, "default-compile")) {
