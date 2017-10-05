@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
@@ -45,6 +47,30 @@ abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressab
     }
 
     protected open val suppressionKey: String get() = this.shortName.removePrefix("Kotlin")
+
+    protected fun ProblemsHolder.registerProblemWithoutOfflineInformation(
+            element: PsiElement,
+            description: String,
+            isOnTheFly: Boolean,
+            highlightType: ProblemHighlightType,
+            vararg fixes: LocalQuickFix
+    ) {
+        registerProblemWithoutOfflineInformation(element, description, isOnTheFly, highlightType, null, *fixes)
+    }
+
+    protected fun ProblemsHolder.registerProblemWithoutOfflineInformation(
+            element: PsiElement,
+            description: String,
+            isOnTheFly: Boolean,
+            highlightType: ProblemHighlightType,
+            range: TextRange?,
+            vararg fixes: LocalQuickFix
+    ) {
+        if (!ApplicationManager.getApplication().isUnitTestMode &&
+            !isOnTheFly && highlightType == ProblemHighlightType.INFORMATION) return
+        val problemDescriptor = manager.createProblemDescriptor(element, range, description, highlightType, isOnTheFly, *fixes)
+        registerProblem(problemDescriptor)
+    }
 }
 
 private fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  {

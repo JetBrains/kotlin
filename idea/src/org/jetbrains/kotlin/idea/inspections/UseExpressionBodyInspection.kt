@@ -74,15 +74,14 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
                     declaration as? KtDeclarationWithBody ?: return
                     val (toHighlight, suffix, highlightType) = statusFor(declaration) ?: return
 
-                    val problemDescriptor = holder.manager.createProblemDescriptor(
+                    holder.registerProblemWithoutOfflineInformation(
                             declaration,
-                            toHighlight?.textRange?.shiftRight(-declaration.startOffset),
                             "Use expression body instead of $suffix",
-                            highlightType,
                             isOnTheFly,
+                            highlightType,
+                            toHighlight?.textRange?.shiftRight(-declaration.startOffset),
                             ConvertToExpressionBodyFix()
                     )
-                    holder.registerProblem(problemDescriptor)
                 }
             }
 

@@ -55,10 +55,13 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
                         else
                             INFORMATION to "can"
 
-                        holder.registerProblem(expression,
-                                               "Equality check $verb be used instead of elvis for nullable boolean check",
-                                               highlightType,
-                                               ReplaceWithEqualityCheckFix())
+                        holder.registerProblemWithoutOfflineInformation(
+                                expression,
+                                "Equality check $verb be used instead of elvis for nullable boolean check",
+                                isOnTheFly,
+                                highlightType,
+                                ReplaceWithEqualityCheckFix()
+                        )
                     }
                 }
             }

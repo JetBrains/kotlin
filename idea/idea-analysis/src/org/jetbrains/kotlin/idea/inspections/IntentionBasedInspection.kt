@@ -123,8 +123,14 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                     val allFixes = fixes ?: SmartList<LocalQuickFix>()
                     additionalFixes(targetElement)?.let { allFixes.addAll(it) }
                     if (!allFixes.isEmpty()) {
-                        holder.registerProblem(targetElement, problemText ?: allFixes.first().name,
-                                               problemHighlightType(targetElement), range, *allFixes.toTypedArray())
+                        holder.registerProblemWithoutOfflineInformation(
+                                targetElement,
+                                problemText ?: allFixes.first().name,
+                                isOnTheFly,
+                                problemHighlightType(targetElement),
+                                range,
+                                *allFixes.toTypedArray()
+                        )
                     }
                 }
             }
