@@ -74,7 +74,7 @@ object KotlinTypeFactory {
             annotations: Annotations,
             descriptor: ClassDescriptor,
             arguments: List<TypeProjection>
-    ): SimpleType = simpleType(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
+    ): SimpleType = simpleType(annotations, descriptor.typeConstructor, arguments, nullable = false)
 
     @JvmStatic
     fun simpleType(
@@ -82,9 +82,8 @@ object KotlinTypeFactory {
             annotations: Annotations = baseType.annotations,
             constructor: TypeConstructor = baseType.constructor,
             arguments: List<TypeProjection> = baseType.arguments,
-            nullable: Boolean = baseType.isMarkedNullable,
-            memberScope: MemberScope = baseType.memberScope
-    ): SimpleType = simpleType(annotations, constructor, arguments, nullable, memberScope)
+            nullable: Boolean = baseType.isMarkedNullable
+    ): SimpleType = simpleType(annotations, constructor, arguments, nullable)
 
     @JvmStatic
     fun flexibleType(lowerBound: SimpleType, upperBound: SimpleType): UnwrappedType {
