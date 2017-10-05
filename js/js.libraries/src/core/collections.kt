@@ -17,7 +17,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
-import kotlin.js.Math
+import kotlin.math.floor
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 @kotlin.internal.InlineOnly
@@ -100,17 +100,13 @@ public fun <T> MutableList<T>.fill(value: T): Unit {
 @SinceKotlin("1.2")
 public fun <T> MutableList<T>.shuffle(): Unit {
     for (i in lastIndex downTo 1) {
-        rand(i + 1).let { j ->
-            swap(this, i, j)
-        }
+        val j = rand(i + 1)
+        val copy = this[i]
+        this[i] = this[j]
+        this[j] = copy
+    }
 }
-private fun rand(upperBound: Int) = Math.floor(Math.random() * upperBound)
-private fun swap(list: MutableList<T>, i: Int, j: Int): Unit {
-    val copy = list[i]
-    list[i] = list[j]
-    list[j] = copy
-}
-
+private fun rand(upperBound: Int) = floor(kotlin.js.Math.random() * upperBound).toInt()
 
 /**
  * Returns a new list with the elements of this list randomly shuffled.
@@ -139,7 +135,7 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
 
     array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
 
-    for (i in 0..array.lastIndex) {
+    for (i in 0 until array.size) {
         list[i] = array[i]
     }
 }
