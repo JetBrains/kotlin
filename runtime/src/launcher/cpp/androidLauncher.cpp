@@ -122,8 +122,6 @@ void runKonan_start(bool startThread) {
 void putEventSynchronously(void* event) {
   auto value = reinterpret_cast<uintptr_t>(event);
 
-  LOGE("putEventSynchronously() %d %d", launcherState->pipeC, launcherState->pipeKonan);
-
   if (write(launcherState->pipeC, &value, sizeof(value)) != sizeof(value)) {
     LOGE("Failure writing event: %s\n", strerror(errno));
   }
@@ -131,7 +129,6 @@ void putEventSynchronously(void* event) {
   if (read(launcherState->pipeC, &response, sizeof(response)) != sizeof(response)) {
     LOGE("Failure reading response: %s\n", strerror(errno));
   }
-  LOGE("putEventSynchronously() done");
 }
 
 void onDestroy(ANativeActivity* activity) {
