@@ -54,6 +54,7 @@ class CoroutineTransformerMethodVisitor(
         private val containingClassInternalName: String,
         obtainClassBuilderForCoroutineState: () -> ClassBuilder,
         private val isForNamedFunction: Boolean,
+        private val shouldPreserveClassInitialization: Boolean,
         private val element: KtElement,
         // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
         private val needDispatchReceiver: Boolean = false,
@@ -99,7 +100,7 @@ class CoroutineTransformerMethodVisitor(
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
         removeUnreachableSuspensionPointsAndExitPoints(methodNode, suspensionPoints)
 
-        processUninitializedStores(methodNode)
+        UninitializedStoresProcessor(methodNode, shouldPreserveClassInitialization).run()
 
         spillVariables(suspensionPoints, methodNode)
 

@@ -4307,6 +4307,24 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("inlineFunInConstructorCallWithDisabledNormalization.kt")
+        public void testInlineFunInConstructorCallWithDisabledNormalization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallWithDisabledNormalization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunInConstructorCallWithEnabledNormalization.kt")
+        public void testInlineFunInConstructorCallWithEnabledNormalization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallWithEnabledNormalization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunInConstructorCallWithStrictNormalization.kt")
+        public void testInlineFunInConstructorCallWithStrictNormalization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallWithStrictNormalization.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineFunInInnerClassConstructorCall.kt")
         public void testInlineFunInInnerClassConstructorCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/inlineFunInInnerClassConstructorCall.kt");

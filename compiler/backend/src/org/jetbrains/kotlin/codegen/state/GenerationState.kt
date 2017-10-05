@@ -181,10 +181,15 @@ class GenerationState @JvmOverloads constructor(
 
     val shouldInlineConstVals = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
+    val constructorCallNormalizationMode = configuration.get(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
+                                                             JVMConstructorCallNormalizationMode.DEFAULT)
+
     init {
+        val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
+
         this.interceptedBuilderFactory = builderFactory
                 .wrapWith(
-                    { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
+                    { OptimizationClassBuilderFactory(it, disableOptimization, constructorCallNormalizationMode) },
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
                             it, this.bindingContext, diagnostics, this.moduleName,
                             shouldGenerate = { !shouldOnlyCollectSignatures(it) }

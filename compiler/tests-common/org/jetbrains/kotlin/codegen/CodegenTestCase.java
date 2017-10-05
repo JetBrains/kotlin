@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -200,6 +199,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final List<Class<?>> FLAG_CLASSES = ImmutableList.of(CLIConfigurationKeys.class, JVMConfigurationKeys.class);
 
     private static final Pattern BOOLEAN_FLAG_PATTERN = Pattern.compile("([+-])(([a-zA-Z_0-9]*)\\.)?([a-zA-Z_0-9]*)");
+    private static final Pattern CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN = Pattern.compile(
+            "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_0-9]*)");
 
     private static void updateConfigurationWithFlags(@NotNull CompilerConfiguration configuration, @NotNull List<String> flags) {
         for (String flag : flags) {
@@ -210,6 +211,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 String flagName = m.group(4);
 
                 tryApplyBooleanFlag(configuration, flag, flagEnabled, flagNamespace, flagName);
+                continue;
+            }
+
+            m = CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN.matcher(flag);
+            if (m.matches()) {
+                String flagValueString = m.group(1);
+                JVMConstructorCallNormalizationMode mode = JVMConstructorCallNormalizationMode.fromStringOrNull(flagValueString);
+                assert mode != null : "Wrong CONSTRUCTOR_CALL_NORMALIZATION_MODE value: " + flagValueString;
+                configuration.put(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE, mode);
             }
         }
     }

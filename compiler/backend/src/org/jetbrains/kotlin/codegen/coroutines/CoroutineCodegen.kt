@@ -145,6 +145,8 @@ class CoroutineCodegenForLambda private constructor(
 ) {
     private val builtIns = funDescriptor.builtIns
 
+    private val constructorCallNormalizationMode = outerExpressionCodegen.state.constructorCallNormalizationMode
+
     private lateinit var constructorToUseFromInvoke: Method
 
     private val createCoroutineDescriptor =
@@ -313,6 +315,7 @@ class CoroutineCodegenForLambda private constructor(
                                 mv, access, name, desc, null, null,
                                 obtainClassBuilderForCoroutineState = { v },
                                 element = element,
+                                shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                                 containingClassInternalName = v.thisName,
                                 isForNamedFunction = false
                         )

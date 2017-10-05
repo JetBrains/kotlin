@@ -49,7 +49,7 @@ fun box(): String {
         }
     }
 
-    if (logger.toString() != "A.<clinit>;args;A.<init>;") {
+    if (logger.toString() != "args;A.<clinit>;A.<init>;") {
         return "Fail: '$logger'"
     }
 
