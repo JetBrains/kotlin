@@ -22,6 +22,7 @@ dependencies {
     compilerModules.forEach {
         testRuntime(project(it))
     }
+    testRuntime(protobufFull())
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar", subdir = "jps/test"))
