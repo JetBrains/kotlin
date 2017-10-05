@@ -1,8 +1,23 @@
-package org.jetbrains.kotlin.idea.nodejs
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.idea.nodejs.mocha
 
 import com.intellij.execution.RunManager
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.configuration.EnvironmentVariablesData
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
@@ -13,14 +28,13 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.file.PsiJavaDirectoryImpl
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.jetbrains.nodejs.mocha.MochaUtil
 import com.jetbrains.nodejs.mocha.execution.*
-import org.jetbrains.kotlin.idea.js.getJsClasspath
 import org.jetbrains.kotlin.idea.js.getJsOutputFilePath
+import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -30,7 +44,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import java.io.File
 
 class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
     private data class TestElementInfo(val runSettings: MochaRunSettings, val enclosingTestElement: PsiElement)
@@ -80,7 +93,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
     }
 
     private fun createSuiteOrTestData(element: PsiElement, module: Module): TestElementPath? {
-        if (element is PsiDirectory && module.getModuleDir() == (element as PsiJavaDirectoryImpl).virtualFile.path) {
+        if (element is PsiDirectory && module.getModuleDir() == element.virtualFile.path) {
             return TestElementPath.BySingleFile
         }
 
@@ -133,11 +146,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
             }
         }
 
-        val nodeJsClasspath = getJsClasspath(module).joinToString(File.pathSeparator) {
-            val basePath = project.basePath ?: return@joinToString it
-            FileUtil.getRelativePath(basePath, it, '/') ?: it
-        }
-        builder.setEnvData(EnvironmentVariablesData.create(mapOf("NODE_PATH" to nodeJsClasspath), true))
+        builder.setEnvData(module.getNodeJsEnvironmentVars())
 
         return TestElementInfo(builder.build(), element)
     }
