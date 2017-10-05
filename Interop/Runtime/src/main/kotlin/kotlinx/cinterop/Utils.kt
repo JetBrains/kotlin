@@ -361,6 +361,20 @@ val String.cstr: CValues<ByteVar>
         }
     }
 
+/**
+ * Convert this list of Kotlin strings to C array of C strings,
+ * allocating memory for the array and C strings with given [AutofreeScope].
+ */
+fun List<String>.toCStringArray(autofreeScope: AutofreeScope): CPointer<CPointerVar<ByteVar>> =
+        autofreeScope.allocArrayOf(this.map { it.cstr.getPointer(autofreeScope) })
+
+/**
+ * Convert this array of Kotlin strings to C array of C strings,
+ * allocating memory for the array and C strings with given [AutofreeScope].
+ */
+fun Array<String>.toCStringArray(autofreeScope: AutofreeScope): CPointer<CPointerVar<ByteVar>> =
+        autofreeScope.allocArrayOf(this.map { it.cstr.getPointer(autofreeScope) })
+
 val String.wcstr: CValues<ShortVar>
     get() {
         val chars = CharArray(this.length, { i -> this.get(i)})
