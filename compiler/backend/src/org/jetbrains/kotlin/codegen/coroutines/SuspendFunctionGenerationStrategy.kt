@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
@@ -34,7 +35,8 @@ class SuspendFunctionGenerationStrategy(
         state: GenerationState,
         private val originalSuspendDescriptor: FunctionDescriptor,
         private val declaration: KtFunction,
-        private val containingClassInternalName: String
+        private val containingClassInternalName: String,
+        private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode
 ) : FunctionGenerationStrategy.CodegenBased(state) {
 
     private lateinit var transformer: CoroutineTransformerMethodVisitor
@@ -59,6 +61,7 @@ class SuspendFunctionGenerationStrategy(
                 mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
                 isForNamedFunction = true,
                 element = declaration,
+                shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
                 internalNameForDispatchReceiver = containingClassInternalNameOrNull()
         ).also {

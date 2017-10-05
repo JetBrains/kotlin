@@ -71,11 +71,10 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
  *   - generate NEW/DUP
  *   - restore constructor arguments
  */
-internal fun processUninitializedStores(methodNode: MethodNode) {
-    UninitializedStoresProcessor(methodNode).run()
-}
-
-class UninitializedStoresProcessor(private val methodNode: MethodNode) {
+class UninitializedStoresProcessor(
+        private val methodNode: MethodNode,
+        private val shouldPreserveClassInitialization: Boolean
+) {
     // <init> method is "special", because it will invoke <init> from this class or from a base class for #0
     //
     // <clinit> method is "special", because <clinit> for singleton objects is generated as:
@@ -108,21 +107,21 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
             methodNode.instructions.run {
                 removeAll(removableUsages)
 
-                // Replace 'NEW C' instruction with "manual" initialization of class 'C':
-                //      LDC [typeName for C]
-                //      INVOKESTATIC java/lang/Class.forName (Ljava/lang/String;)Ljava/lang/Class;
-                //      POP
-                val typeNameForClass = newInsn.desc.replace('/', '.')
-                insertBefore(newInsn, LdcInsnNode(typeNameForClass))
-                insertBefore(
-                        newInsn,
-                        MethodInsnNode(
-                                Opcodes.INVOKESTATIC,
-                                "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;",
-                                false
-                        )
-                )
-                set(newInsn, InsnNode(Opcodes.POP))
+                if (shouldPreserveClassInitialization) {
+                    // Replace 'NEW C' instruction with "manual" initialization of class 'C':
+                    //      LDC [typeName for C]
+                    //      INVOKESTATIC java/lang/Class.forName (Ljava/lang/String;)Ljava/lang/Class;
+                    //      POP
+                    val typeNameForClass = newInsn.desc.replace('/', '.')
+                    insertBefore(newInsn, LdcInsnNode(typeNameForClass))
+                    insertBefore(newInsn, MethodInsnNode(
+                            Opcodes.INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;", false
+                    ))
+                    set(newInsn, InsnNode(Opcodes.POP))
+                }
+                else {
+                    remove(newInsn)
+                }
             }
 
             val indexOfConstructorArgumentFromTopOfStack = Type.getArgumentTypes((insn as MethodInsnNode).desc).size

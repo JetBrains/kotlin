@@ -18,10 +18,17 @@ package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.coroutines.UninitializedStoresProcessor
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class UninitializedStoresMethodTransformer : MethodTransformer() {
+class UninitializedStoresMethodTransformer(
+        private val mode: JVMConstructorCallNormalizationMode
+) : MethodTransformer() {
+
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        UninitializedStoresProcessor(methodNode).run()
+        if (mode.isEnabled) {
+            UninitializedStoresProcessor(methodNode, mode.shouldPreserveClassInitialization).run()
+        }
     }
+
 }

@@ -137,7 +137,8 @@ public class FunctionCodegen {
                         state,
                         CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
                         function,
-                        v.getThisName()
+                        v.getThisName(),
+                        state.getConstructorCallNormalizationMode()
                 );
             }
             else {

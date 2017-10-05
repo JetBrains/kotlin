@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.ReportLevel
@@ -107,6 +108,16 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xno-optimize", description = "Disable optimizations")
     var noOptimize: Boolean by FreezableVar(false)
+
+    @Argument(
+            value = "-Xnormalize-constructor-calls",
+            valueDescription = "{disable|enable|preserve-class-initialization}",
+            description = "Normalize constructor calls " +
+                          "(disable: don't normalize; enable: normalize; " +
+                          "preserve-class-initialization: normalize preserving class initialization order), " +
+                          "default is disable"
+    )
+    var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
     var reportPerf: Boolean by FreezableVar(false)
