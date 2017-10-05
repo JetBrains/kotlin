@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class GeneratorsFileUtil {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -56,9 +57,7 @@ public class GeneratorsFileUtil {
         FileUtil.writeToFile(tempFile, newText);
         System.out.println("File written: " + tempFile.getAbsolutePath());
         if (useTempFile) {
-            if (!tempFile.renameTo(file)) {
-                throw new RuntimeException("failed to rename " + tempFile + " to " + file);
-            }
+            Files.move(tempFile.toPath(), file.toPath());
             System.out.println("Renamed " + tempFile + " to " + file);
         }
         System.out.println();
