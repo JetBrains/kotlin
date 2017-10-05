@@ -79,6 +79,7 @@ public abstract class KotlinBuiltIns {
     private final NotNullLazyValue<PackageFragments> packageFragments;
 
     private final MemoizedFunctionToNotNull<Integer, ClassDescriptor> suspendFunctionClasses;
+    private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
 
     private final StorageManager storageManager;
 
@@ -133,6 +134,13 @@ public abstract class KotlinBuiltIns {
                         FunctionClassDescriptor.Kind.SuspendFunction,
                         arity
                 );
+            }
+        });
+
+        this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor invoke(Name name) {
+                return getBuiltInClassByName(name, getBuiltInsPackageFragment());
             }
         });
     }
@@ -415,7 +423,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        return getBuiltInClassByName(simpleName, getBuiltInsPackageFragment());
+        return builtInClassesByName.invoke(simpleName);
     }
 
     @NotNull
