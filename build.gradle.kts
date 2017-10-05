@@ -223,7 +223,7 @@ allprojects {
 
     // There are problems with common build dir:
     //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
-    //  - idea siims unable to exclude common builddir from indexing
+    //  - idea seems unable to exclude common builddir from indexing
     // therefore it is disabled by default
 //    buildDir = File(commonBuildDir, project.name)
 
@@ -231,8 +231,6 @@ allprojects {
         for (repo in (rootProject.extra["repos"] as List<String>)) {
             maven { setUrl(repo) }
         }
-        mavenCentral()
-        jcenter()
     }
     configureJvmProject(javaHome!!, jvmTarget!!)
 
