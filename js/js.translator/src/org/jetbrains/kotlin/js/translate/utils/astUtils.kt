@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.js.translate.utils.jsAstUtils
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 fun JsFunction.addStatement(stmt: JsStatement) {
     body.statements.add(stmt)
@@ -103,3 +105,15 @@ var JsConditional.then: JsExpression
 var JsConditional.otherwise: JsExpression
     get() = elseExpression
     set(value) { elseExpression = value }
+
+// Extension functions below produce aliased invocations.
+fun TranslationContext.invokeKotlinFunction(functionName: String, vararg arguments: JsExpression)
+    = JsInvocation(getReferenceToIntrinsic(functionName), arguments.toList())
+
+fun TranslationContext.toByte(expression: JsExpression) = invokeKotlinFunction(OperatorConventions.BYTE.identifier, expression)
+
+fun TranslationContext.toShort(expression: JsExpression) = invokeKotlinFunction(OperatorConventions.SHORT.identifier, expression)
+
+fun TranslationContext.toChar(expression: JsExpression) = invokeKotlinFunction(OperatorConventions.CHAR.identifier, expression)
+
+fun TranslationContext.toLong(expression: JsExpression) = invokeKotlinFunction(OperatorConventions.LONG.identifier, expression)

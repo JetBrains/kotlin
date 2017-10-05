@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collections;
@@ -155,26 +154,6 @@ public final class JsAstUtils {
     @NotNull
     public static JsExpression charToString(@NotNull JsExpression expression) {
         return new JsInvocation(new JsNameRef("fromCharCode", new JsNameRef("String")), expression);
-    }
-
-    @NotNull
-    public static JsExpression toShort(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.SHORT.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toByte(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.BYTE.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toLong(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.LONG.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toChar(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.CHAR.getIdentifier(), expression);
     }
 
     @NotNull

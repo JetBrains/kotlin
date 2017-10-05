@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -99,7 +100,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
                 @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            return JsAstUtils.toShort(underlyingIntrinsic.apply(receiver, arguments, context));
+            return AstUtilsKt.toShort(context, underlyingIntrinsic.apply(receiver, arguments, context));
         }
     }
 
@@ -117,7 +118,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
                 @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            return JsAstUtils.toByte(underlyingIntrinsic.apply(receiver, arguments, context));
+            return AstUtilsKt.toByte(context, underlyingIntrinsic.apply(receiver, arguments, context));
         }
     }
 
