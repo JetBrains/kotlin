@@ -22,9 +22,12 @@ fun Project.commonDep(coord: String): String {
 
 fun Project.commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
 
-fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File(rootDir, "dependencies"), subdir: String? = null): ConfigurableFileCollection {
+fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File(rootDir, "dependencies"), subdir: String? = null, optional: Boolean = false): ConfigurableFileCollection {
     val dir = if (subdir != null) File(baseDir, subdir) else baseDir
-    if (!dir.exists() || !dir.isDirectory) throw GradleException("Invalid base directory $dir")
+    if (!dir.exists() || !dir.isDirectory) {
+        if (optional) return files()
+        throw GradleException("Invalid base directory $dir")
+    }
     val matchingFiles = dir.listFiles { file -> artifactBaseNames.any { file.matchMaybeVersionedArtifact(it) } }
     if (matchingFiles == null || matchingFiles.size < artifactBaseNames.size)
         throw GradleException("Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' (found: ${matchingFiles?.joinToString { it.name }})")
@@ -37,8 +40,8 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
     else files()
 }
 
-fun Project.ideaSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib"): ConfigurableFileCollection =
-        preloadedDeps(*artifactBaseNames, baseDir = File(rootDir, "ideaSDK"), subdir = subdir)
+fun Project.ideaSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib", optional: Boolean = false): ConfigurableFileCollection =
+        preloadedDeps(*artifactBaseNames, baseDir = File(rootDir, "ideaSDK"), subdir = subdir, optional = optional)
 
 fun Project.ideaUltimateSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib"): ConfigurableFileCollection {
     val ultimateSdkDir = File(rootDir, "ultimate", "ideaSDK")
@@ -50,8 +53,8 @@ fun Project.ideaSdkCoreDeps(vararg artifactBaseNames: String): ConfigurableFileC
 
 fun Project.ideaUltimateSdkCoreDeps(vararg artifactBaseNames: String): ConfigurableFileCollection = ideaUltimateSdkDeps(*artifactBaseNames, subdir = "core")
 
-fun Project.ideaPluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib"): ConfigurableFileCollection =
-        ideaSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir")
+fun Project.ideaPluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib", optional: Boolean = false): ConfigurableFileCollection =
+        ideaSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir", optional = optional)
 
 fun Project.ideaUltimatePluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib"): ConfigurableFileCollection =
         ideaUltimateSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir")
