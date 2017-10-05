@@ -2,6 +2,7 @@ import org.gradle.api.Project
 import java.util.*
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
@@ -34,6 +35,7 @@ buildscript {
 
 plugins {
     `build-scan`
+    idea
 }
 
 buildScan {
@@ -445,6 +447,23 @@ tasks {
         }
     }
     "check" { dependsOn("test") }
+}
+
+the<IdeaModel>().apply {
+    module {
+        excludeDirs = files(
+                project.buildDir,
+                ".gradle",
+                "dependencies",
+                "dist",
+                "ideaSDK/bin",
+                "ideaSDK/androidSDK",
+                "ideaSDK/config",
+                "ideaSDK/config-idea",
+                "ideaSDK/system",
+                "ideaSDK/system-idea"
+        ).toSet()
+    }
 }
 
 fun jdkPathIfFound(version: String): String? {
