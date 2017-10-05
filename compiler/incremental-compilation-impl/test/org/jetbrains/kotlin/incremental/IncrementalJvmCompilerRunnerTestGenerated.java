@@ -1067,6 +1067,21 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("jps-plugin/testData/incremental/withJava/bytecodeDiffersAfterRebuild")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BytecodeDiffersAfterRebuild extends AbstractIncrementalJvmCompilerRunnerTest {
+            public void testAllFilesPresentInBytecodeDiffersAfterRebuild() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/bytecodeDiffersAfterRebuild"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("kt20636")
+            public void testKt20636() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/bytecodeDiffersAfterRebuild/kt20636/");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
