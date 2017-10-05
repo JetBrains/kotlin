@@ -56,6 +56,8 @@ open class KonanInteropTask: KonanTargetableTask() {
 
     @Input var dumpParameters = false
         internal set
+    @Input var noDefaultLibs  = false
+        internal set
 
     @Input val compilerOpts   = mutableListOf<String>()
     @Input val linkerOpts     = mutableListOf<String>()
@@ -87,6 +89,8 @@ open class KonanInteropTask: KonanTargetableTask() {
         addArg("-pkg", pkg ?: libName)
 
         addFileArgs("-h", headers)
+
+        addKey("-nodefaultlibs", noDefaultLibs)
 
         compilerOpts.forEach {
             addArg("-copt", it)
@@ -191,6 +195,10 @@ open class KonanInteropConfig(
 
     fun dumpParameters(value: Boolean) = with(interopProcessingTask) {
         dumpParameters = value
+    }
+
+    fun noDefaultLibs(flag: Boolean) = with(interopProcessingTask) {
+        noDefaultLibs = flag
     }
 
     fun dependsOn(dependency: Any) = interopProcessingTask.dependsOn(dependency)

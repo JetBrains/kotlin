@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 
 fun invokeCinterop(args: Array<String>) {
+    val cinteropArgFilter = listOf("-library", "-r", "-repo", "-nodefaultlibs")
+
     var outputFileName = "nativelib"
     var target = "host"
     val libraries = mutableListOf<String>()
     val repos = mutableListOf<String>()
+    var noDefaultLibs = false
     for (i in args.indices) {
         val arg = args[i]
         val nextArg = args.getOrNull(i + 1)
@@ -27,7 +30,10 @@ fun invokeCinterop(args: Array<String>) {
             libraries.addIfNotNull(nextArg)
         if (arg == "-r" || arg == "-repo")
             repos.addIfNotNull(nextArg)
+        if (arg == "-nodefaultlibs")
+            noDefaultLibs = true
     }
+
 
     val buildDir = File("$outputFileName-build")
     val generatedDir = File(buildDir, "kotlin")
@@ -38,7 +44,7 @@ fun invokeCinterop(args: Array<String>) {
     val targetManager = TargetManager(target)
     val resolver = defaultResolver(repos, targetManager)
     val allLibraries = resolver.resolveLibrariesRecursive(
-            libraries, targetManager.target, noStdLib = true, noDefaultLibs = false
+            libraries, targetManager.target, noStdLib = true, noDefaultLibs = noDefaultLibs
     )
 
     val importArgs = allLibraries.flatMap {
@@ -61,7 +67,7 @@ fun invokeCinterop(args: Array<String>) {
         "-flavor", "native"
     ) + importArgs
 
-    val cinteropArgs = (additionalArgs + args.toList()).toTypedArray()
+    val cinteropArgs = (additionalArgs + args.filter { it !in cinteropArgFilter }).toTypedArray()
     val cinteropArgsToCompiler = mutableListOf<String>()
     interop(cinteropArgs, cinteropArgsToCompiler)
 

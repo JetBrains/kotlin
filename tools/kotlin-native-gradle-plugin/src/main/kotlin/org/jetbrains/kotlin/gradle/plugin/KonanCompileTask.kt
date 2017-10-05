@@ -87,6 +87,8 @@ open class KonanCompileTask: KonanTargetableTask() {
         internal set
     @Input var enableAssertions   = false
         internal set
+    @Input var noDefaultLibs      = false
+        internal set
     @Console var measureTime      = false
         internal set
 
@@ -122,6 +124,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addKey("-nomain", noMain)
         addKey("-opt", enableOptimization)
         addKey("-ea", enableAssertions)
+        addKey("-nodefaultlibs", noDefaultLibs)
         addKey("--time", measureTime)
 
         addAll(extraOpts)
@@ -282,6 +285,10 @@ open class KonanCompileConfig(
 
     fun enableAssertions() = with(compilationTask) {
         enableAssertions = true
+    }
+
+    fun noDefaultLibs(flag: Boolean) = with(compilationTask) {
+        noDefaultLibs = flag
     }
 
     fun measureTime(value: Boolean) = with(compilationTask) {

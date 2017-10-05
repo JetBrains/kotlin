@@ -15,6 +15,7 @@ konanInterop {
         defFile gradle.startParameter.projectProperties.defFile
         pkg gradle.startParameter.projectProperties.name
         target gradle.startParameter.projectProperties.target
+        noDefaultLibs true
     }
 }
 
