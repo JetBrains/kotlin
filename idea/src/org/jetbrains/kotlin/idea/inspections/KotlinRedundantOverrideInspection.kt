@@ -20,8 +20,10 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredFunction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
@@ -108,18 +111,18 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
 }
 
 private fun KtNamedFunction.isDefinedInDelegatedSuperType(): Boolean {
+    val functionName = name ?: return false
+    val functionParamTypes = (descriptor as? FunctionDescriptor)?.valueParameters?.map { it.type } ?: return false
     val context = analyze()
     return containingClassOrObject?.superTypeListEntries?.any { entry ->
         val superType = (entry as? KtDelegatedSuperTypeEntry)?.typeReference?.let { context[BindingContext.TYPE, it] }
         val superTypeDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor
-        superTypeDescriptor?.let { isDefinedIn(listOf(it)) } ?: false
+        superTypeDescriptor?.let { hasFunction(listOf(it), functionName, functionParamTypes) } ?: false
     } ?: false
 }
 
-private fun KtNamedFunction.isDefinedIn(classDescriptors: List<ClassDescriptor>): Boolean {
-    val functionName = name ?: return false
-    return classDescriptors.any {
-        it.findDeclaredFunction(functionName, false) { it.valueParameters == valueParameters } != null
-        || isDefinedIn(it.getSuperInterfaces())
-    }
-}
+private fun hasFunction(classDescriptors: List<ClassDescriptor>, name: String, paramTypes: List<KotlinType>): Boolean =
+        classDescriptors.any {
+            it.findDeclaredFunction(name, false) { it.valueParameters.map { it.type } == paramTypes } != null
+            || hasFunction(it.getSuperInterfaces(), name, paramTypes)
+        }
