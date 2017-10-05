@@ -135,7 +135,7 @@ fun SimpleType.replace(
     if (newArguments.isEmpty() && newAnnotations === annotations) return this
 
     if (newArguments.isEmpty()) {
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 newAnnotations,
                 constructor,
                 arguments,

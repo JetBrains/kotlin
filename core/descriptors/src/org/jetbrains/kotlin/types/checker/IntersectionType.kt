@@ -121,7 +121,7 @@ object TypeIntersector {
         if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
 
         val constructor = IntersectionTypeConstructor(inputTypes)
-        return KotlinTypeFactory.simpleType(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
     }
 
     private fun isStrictSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {

@@ -134,7 +134,7 @@ public class TypeIntersector {
 
         IntersectionTypeConstructor constructor = new IntersectionTypeConstructor(resultingTypes);
 
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.Companion.getEMPTY(),
                 constructor,
                 Collections.emptyList(),

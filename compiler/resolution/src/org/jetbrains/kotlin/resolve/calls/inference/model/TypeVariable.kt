@@ -46,7 +46,7 @@ sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) {
 
     // member scope is used if we have receiver with type TypeVariable(T)
     // todo add to member scope methods from supertypes for type variable
-    val defaultType: SimpleType = KotlinTypeFactory.simpleType(
+    val defaultType: SimpleType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             Annotations.EMPTY, freshTypeConstructor, arguments = emptyList(),
             nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope)
 

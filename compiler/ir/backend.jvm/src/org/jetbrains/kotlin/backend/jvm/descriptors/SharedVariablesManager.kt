@@ -78,7 +78,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                 ClassConstructorDescriptorImpl.create(genericRefClass, Annotations.EMPTY, true, SourceElement.NO_SOURCE).apply {
                     initialize(emptyList(), Visibilities.PUBLIC)
                     val typeParameter = typeParameters[0]
-                    val typeParameterType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameter.typeConstructor, listOf(), false, MemberScope.Empty)
+                    val typeParameterType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, typeParameter.typeConstructor, listOf(), false, MemberScope.Empty)
                     returnType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, genericRefClass, listOf(TypeProjectionImpl(Variance.INVARIANT, typeParameterType)))
                 }
 
@@ -182,7 +182,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
     private fun getSharedVariableType(valueType: KotlinType): KotlinType =
             primitiveRefDescriptorProviders[getPrimitiveType(valueType)]?.refType ?:
             objectRefDescriptorsProvider.getRefType(valueType)
-    
+
     private fun getPrimitiveType(type: KotlinType): PrimitiveType? =
             when {
                 KotlinBuiltIns.isBoolean(type) -> PrimitiveType.BOOLEAN

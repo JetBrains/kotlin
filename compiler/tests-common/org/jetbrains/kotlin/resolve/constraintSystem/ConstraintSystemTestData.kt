@@ -64,8 +64,8 @@ class ConstraintSystemTestData(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            return KotlinTypeFactory.simpleType(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns),
-                                                listOf(), false, MemberScope.Empty
+            return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns),
+                                                                         listOf(), false, MemberScope.Empty
             )
         }
         return typeResolver.resolveType(

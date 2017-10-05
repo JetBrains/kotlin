@@ -76,11 +76,11 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
     (unwrap() as? AbbreviatedType)?.let {
         return AbbreviatedType(it.expandedType, it.abbreviation.approximateNonDynamicFlexibleTypes(preferNotNull))
     }
-    return KotlinTypeFactory.simpleType(annotations,
-                                        constructor,
-                                        arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
-                                        isMarkedNullable,
-                                        ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations,
+                                                                 constructor,
+                                                                 arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
+                                                                 isMarkedNullable,
+                                                                 ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }
 
