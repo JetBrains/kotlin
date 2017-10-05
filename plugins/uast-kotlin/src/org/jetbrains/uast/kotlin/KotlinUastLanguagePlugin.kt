@@ -181,14 +181,15 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                     val lightMethod = LightClassUtil.getLightClassAccessorMethod(original) ?: return null
                     convertDeclaration(lightMethod, givenParent, requiredType)
                 }
-                is KtProperty -> el<UDeclaration> {
+
+                is KtProperty ->
                     if (original.isLocal) {
-                        KotlinConverter.convertPsiElement(element, givenParent,  requiredType)
+                        KotlinConverter.convertPsiElement(element, givenParent, requiredType)
                     }
                     else {
                         convertNonLocalProperty(original, givenParent, requiredType)
                     }
-                }
+
                 is KtParameter -> el<UParameter> {
                     val ownerFunction = original.ownerFunction as? KtFunction ?: return null
                     val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return null
@@ -240,7 +241,9 @@ private fun convertNonLocalProperty(property: KtProperty,
                                     requiredType: Class<out UElement>?): UElement? {
     val methods = LightClassUtil.getLightClassPropertyMethods(property)
     return methods.backingField?.let { backingField ->
-        KotlinUField(backingField, givenParent)
+        with(requiredType) {
+            el<UField> { KotlinUField(backingField, givenParent) }
+        }
     } ?: methods.getter?.let { getter ->
         KotlinUastLanguagePlugin().convertDeclaration(getter, givenParent, requiredType)
     }
@@ -301,7 +304,7 @@ internal object KotlinConverter {
             is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> el<ULiteralExpression>(build(::KotlinStringULiteralExpression))
             is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, requiredType) } ?: expr<UExpression> { UastEmptyExpression }
             is KtWhenEntry -> el<USwitchClauseExpressionWithBody>(build(::KotlinUSwitchEntry))
-            is KtWhenCondition -> convertWhenCondition(element, givenParent)
+            is KtWhenCondition -> convertWhenCondition(element, givenParent, requiredType)
             is KtTypeReference -> el<UTypeReferenceExpression> { LazyKotlinUTypeReferenceExpression(element, givenParent) }
 
             else -> {
@@ -422,29 +425,40 @@ internal object KotlinConverter {
         }}
     }
 
-    internal fun convertWhenCondition(condition: KtWhenCondition, givenParent: UElement?): UExpression {
-        return when (condition) {
-            is KtWhenConditionInRange -> KotlinCustomUBinaryExpression(condition, givenParent).apply {
-                leftOperand = KotlinStringUSimpleReferenceExpression("it", this)
-                operator = when {
-                    condition.isNegated -> KotlinBinaryOperators.NOT_IN
-                    else -> KotlinBinaryOperators.IN
+    internal fun convertWhenCondition(condition: KtWhenCondition,
+                                      givenParent: UElement?,
+                                      requiredType: Class<out UElement>? = null): UExpression? {
+        return with(requiredType) {
+            when (condition) {
+                is KtWhenConditionInRange -> expr<UBinaryExpression> {
+                    KotlinCustomUBinaryExpression(condition, givenParent).apply {
+                        leftOperand = KotlinStringUSimpleReferenceExpression("it", this)
+                        operator = when {
+                            condition.isNegated -> KotlinBinaryOperators.NOT_IN
+                            else -> KotlinBinaryOperators.IN
+                        }
+                        rightOperand = KotlinConverter.convertOrEmpty(condition.rangeExpression, this)
+                    }
                 }
-                rightOperand = KotlinConverter.convertOrEmpty(condition.rangeExpression, this)
+                is KtWhenConditionIsPattern -> expr<UBinaryExpression> {
+                    KotlinCustomUBinaryExpressionWithType(condition, givenParent).apply {
+                        operand = KotlinStringUSimpleReferenceExpression("it", this)
+                        operationKind = when {
+                            condition.isNegated -> KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
+                            else -> UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
+                        }
+                        val typeRef = condition.typeReference
+                        typeReference = typeRef?.let {
+                            LazyKotlinUTypeReferenceExpression(it, this) { typeRef.toPsiType(this, boxed = true) }
+                        }
+                    }
+                }
+
+                is KtWhenConditionWithExpression ->
+                    condition.expression?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
+
+                else -> expr<UExpression> { UastEmptyExpression }
             }
-            is KtWhenConditionIsPattern -> KotlinCustomUBinaryExpressionWithType(condition, givenParent).apply {
-                operand = KotlinStringUSimpleReferenceExpression("it", this)
-                operationKind = when {
-                    condition.isNegated -> KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
-                    else -> UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
-                }
-                val typeRef = condition.typeReference
-                typeReference = typeRef?.let {
-                    LazyKotlinUTypeReferenceExpression(it, this) { typeRef.toPsiType(this, boxed = true) }
-                }
-            }
-            is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(condition.expression, givenParent)
-            else -> UastEmptyExpression
         }
     }
 
