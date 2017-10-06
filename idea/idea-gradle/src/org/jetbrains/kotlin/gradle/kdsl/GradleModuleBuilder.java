@@ -28,6 +28,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
 import com.intellij.openapi.externalSystem.importing.ImportSpec;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
@@ -133,7 +134,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
       moduleName = getName();
     }
     else {
-      moduleName = ModuleGrouperKt.isQualifiedModuleNamesEnabled(myWizardContext.getProject()) && StringUtil.isNotEmpty(myProjectId.getGroupId())
+      moduleName = getExternalProjectSettings().isUseQualifiedModuleNames() && StringUtil.isNotEmpty(myProjectId.getGroupId())
                    ? (myProjectId.getGroupId() + '.' + myProjectId.getArtifactId())
                    : myProjectId.getArtifactId();
     }
@@ -231,6 +232,9 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
     catch (IOException e) {
       LOG.warn("Unexpected exception on applying frameworks templates", e);
     }
+
+    // it will be set later in any case, but save is called immediately after project creation, so, to ensure that it will be properly saved as external system module
+    ExternalSystemModulePropertyManager.getInstance(module).setExternalId(GradleConstants.SYSTEM_ID);
 
     final Project project = module.getProject();
     if (myWizardContext.isCreatingNewProject()) {
