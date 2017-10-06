@@ -20,12 +20,28 @@ import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
+import java.io.File
 
 abstract class AbstractGradleConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinWithGradleConfigurator>() {
 
     fun doTestGradle(path: String) {
-        doTest(path, path.replace("before", "after"),
-               if ("js" in path) KotlinJsGradleModuleConfigurator() else KotlinGradleModuleConfigurator())
+        val testPathFile = File(testDataPath + path)
+        val (before, after) = if (testPathFile.isFile) {
+            path to path.replace("before", "after")
+        }
+        else {
+            when {
+                File(testPathFile, "build_before.gradle").exists() ->
+                        "$path/build_before.gradle" to "$path/build_after.gradle"
+
+                File(testPathFile, "build_before.gradle.kts").exists() ->
+                    "$path/build_before.gradle.kts" to "$path/build_after.gradle.kts"
+
+                else -> error("Can't find test data files")
+            }
+        }
+
+        doTest(before, after, if ("js" in path) KotlinJsGradleModuleConfigurator() else KotlinGradleModuleConfigurator())
     }
 
     override fun runConfigurator(module: Module, file: PsiFile, configurator: KotlinWithGradleConfigurator, version: String, collector: NotificationMessageCollector) {
