@@ -34,6 +34,14 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
 
     override fun doTestLineMarkers() = true
 
+    fun testFromActualSecondaryConstructor() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
+    fun testFromClassToAlias() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
     fun testFromCommonToJvmHeader() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
@@ -42,16 +50,8 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
-    fun testFromClassToAlias() {
+    fun testFromExpectedSecondaryConstructor() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-    }
-
-    fun testWithOverloads() {
-        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-    }
-
-    fun testSuspendImplInPlatformModules() {
-        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
     }
 
     fun testKotlinTestAnnotations() {
@@ -64,6 +64,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
                                     }
                                 }
                             })
+    }
+
+    fun testSuspendImplInPlatformModules() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
     }
 
     fun testTransitive() {
@@ -83,5 +87,9 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
         userModule.addDependency(baseModule)
 
         checkHighlightingInAllFiles()
+    }
+
+    fun testWithOverloads() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 }

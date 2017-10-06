@@ -58,8 +58,8 @@ private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): Declar
             descriptor.findCompatibleExpectedForActual(this@declarationOf).firstOrNull()
         }
 
-fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
+fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
+    val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
     val commonModuleDescriptor = platformModuleDescriptor.commonModuleOrNull() ?: return null
@@ -68,8 +68,8 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
     return "Has declaration in common module"
 }
 
-fun navigateToExpectedDeclaration(declaration: KtDeclaration) {
-    declaration.expectedDeclarationIfAny()?.navigate(false)
+fun navigateToExpectedDeclaration(declaration: KtDeclaration?) {
+    declaration?.expectedDeclarationIfAny()?.navigate(false)
 }
 
 internal fun MemberDescriptor.expectedDescriptor() = module.commonModuleOrNull()?.declarationOf(this)

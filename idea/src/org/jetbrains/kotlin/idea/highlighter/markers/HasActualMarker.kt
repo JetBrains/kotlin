@@ -44,8 +44,8 @@ fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: B
             }
         }
 
-fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
+fun getPlatformActualTooltip(declaration: KtDeclaration?): String? {
+    val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
     val platformModulesWithActuals = commonModuleDescriptor.implementingDescriptors.filter {
@@ -58,13 +58,13 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
     }
 }
 
-fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration) {
-    val actuals = declaration.actualsForExpected()
-    if (actuals.isEmpty()) return
+fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration?) {
+    val actualDeclarations = declaration?.actualsForExpected() ?: return
+    if (actualDeclarations.isEmpty()) return
 
     val renderer = DefaultPsiElementCellRenderer()
     PsiElementListNavigator.openTargets(e,
-                                        actuals.toTypedArray(),
+                                        actualDeclarations.toTypedArray(),
                                         "Choose actual for ${declaration.name}",
                                         "Actuals for ${declaration.name}",
                                         renderer)
