@@ -15,7 +15,7 @@
  */
 
 import kotlinx.cinterop.*
-import posix.*
+import platform.posix.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 

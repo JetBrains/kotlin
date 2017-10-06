@@ -15,7 +15,6 @@ List<String> libraries = gradle.startParameter.projectProperties.libraries.split
 konanInterop {
     "$taskName" {
         defFile gradle.startParameter.projectProperties.defFile
-        pkg gradle.startParameter.projectProperties.name
         target gradle.startParameter.projectProperties.target
         noDefaultLibs true
         extraOpts libraries.collectMany { ["-library",  "$konanHome/klib/$it"] }

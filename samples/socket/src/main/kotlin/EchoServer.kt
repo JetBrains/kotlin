@@ -15,7 +15,7 @@
  */
 
 import kotlinx.cinterop.*
-import posix.*
+import platform.posix.*
 
 fun main(args: Array<String>) {
     if (args.size < 1) {

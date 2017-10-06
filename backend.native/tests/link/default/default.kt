@@ -1,4 +1,4 @@
-import posix.*
+import platform.posix.*
 
 fun main(args: Array<String>) {
     // Just check the typealias is in scope.
