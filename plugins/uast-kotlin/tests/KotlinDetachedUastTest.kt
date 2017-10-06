@@ -16,10 +16,12 @@
 
 package org.jetbrains.uast.test.kotlin
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -32,8 +34,7 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-
-    fun testStringAnnotationWithEmpty() {
+    fun testLiteralInAnnotation() {
 
         val psiFile = myFixture.configureByText("AnnotatedClass.kt", """
             class AnnotatedClass {
@@ -42,17 +43,24 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
             }
         """.trimIndent())
 
-        fun psiElement(file: PsiFile): Any? = (file.findElementAt(file.text.indexOf("\"\"")) ?: error("not found"))
+        fun psiElement(file: PsiFile): PsiElement = file.findElementAt(file.text.indexOf("\"\"")).orFail("literal")
                 .getParentOfType<PsiLanguageInjectionHost>(false).orFail("host")
-                .toUElement().orFail("uelement").getParentOfType<UClass>(false)
-                .orFail("UClass").psi.orFail("psi").also {
-        }
+                .toUElement().orFail("uElement").getParentOfType<UClass>(false)
+                .orFail("UClass").psi.orFail("psi")
 
-        TestCase.assertNotNull("base", psiElement(psiFile))
+        psiElement(psiFile).let {
+            // Otherwise following asserts have no sense
+            TestCase.assertTrue("psi element should be light ", it is KtLightElement<*, *>)
+        }
         val copied = psiFile.copied()
-        TestCase.assertNull("vf for $copied", copied.virtualFile)
-        TestCase.assertNotNull("copy", psiElement(copied))
+        TestCase.assertNull("virtual file for copy should be null", copied.virtualFile)
+        TestCase.assertNotNull("psi element in copy", psiElement(copied))
+        TestCase.assertSame("copy.originalFile should be psiFile", copied.originalFile, psiFile)
+        TestCase.assertSame("virtualFiles of element and file itself should be the same",
+                            psiElement(copied).containingFile.originalFile.virtualFile,
+                            copied.originalFile.virtualFile)
     }
+
 }
 
 fun <T> T?.orFail(msg: String): T = this ?: error(msg)
