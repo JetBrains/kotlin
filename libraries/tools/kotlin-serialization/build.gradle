@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.jetbrains.kotlinx'
-version = '0.1.1'
+version = '0.1.2'
 
 apply plugin: 'kotlin'
 
@@ -24,8 +24,9 @@ repositories {
 dependencies {
     compileOnly project(':kotlin-gradle-plugin-api')
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+    compile project(':kotlin-stdlib')
+    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    compileOnly project(':kotlin-allopen-compiler-plugin')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
@@ -39,13 +40,19 @@ task preprocessSources(type: Copy) {
     filter { it.replaceAll('(?<!\\.)com\\.intellij', 'org.jetbrains.kotlin.com.intellij') }
 }
 
-sourceSets.main.java.srcDirs += targetSrc
+//sourceSets.main.java.srcDirs += targetSrc
 
-compileKotlin.dependsOn preprocessSources
+//compileKotlin.dependsOn preprocessSources
+
+evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
 
 jar {
-    from(targetSrc) { include("META-INF/**") }
+//    from(targetSrc) { include("META-INF/**") }
+    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
+    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
+    manifestAttributes(manifest, project)
 }
+
 
 apply plugin: 'maven-publish'
 
