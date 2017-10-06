@@ -28,7 +28,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
 
 compilerOpts = -D_XOPEN_SOURCE
 linkerOpts = -ldl -lz
-
+depends = posix
 ---
 
 // menu.h is excluded so far due to interop issues.

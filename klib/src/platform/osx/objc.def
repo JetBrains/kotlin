@@ -7,6 +7,6 @@ headers = objc/List.h objc/NSObjCRuntime.h objc/NSObject.h objc/Object.h objc/Pr
 
 compilerOpts = -D_XOPEN_SOURCE
 linkerOpts = -lobjc
-
+depends = posix
 ---
 // objc-auto.h is excluded so far due to interop issues.
