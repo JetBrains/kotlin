@@ -140,11 +140,13 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                 for (implementation in implementations) {
                     if (isDelegated(implementation)) continue
 
-                    val mirrorElement = (implementation as? KtLightMethod)?.kotlinOrigin
-                    val elementToProcess = when(mirrorElement) {
-                        is KtProperty, is KtParameter -> mirrorElement
-                        is KtPropertyAccessor -> if (mirrorElement.parent is KtProperty) mirrorElement.parent else implementation
-                        else -> implementation
+                    val elementToProcess = runReadAction {
+                        val mirrorElement = (implementation as? KtLightMethod)?.kotlinOrigin
+                        when (mirrorElement) {
+                            is KtProperty, is KtParameter -> mirrorElement
+                            is KtPropertyAccessor -> if (mirrorElement.parent is KtProperty) mirrorElement.parent else implementation
+                            else -> implementation
+                        }
                     }
 
                     if (!consumer.process(elementToProcess)) {
