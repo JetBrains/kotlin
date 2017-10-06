@@ -86,7 +86,7 @@ open class KonanInteropTask: KonanTargetableTask() {
 
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-def", defFile.canonicalPath)
-        addArg("-pkg", pkg ?: libName)
+        addArgIfNotNull("-pkg", pkg)
 
         addFileArgs("-h", headers)
 
