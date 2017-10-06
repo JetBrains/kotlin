@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 991
+// EXPECTED_REACHABLE_NODES: 1109
 // PROPERTY_WRITE_COUNT: name=foo_61zpoe$ count=1
 // FILE: a.kt
 fun foo(x: String): String = x

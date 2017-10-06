@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1001
+// EXPECTED_REACHABLE_NODES: 1119
 package foo
 
 inline fun String.charCodeAt(i: Int): Int = asDynamic().charCodeAt(i)

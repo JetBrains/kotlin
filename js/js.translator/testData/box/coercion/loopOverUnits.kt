@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1009
+// EXPECTED_REACHABLE_NODES: 1117
 class A {
     operator fun iterator() = B()
 }

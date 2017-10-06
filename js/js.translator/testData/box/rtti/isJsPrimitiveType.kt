@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1031
+// EXPECTED_REACHABLE_NODES: 1148
 package foo
 
 enum class Type {

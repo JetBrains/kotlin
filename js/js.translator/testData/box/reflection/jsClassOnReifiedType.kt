@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1047
+// EXPECTED_REACHABLE_NODES: 1165
 package foo
 
 inline fun <reified T : Any> foo(): JsClass<T> {

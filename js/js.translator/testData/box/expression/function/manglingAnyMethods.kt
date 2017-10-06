@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1045
+// EXPECTED_REACHABLE_NODES: 1163
 package foo
 
 public class PublicClass {

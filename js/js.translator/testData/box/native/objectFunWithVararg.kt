@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 995
+// EXPECTED_REACHABLE_NODES: 1109
 import Test.test
 
 external object Test {

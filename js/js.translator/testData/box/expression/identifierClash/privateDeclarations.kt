@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1000
+// EXPECTED_REACHABLE_NODES: 1114
 open class A {
     private val `.` = "A"
     private val `;` = "B"

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 997
+// EXPECTED_REACHABLE_NODES: 1111
 // CHECK_NOT_CALLED_IN_SCOPE: function=toBoxedChar scope=box$lambda
 // CHECK_CALLED_IN_SCOPE: function=unboxChar scope=box$lambda
 // CHECK_CALLED_IN_SCOPE: function=toBoxedChar scope=box

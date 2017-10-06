@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1007
+// EXPECTED_REACHABLE_NODES: 1124
 package foo
 
 class A : Comparable<A> {

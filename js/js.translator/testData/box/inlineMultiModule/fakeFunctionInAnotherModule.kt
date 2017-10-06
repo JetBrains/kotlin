@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 996
+// EXPECTED_REACHABLE_NODES: 1110
 // MODULE: lib
 // FILE: lib1.kt
 open class Parent {

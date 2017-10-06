@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1014
+// EXPECTED_REACHABLE_NODES: 1132
 // This test was adapted from compiler/testData/codegen/box/classes
 package foo
 
