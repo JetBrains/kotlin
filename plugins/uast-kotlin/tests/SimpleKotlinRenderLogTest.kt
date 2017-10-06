@@ -44,4 +44,6 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
     @Test fun testParameterPropertyWithAnnotation() = doTest("ParameterPropertyWithAnnotation")
 
     @Test fun testParametersWithDefaultValues() = doTest("ParametersWithDefaultValues")
+
+    @Test fun testUnexpectedContainer() = doTest("UnexpectedContainerException") { testName, file -> check(testName, file, false) }
 }

@@ -100,17 +100,17 @@ open class KotlinUClass private constructor(
             else -> KotlinUClass(psi, containingElement)
         }
     }
+}
 
-    class KotlinPrimaryConstructorUMethod(
-            private val ktClass: KtClassOrObject?,
-            override val psi: KtLightMethod,
-            override val uastParent: UElement?
-    ): KotlinUMethod(psi, uastParent) {
-        override val uastBody: UExpression? by lz {
-            ktClass?.getAnonymousInitializers()
-                    ?.takeIf { it.isNotEmpty() }
-                    ?.let { KotlinUBlockExpression.create(it, this) }
-        }
+class KotlinPrimaryConstructorUMethod(
+        private val ktClass: KtClassOrObject?,
+        override val psi: KtLightMethod,
+        override val uastParent: UElement?
+): KotlinUMethod(psi, uastParent) {
+    override val uastBody: UExpression? by lz {
+        ktClass?.getAnonymousInitializers()
+                ?.takeIf { it.isNotEmpty() }
+                ?.let { KotlinUBlockExpression.create(it, this) }
     }
 }
 

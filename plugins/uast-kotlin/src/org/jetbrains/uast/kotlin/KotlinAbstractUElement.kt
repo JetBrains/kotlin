@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.asJava.toLightGetter
 import org.jetbrains.kotlin.asJava.toLightSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
 
@@ -50,8 +52,15 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
                              ?: parent
             }
         }
+        if (psi is UastKotlinPsiVariable && parent != null) {
+            parent = parent.parent
+        }
 
-        if ((parent is KtStringTemplateExpression && parent.entries.size == 1) || parent is KtWhenConditionWithExpression) {
+        if (parent is KtStringTemplateEntryWithExpression) {
+            parent = parent.parent
+        }
+        if ((parent is KtStringTemplateExpression && parent.entries.size == 1) ||
+            parent is KtWhenConditionWithExpression) {
             parent = parent.parent
         }
 
@@ -85,6 +94,16 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         val annotationClass = findAnnotationClassFromConstructorParameter(parent)
         if (annotationClass != null) {
             return annotationClass.methods.find { it.name == parent.name }
+        }
+    }
+
+    if (parent is KtClassInitializer) {
+        val containingClass = parent.containingClassOrObject
+        if (containingClass != null) {
+            val containingUClass = KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as KotlinUClass?
+            containingUClass?.methods?.filterIsInstance<KotlinPrimaryConstructorUMethod>()?.firstOrNull()?.let {
+                return it.uastBody
+            }
         }
     }
 
