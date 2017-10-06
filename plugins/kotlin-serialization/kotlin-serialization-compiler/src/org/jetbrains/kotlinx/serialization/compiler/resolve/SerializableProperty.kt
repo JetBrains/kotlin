@@ -23,7 +23,7 @@ class SerializableProperty(val descriptor: PropertyDescriptor, val isConstructor
     val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
     val type = descriptor.type
     val module = descriptor.module
-    val serializer = descriptor.propertySerializer
+    val serializableWith = descriptor.annotations.serializableWith
     val optional = descriptor.annotations.serialOptional
     val transient = descriptor.annotations.serialTransient
     val annotations = descriptor.annotations

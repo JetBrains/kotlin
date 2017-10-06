@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
@@ -52,12 +53,12 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
         KotlinBuiltIns.isUnit(T) -> SerialTypeInfo(property, "Unit", unit = true)
         KotlinBuiltIns.isPrimitiveArray(T) -> TODO("primitive arrays are not supported yet")
         KotlinBuiltIns.isNonPrimitiveArray(T.toClassDescriptor!!) -> {
-            val serializer = property.serializer?.toClassDescriptor ?:
+            val serializer = property.serializableWith?.toClassDescriptor ?:
                              property.module.findClassAcrossModuleDependencies(referenceArraySerializerId)
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
         T.toClassDescriptor?.kind == ClassKind.ENUM_CLASS -> {
-            val serializer = property.serializer?.toClassDescriptor ?:
+            val serializer = property.serializableWith?.toClassDescriptor ?:
                              property.module.findClassAcrossModuleDependencies(enumSerializerId)
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
@@ -73,6 +74,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
          ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
          ?: findEnumTypeSerializer(module, kType)
+         ?: module.findClassAcrossModuleDependencies(contextSerializerId)
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
@@ -105,7 +107,7 @@ fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDe
 
 fun KotlinType.requiresPolymorphism(): Boolean {
     return this.toClassDescriptor?.getSuperClassNotAny()?.isInternalSerializable == true
-           || this.toClassDescriptor?.modality == Modality.OPEN
+           || (this.toClassDescriptor?.modality == Modality.OPEN && this.toClassDescriptor?.unsubstitutedPrimaryConstructor != null) // open not java class
            || this.containsTypeProjectionsInTopLevelArguments() // List<*>
 }
 

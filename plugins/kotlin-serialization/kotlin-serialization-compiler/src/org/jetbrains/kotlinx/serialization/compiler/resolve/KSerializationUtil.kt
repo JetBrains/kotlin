@@ -128,15 +128,8 @@ internal val ClassDescriptor?.classSerializer: KotlinType?
     }
 
 // serializer that was declared for this specific type or annotation from a class declaration
-val KotlinType?.typeSerializer: KotlinType?
-    get() = this?.let {
-        // serializer annotation on this type or from a class
-        return it.annotations.serializableWith ?: (it.toClassDescriptor).classSerializer
-    }
-
-// serializer that was declared specifically for this property via its own annotation or via annotation on its type
-val PropertyDescriptor.propertySerializer: KotlinType?
-    get() = annotations.serializableWith ?: type.typeSerializer
+val KotlinType.typeSerializer: KotlinType?
+    get() = this.annotations.serializableWith ?: (this.toClassDescriptor).classSerializer
 
 
 fun getSerializableClassDescriptorBySerializer(serializerDescriptor: ClassDescriptor): ClassDescriptor? {

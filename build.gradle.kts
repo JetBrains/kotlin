@@ -88,6 +88,7 @@ val commonLocalDataDir = "$rootDir/local"
 val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
 val ideaUltimateSandboxDir = "$commonLocalDataDir/ideaUltimateSandbox"
 val ideaPluginDir = "$distDir/artifacts/ideaPlugin/Kotlin"
+val serialPluginDir = "$distDir/artifacts/Serialization"
 val ideaUltimatePluginDir = "$distDir/artifacts/ideaUltimatePlugin/Kotlin"
 val cidrPluginDir = "$distDir/artifacts/cidrPlugin/Kotlin"
 
@@ -98,6 +99,7 @@ extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
 extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaUltimateSandboxDir"] = project.file(ideaUltimateSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
+extra["serialPluginDir"] = project.file(serialPluginDir)
 extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
 extra["cidrPluginDir"] = project.file(cidrPluginDir)
 extra["isSonatypeRelease"] = false

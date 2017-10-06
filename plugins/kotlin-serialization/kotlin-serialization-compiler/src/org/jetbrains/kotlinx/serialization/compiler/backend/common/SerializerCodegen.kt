@@ -38,10 +38,10 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
 
     fun generate() {
         check(properties.isExternallySerializable) { "Class ${serializableDescriptor.name} is not externally serializable" }
-        generateSerializableClassPropertyIfNeeded()
+        val prop = generateSerializableClassPropertyIfNeeded()
         val save = generateSaveIfNeeded()
         val load = generateLoadIfNeeded()
-        if (save || load)
+        if (save || load || prop)
             generateSerialDesc()
     }
 
@@ -55,10 +55,11 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
 
     protected abstract fun generateLoad(function: FunctionDescriptor)
 
-    private fun generateSerializableClassPropertyIfNeeded() {
+    private fun generateSerializableClassPropertyIfNeeded(): Boolean {
         val property = serialDescPropertyDescriptor
-                       ?: return
+                       ?: return false
         generateSerializableClassProperty(property)
+        return true
     }
 
     private fun generateSaveIfNeeded(): Boolean {

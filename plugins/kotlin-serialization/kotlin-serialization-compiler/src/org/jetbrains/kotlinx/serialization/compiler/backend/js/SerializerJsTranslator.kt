@@ -35,6 +35,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCod
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -158,7 +159,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             return getQualifiedClassReferenceName(serializerClass)
         }
         else {
-            var args = if (serializerClass.classId == enumSerializerId)
+            var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
                 listOf(createGetKClassExpression(kType.toClassDescriptor!!))
             else kType.arguments.map {
                 val argSer = findTypeSerializer(module, it.type) ?: return null
@@ -166,7 +167,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                 if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
             }
             if (serializerClass.classId == referenceArraySerializerId)
-               args = listOf(createGetKClassExpression(kType.arguments[0].type.toClassDescriptor!!)) + args
+                args = listOf(createGetKClassExpression(kType.arguments[0].type.toClassDescriptor!!)) + args
             return JsNew(getQualifiedClassReferenceName(serializerClass), args)
         }
     }
@@ -215,7 +216,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                     JsInvocation(JsNameRef(readElementF, inputVar), serialClassDescRef)
             ).makeStmt()
             // switch(index)
-            jsSwitch (indexVar) {
+            jsSwitch(indexVar) {
                 // -2: readAll = true
                 case(JsIntLiteral(-2)) {
                     +JsAstUtils.assignment(
@@ -230,12 +231,15 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         val sti = getSerialTypeInfo(property)
                         val innerSerial = if (sti.serializer == null) null else serializerInstance(sti.serializer, property.module, property.type)
                         val call = if (innerSerial == null) {
+                            val unknownSer = (sti.elementMethodPrefix.isEmpty())
                             val readFunc =
-                                    inputClass.getFuncDesc("read${sti.elementMethodPrefix}ElementValue").single()
+                                    inputClass.getFuncDesc("read${sti.elementMethodPrefix}ElementValue")
+                                            // if readElementValue, must have 3 parameters, if readXXXElementValue - 2
+                                            .single { !unknownSer || (it is FunctionDescriptor && it.valueParameters.size == 3) }
                                             .let { context.getNameForDescriptor(it) }
-                            JsInvocation(JsNameRef(readFunc, inputVar),
-                                         serialClassDescRef,
-                                         JsIntLiteral(i))
+                            val readArgs = mutableListOf(serialClassDescRef, JsIntLiteral(i))
+                            if (unknownSer) readArgs.add(createGetKClassExpression(property.type.toClassDescriptor!!))
+                            JsInvocation(JsNameRef(readFunc, inputVar), readArgs)
                         }
                         else {
                             val readFunc =
@@ -262,7 +266,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         if (KotlinBuiltIns.isCharOrNullableChar(property.type)) {
                             +JsAstUtils.assignment(
                                     localProps[i],
-                                    TranslationUtils.coerce(context, localProps[i], TranslationUtils.getReturnTypeForCoercion(property.descriptor.getter!!))
+                                    TranslationUtils.coerce(context, localProps[i], context.currentModule.builtIns.charType)
                             ).makeStmt()
                         }
 
@@ -298,6 +302,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         ).makeStmt()
 
         // deserialization constructor call
+        // todo: external deserialization with primary constructor and setters calls after resolution of KT-11586
         val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(serializableDescriptor, context.bindingContext())
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
         val args: MutableList<JsExpression> = mutableListOf(bitMasks[0])

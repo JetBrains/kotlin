@@ -11,7 +11,7 @@ dependencies {
     compileOnly(project(":idea:idea-jvm"))
 
     compile(intellijDep())
-    
+
     runtimeOnly(files(toolsJar()))
 }
 
@@ -19,5 +19,6 @@ val ideaPluginDir: File by rootProject.extra
 val ideaSandboxDir: File by rootProject.extra
 
 runIdeTask("runIde", ideaPluginDir, ideaSandboxDir) {
-    dependsOn(":dist", ":ideaPlugin")
+    // TODO: add serialization plugin to pluginDir
+    dependsOn(":dist", ":ideaPlugin", ":kotlinx-serialization-compiler-plugin:dist")
 }
