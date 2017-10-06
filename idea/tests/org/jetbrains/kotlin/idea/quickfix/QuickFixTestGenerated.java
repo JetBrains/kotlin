@@ -237,6 +237,63 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addAnnotationTarget")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddAnnotationTarget extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddAnnotationTarget() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addAnnotationTarget"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic1.kt")
+        public void testBasic1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/basic1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("basic2.kt")
+        public void testBasic2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/basic2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("basic3.kt")
+        public void testBasic3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/basic3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("basic4.kt")
+        public void testBasic4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/basic4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fromLib.kt")
+        public void testFromLib() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/fromLib.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasAnnotationTarget1.kt")
+        public void testHasAnnotationTarget1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/hasAnnotationTarget1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasAnnotationTarget2.kt")
+        public void testHasAnnotationTarget2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/hasAnnotationTarget2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noBackingField.kt")
+        public void testNoBackingField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/noBackingField.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addCrossinline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
