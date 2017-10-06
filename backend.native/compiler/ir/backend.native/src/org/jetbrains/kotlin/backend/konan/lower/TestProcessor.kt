@@ -230,6 +230,20 @@ internal class TestProcessor (val context: KonanBackendContext) {
             }
         }
 
+        fun IrFunction.checkFunctionSignature() {
+            // Test runner requires test functions to have the following signature: () -> Unit.
+            if (descriptor.returnType != context.builtIns.unitType) {
+                context.reportCompilationError(
+                        "Test function must return Unit: ${descriptor.fqNameSafe}", irFile, this
+                )
+            }
+            if (descriptor.valueParameters.isNotEmpty()) {
+                context.reportCompilationError(
+                        "Test function must have no arguments: ${descriptor.fqNameSafe}", irFile, this
+                )
+            }
+        }
+
         // TODO: Use symbols instead of containingDeclaration when such information is available.
         override fun visitFunction(declaration: IrFunction) {
             val symbol = declaration.symbol
@@ -239,6 +253,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
             if (kinds.isEmpty()) {
                 return
             }
+            declaration.checkFunctionSignature()
 
             when (owner) {
                 is PackageFragmentDescriptor -> topLevelFunctions.registerFunction(symbol, kinds)
