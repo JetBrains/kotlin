@@ -14115,6 +14115,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inheritanceByDelegationInExpectClass.kt")
+                public void testInheritanceByDelegationInExpectClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/inheritanceByDelegationInExpectClass.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("memberPropertyKinds.kt")
                 public void testMemberPropertyKinds() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/memberPropertyKinds.kt");
