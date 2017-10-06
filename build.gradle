@@ -285,7 +285,8 @@ targetList.each { target ->
                         'defFile'        : defFile.file.absolutePath,
                         'konan.home'     : project.file('dist'),
                         'target'         : target,
-                        'suffix'         : suffix
+                        'suffix'         : suffix,
+                        'libraries'      : defFile.config.depends.join(" ")
                 ]
             }
     }
