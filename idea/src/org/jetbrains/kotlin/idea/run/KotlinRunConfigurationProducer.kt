@@ -130,5 +130,5 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
 fun Module.findJvmImplementationModule(): Module? {
     if (targetPlatform != TargetPlatformKind.Common) return null
     val allDependentModules = ModuleManager.getInstance(project).getModuleDependentModules(this)
-    return allDependentModules.first { it.targetPlatform is TargetPlatformKind.Jvm }
+    return allDependentModules.firstOrNull { it.targetPlatform is TargetPlatformKind.Jvm }
 }
