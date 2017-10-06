@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 public class GeneratorsFileUtil {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void writeFileIfContentChanged(File file, String newText) throws IOException {
@@ -57,7 +59,7 @@ public class GeneratorsFileUtil {
         FileUtil.writeToFile(tempFile, newText);
         System.out.println("File written: " + tempFile.getAbsolutePath());
         if (useTempFile) {
-            Files.move(tempFile.toPath(), file.toPath());
+            Files.move(tempFile.toPath(), file.toPath(), REPLACE_EXISTING);
             System.out.println("Renamed " + tempFile + " to " + file);
         }
         System.out.println();
