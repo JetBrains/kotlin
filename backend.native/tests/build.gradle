@@ -2079,6 +2079,11 @@ kotlinNativeInterop {
         flavor 'native'
     }
 
+    cglobals {
+        defFile 'interop/basics/cglobals.def'
+        flavor 'native'
+    }
+
     cfunptr {
         defFile 'interop/basics/cfunptr.def'
         flavor 'native'
@@ -2158,6 +2163,12 @@ task interop_funptr(type: RunInteropKonanTest) {
     goldValue = "42\n17\n1\n0\n"
     source = "interop/basics/funptr.kt"
     interop = 'cfunptr'
+}
+
+task interop_globals(type: RunInteropKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/globals.kt"
+    interop = 'cglobals'
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {

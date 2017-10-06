@@ -28,6 +28,12 @@ interface KotlinScope {
      * @return the string to be used as a name in the declaration of the classifier in current scope.
      */
     fun declare(classifier: Classifier): String
+
+    /**
+     * @return the string to be used as a name in the declaration of the property in current scope,
+     * or `null` if the property with given name can't be declared.
+     */
+    fun declareProperty(name: String): String?
 }
 
 data class Classifier(
@@ -210,6 +216,7 @@ class KotlinFile(
     }
 
     private val importedNameToPkg = mutableMapOf<String, String>()
+    private val declaredProperties = mutableSetOf<String>()
 
     override fun reference(classifier: Classifier): String = if (classifier.topLevelName in namesToBeDeclared) {
         if (classifier.pkg == this.pkg) {
@@ -223,13 +230,20 @@ class KotlinFile(
                 "'${classifier.topLevelName}' from the file package was not reserved for declaration"
         )
     } else {
-        val pkg = importedNameToPkg.getOrPut(classifier.topLevelName) { classifier.pkg }
-        if (pkg == classifier.pkg) {
+        if (tryImport(classifier)) {
             // Is successfully imported:
             classifier.relativeFqName
         } else {
             classifier.fqName
         }
+    }
+
+    private fun tryImport(classifier: Classifier): Boolean {
+        if (classifier.topLevelName in declaredProperties) {
+            return false
+        }
+
+        return importedNameToPkg.getOrPut(classifier.topLevelName) { classifier.pkg } == classifier.pkg
     }
 
     private val alreadyDeclared = mutableSetOf<String>()
@@ -253,6 +267,15 @@ class KotlinFile(
 
         return topLevelName.asSimpleName()
     }
+
+    override fun declareProperty(name: String): String? =
+            if (name in declaredProperties || name in namesToBeDeclared || name in importedNameToPkg) {
+                null
+                // TODO: using original global name should be preferred to importing the clashed name.
+            } else {
+                declaredProperties.add(name)
+                name.asSimpleName()
+            }
 
     fun buildImports(): List<String> = importedNameToPkg.mapNotNull { (name, pkg) ->
         if (pkg == "kotlin" || pkg == "kotlinx.cinterop") {

@@ -159,6 +159,11 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
     override val macroConstants = mutableListOf<ConstantDef>()
 
+    private val globalById = mutableMapOf<DeclarationID, GlobalDecl>()
+
+    override val globals: Collection<GlobalDecl>
+        get() = globalById.values
+
     override lateinit var includedHeaders: List<HeaderId>
 
     private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
@@ -644,6 +649,19 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
             CXIdxEntity_Enum -> {
                 getEnumDefAt(cursor)
+            }
+
+            CXIdxEntity_Variable -> {
+                if (info.semanticContainer!!.pointed.cursor.kind == CXCursorKind.CXCursor_TranslationUnit) {
+                    // Top-level variable.
+                    globalById.getOrPut(getDeclarationId(cursor)) {
+                        GlobalDecl(
+                                name = entityName!!,
+                                type = convertCursorType(cursor),
+                                isConst = clang_isConstQualifiedType(clang_getCursorType(cursor)) != 0
+                        )
+                    }
+                }
             }
 
             CXIdxEntity_ObjCClass -> {

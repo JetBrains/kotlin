@@ -800,6 +800,16 @@ class StubGenerator(
             }
         }
 
+        nativeIndex.globals.forEach {
+            try {
+                stubs.add(
+                        GlobalVariableStub(it, this)
+                )
+            } catch (e: Throwable) {
+                log("Warning: cannot generate stubs for global ${it.name}")
+            }
+        }
+
         nativeIndex.structs.forEach { s ->
             try {
                 stubs.add(
