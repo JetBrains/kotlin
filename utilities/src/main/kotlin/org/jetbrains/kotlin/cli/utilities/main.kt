@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 
 fun invokeCinterop(args: Array<String>) {
-    val cinteropArgFilter = listOf("-library", "-r", "-repo", "-nodefaultlibs")
+    val cinteropArgFilter = listOf("-nodefaultlibs")
 
     var outputFileName = "nativelib"
     var target = "host"
