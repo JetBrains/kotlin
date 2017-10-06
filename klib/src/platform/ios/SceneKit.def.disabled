@@ -1,0 +1,8 @@
+language = Objective-C
+package = platform.SceneKit
+headers = SceneKit/SceneKit.h
+
+headerFilter = SceneKit/**
+
+compilerOpts = -framework SceneKit
+linkerOpts = -framework SceneKit

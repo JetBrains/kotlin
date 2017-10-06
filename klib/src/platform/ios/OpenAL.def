@@ -1,0 +1,9 @@
+depends = posix
+language = Objective-C
+package = platform.OpenAL
+headers = OpenAL/OpenAL.h
+
+headerFilter = OpenAL/**
+
+compilerOpts = -framework OpenAL
+linkerOpts = -framework OpenAL

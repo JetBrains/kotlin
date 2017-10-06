@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.MultipeerConnectivity
+headers = MultipeerConnectivity/MultipeerConnectivity.h
+
+headerFilter = MultipeerConnectivity/**
+
+compilerOpts = -framework MultipeerConnectivity
+linkerOpts = -framework MultipeerConnectivity

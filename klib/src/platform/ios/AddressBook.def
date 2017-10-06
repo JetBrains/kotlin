@@ -1,0 +1,9 @@
+depends = CoreFoundation darwin posix
+language = Objective-C
+package = platform.AddressBook
+headers = AddressBook/AddressBook.h
+
+headerFilter = AddressBook/**
+
+compilerOpts = -framework AddressBook
+linkerOpts = -framework AddressBook

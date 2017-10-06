@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL Foundation MapKit Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.WatchKit
+headers = WatchKit/WatchKit.h
+
+headerFilter = WatchKit/**
+
+compilerOpts = -framework WatchKit
+linkerOpts = -framework WatchKit

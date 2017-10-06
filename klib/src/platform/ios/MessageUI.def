@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.MessageUI
+headers = MessageUI/MessageUI.h
+
+headerFilter = MessageUI/**
+
+compilerOpts = -framework MessageUI
+linkerOpts = -framework MessageUI

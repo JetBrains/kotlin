@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreText EAGL Foundation Metal QuartzCore Security darwin posix
+language = Objective-C
+package = platform.MediaAccessibility
+headers = MediaAccessibility/MediaAccessibility.h
+
+headerFilter = MediaAccessibility/**
+
+compilerOpts = -framework MediaAccessibility
+linkerOpts = -framework MediaAccessibility

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.konan.target
 
 enum class Family(name:String, val exeSuffix:String) {
     OSX("osx", "kexe"),
+    IOS("ios", "kexe"),
     LINUX("linux", "kexe"),
     WINDOWS("windows", "exe"),
     ANDROID("android", "so"),
@@ -39,8 +40,8 @@ enum class Architecture(val bitness: Int) {
 enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) {
     ANDROID_ARM32(  Family.ANDROID,     Architecture.ARM32,     "android_arm32"),
     ANDROID_ARM64(  Family.ANDROID,     Architecture.ARM64,     "android_arm64"),
-    IPHONE(         Family.OSX,         Architecture.ARM32,     "ios"),
-    IPHONE_SIM(     Family.OSX,         Architecture.X64,       "ios_sim"),
+    IPHONE(         Family.IOS,         Architecture.ARM32,     "ios"),
+    IPHONE_SIM(     Family.IOS,         Architecture.X64,       "ios_sim"),
     LINUX(          Family.LINUX,       Architecture.X64,       "linux"),
     MINGW(          Family.WINDOWS,     Architecture.X64,       "mingw"),
     MACBOOK(        Family.OSX,         Architecture.X64,       "osx"),
@@ -48,6 +49,7 @@ enum class KonanTarget(val family: Family, val architecture: Architecture, val d
     LINUX_MIPS32(   Family.LINUX,       Architecture.MIPS32,    "linux_mips32"),
     LINUX_MIPSEL32( Family.LINUX,       Architecture.MIPSEL32,  "linux_mipsel32"),
     WASM32(         Family.WASM,        Architecture.WASM32,    "wasm32");
+
 
     val userName get() = name.toLowerCase()
 }

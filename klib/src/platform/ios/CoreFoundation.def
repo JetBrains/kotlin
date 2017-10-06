@@ -1,0 +1,9 @@
+depends = darwin posix
+language = Objective-C
+package = platform.CoreFoundation
+headers = CoreFoundation/CoreFoundation.h CoreFoundation/CFPlugIn.h CoreFoundation/CFPlugInCOM.h
+
+headerFilter = CoreFoundation/**
+
+compilerOpts = -framework CoreFoundation
+linkerOpts = -framework CoreFoundation

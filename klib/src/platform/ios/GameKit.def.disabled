@@ -1,0 +1,8 @@
+language = Objective-C
+package = platform.GameKit
+headers = GameKit/GameKit.h
+
+headerFilter = GameKit/**
+
+compilerOpts = -framework GameKit
+linkerOpts = -framework GameKit

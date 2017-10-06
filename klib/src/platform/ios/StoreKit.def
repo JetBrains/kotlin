@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.StoreKit
+headers = StoreKit/StoreKit.h
+
+headerFilter = StoreKit/**
+
+compilerOpts = -framework StoreKit
+linkerOpts = -framework StoreKit

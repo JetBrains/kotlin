@@ -1,0 +1,9 @@
+depends = CoreFoundation darwin posix
+language = Objective-C
+package = platform.CFNetwork
+headers = CFNetwork/CFNetwork.h
+
+headerFilter = CFNetwork/**
+
+compilerOpts = -framework CFNetwork
+linkerOpts = -framework CFNetwork

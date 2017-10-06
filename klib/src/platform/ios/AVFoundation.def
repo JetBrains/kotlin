@@ -1,0 +1,9 @@
+depends = AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreMIDI CoreMedia CoreVideo EAGL Foundation MediaToolbox Metal OpenGLESCommon QuartzCore Security darwin posix
+language = Objective-C
+package = platform.AVFoundation
+headers = AVFoundation/AVFoundation.h AVFoundation/AVFAudio.h AVFoundation/AVAudioBuffer.h
+
+headerFilter = AVFoundation/** AVFAudio/**
+
+compilerOpts = -framework AVFoundation
+linkerOpts = -framework AVFoundation

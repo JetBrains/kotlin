@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreVideo EAGL Foundation Metal OpenGLESCommon Security darwin posix
+language = Objective-C
+package = platform.CoreImage
+headers = CoreImage/CoreImage.h
+
+headerFilter = CoreImage/**
+
+compilerOpts = -framework CoreImage
+linkerOpts = -framework CoreImage

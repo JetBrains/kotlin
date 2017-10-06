@@ -1,0 +1,9 @@
+depends = CoreFoundation darwin posix
+language = Objective-C
+package = platform.GSS
+headers = GSS/GSS.h
+
+headerFilter = GSS/**
+
+compilerOpts = -framework GSS
+linkerOpts = -framework GSS

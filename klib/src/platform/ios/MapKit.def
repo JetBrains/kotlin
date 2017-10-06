@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.MapKit
+headers = MapKit/MapKit.h
+
+headerFilter = MapKit/**
+
+compilerOpts = -framework MapKit
+linkerOpts = -framework MapKit

@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.GameController
+headers = GameController/GameController.h
+
+headerFilter = GameController/**
+
+compilerOpts = -framework GameController
+linkerOpts = -framework GameController

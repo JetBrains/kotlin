@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.NotificationCenter
+headers = NotificationCenter/NotificationCenter.h
+
+headerFilter = NotificationCenter/**
+
+compilerOpts = -framework NotificationCenter
+linkerOpts = -framework NotificationCenter

@@ -1,0 +1,9 @@
+depends = CoreFoundation darwin posix
+language = Objective-C
+package = platform.SystemConfiguration
+headers = SystemConfiguration/SystemConfiguration.h
+
+headerFilter = SystemConfiguration/**
+
+compilerOpts = -framework SystemConfiguration
+linkerOpts = -framework SystemConfiguration

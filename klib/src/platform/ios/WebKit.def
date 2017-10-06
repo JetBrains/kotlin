@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.WebKit
+headers = WebKit/WebKit.h
+
+headerFilter = WebKit/**
+
+compilerOpts = -framework WebKit
+linkerOpts = -framework WebKit

@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.CoreMotion
+headers = CoreMotion/CoreMotion.h
+
+headerFilter = CoreMotion/**
+
+compilerOpts = -framework CoreMotion
+linkerOpts = -framework CoreMotion

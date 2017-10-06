@@ -1,0 +1,9 @@
+depends = AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.CoreAudioKit
+headers = CoreAudioKit/CoreAudioKit.h
+
+headerFilter = CoreAudioKit/**
+
+compilerOpts = -framework CoreAudioKit
+linkerOpts = -framework CoreAudioKit

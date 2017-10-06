@@ -1,0 +1,9 @@
+depends = AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreMedia CoreVideo Foundation Metal OpenGLESCommon Security darwin posix
+language = Objective-C
+package = platform.VideoToolbox
+headers = VideoToolbox/VideoToolbox.h
+
+headerFilter = VideoToolbox/**
+
+compilerOpts = -framework VideoToolbox
+linkerOpts = -framework VideoToolbox

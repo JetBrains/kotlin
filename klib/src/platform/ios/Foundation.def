@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation Security darwin posix
+language = Objective-C
+package = platform.Foundation
+headers = Foundation/Foundation.h
+
+headerFilter = Foundation/**
+
+compilerOpts = -framework Foundation
+linkerOpts = -framework Foundation

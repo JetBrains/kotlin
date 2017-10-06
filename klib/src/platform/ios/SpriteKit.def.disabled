@@ -1,0 +1,8 @@
+language = Objective-C
+package = platform.SpriteKit
+headers = SpriteKit/SpriteKit.h
+
+headerFilter = SpriteKit/**
+
+compilerOpts = -framework SpriteKit
+linkerOpts = -framework SpriteKit

@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.AVKit
+headers = AVKit/AVKit.h
+
+headerFilter = AVKit/**
+
+compilerOpts = -framework AVKit
+linkerOpts = -framework AVKit

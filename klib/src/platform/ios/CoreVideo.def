@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Metal OpenGLESCommon Security darwin posix
+language = Objective-C
+package = platform.CoreVideo
+headers = CoreVideo/CoreVideo.h
+
+headerFilter = CoreVideo/**
+
+compilerOpts = -framework CoreVideo
+linkerOpts = -framework CoreVideo

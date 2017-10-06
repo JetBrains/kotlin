@@ -1,0 +1,9 @@
+depends = CoreFoundation CoreGraphics darwin posix
+language = Objective-C
+package = platform.ImageIO
+headers = ImageIO/ImageIO.h
+
+headerFilter = ImageIO/**
+
+compilerOpts = -framework ImageIO
+linkerOpts = -framework ImageIO

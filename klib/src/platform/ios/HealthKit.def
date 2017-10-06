@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.HealthKit
+headers = HealthKit/HealthKit.h
+
+headerFilter = HealthKit/**
+
+compilerOpts = -framework HealthKit
+linkerOpts = -framework HealthKit
