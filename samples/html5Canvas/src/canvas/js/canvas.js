@@ -30,6 +30,9 @@ konan.libraries.push ({          // This one will be auto generated.
         knjs_fillRect: function(arena, obj, x1, y1, width, height) {
             kotlinObject(arena, obj).fillRect(x1, y1, width, height);
         },
+        knjs_fillText: function(arena, obj, textPtr, textLength, x, y, maxWidth) {
+            kotlinObject(arena, obj).fillText(toUTF16String(textPtr, textLength), x, y, maxWidth);
+        },
         knjs_fill: function(arena, obj) {
             kotlinObject(arena, obj).fill();
         },

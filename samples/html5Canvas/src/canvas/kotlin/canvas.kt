@@ -30,6 +30,8 @@ external public fun knjs_lineTo(arena: Int, obj: Int, x: Int, y: Int): Int;
 
 @SymbolName("knjs_fillRect")
 external public fun knjs_fillRect(arena: Int, obj: Int, x1: Int, y1: Int, width: Int, height: Int)
+@SymbolName("knjs_fillText")
+external public fun knjs_fillText(arena: Int, obj: Int, textPtr: Int, textWidth: Int, x: Int, y: Int, maxWidth: Int)
 
 @SymbolName("knjs_fill")
 external public fun knjs_fill(arena: Int, obj: Int)
@@ -96,6 +98,9 @@ open class Context(arena: Int, index: Int): JsValue(arena, index) {
     }
     fun fillRect(x: Int, y: Int, width: Int, height: Int) {
         knjs_fillRect(this.arena, this.index, x, y, width, height)
+    }
+    fun fillText(text: String, x: Int, y: Int, maxWidth: Int) {
+        knjs_fillText(this.arena, this.index, stringPointer(text), stringLengthBytes(text), x, y, maxWidth)
     }
     fun fill() {
         knjs_fill(this.arena, this.index)
