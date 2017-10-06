@@ -20,7 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.*
+import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineOrReturnInJvm
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
@@ -29,7 +30,9 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -47,13 +50,15 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
+import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
+import kotlin.collections.HashSet
 
 abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         protected val codegen: T,
@@ -179,6 +184,46 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         }
     }
 
+    private fun canSkipStackSpillingOnInline(methodNode: MethodNode): Boolean {
+        // Stack spilling before inline function 'f' call is required if:
+        //  - 'f' is a suspend function
+        //  - 'f' has try-catch blocks
+        //  - 'f' has loops
+        //
+        // Instead of checking for loops precisely, we just check if there are any backward jumps -
+        // that is, a jump from instruction #i to instruction #j where j < i
+
+        if (functionDescriptor.isSuspend) return false
+        if (methodNode.tryCatchBlocks.isNotEmpty()) return false
+
+        fun isBackwardJump(fromIndex: Int, toLabel: LabelNode) =
+                methodNode.instructions.indexOf(toLabel) < fromIndex
+
+        val insns = methodNode.instructions.toArray()
+        for (i in insns.indices) {
+            val insn = insns[i]
+            when (insn) {
+                is JumpInsnNode ->
+                    if (isBackwardJump(i, insn.label)) return false
+
+                is LookupSwitchInsnNode -> {
+                    insn.dflt?.let {
+                        if (isBackwardJump(i, it)) return false
+                    }
+                    if (insn.labels.any { isBackwardJump(i, it) }) return false
+                }
+
+                is TableSwitchInsnNode -> {
+                    insn.dflt?.let {
+                        if (isBackwardJump(i, it)) return false
+                    }
+                    if (insn.labels.any { isBackwardJump(i, it) }) return false
+                }
+            }
+        }
+
+        return true
+    }
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
@@ -201,7 +246,11 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         //through generation captured parameters will be added to invocationParamBuilder
         putClosureParametersOnStack()
 
-        addInlineMarker(codegen.v, true)
+        val shouldSpillStack = !canSkipStackSpillingOnInline(node)
+
+        if (shouldSpillStack) {
+            addInlineMarker(codegen.v, true)
+        }
 
         val parameters = invocationParamBuilder.buildParameters()
 
@@ -239,7 +288,9 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
         adapter.accept(MethodBodyVisitor(codegen.v))
 
-        addInlineMarker(codegen.v, false)
+        if (shouldSpillStack) {
+            addInlineMarker(codegen.v, false)
+        }
 
         defaultSourceMapper.callSiteMarker = null
 
