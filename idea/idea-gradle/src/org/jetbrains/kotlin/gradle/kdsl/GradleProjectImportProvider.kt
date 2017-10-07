@@ -26,4 +26,6 @@ class GradleProjectImportProvider(builder: GradleProjectImportBuilder)
     override fun canImportFromFile(file: VirtualFile): Boolean = file.name.endsWith(".${GradleConstants.EXTENSION}.kts")
 
     override fun getFileSample(): String? = "<b>Gradle (Kotlin DSL)</b> build script (*.gradle.kts)"
+
+    override fun getName(): String = "Gradle (Kotlin DSL)"
 }
