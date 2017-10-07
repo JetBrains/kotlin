@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
@@ -37,8 +38,9 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
                 override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
                     super.visitQualifiedExpression(expression)
 
-                    val firstQualifiedExpression = expression.receiverExpression as? KtQualifiedExpression ?: return
-                    val firstCallExpression = firstQualifiedExpression.selectorExpression as? KtCallExpression ?: return
+                    val firstExpression = expression.receiverExpression
+                    val firstCallExpression = getCallExpression(firstExpression) ?: return
+
                     val secondCallExpression = expression.selectorExpression as? KtCallExpression ?: return
 
                     val firstCalleeExpression = firstCallExpression.calleeExpression ?: return
@@ -48,15 +50,20 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
                             ] ?: return
 
                     val context = expression.analyze()
-                    val firstResolvedCall = firstQualifiedExpression.getResolvedCall(context) ?: return
+                    val firstResolvedCall = firstExpression.getResolvedCall(context) ?: return
                     val conversion = actualConversions.firstOrNull {
                         firstResolvedCall.resultingDescriptor.fqNameOrNull()?.asString() == it.firstFqName
                     } ?: return
+
+                    val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return
+
                     // Do not apply on maps due to lack of relevant stdlib functions
-                    val firstReceiverType = firstResolvedCall.extensionReceiver?.type ?: return
-                    val builtIns = firstReceiverType.builtIns
-                    val mapType = builtIns.map.defaultType
-                    if (firstReceiverType.isSubtypeOf(mapType)) return
+                    val firstReceiverType = firstResolvedCall.extensionReceiver?.type
+                    if (firstReceiverType != null) {
+                        val mapType = builtIns.map.defaultType
+                        if (firstReceiverType.isSubtypeOf(mapType)) return
+                    }
+
                     // Do not apply for lambdas with return inside
                     val lambdaArgument = firstCallExpression.lambdaArguments.firstOrNull()
                     if (lambdaArgument?.anyDescendantOfType<KtReturnExpression>() == true) return
@@ -111,7 +118,9 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
                 Conversion("kotlin.collections.map", "kotlin.collections.joinTo", "joinTo"),
                 Conversion("kotlin.collections.map", "kotlin.collections.joinToString", "joinToString"),
-                Conversion("kotlin.collections.map", "kotlin.collections.filterNotNull", "mapNotNull")
+                Conversion("kotlin.collections.map", "kotlin.collections.filterNotNull", "mapNotNull"),
+
+                Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
         )
 
         private val conversionGroups = conversions.groupBy { it.firstName to it.secondName }
@@ -123,6 +132,10 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
             val secondName = secondFqName.convertToShort()
         }
+
+        fun getCallExpression(firstExpression: KtExpression) =
+                ((firstExpression as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
+                 ?: firstExpression as? KtCallExpression)
 
     }
 }
