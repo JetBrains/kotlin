@@ -62,10 +62,13 @@ projectTest {
     workingDir = rootDir
 }
 
-val generateTests by task<JavaExec> {
+fun generator(fqName: String) = task<JavaExec> {
     classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
-
-    main = "org.jetbrains.kotlin.generators.tests.GenerateTestsKt"
-
+    main = fqName
     workingDir = rootDir
 }
+
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTestsKt")
+
+val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt")
+val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")

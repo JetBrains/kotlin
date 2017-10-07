@@ -27,7 +27,8 @@ import java.util.regex.Pattern
 //
 // * Windows: download and unpack from here: https://code.google.com/p/protobuf/downloads/list
 // * Ubuntu: install "protobuf-compiler" package
-// * Mac OS: install "protobuf" package from Homebrew or "protobuf-cpp" from MacPorts
+// * macOS:
+//     brew install https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb
 // * You can also download source and build it yourself (https://code.google.com/p/protobuf/downloads/list)
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
