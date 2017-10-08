@@ -19,7 +19,6 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-gradle"))
-    compile(project(":plugins:uast-kotlin"))
 
     compile(androidDxJar())
 
