@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.text.StringKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.sequences.SequencesKt;
