@@ -1,4 +1,4 @@
-// HIGHLIGHT: INFORMATION
+// HIGHLIGHT: INFO
 
 fun test(): String {
     <caret>try {
