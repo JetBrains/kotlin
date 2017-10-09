@@ -25767,6 +25767,25 @@ public final class DebugProtoBuf {
      * </pre>
      */
     int getMessage();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    boolean hasVersionKind();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind getVersionKind();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.VersionRequirement}
@@ -25849,6 +25868,17 @@ public final class DebugProtoBuf {
             case 40: {
               bitField0_ |= 0x00000010;
               message_ = input.readInt32();
+              break;
+            }
+            case 48: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind value = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(6, rawValue);
+              } else {
+                bitField0_ |= 0x00000020;
+                versionKind_ = value;
+              }
               break;
             }
           }
@@ -25981,6 +26011,97 @@ public final class DebugProtoBuf {
       // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.VersionRequirement.Level)
     }
 
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind}
+     */
+    public enum VersionKind
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>LANGUAGE_VERSION = 0;</code>
+       */
+      LANGUAGE_VERSION(0, 0),
+      /**
+       * <code>COMPILER_VERSION = 1;</code>
+       */
+      COMPILER_VERSION(1, 1),
+      /**
+       * <code>API_VERSION = 2;</code>
+       */
+      API_VERSION(2, 2),
+      ;
+
+      /**
+       * <code>LANGUAGE_VERSION = 0;</code>
+       */
+      public static final int LANGUAGE_VERSION_VALUE = 0;
+      /**
+       * <code>COMPILER_VERSION = 1;</code>
+       */
+      public static final int COMPILER_VERSION_VALUE = 1;
+      /**
+       * <code>API_VERSION = 2;</code>
+       */
+      public static final int API_VERSION_VALUE = 2;
+
+
+      public final int getNumber() { return value; }
+
+      public static VersionKind valueOf(int value) {
+        switch (value) {
+          case 0: return LANGUAGE_VERSION;
+          case 1: return COMPILER_VERSION;
+          case 2: return API_VERSION;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<VersionKind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<VersionKind>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<VersionKind>() {
+              public VersionKind findValueByNumber(int number) {
+                return VersionKind.valueOf(number);
+              }
+            };
+
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.getDescriptor().getEnumTypes().get(1);
+      }
+
+      private static final VersionKind[] VALUES = values();
+
+      public static VersionKind valueOf(
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private VersionKind(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind)
+    }
+
     private int bitField0_;
     public static final int VERSION_FIELD_NUMBER = 1;
     private int version_;
@@ -26103,12 +26224,38 @@ public final class DebugProtoBuf {
       return message_;
     }
 
+    public static final int VERSION_KIND_FIELD_NUMBER = 6;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind versionKind_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    public boolean hasVersionKind() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind getVersionKind() {
+      return versionKind_;
+    }
+
     private void initFields() {
       version_ = 0;
       versionFull_ = 0;
       level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level.ERROR;
       errorCode_ = 0;
       message_ = 0;
+      versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -26138,6 +26285,9 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeInt32(5, message_);
       }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeEnum(6, versionKind_.getNumber());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -26166,6 +26316,10 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(5, message_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(6, versionKind_.getNumber());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -26294,6 +26448,8 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000008);
         message_ = 0;
         bitField0_ = (bitField0_ & ~0x00000010);
+        versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -26342,6 +26498,10 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000010;
         }
         result.message_ = message_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.versionKind_ = versionKind_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -26372,6 +26532,9 @@ public final class DebugProtoBuf {
         }
         if (other.hasMessage()) {
           setMessage(other.getMessage());
+        }
+        if (other.hasVersionKind()) {
+          setVersionKind(other.getVersionKind());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -26651,6 +26814,61 @@ public final class DebugProtoBuf {
       public Builder clearMessage() {
         bitField0_ = (bitField0_ & ~0x00000010);
         message_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public boolean hasVersionKind() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind getVersionKind() {
+        return versionKind_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public Builder setVersionKind(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000020;
+        versionKind_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public Builder clearVersionKind() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
         onChanged();
         return this;
       }
@@ -28906,29 +29124,34 @@ public final class DebugProtoBuf {
       "\003(\0132..org.jetbrains.kotlin.serialization" +
       ".Annotation\022\033\n\023version_requirement\030\037 \001(\005",
       "*\005\010d\020\310\001\"&\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001" +
-      "*\005\010d\020\310\001\"\347\001\n\022VersionRequirement\022\017\n\007versio" +
+      "*\005\010d\020\310\001\"\237\003\n\022VersionRequirement\022\017\n\007versio" +
       "n\030\001 \001(\005\022\024\n\014version_full\030\002 \001(\005\022R\n\005level\030\003" +
       " \001(\0162<.org.jetbrains.kotlin.serializatio" +
       "n.VersionRequirement.Level:\005ERROR\022\022\n\nerr" +
-      "or_code\030\004 \001(\005\022\025\n\007message\030\005 \001(\005B\004\230\265\030\001\"+\n\005" +
-      "Level\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020" +
-      "\002\"f\n\027VersionRequirementTable\022K\n\013requirem" +
-      "ent\030\001 \003(\01326.org.jetbrains.kotlin.seriali" +
-      "zation.VersionRequirement\"\243\002\n\017PackageFra",
-      "gment\022@\n\007strings\030\001 \001(\0132/.org.jetbrains.k" +
-      "otlin.serialization.StringTable\022O\n\017quali" +
-      "fied_names\030\002 \001(\01326.org.jetbrains.kotlin." +
-      "serialization.QualifiedNameTable\022<\n\007pack" +
-      "age\030\003 \001(\0132+.org.jetbrains.kotlin.seriali" +
-      "zation.Package\0228\n\005class\030\004 \003(\0132).org.jetb" +
-      "rains.kotlin.serialization.Class*\005\010d\020\310\001*" +
-      "9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABST" +
-      "RACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTE" +
-      "RNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PU",
-      "BLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q" +
-      "\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OV" +
-      "ERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020" +
-      "\003B\017B\rDebugProtoBuf"
+      "or_code\030\004 \001(\005\022\025\n\007message\030\005 \001(\005B\004\230\265\030\001\022j\n\014" +
+      "version_kind\030\006 \001(\0162B.org.jetbrains.kotli" +
+      "n.serialization.VersionRequirement.Versi" +
+      "onKind:\020LANGUAGE_VERSION\"+\n\005Level\022\013\n\007WAR" +
+      "NING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020\002\"J\n\013Version",
+      "Kind\022\024\n\020LANGUAGE_VERSION\020\000\022\024\n\020COMPILER_V" +
+      "ERSION\020\001\022\017\n\013API_VERSION\020\002\"f\n\027VersionRequ" +
+      "irementTable\022K\n\013requirement\030\001 \003(\01326.org." +
+      "jetbrains.kotlin.serialization.VersionRe" +
+      "quirement\"\243\002\n\017PackageFragment\022@\n\007strings" +
+      "\030\001 \001(\0132/.org.jetbrains.kotlin.serializat" +
+      "ion.StringTable\022O\n\017qualified_names\030\002 \001(\013" +
+      "26.org.jetbrains.kotlin.serialization.Qu" +
+      "alifiedNameTable\022<\n\007package\030\003 \001(\0132+.org." +
+      "jetbrains.kotlin.serialization.Package\0228",
+      "\n\005class\030\004 \003(\0132).org.jetbrains.kotlin.ser" +
+      "ialization.Class*\005\010d\020\310\001*9\n\010Modality\022\t\n\005F" +
+      "INAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED" +
+      "\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVAT" +
+      "E\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVAT" +
+      "E_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013" +
+      "DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELE" +
+      "GATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProtoB" +
+      "uf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -29056,7 +29279,7 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_descriptor,
-        new java.lang.String[] { "Version", "VersionFull", "Level", "ErrorCode", "Message", });
+        new java.lang.String[] { "Version", "VersionFull", "Level", "ErrorCode", "Message", "VersionKind", });
     internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_descriptor =
       getDescriptor().getMessageTypes().get(15);
     internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_fieldAccessorTable = new

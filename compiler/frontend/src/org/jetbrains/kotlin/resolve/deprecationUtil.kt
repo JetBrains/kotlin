@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
 import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
@@ -292,8 +293,17 @@ class DeprecationResolver(
             if (versionRequirement != null) {
                 // We're using ApiVersion because it's convenient to compare versions, "-api-version" is not involved in any way
                 // TODO: usage of ApiVersion is confusing here, refactor
-                if (ApiVersion.createByVersionRequirement(versionRequirement) >
-                    ApiVersion.createByLanguageVersion(languageVersionSettings.languageVersion)) {
+                val requiredVersion = ApiVersion.createByVersionRequirement(versionRequirement)
+                val currentVersion = when (versionRequirement.kind) {
+                    ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION ->
+                        ApiVersion.createByLanguageVersion(languageVersionSettings.languageVersion)
+                    ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
+                        languageVersionSettings.apiVersion
+                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
+                        ApiVersion.LATEST_STABLE
+                    else -> null
+                }
+                if (currentVersion != null && currentVersion < requiredVersion) {
                     result.add(DeprecatedByVersionRequirement(versionRequirement, target))
                 }
             }

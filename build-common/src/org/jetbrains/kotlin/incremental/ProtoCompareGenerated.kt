@@ -855,6 +855,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkStringEquals(old.message, new.message)) return false
         }
 
+        if (old.hasVersionKind() != new.hasVersionKind()) return false
+        if (old.hasVersionKind()) {
+            if (old.versionKind != new.versionKind) return false
+        }
+
         return true
     }
 
@@ -1795,6 +1800,10 @@ fun ProtoBuf.VersionRequirement.hashCode(stringIndexes: (Int) -> Int, fqNameInde
 
     if (hasMessage()) {
         hashCode = 31 * hashCode + stringIndexes(message)
+    }
+
+    if (hasVersionKind()) {
+        hashCode = 31 * hashCode + versionKind.hashCode()
     }
 
     return hashCode

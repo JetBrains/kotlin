@@ -74,6 +74,14 @@ internal annotation class DynamicExtension
  * to the user). The diagnostic severity can be specified with [level]: WARNING/ERROR mean that either a warning or an error
  * is going to be reported, HIDDEN means that the declaration is going to be removed from resolution completely.
  *
+ * [versionKind] specifies which version should be compared with the [version] value, when compiling the usage of the annotated declaration.
+ * Note that prior to 1.2, only [RequireKotlinVersionKind.LANGUAGE_VERSION] was supported, so the Kotlin compiler before 1.2 is going to
+ * treat any [RequireKotlin] as if it requires the language version. Since 1.2, the Kotlin compiler supports
+ * [RequireKotlinVersionKind.LANGUAGE_VERSION], [RequireKotlinVersionKind.COMPILER_VERSION] and [RequireKotlinVersionKind.API_VERSION].
+ * If the actual value of [versionKind] is something different (e.g. a new version kind, added in future versions of Kotlin),
+ * Kotlin 1.2 is going to ignore this [RequireKotlin] altogether, where as Kotlin before 1.2 is going to treat this as a requirement
+ * on the language version.
+ *
  * This annotation is erased at compile time; its arguments are stored in a more compact form in the Kotlin metadata.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPEALIAS)
@@ -82,5 +90,15 @@ internal annotation class RequireKotlin(
         val version: String,
         val message: String = "",
         val level: DeprecationLevel = DeprecationLevel.ERROR,
+        val versionKind: RequireKotlinVersionKind = RequireKotlinVersionKind.LANGUAGE_VERSION,
         val errorCode: Int = -1
 )
+
+/**
+ * The kind of the version that is required by [RequireKotlin].
+ */
+internal enum class RequireKotlinVersionKind {
+    LANGUAGE_VERSION,
+    COMPILER_VERSION,
+    API_VERSION,
+}

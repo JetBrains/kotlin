@@ -424,6 +424,12 @@ message VersionRequirement {
     HIDDEN = 2;
   }
 
+  enum VersionKind {
+    LANGUAGE_VERSION = 0;
+    COMPILER_VERSION = 1;
+    API_VERSION = 2;
+  }
+
   // Kotlin version, since which this declaration is accessible, in the following format (encoded version is "major.minor.patch"):
   // (patch << 7) + (minor << 3) + major
   // Compilers with version less than this value should report a diagnostic if this declaration is selected as the resolution result
@@ -441,6 +447,10 @@ message VersionRequirement {
 
   // Diagnostic message
   optional int32 message = 5 [(string_id_in_table) = true];
+
+  // Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+  // (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+  optional VersionKind version_kind = 6 [default = LANGUAGE_VERSION];
 }
 
 message VersionRequirementTable {

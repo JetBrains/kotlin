@@ -33,6 +33,7 @@ class VersionRequirementTable private constructor(private val infos: List<ProtoB
 
 class VersionRequirement(
         val version: Version,
+        val kind: ProtoBuf.VersionRequirement.VersionKind,
         val level: DeprecationLevel,
         val errorCode: Int?,
         val message: String?
@@ -117,7 +118,7 @@ class VersionRequirement(
 
             val message = if (info.hasMessage()) nameResolver.getString(info.message) else null
 
-            return VersionRequirement(version, level, errorCode, message)
+            return VersionRequirement(version, info.versionKind, level, errorCode, message)
         }
     }
 }

@@ -40,6 +40,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
             expectedVersionRequirement: VersionRequirement.Version,
             expectedLevel: DeprecationLevel,
             expectedMessage: String?,
+            expectedVersionKind: ProtoBuf.VersionRequirement.VersionKind,
             expectedErrorCode: Int?,
             vararg fqNames: String
     ) {
@@ -66,6 +67,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
             assertEquals(expectedVersionRequirement, requirement.version)
             assertEquals(expectedLevel, requirement.level)
             assertEquals(expectedMessage, requirement.message)
+            assertEquals(expectedVersionKind, requirement.kind)
             assertEquals(expectedErrorCode, requirement.errorCode)
         }
 
@@ -96,7 +98,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testSuspendFun() {
-        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, null,
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
                "test.topLevel",
                "test.Foo.member",
                "test.Foo.<init>",
@@ -109,7 +111,17 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testLanguageVersionViaAnnotation() {
-        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", 42,
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, 42,
+               "test.Klass",
+               "test.Konstructor.<init>",
+               "test.Typealias",
+               "test.function",
+               "test.property"
+       )
+    }
+
+    fun testApiVersionViaAnnotation() {
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.API_VERSION, 42,
                "test.Klass",
                "test.Konstructor.<init>",
                "test.Typealias",

@@ -633,6 +633,15 @@ class DescriptorSerializer private constructor(
             DeprecationLevel.HIDDEN.toString() -> proto.level = ProtoBuf.VersionRequirement.Level.HIDDEN
         }
 
+        val versionKind = (args[RequireKotlinNames.VERSION_KIND] as? EnumValue)?.value?.name?.asString()
+        when (versionKind) {
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION.toString() -> { /* LANGUAGE_VERSION is the default kind */ }
+            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION.toString() ->
+                proto.versionKind = ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
+            ProtoBuf.VersionRequirement.VersionKind.API_VERSION.toString() ->
+                proto.versionKind = ProtoBuf.VersionRequirement.VersionKind.API_VERSION
+        }
+
         val errorCode = (args[RequireKotlinNames.ERROR_CODE] as? IntValue)?.value
         if (errorCode != null && errorCode != -1) {
             proto.errorCode = errorCode
@@ -656,6 +665,7 @@ class DescriptorSerializer private constructor(
         val VERSION = Name.identifier("version")
         val MESSAGE = Name.identifier("message")
         val LEVEL = Name.identifier("level")
+        val VERSION_KIND = Name.identifier("versionKind")
         val ERROR_CODE = Name.identifier("errorCode")
 
         val VERSION_REGEX: Regex = "(0|[1-9][0-9]*)".let { number -> Regex("$number\\.$number(\\.$number)?") }
