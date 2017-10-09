@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -54,6 +56,7 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.descriptors.FindClassInModuleKt.findClassAcrossModuleDependencies;
 import static org.jetbrains.kotlin.js.config.JsConfig.UNKNOWN_EXTERNAL_MODULE_NAME;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
@@ -141,6 +144,8 @@ public final class StaticContext {
     @NotNull
     private final SourceFilePathResolver sourceFilePathResolver;
 
+    private final boolean isStdlib;
+
     public StaticContext(
             @NotNull BindingTrace bindingTrace,
             @NotNull JsConfig config,
@@ -163,6 +168,10 @@ public final class StaticContext {
 
         classModelGenerator = new ClassModelGenerator(TranslationContext.rootContext(this));
         this.sourceFilePathResolver = sourceFilePathResolver;
+
+        ClassDescriptor exceptionClass = findClassAcrossModuleDependencies(
+                moduleDescriptor, ClassId.topLevel(new FqName("kotlin.Exception")));
+        isStdlib = exceptionClass != null && DescriptorUtils.getContainingModule(exceptionClass) == moduleDescriptor;
     }
 
     @NotNull
@@ -840,9 +849,30 @@ public final class StaticContext {
 
     @NotNull
     public JsExpression getReferenceToIntrinsic(@NotNull String name) {
-        JsName resultName = intrinsicNames.computeIfAbsent(name, k ->
-                importDeclaration(NameSuggestion.sanitizeName(name), "intrinsic:" + name, TranslationUtils.getIntrinsicFqn(name)));
+        JsName resultName = intrinsicNames.computeIfAbsent(name, k -> {
+            if (isStdlib) {
+                DeclarationDescriptor descriptor = findDescriptorForIntrinsic(name);
+                if (descriptor != null) {
+                    return getInnerNameForDescriptor(descriptor);
+                }
+            }
+            return importDeclaration(NameSuggestion.sanitizeName(name), "intrinsic:" + name, TranslationUtils.getIntrinsicFqn(name));
+        });
 
         return pureFqn(resultName, null);
+    }
+
+    @Nullable
+    private DeclarationDescriptor findDescriptorForIntrinsic(@NotNull String name) {
+        PackageViewDescriptor rootPackage = currentModule.getPackage(FqName.ROOT);
+        FunctionDescriptor functionDescriptor = DescriptorUtils.getFunctionByNameOrNull(
+                rootPackage.getMemberScope(), Name.identifier(name));
+        if (functionDescriptor != null) return functionDescriptor;
+
+        ClassifierDescriptor cls = rootPackage.getMemberScope().getContributedClassifier(
+                Name.identifier(name), NoLookupLocation.FROM_BACKEND);
+        if (cls != null) return cls;
+
+        return null;
     }
 }
