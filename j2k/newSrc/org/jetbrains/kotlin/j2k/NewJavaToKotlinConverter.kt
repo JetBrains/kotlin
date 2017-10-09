@@ -27,7 +27,7 @@ class NewJavaToKotlinConverter(
         private val settings: ConverterSettings
 ) {
 
-    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()) {
-
+    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): Nothing {
+        TODO("Output generation")
     }
 }
