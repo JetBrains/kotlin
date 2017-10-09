@@ -140,7 +140,7 @@ fun getConfigurableModulesWithKotlinFiles(project: Project): List<ModuleSourceRo
 }
 
 fun showConfigureKotlinNotificationIfNeeded(module: Module) {
-    val moduleGroup = ModuleSourceRootMap(module.project).toModuleGroup(module)
+    val moduleGroup = module.toModuleGroup()
     if (isNotConfiguredNotificationRequired(moduleGroup)) return
 
     ConfigureKotlinNotificationManager.notify(module.project)
