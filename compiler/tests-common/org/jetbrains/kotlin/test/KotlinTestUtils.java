@@ -29,6 +29,7 @@ import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
@@ -85,7 +86,6 @@ import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -418,7 +418,7 @@ public class KotlinTestUtils {
     public static KtFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
         String shortName = name.substring(name.lastIndexOf('/') + 1);
         shortName = shortName.substring(shortName.lastIndexOf('\\') + 1);
-        LightVirtualFile virtualFile = new LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
+        LightVirtualFile virtualFile = new LightVirtualFile(shortName, KotlinLanguage.INSTANCE, StringUtilRt.convertLineSeparators(text)) {
             @NotNull
             @Override
             public String getPath() {
