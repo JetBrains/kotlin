@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
-import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 
 internal class KotlinJsDceOptionsImpl : KotlinJsDceOptionsBase() {
     override var freeCompilerArgs: List<String> = listOf()
 
     override fun updateArguments(args: K2JSDceArguments) {
         super.updateArguments(args)
-        val freeArgsArray = (freeCompilerArgs as List<Any>).map(Any::toString).toTypedArray()
-        K2JSDce().parseArguments(freeArgsArray, args)
+        copyFreeCompilerArgsToArgs(args)
     }
 }
