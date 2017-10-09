@@ -542,13 +542,14 @@ abstract class BasicBoxTest(
         val testFunctionFqn = testModuleName + (if (testPackage.isNullOrEmpty()) "" else ".$testPackage") + ".$testFunction"
         val additionalReachableNodes = setOf(
                 testFunctionFqn, "kotlin.kotlin.io.BufferedOutput", "kotlin.kotlin.io.output.flush",
-                "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$"
+                "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$",
+                "kotlin-test.kotlin.test.DefaultAsserter"
         )
         val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
         val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) { _, _ -> }
 
         val reachableNodes = dceResult.reachableNodes
-        minificationThresholdChecker(reachableNodes.size)
+        minificationThresholdChecker(reachableNodes.count { it.reachable })
 
         val runList = mutableListOf<String>()
         runList += kotlinJsLibOutput

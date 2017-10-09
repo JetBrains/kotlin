@@ -562,14 +562,17 @@ public class JsAstMapper {
         Node fromFnNameNode = fnNode.getFirstChild();
         Node fromParamNode = fnNode.getFirstChild().getNext().getFirstChild();
         Node fromBodyNode = fnNode.getFirstChild().getNext().getNext();
-        JsFunction toFn = scopeContext.enterFunction();
 
         // Decide the function's name, if any.
         //
         String fnNameIdent = fromFnNameNode.getString();
+        JsName functionName = null;
         if (fnNameIdent != null && fnNameIdent.length() > 0) {
-            toFn.setName(scopeContext.globalNameFor(fnNameIdent));
+            functionName = scopeContext.localNameFor(fnNameIdent);
         }
+
+        JsFunction toFn = scopeContext.enterFunction();
+        toFn.setName(functionName);
 
         while (fromParamNode != null) {
             String fromParamName = fromParamNode.getString();
