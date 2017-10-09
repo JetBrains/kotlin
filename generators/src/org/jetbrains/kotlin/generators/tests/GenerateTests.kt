@@ -152,6 +152,7 @@ import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
+import org.jetbrains.kotlin.j2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
@@ -1258,6 +1259,12 @@ fun main(args: Array<String>) {
     }
     testGroup("j2k/tests", "j2k/testData") {
         testClass<AbstractJavaToKotlinConverterForWebDemoTest> {
+            model("fileOrElement", extension = "java")
+        }
+    }
+
+    testGroup("j2k/tests", "j2k/testData") {
+        testClass<AbstractNewJavaToKotlinConverterSingleFileTest> {
             model("fileOrElement", extension = "java")
         }
     }
