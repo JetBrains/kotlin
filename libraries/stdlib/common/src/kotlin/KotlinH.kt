@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package kotlin
 
-import kotlin.annotation.AnnotationTarget.*
+import kotlin.annotation.AnnotationTarget.FIELD
+import kotlin.annotation.AnnotationTarget.PROPERTY
 
 open expect class Error : Throwable {
     constructor()
@@ -93,7 +94,7 @@ expect fun Float.isFinite(): Boolean
 // From concurrent.kt
 
 @Target(PROPERTY, FIELD)
-expect annotation class Volatile
+expect annotation class Volatile()
 
 public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 
