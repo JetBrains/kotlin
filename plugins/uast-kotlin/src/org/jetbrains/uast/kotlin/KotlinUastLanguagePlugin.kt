@@ -139,9 +139,6 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         }
 
         val original = element.originalElement
-
-        if (original.containingFile?.virtualFile == null) return null
-
         return with(requiredType) {
             when (original) {
                 is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
