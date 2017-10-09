@@ -77,7 +77,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
                     "\ncompileKotlinCommon.kotlinOptions.freeCompilerArgs = ['-Xno-inline']" +
                     "\ncompileKotlinCommon.kotlinOptions.suppressWarnings = true")
 
-            build("build", options = defaultBuildOptions().copy(kotlinDaemonDebugPort = 5556)) {
+            build("build") {
                 assertSuccessful()
                 assertContains("-Xno-inline")
                 assertContains("-nowarn")
