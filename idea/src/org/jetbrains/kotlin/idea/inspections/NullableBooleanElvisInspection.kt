@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
+import com.intellij.codeInspection.ProblemHighlightType.INFO
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -53,7 +53,7 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
                         val (highlightType, verb) = if (condition != null && condition in expression.parentsWithSelf)
                             GENERIC_ERROR_OR_WARNING to "should"
                         else
-                            INFORMATION to "can"
+                            INFO to "can"
 
                         holder.registerProblemWithoutOfflineInformation(
                                 expression,

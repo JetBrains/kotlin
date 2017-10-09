@@ -41,7 +41,7 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                                 keyword,
                                 "Return can be lifted out of '${keyword.text}'",
                                 if (!hasOtherReturns && foldableReturns.size > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                else ProblemHighlightType.INFORMATION,
+                                else ProblemHighlightType.INFO,
                                 LiftReturnOutFix(keyword.text)
                         )
                         return
@@ -53,7 +53,7 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                                 "Assignment can be lifted out of '${keyword.text}'",
                                 isOnTheFly,
                                 if (assignmentNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                else ProblemHighlightType.INFORMATION,
+                                else ProblemHighlightType.INFO,
                                 LiftAssignmentOutFix(keyword.text)
                         )
                     }
