@@ -24,7 +24,7 @@ public class KotlinCompilerVersion {
     // True if this compiler is of a non-stable (EAP or Beta) version.
     // Binaries produced by this compiler can not be loaded by release versions of the compiler.
     // Change this value before and after every major release
-    private static final boolean IS_PRE_RELEASE = false;
+    private static final boolean IS_PRE_RELEASE = true;
 
     public static final String TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY = "kotlin.test.is.pre.release";
 
