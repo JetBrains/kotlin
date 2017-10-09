@@ -1,4 +1,4 @@
-expect annotation class <lineMarker>Ann</lineMarker> <lineMarker>constructor</lineMarker>(
+expect annotation class <lineMarker>Ann</lineMarker><lineMarker>(</lineMarker>
         val <lineMarker>x</lineMarker>: Int,
         val <lineMarker>y</lineMarker>: String
 )

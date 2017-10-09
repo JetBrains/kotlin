@@ -298,7 +298,12 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
 }
 
 private val KtNamedDeclaration.expectOrActualAnchor
-    get() = nameIdentifier ?: (this as? KtConstructor<*>)?.getConstructorKeyword() ?: this
+    get() =
+        nameIdentifier
+        ?: (this as? KtConstructor<*>)?.let {
+            it.getConstructorKeyword() ?: it.getValueParameterList()?.leftParenthesis
+        }
+        ?: this
 
 private fun collectActualMarkers(declaration: KtNamedDeclaration,
                                  result: MutableCollection<LineMarkerInfo<*>>) {
