@@ -44,7 +44,10 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        java.srcDir("newSrc")
+    }
     "test" { projectDefault() }
 }
 
