@@ -64,10 +64,10 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
     }
 
     private fun KtNamedDeclaration.isExpectDeclaration(): Boolean =
-            hasExpectModifier() || containingClassOrObject?.isExpectDeclaration() == true
+            (toDescriptor() as? MemberDescriptor)?.isExpect == true
 
     private fun KtNamedDeclaration.isActualDeclaration(): Boolean =
-            hasActualModifier()
+            (toDescriptor() as? MemberDescriptor)?.isActual == true
 
     override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
         if (elements.isEmpty()) return
