@@ -1,4 +1,4 @@
-// HIGHLIGHT: INFORMATION
+// HIGHLIGHT: INFO
 
 fun foo(arg: Int): Int {
     <caret>when (arg) {

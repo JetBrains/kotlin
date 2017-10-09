@@ -1,4 +1,4 @@
-// HIGHLIGHT: INFORMATION
+// HIGHLIGHT: INFO
 
 fun test(n: Int, arg: String?): String {
     <caret>when (n) {

@@ -1,4 +1,4 @@
-// HIGHLIGHT: INFORMATION
+// HIGHLIGHT: INFO
 
 fun abs(x: Int): Int =// No highlighting here
         if (x > 0) {

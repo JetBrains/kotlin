@@ -20,7 +20,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
+import com.intellij.codeInspection.ProblemHighlightType.INFO
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -59,10 +59,10 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
         val toHighlight = valueStatement.toHighlight()
         return when {
-            valueStatement !is KtReturnExpression -> Status(toHighlight, "block body", INFORMATION)
+            valueStatement !is KtReturnExpression -> Status(toHighlight, "block body", INFO)
             valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", GENERIC_ERROR_OR_WARNING)
             valueStatement.isOneLiner() -> Status(toHighlight, "one-line return", GENERIC_ERROR_OR_WARNING)
-            else -> Status(toHighlight, "return", INFORMATION)
+            else -> Status(toHighlight, "return", INFO)
         }
     }
 
