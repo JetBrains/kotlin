@@ -1072,6 +1072,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("illegalRequireKotlinValue.kt")
+            public void testIllegalRequireKotlinValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/illegalRequireKotlinValue.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("illegalSinceKotlinValue.kt")
             public void testIllegalSinceKotlinValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/illegalSinceKotlinValue.kt");

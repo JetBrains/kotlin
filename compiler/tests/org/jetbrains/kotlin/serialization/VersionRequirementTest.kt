@@ -129,4 +129,14 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
                "test.property"
        )
     }
+
+    fun testCompilerVersionViaAnnotation() {
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, 42,
+               "test.Klass",
+               "test.Konstructor.<init>",
+               "test.Typealias",
+               "test.function",
+               "test.property"
+       )
+    }
 }

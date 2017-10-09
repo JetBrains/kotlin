@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.RequireKotlinNames
+import org.jetbrains.kotlin.resolve.checkers.KotlinVersionStringAnnotationValueChecker
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
@@ -609,7 +611,7 @@ class DescriptorSerializer private constructor(
         val args = annotation.allValueArguments
 
         val versionString = (args[RequireKotlinNames.VERSION] as? StringValue)?.value ?: return null
-        val matchResult = RequireKotlinNames.VERSION_REGEX.matchEntire(versionString) ?: return null
+        val matchResult = KotlinVersionStringAnnotationValueChecker.VERSION_REGEX.matchEntire(versionString) ?: return null
 
         val major = matchResult.groupValues.getOrNull(1)?.toIntOrNull() ?: return null
         val minor = matchResult.groupValues.getOrNull(2)?.toIntOrNull() ?: 0
@@ -658,18 +660,6 @@ class DescriptorSerializer private constructor(
 
     private fun getTypeParameterId(descriptor: TypeParameterDescriptor): Int =
             typeParameters.intern(descriptor)
-
-    private object RequireKotlinNames {
-        val FQ_NAME = FqName("kotlin.internal.RequireKotlin")
-
-        val VERSION = Name.identifier("version")
-        val MESSAGE = Name.identifier("message")
-        val LEVEL = Name.identifier("level")
-        val VERSION_KIND = Name.identifier("versionKind")
-        val ERROR_CODE = Name.identifier("errorCode")
-
-        val VERSION_REGEX: Regex = "(0|[1-9][0-9]*)".let { number -> Regex("$number\\.$number(\\.$number)?") }
-    }
 
     companion object {
         @JvmStatic

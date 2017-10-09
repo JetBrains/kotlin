@@ -19,16 +19,11 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 
-private val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")
-
-// TODO: use-site targeted annotations
-internal fun DeclarationDescriptor.getSinceKotlinAnnotation(): AnnotationDescriptor? =
-        annotations.findAnnotation(SINCE_KOTLIN_FQ_NAME)
+internal val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")
 
 /**
  * @return true if the descriptor is accessible according to [languageVersionSettings], or false otherwise. The [actionIfInaccessible]
@@ -62,8 +57,10 @@ private fun getSinceKotlinVersionByOverridden(descriptor: CallableMemberDescript
 }
 
 private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): ApiVersion? {
+    // TODO: use-site targeted annotations
     fun DeclarationDescriptor.loadAnnotationValue(): ApiVersion? =
-            (getSinceKotlinAnnotation()?.allValueArguments?.values?.singleOrNull()?.value as? String)?.let(ApiVersion.Companion::parse)
+            (annotations.findAnnotation(SINCE_KOTLIN_FQ_NAME)?.allValueArguments?.values?.singleOrNull()?.value as? String)
+                    ?.let(ApiVersion.Companion::parse)
 
     val ownVersion = loadAnnotationValue()
     val ctorClass = (this as? ConstructorDescriptor)?.containingDeclaration?.loadAnnotationValue()

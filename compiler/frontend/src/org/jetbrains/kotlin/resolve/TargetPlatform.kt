@@ -85,6 +85,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         InlineParameterChecker,
         InfixModifierChecker(),
         SinceKotlinAnnotationValueChecker,
+        RequireKotlinAnnotationValueChecker,
         ReifiedTypeParameterAnnotationChecker(),
         DynamicReceiverChecker,
         DelegationChecker(),

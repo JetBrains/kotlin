@@ -1,0 +1,15 @@
+package
+
+package test {
+    @kotlin.internal.RequireKotlin(version = "") public fun f01(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "x") public fun f02(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "1") public fun f03(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "1.0-beta") public fun f04(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "1.1.0-dev-1111") public fun f05(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "1.5.3.7") public fun f06(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "1..0") public fun f07(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = " 1.0") public fun f08(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "1.1") public fun ok1(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "1.1.0") public fun ok2(): kotlin.Unit
+    @kotlin.internal.RequireKotlin(version = "0.0.0") public fun ok3(): kotlin.Unit
+}
