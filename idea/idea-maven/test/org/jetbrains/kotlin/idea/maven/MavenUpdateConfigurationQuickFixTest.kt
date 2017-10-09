@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.maven
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -87,7 +88,7 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
 
     private fun checkResult(file: VirtualFile) {
         val expectedPath = File(getTestDataPath(), "pom.xml.after")
-        val expectedContent = expectedPath.readText()
+        val expectedContent = FileUtil.loadFile(expectedPath, true)
         val actualContent = LoadTextUtil.loadText(file).toString()
         if (actualContent != expectedContent) {
             throw FileComparisonFailure("pom.xml doesn't match", expectedContent, actualContent, expectedPath.path)
