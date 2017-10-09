@@ -109,6 +109,12 @@ dist {
     }
 }
 
+task dexMethodCount(type: DexMethodCount) {
+    from jar
+    ownPackages = ['kotlin']
+}
+assemble.dependsOn(dexMethodCount)
+
 compileBuiltinsKotlin {
     dependsOn ":core:builtins:serialize"
     kotlinOptions {

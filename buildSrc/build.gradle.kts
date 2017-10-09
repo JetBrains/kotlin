@@ -32,11 +32,13 @@ repositories {
     extra["buildSrcKotlinRepo"]?.let {
         maven { setUrl(it) }
     }
+    maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
 //    maven { setUrl("https://repo.gradle.org/gradle/libs-releases-local") }
 }
 
 dependencies {
     compile(files("../dependencies/native-platform-uberjar.jar"))
+    compile("com.jakewharton.dex:dex-method-list:2.0.0-alpha")
 //    compile("net.rubygrapefruit:native-platform:0.14")
     // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")

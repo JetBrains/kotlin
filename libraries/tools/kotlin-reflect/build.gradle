@@ -170,6 +170,13 @@ task relocatedSourcesJar(type: Jar) {
 
 def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
 
+task dexMethodCount(type: DexMethodCount) {
+    dependsOn(artifactJar.builtBy)
+    jarFile = artifactJar.file
+    ownPackages = ['kotlin.reflect']
+}
+assemble.dependsOn(dexMethodCount)
+
 artifacts {
     mainJar artifactJar
     runtime artifactJar
