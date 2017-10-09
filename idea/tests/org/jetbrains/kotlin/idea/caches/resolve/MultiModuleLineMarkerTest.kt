@@ -121,6 +121,25 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
+    fun testTransitiveCommon() {
+        val commonBaseModule = module("common_base", TestJdkKind.MOCK_JDK)
+        commonBaseModule.createFacet(TargetPlatformKind.Common, false)
+
+        val commonUserModule = module("common_user", TestJdkKind.MOCK_JDK)
+        commonUserModule.createFacet(TargetPlatformKind.Common, false)
+        commonUserModule.enableMultiPlatform()
+        commonUserModule.addDependency(commonBaseModule)
+
+        val jvmPlatform = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        val jvmModule = module("jvm", TestJdkKind.MOCK_JDK)
+        jvmModule.createFacet(jvmPlatform, implementedModuleName = "common_user")
+        jvmModule.enableMultiPlatform()
+        jvmModule.addDependency(commonBaseModule)
+        jvmModule.addDependency(commonUserModule)
+
+        checkHighlightingInAllFiles()
+    }
+
     fun testWithOverloads() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }

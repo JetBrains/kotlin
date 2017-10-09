@@ -130,16 +130,17 @@ private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsPr
     }
 }
 
+private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): ModuleSourceInfo? =
+        when (baseModuleSourceInfo) {
+            is ModuleProductionSourceInfo -> productionSourceInfo()
+            is ModuleTestSourceInfo -> testSourceInfo()
+            else -> null
+        }
+
 private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
     val modelsProvider = IdeModifiableModelsProviderImpl(project)
     val implementingModules = findImplementingModules(modelsProvider)
-    return implementingModules.mapNotNull {
-        when (moduleSourceInfo) {
-            is ModuleProductionSourceInfo -> it.productionSourceInfo()
-            is ModuleTestSourceInfo -> it.testSourceInfo()
-            else -> null
-        }
-    }
+    return implementingModules.mapNotNull { it.getModuleInfo(moduleSourceInfo) }
 }
 
 val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
@@ -157,6 +158,20 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
                       ProjectRootModificationTracker.getInstance(module.project)).toTypedArray()
             )
         })
+    }
+
+val ModuleDescriptor.implementedDescriptor: ModuleDescriptor?
+    get() {
+        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return null
+        val module = moduleSourceInfo.module
+
+        val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
+        val implementedModuleName = module.findImplementedModuleName(modelsProvider)
+        val implementedModule = implementedModuleName?.let { modelsProvider.findIdeModule(it) }
+        val implementedModuleInfo = implementedModule?.getModuleInfo(moduleSourceInfo)
+        return implementedModuleInfo?.let {
+            KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+        }
     }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider,

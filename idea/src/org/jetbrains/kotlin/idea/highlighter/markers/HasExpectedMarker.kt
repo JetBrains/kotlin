@@ -16,40 +16,20 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.facet.implementedDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-val ModuleDescriptor.sourceKind: SourceKind
-    get() = when (getCapability(ModuleInfo.Capability)) {
-        is ModuleProductionSourceInfo -> SourceKind.PRODUCTION
-        is ModuleTestSourceInfo -> SourceKind.TEST
-        else -> SourceKind.OTHER
-    }
-
-enum class SourceKind { OTHER, PRODUCTION, TEST }
-
-fun ModuleDescriptor.commonModuleOrNull(): ModuleDescriptor? {
-    val sourceKind = sourceKind
-    return allDependencyModules.firstOrNull { dependency ->
-        dependency.getMultiTargetPlatform() == MultiTargetPlatform.Common && dependency.sourceKind == sourceKind
-    }
-}
 
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
@@ -62,7 +42,7 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
     val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val commonModuleDescriptor = platformModuleDescriptor.commonModuleOrNull() ?: return null
+    val commonModuleDescriptor = platformModuleDescriptor.implementedDescriptor ?: return null
     if (!commonModuleDescriptor.hasDeclarationOf(descriptor)) return null
 
     return "Has declaration in common module"
@@ -72,7 +52,7 @@ fun navigateToExpectedDeclaration(declaration: KtDeclaration?) {
     declaration?.expectedDeclarationIfAny()?.navigate(false)
 }
 
-internal fun MemberDescriptor.expectedDescriptor() = module.commonModuleOrNull()?.declarationOf(this)
+internal fun MemberDescriptor.expectedDescriptor() = module.implementedDescriptor?.declarationOf(this)
 
 internal fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
     val expectedDescriptor = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() ?: return null
