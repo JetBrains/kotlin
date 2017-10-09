@@ -34,6 +34,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
 
     override fun doTestLineMarkers() = true
 
+    fun testFromActualSealedClass() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
     fun testFromActualSecondaryConstructor() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
@@ -47,6 +51,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
     }
 
     fun testFromCommonToJvmImpl() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
+    fun testFromExpectedSealedClass() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
