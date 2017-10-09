@@ -58,6 +58,7 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    jvmTarget = "1.8"
 }
 
 kotlin.experimental.coroutines 'enable'
