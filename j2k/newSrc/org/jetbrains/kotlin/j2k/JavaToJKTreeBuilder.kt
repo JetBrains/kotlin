@@ -16,21 +16,18 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.j2k.ConverterSettings
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.JavaElementVisitor
+import com.intellij.psi.PsiElement
 
-class NewJavaToKotlinConverter(
-        private val project: Project,
-        private val settings: ConverterSettings
-) {
+class JavaToJKTreeBuilder {
 
-    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): Nothing {
-        val treeBuilder = JavaToJKTreeBuilder()
-        val fileTrees = files.map(treeBuilder::buildTree)
+    private class ElementVisitor : JavaElementVisitor()
 
-        TODO("Output generation")
+    fun buildTree(psi: PsiElement): Nothing {
+        assert(psi.language.`is`(JavaLanguage.INSTANCE)) { "Unable to build JK Tree using Java Visitor for language ${psi.language}" }
+        val elementVisitor = ElementVisitor()
+        psi.accept(elementVisitor)
+        TODO("Tree output type")
     }
 }
