@@ -1382,10 +1382,28 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull ClassConstructorDescriptor constructorDescriptor,
             @Nullable ResolvedCall<ConstructorDescriptor> delegationConstructorCall
     ) {
+        MethodContext codegenContext = codegen.context;
+        assert codegenContext instanceof ConstructorContext :
+                "Constructor context expected: " + codegenContext;
+        assert !((ConstructorContext) codegenContext).isThisInitialized() :
+                "Delegating constructor call is already generated for " + ((ConstructorContext) codegenContext).getConstructorDescriptor();
+
         if (delegationConstructorCall == null) {
             genSimpleSuperCall(iv);
-            return;
         }
+        else {
+            generateDelegationConstructorCall(iv, codegen, constructorDescriptor, delegationConstructorCall);
+        }
+
+        ((ConstructorContext) codegenContext).setThisInitialized(true);
+    }
+
+    private void generateDelegationConstructorCall(
+            @NotNull InstructionAdapter iv,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull ClassConstructorDescriptor constructorDescriptor,
+            @NotNull ResolvedCall<ConstructorDescriptor> delegationConstructorCall
+    ) {
         iv.load(0, OBJECT_TYPE);
         ConstructorDescriptor delegateConstructor = SamCodegenUtil.resolveSamAdapter(codegen.getConstructorDescriptor(delegationConstructorCall));
 

@@ -1736,7 +1736,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if (isPossiblyUninitializedSingleton(classDescriptor) && isInsideSingleton(classDescriptor)) {
+            if (shouldGenerateSingletonAsThisOrOuterFromContext(classDescriptor)) {
                 return generateThisOrOuterFromContext(classDescriptor, false, false);
             }
             if (isObject(classDescriptor)) {
@@ -1757,6 +1757,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return localOrCaptured;
         }
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+    }
+
+    private boolean shouldGenerateSingletonAsThisOrOuterFromContext(ClassDescriptor classDescriptor) {
+        return isPossiblyUninitializedSingleton(classDescriptor) &&
+               isInsideSingleton(classDescriptor) &&
+               isThisInitialized(classDescriptor);
+    }
+
+    private boolean isThisInitialized(ClassDescriptor classDescriptor) {
+        CodegenContext context = this.context;
+        while (context != null) {
+            if (context instanceof ConstructorContext) {
+                ConstructorContext constructorContext = (ConstructorContext) context;
+                ClassDescriptor constructedClass = constructorContext.getConstructorDescriptor().getConstructedClass();
+                if (constructedClass == classDescriptor) {
+                    return constructorContext.isThisInitialized();
+                }
+            }
+            context = context.getParentContext();
+        }
+        return true;
     }
 
     @Nullable
@@ -2601,7 +2622,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getFunctionDescriptor())) {
             return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
         }
-        else if (CodegenUtilKt.isPossiblyUninitializedSingleton(calleeContainingClass) && isInsideSingleton(calleeContainingClass)) {
+        else if (shouldGenerateSingletonAsThisOrOuterFromContext(calleeContainingClass)) {
             return generateThisOrOuterFromContext(calleeContainingClass, isSuper, forceOuter);
         }
         else if (isEnumEntry(calleeContainingClass)) {
