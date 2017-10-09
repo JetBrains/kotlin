@@ -47,20 +47,14 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
             Pair("file", fileContents)
         }
 
-        fun parseBoolean(text: String): Boolean = when (text) {
-            "true" -> true
-            "false" -> false
-            else -> throw IllegalArgumentException("Unknown option value: $text")
-        }
-
-        var settings = ConverterSettings.defaultSettings.copy()
+        val settings = ConverterSettings.defaultSettings.copy()
         val directives = KotlinTestUtils.parseDirectives(javaCode)
         for ((name, value) in directives) {
             when (name) {
-                "forceNotNullTypes" -> settings.forceNotNullTypes = parseBoolean(value)
-                "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = parseBoolean(value)
-                "specifyFieldTypeByDefault" -> settings.specifyFieldTypeByDefault = parseBoolean(value)
-                "openByDefault" -> settings.openByDefault = parseBoolean(value)
+                "forceNotNullTypes" -> settings.forceNotNullTypes = value.toBoolean()
+                "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = value.toBoolean()
+                "specifyFieldTypeByDefault" -> settings.specifyFieldTypeByDefault = value.toBoolean()
+                "openByDefault" -> settings.openByDefault = value.toBoolean()
                 else -> throw IllegalArgumentException("Unknown option: $name")
             }
         }
@@ -105,7 +99,7 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
             reformattedText
     }
 
-    private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
+    protected open fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
         val converter = JavaToKotlinConverter(project, settings, IdeaJavaToKotlinServices)
         return converter.filesToKotlin(listOf(file), J2kPostProcessor(formatCode = true)).results.single()
@@ -151,11 +145,11 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
 
     private fun String.removeLastLine() = substringBeforeLast('\n', "")
 
-    private fun createJavaFile(text: String): PsiJavaFile {
+    protected fun createJavaFile(text: String): PsiJavaFile {
         return myFixture.configureByText("converterTestFile.java", text) as PsiJavaFile
     }
 
-    private fun createKotlinFile(text: String): KtFile {
+    protected fun createKotlinFile(text: String): KtFile {
         return myFixture.configureByText("converterTestFile.kt", text) as KtFile
     }
 }
