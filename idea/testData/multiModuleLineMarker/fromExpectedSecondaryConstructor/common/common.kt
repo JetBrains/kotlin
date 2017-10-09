@@ -1,3 +1,3 @@
 expect class <lineMarker>SecondaryConstructor</lineMarker>{
-    constructor(name: String, surname: String)
+    <lineMarker>constructor</lineMarker>(name: String, surname: String)
 }

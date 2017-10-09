@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import java.awt.event.MouseEvent
@@ -60,6 +61,12 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         // all Kotlin markers are added in slow marker pass
         return null
     }
+
+    private fun KtNamedDeclaration.isExpectDeclaration(): Boolean =
+            hasExpectModifier() || containingClassOrObject?.isExpectDeclaration() == true
+
+    private fun KtNamedDeclaration.isActualDeclaration(): Boolean =
+            hasActualModifier()
 
     override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
         if (elements.isEmpty()) return
@@ -100,10 +107,10 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         for (element in elements) {
             if (element !is KtNamedDeclaration) continue
 
-            if (element.hasExpectModifier()) {
+            if (element.isExpectDeclaration()) {
                 collectActualMarkers(element, result)
             }
-            else if (element.hasActualModifier()) {
+            else if (element.isActualDeclaration()) {
                 collectExpectedMarkers(element, result)
             }
         }

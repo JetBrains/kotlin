@@ -1,5 +1,5 @@
 expect class <lineMarker>Header</lineMarker> {
-    fun foo(): Int
+    fun <lineMarker>foo</lineMarker>(): Int
 }
 
 expect fun <lineMarker>foo</lineMarker>(arg: Int): String
