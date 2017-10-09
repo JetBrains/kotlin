@@ -1,4 +1,4 @@
-// HIGHLIGHT: INFORMATION
+// HIGHLIGHT: INFO
 
 fun foo(): Int {
     var res = 0
