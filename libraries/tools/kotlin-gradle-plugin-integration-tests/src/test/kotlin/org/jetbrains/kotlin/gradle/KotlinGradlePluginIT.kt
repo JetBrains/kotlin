@@ -385,47 +385,6 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-
-    @Test
-    fun testMultiplatformCompile() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(":lib:compileKotlinCommon",
-                    ":lib:compileTestKotlinCommon",
-                    ":libJvm:compileKotlin",
-                    ":libJvm:compileTestKotlin",
-                    ":libJs:compileKotlin2Js",
-                    ":libJs:compileTestKotlin2Js")
-            assertFileExists("lib/build/classes/main/foo/PlatformClass.kotlin_metadata")
-            assertFileExists("lib/build/classes/test/foo/PlatformTest.kotlin_metadata")
-            assertFileExists("libJvm/build/classes/main/foo/PlatformClass.class")
-            assertFileExists("libJvm/build/classes/test/foo/PlatformTest.class")
-            assertFileExists("libJs/build/classes/main/libJs.js")
-            assertFileExists("libJs/build/classes/test/libJs_test.js")
-        }
-    }
-
-    @Test
-    fun testDeprecatedImplementWarning() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
-
-        project.build("build") {
-            assertSuccessful()
-            assertNotContains(IMPLEMENT_DEPRECATION_WARNING)
-        }
-
-        project.projectDir.walk().filter { it.name == "build.gradle" }.forEach { buildGradle ->
-            buildGradle.modify { it.replace(EXPECTED_BY_CONFIG_NAME, IMPLEMENT_CONFIG_NAME) }
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(IMPLEMENT_DEPRECATION_WARNING)
-        }
-    }
-
     @Test
     fun testFreeCompilerArgs() {
         val project = Project("kotlinProject", GRADLE_VERSION)
