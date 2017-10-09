@@ -1140,7 +1140,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         if (tests) {
             testsOut.walk().filterTo(outputFiles) { it.isFile }
         }
-        return outputFiles.map { it.relativeTo(workDir).path }
+        return outputFiles.map { FileUtilRt.toSystemIndependentName(it.relativeTo(workDir).path) }
     }
 
     private val JpsModule.prodOut: File
