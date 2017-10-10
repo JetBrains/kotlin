@@ -9,8 +9,8 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     netinet/icmp6.h netinet/if_ether.h netinet/in.h netinet/in_systm.h \
     netinet/ip.h netinet/ip6.h netinet/ip_icmp.h netinet/tcp.h netinet/udp.h \
     sys/ioctl.h sys/ipc.h sys/mman.h sys/poll.h sys/ptrace.h \
-    sys/queue.h sys/select.h sys/shm.h sys/stat.h \
-    limits.h sys/time.h sys/times.h sys/wait.h
+    sys/queue.h sys/select.h sys/shm.h sys/stat.h sys/socket.h \
+    sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
 compilerOpts = -D_ANSI_SOURCE -D_POSIX_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700
 
