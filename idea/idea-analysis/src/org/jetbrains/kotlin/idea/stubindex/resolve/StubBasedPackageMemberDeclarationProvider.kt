@@ -61,9 +61,12 @@ class StubBasedPackageMemberDeclarationProvider(
         return result
     }
 
-    override fun getDeclarationNames() =
-            getDeclarations(DescriptorKindFilter.ALL, { true })
-                    .mapTo(mutableSetOf()) { ResolveSessionUtils.safeNameForLazyResolve(it as KtNamedDeclaration) }
+    private val declarationNames_ by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        getDeclarations(DescriptorKindFilter.ALL, { true })
+                .mapTo(mutableSetOf()) { ResolveSessionUtils.safeNameForLazyResolve(it as KtNamedDeclaration) }
+    }
+
+    override fun getDeclarationNames() = declarationNames_
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> {
         val result = ArrayList<KtClassLikeInfo>()
