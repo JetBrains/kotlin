@@ -832,7 +832,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractFindUsagesTest> {
-            model("findUsages/kotlin", pattern = """^(.+)\.0\.kt$""")
+            model("findUsages/kotlin", pattern = """^(.+)\.0\.(kt|kts)$""")
             model("findUsages/java", pattern = """^(.+)\.0\.java$""")
             model("findUsages/propertyFiles", pattern = """^(.+)\.0\.properties$""")
         }
