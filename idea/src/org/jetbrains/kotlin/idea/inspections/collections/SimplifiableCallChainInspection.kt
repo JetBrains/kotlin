@@ -59,9 +59,10 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
                     // Do not apply on maps due to lack of relevant stdlib functions
                     val firstReceiverType = firstResolvedCall.extensionReceiver?.type
-                    if (firstReceiverType != null) {
-                        val mapType = builtIns.map.defaultType
-                        if (firstReceiverType.isSubtypeOf(mapType)) return
+                    val firstReceiverRawType = firstReceiverType?.constructor?.declarationDescriptor?.defaultType
+                    if (firstReceiverRawType != null) {
+                        if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
+                            firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)) return
                     }
 
                     // Do not apply for lambdas with return inside
