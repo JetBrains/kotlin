@@ -30,8 +30,10 @@ class KotlinUBlockExpression(
     private class KotlinLazyUBlockExpression(
             override val uastParent: UElement?,
             expressionProducer: (expressionParent: UElement?) -> List<UExpression>
-    ) : UBlockExpression {
+    ) : UBlockExpression, JvmDeclarationUElement {
         override val psi: PsiElement? = null
+        override val javaPsi: PsiElement? = null
+        override val sourcePsi: PsiElement? = null
         override val annotations: List<UAnnotation> = emptyList()
         override val expressions by lz { expressionProducer(this) }
     }
