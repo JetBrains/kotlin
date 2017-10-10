@@ -243,6 +243,10 @@ task crossDistRuntime(type: Copy) {
     dependsOn('commonDistRuntime')
 }
 
+task crossDistPlatformLibs {
+    dependsOn.addAll(targetList.collect { "${it}PlatformLibs" })
+}
+
 targetList.each { target ->
     task("${target}CrossDistRuntime", type: Copy) {
         dependsOn ":runtime:${target}Runtime"
