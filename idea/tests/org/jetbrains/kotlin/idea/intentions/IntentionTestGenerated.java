@@ -5036,6 +5036,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("defaultNamed2.kt")
+        public void testDefaultNamed2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultNamed2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultNamed3.kt")
+        public void testDefaultNamed3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultNamed3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultOverridden.kt")
         public void testDefaultOverridden() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultOverridden.kt");
@@ -5045,6 +5057,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("defaultUnnamed.kt")
         public void testDefaultUnnamed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultUnnamed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultUnnamed2.kt")
+        public void testDefaultUnnamed2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultUnnamed2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultUnnamed3.kt")
+        public void testDefaultUnnamed3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultUnnamed3.kt");
             doTest(fileName);
         }
 
