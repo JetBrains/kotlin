@@ -104,7 +104,7 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * Run the "IDEA" run configuration in the project
 * a child IntelliJ IDEA with the Kotlin plugin will then startup
 
-### Latest plugin
+###Latest plugin
 
 You probably want to have locally the same version of plugin that build server is using for building.
 As this version is constantly moving, the best way to always be updated is to let IntelliJ IDEA notify you when it is time to renew your plugin.
@@ -120,14 +120,8 @@ Open:
 
 and add the following URL to your repositories:
 
-##### For bleeding edge plugin
-
     https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_CompilerAllPlugins),status:SUCCESS/artifacts/content/updatePlugins-IJ2017.3.xml
-
-##### For bootstrap plugin
-
-    https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_CompilerAllPlugins),tag:bootstrap/artifacts/content/updatePlugins-IJ2017.3.xml
-
+    
 Then update the list of plugins in "Browse Repositories", you'll see two versions of Kotlin there, install the one with the higher version number.
 
 If you want to keep an IntelliJ IDEA installation with that bleeding edge Kotlin plugin for working Kotlin project sources only separate to your default IntelliJ IDEA installation with the stable Kotlin
