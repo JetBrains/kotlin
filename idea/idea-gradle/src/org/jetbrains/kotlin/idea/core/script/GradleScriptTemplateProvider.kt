@@ -88,18 +88,25 @@ abstract class AbstractGradleScriptTemplatesProvider(
     }
 }
 
-class GradleKotlinDSLTemplateProvider(project: Project) : AbstractGradleScriptTemplatesProvider(
+abstract class AbstractGradleKotlinDSLTemplateProvider(project: Project, private val templateClass: String)
+    : AbstractGradleScriptTemplatesProvider(
         project,
         "Gradle Kotlin DSL",
-        "org.gradle.kotlin.dsl.KotlinBuildScript",
+        templateClass,
         Regex("^gradle-(?:kotlin-dsl|core).*\\.jar\$")
 ) {
     // TODO_R: check this against kotlin-dsl branch that uses daemon
     override val additionalResolverClasspath: List<File> get() =
-            // additionally need compiler jar to load gradle resolver
-            gradleLibDir.listFiles { file -> file.name.startsWith("kotlin-compiler-embeddable") }
-                    .firstOrNull()?.let(::listOf).orEmpty()
+    // additionally need compiler jar to load gradle resolver
+        gradleLibDir.listFiles { file -> file.name.startsWith("kotlin-compiler-embeddable") }
+                .firstOrNull()?.let(::listOf).orEmpty()
 }
+
+class GradleSettingsKotlinDSLTemplateProvider(project: Project)
+    : AbstractGradleKotlinDSLTemplateProvider(project, "org.gradle.kotlin.dsl.KotlinSettingsScript")
+
+class GradleKotlinDSLTemplateProvider(project: Project)
+    : AbstractGradleKotlinDSLTemplateProvider(project, "org.gradle.kotlin.dsl.KotlinBuildScript")
 
 class LegacyGradleScriptKotlinTemplateProvider(project: Project) : AbstractGradleScriptTemplatesProvider(
         project,
