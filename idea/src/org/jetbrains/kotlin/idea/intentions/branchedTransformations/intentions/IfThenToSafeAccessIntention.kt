@@ -30,7 +30,7 @@ class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(If
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
 
     override fun problemHighlightType(element: KtIfExpression): ProblemHighlightType =
-            if (element.shouldBeTransformed()) super.problemHighlightType(element) else ProblemHighlightType.INFORMATION
+            if (element.shouldBeTransformed()) super.problemHighlightType(element) else ProblemHighlightType.INFO
 }
 
 class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
