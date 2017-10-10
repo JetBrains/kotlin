@@ -270,13 +270,15 @@ targetList.each { target ->
         }
     }
 
+    Task platformLibs = task("${target}PlatformLibs") {}
+
     targetDefFiles(target).forEach{
         defFile ->
             def taskName = defFileToTaskName(target, defFile.name)
             def suffix = null
             if (new PlatformInfo().isWindows())
                 suffix = 'bat'
-            task(taskName, type:GradleBuild) {
+            Task libTask = task(taskName, type:GradleBuild) {
                 dependsOn ':dist'
                 dependsOn ':tools:kotlin-native-gradle-plugin:jar'
                 dependsOn defFile.config.depends.collect{defFileToTaskName(target, it)}
@@ -293,6 +295,7 @@ targetList.each { target ->
                         'libraries'      : defFile.config.depends.join(" ")
                 ]
             }
+            platformLibs.dependsOn(libTask)
     }
 }
 
