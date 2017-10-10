@@ -1,11 +1,15 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.gradle.api.*
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.kotlin.dsl.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.task
+import org.gradle.kotlin.dsl.the
+import java.lang.Character.isLowerCase
+import java.lang.Character.isUpperCase
 
 fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
@@ -13,22 +17,29 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
         if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
         patterns.forEach { pattern ->
             val maybeMethodName = pattern.substringAfterLast('.')
-            val className = if (maybeMethodName.isNotEmpty() && maybeMethodName[0].isLowerCase())
+            val maybeClassFqName = if (maybeMethodName.isFirstChar(::isLowerCase))
                 pattern.substringBeforeLast('.')
             else
                 pattern
 
-            val matchPattern = className.replace('.', '/') + ".class"
+            if (!maybeClassFqName.substringAfterLast('.').isFirstChar(::isUpperCase)) {
+                return@forEach
+            }
+
+            val classFileNameWithoutExtension = maybeClassFqName.replace('.', '/')
+            val classFileName = classFileNameWithoutExtension + ".class"
 
             include {
+                val path = it.path
                 if (it.isDirectory) {
-                    matchPattern.startsWith(it.path)
+                    classFileNameWithoutExtension.startsWith(path)
                 } else {
-                    it.path.endsWith(matchPattern)
+                    path == classFileName || (path.endsWith(".class") && path.startsWith(classFileNameWithoutExtension + "$"))
                 }
             }
         }
     }
+
     jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1100m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
     maxHeapSize = "1100m"
     systemProperty("idea.is.unit.test", "true")
@@ -39,6 +50,8 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
     ignoreFailures = System.getenv("kotlin_build_ignore_test_failures")?.let { it == "yes" } ?: false
     body()
 }
+
+private inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(first())
 
 inline fun <reified T : Task> Project.getOrCreateTask(taskName: String, body: T.() -> Unit): T =
         (tasks.findByName(taskName)?.let { it as T } ?: task<T>(taskName)).apply { body() }
