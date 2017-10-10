@@ -59,6 +59,8 @@ data class File constructor(internal val javaPath: Path) {
             return result
         }
 
+    fun child(name: String) = File(this, name)
+
     fun copyTo(destination: File) {
         Files.copy(javaPath, destination.javaPath, StandardCopyOption.REPLACE_EXISTING) 
     }

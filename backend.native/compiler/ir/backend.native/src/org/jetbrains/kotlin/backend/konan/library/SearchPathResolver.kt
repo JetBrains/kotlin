@@ -34,7 +34,12 @@ fun defaultResolver(repositories: List<String>, targetManager: TargetManager): S
         defaultResolver(repositories, Distribution(targetManager))
 
 fun defaultResolver(repositories: List<String>, distribution: Distribution): SearchPathResolver =
-        KonanLibrarySearchPathResolver(repositories, distribution.klib, distribution.localKonanDir)
+        KonanLibrarySearchPathResolver(
+                repositories,
+                distribution.targetManager,
+                distribution.klib,
+                distribution.localKonanDir
+        )
 
 fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
                                                  target: KonanTarget,
@@ -94,14 +99,22 @@ fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
     )
 }
 
-class KonanLibrarySearchPathResolver(repositories: List<String>,
-    val distributionKlib: String?, val localKonanDir: String?, val skipCurrentDir: Boolean = false): SearchPathResolver {
+class KonanLibrarySearchPathResolver(
+        repositories: List<String>,
+        val targetManager: TargetManager?,
+        val distributionKlib: String?,
+        val localKonanDir: String?,
+        val skipCurrentDir: Boolean = false
+): SearchPathResolver {
 
     val localHead: File?
         get() = localKonanDir?.File()?.klib
 
     val distHead: File?
         get() = distributionKlib?.File()
+
+    val distPlatformHead: File?
+        get() = targetManager?.let { distHead?.child(targetManager.targetName) }
 
     val currentDirHead: File?
         get() = if (!skipCurrentDir) File.userDir else null
@@ -112,7 +125,7 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
 
     // This is the place where we specify the order of library search.
     override val searchRoots: List<File> by lazy {
-        (listOf(currentDirHead) + repoRoots + listOf(localHead, distHead)).filterNotNull()
+        (listOf(currentDirHead) + repoRoots + listOf(localHead, distHead, distPlatformHead)).filterNotNull()
     }
 
     private fun found(candidate: File): File? {
@@ -145,7 +158,7 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
 
     // The libraries from the default root are linked automatically.
     val defaultRoot: File?
-        get() = if (distHead?.exists ?: false) distHead else null
+        get() = if (distPlatformHead?.exists ?: false) distPlatformHead else null
 
     override fun defaultLinks(nostdlib: Boolean, noDefaultLibs: Boolean): List<File> {
         val defaultLibs = defaultRoot?.listFiles.orEmpty()
