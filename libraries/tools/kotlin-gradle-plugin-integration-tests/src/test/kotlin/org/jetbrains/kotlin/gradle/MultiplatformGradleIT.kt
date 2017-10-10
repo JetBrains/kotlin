@@ -84,4 +84,41 @@ class MultiplatformGradleIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testSubprojectWithAnotherClassLoader() {
+        with(Project("multiplatformProject", GRADLE_VERSION)) {
+            setupWorkingDir()
+
+            // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
+            // plugins separately for the subproject, with a different class loader:
+            File(projectDir, "libJs/build.gradle").modify {
+                "plugins { id 'com.moowork.node' version '1.0.1' }" + "\n" + it
+            }
+
+            // Remove the root project buildscript dependency, needed for the same purpose:
+            File(projectDir, "build.gradle").modify {
+                it.replace("classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:\$kotlin_version'", "")
+                        .apply { assert(!equals(it)) }
+            }
+
+            // Instead, add the dependencies directly to the subprojects buildscripts:
+            listOf("lib", "libJvm", "libJs").forEach { subDirectory ->
+                File(projectDir, "$subDirectory/build.gradle").modify {
+                    """
+                    buildscript {
+                        repositories { mavenLocal(); jcenter() }
+                        dependencies {
+                            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
+                        }
+                    }
+                    """.trimIndent() + "\n" + it
+                }
+            }
+
+            build("build") {
+                assertSuccessful()
+            }
+        }
+    }
 }

@@ -95,7 +95,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         }
 
         commonProject.whenEvaluated {
-            if ((!commonProject.plugins.hasPlugin(KotlinPlatformCommonPlugin::class.java))) {
+            if (!commonProject.pluginManager.hasPlugin("kotlin-platform-common")) {
                 throw GradleException(
                         "Platform project $platformProject has an " +
                         "'$EXPECTED_BY_CONFIG_NAME'${if (implementConfigurationIsUsed) "/'$IMPLEMENT_CONFIG_NAME'" else ""} " +
@@ -115,7 +115,14 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     }
 
     protected val SourceSet.kotlin: SourceDirectorySet?
-            get() = ((getConvention("kotlin") ?: getConvention("kotlin2js")) as? KotlinSourceSet)?.kotlin
+        get() {
+            // Access through reflection, because another project's KotlinSourceSet might be loaded
+            // by a different class loader:
+            val convention = (getConvention("kotlin") ?: getConvention("kotlin2js")) ?: return null
+            val kotlinSourceSetIface = convention.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
+            val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
+            return getKotlin(convention) as? SourceDirectorySet
+        }
 
     companion object {
         @JvmStatic
@@ -128,7 +135,6 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             }
         }
     }
-
 }
 
 open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {
