@@ -16214,6 +16214,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("expected.kt")
+        public void testExpected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/expected.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("getter.kt")
         public void testGetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/getter.kt");
