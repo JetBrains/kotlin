@@ -1,6 +1,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtParameter
@@ -17,6 +18,11 @@ class KotlinUAnnotation(
         override val psi: KtAnnotationEntry,
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UAnnotation {
+
+    override val javaPsi = psi.toLightAnnotation()
+
+    override val sourcePsi = psi
+
     private val resolvedAnnotation: AnnotationDescriptor? by lz { psi.analyze()[BindingContext.ANNOTATION, psi] }
 
     private val resolvedCall: ResolvedCall<*>? by lz { psi.getResolvedCall(psi.analyze()) }
