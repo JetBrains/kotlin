@@ -40,12 +40,12 @@ class MultiplatformGradleIT : BaseGradleIT() {
                            ":libJvm:compileTestKotlin",
                            ":libJs:compileKotlin2Js",
                            ":libJs:compileTestKotlin2Js")
-            assertFileExists("lib/build/classes/main/foo/PlatformClass.kotlin_metadata")
-            assertFileExists("lib/build/classes/test/foo/PlatformTest.kotlin_metadata")
-            assertFileExists("libJvm/build/classes/main/foo/PlatformClass.class")
-            assertFileExists("libJvm/build/classes/test/foo/PlatformTest.class")
-            assertFileExists("libJs/build/classes/main/libJs.js")
-            assertFileExists("libJs/build/classes/test/libJs_test.js")
+            assertFileExists("lib/build/classes/kotlin/main/foo/PlatformClass.kotlin_metadata")
+            assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
+            assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
+            assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
+            assertFileExists("libJs/build/classes/kotlin/main/libJs.js")
+            assertFileExists("libJs/build/classes/kotlin/test/libJs_test.js")
         }
     }
 
