@@ -1,3 +1,5 @@
+depends = posix
 package = platform.zlib
 headers = zconf.h zlib.h
+headerFilter = **
 linkerOpts = -lz

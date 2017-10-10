@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.cli.bc.main as konancMain
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop 
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 
+private val NODEFAULTLIBS = "-nodefaultlibs"
+
 fun invokeCinterop(args: Array<String>) {
-    val cinteropArgFilter = listOf("-nodefaultlibs")
+    val cinteropArgFilter = listOf(NODEFAULTLIBS)
 
     var outputFileName = "nativelib"
     var target = "host"
@@ -46,7 +48,7 @@ fun invokeCinterop(args: Array<String>) {
             libraries.addIfNotNull(nextArg)
         if (arg == "-r" || arg == "-repo")
             repos.addIfNotNull(nextArg)
-        if (arg == "-nodefaultlibs")
+        if (arg == NODEFAULTLIBS)
             noDefaultLibs = true
     }
 
@@ -94,7 +96,9 @@ fun invokeCinterop(args: Array<String>) {
         "-o", outputFileName,
         "-target", target,
         "-manifest", manifest.path
-    ) + cinteropArgsToCompiler + libraries.flatMap { listOf("-library", it) } + repos.flatMap { listOf("-repo", it) }
+    ) + cinteropArgsToCompiler + libraries.flatMap { listOf("-library", it) } + repos.flatMap { listOf("-repo", it) } +
+            if (noDefaultLibs) arrayOf(NODEFAULTLIBS) else emptyArray()
+
     konancMain(konancArgs)
 }
 

@@ -43,7 +43,7 @@ fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
                                                  noDefaultLibs: Boolean = false,
                                                  removeDuplicates: Boolean = true): List<LibraryReaderImpl> {
 
-    val defaultLibraries = defaultLinks(noStdLib, noDefaultLibs).map {
+    val defaultLibraries = defaultLinks(nostdlib = noStdLib, noDefaultLibs = noDefaultLibs).map {
         LibraryReaderImpl(it, abiVersion, target, isDefaultLink = true)
     }
 
@@ -82,7 +82,14 @@ fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
                                                  noStdLib: Boolean = false,
                                                  noDefaultLibs: Boolean = false): List<LibraryReaderImpl> {
     return resolveLibrariesRecursive(
-            resolveImmediateLibraries(libraryNames, target, abiVersion, noStdLib, noDefaultLibs, true),
+            resolveImmediateLibraries(
+                    libraryNames = libraryNames,
+                    target = target,
+                    abiVersion = abiVersion,
+                    noStdLib = noStdLib,
+                    noDefaultLibs = noDefaultLibs,
+                    removeDuplicates = true
+            ),
             target, abiVersion
     )
 }
