@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
@@ -47,7 +47,8 @@ class ReplaceAddWithPlusAssignIntention : SelfTargetingOffsetIndependentIntentio
         } ?: return false
 
         val resolvedCall = element.getResolvedCall(context) ?: return false
-        val receiverClass = DescriptorUtils.getClassDescriptorForType(resolvedCall.getExplicitReceiverValue()?.type ?: return false)
+        val receiverType = resolvedCall.getExplicitReceiverValue()?.type ?: return false
+        val receiverClass = receiverType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
         return receiverClass.isSubclassOf(DefaultBuiltIns.Instance.mutableCollection)
     }
 
