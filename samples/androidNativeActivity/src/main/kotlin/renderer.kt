@@ -15,7 +15,46 @@
  */
 
 import kotlinx.cinterop.*
-import android.*
+import platform.android.*
+import platform.egl.*
+import platform.posix.*
+import platform.gles3.*
+import platform.gles.GL_PERSPECTIVE_CORRECTION_HINT
+import platform.gles.GL_SMOOTH
+import platform.gles.GL_PROJECTION
+import platform.gles.glLoadIdentity
+import platform.gles.glFrustumf
+import platform.gles.glMatrixMode
+import platform.gles.GL_MODELVIEW
+import platform.gles.glTranslatef
+import platform.gles.glShadeModel
+import platform.gles.GL_LIGHT0
+import platform.gles.GL_POSITION
+import platform.gles.glMaterialfv
+import platform.gles.GL_DIFFUSE
+import platform.gles.GL_SHININESS
+import platform.gles.glPushMatrix
+import platform.gles.glRotatef
+import platform.gles.glMultMatrixf
+import platform.gles.GL_MODELVIEW_MATRIX
+import platform.gles.glPopMatrix
+import platform.gles.glTexEnvf
+import platform.gles.GL_TEXTURE_ENV
+import platform.gles.GL_TEXTURE_ENV_MODE
+import platform.gles.glLightfv
+import platform.gles.GL_LIGHTING
+import platform.gles.GL_SPECULAR
+import platform.gles.glMaterialf
+import platform.gles.glTexEnvfv
+import platform.gles.glEnableClientState
+import platform.gles.GL_VERTEX_ARRAY
+import platform.gles.GL_NORMAL_ARRAY
+import platform.gles.GL_TEXTURE_COORD_ARRAY
+import platform.gles.glVertexPointer
+import platform.gles.glTexCoordPointer
+import platform.gles.glNormalPointer
+import platform.gles.GL_TEXTURE_ENV_COLOR
+
 
 class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActivity, val savedMatrix: COpaquePointer?) {
 
@@ -294,7 +333,7 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
         surface = null
         context = null
         initialized = false
-
-        arena.clear()
+        // TODO: What should be called here?
+        //arena.clear()
     }
 }

@@ -15,7 +15,10 @@
  */
 
 import kotlinx.cinterop.*
-import android.*
+import platform.android.*
+import platform.posix.*
+import platform.gles3.*
+import platform.linux.*
 
 fun logError(message: String) {
     __android_log_write(ANDROID_LOG_ERROR, "KonanActivity", message)
@@ -26,7 +29,7 @@ fun logInfo(message: String) {
 }
 
 val errno: Int
-    get() = interop_errno()
+    get() = posix_errno()
 
 fun getUnixError() = strerror(errno)!!.toKString()
 
@@ -95,7 +98,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
 
     private fun processSysEvent(fd: IntVar): Boolean = memScoped {
         val eventPointer = alloc<COpaquePointerVar>()
-        val readBytes = read(fd.value, eventPointer.ptr, pointerSize.signExtend<size_t>()).toLong()
+        val readBytes = read(fd.value, eventPointer.ptr, pointerSize.signExtend<platform.posix.size_t>()).toLong()
         if (readBytes != pointerSize.toLong()) {
             logError("Failure reading event, $readBytes read: ${getUnixError()}")
             return true
@@ -138,7 +141,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
                 NativeActivityEventKind.SAVE_INSTANCE_STATE -> {
                     val saveStateEvent = eventPointer.value.dereferenceAs<NativeActivitySaveStateEvent>()
                     val state = renderer.getState()
-                    val dataSize = state.second.signExtend<size_t>()
+                    val dataSize = state.second.signExtend<platform.posix.size_t>()
                     rendererState = realloc(rendererState, dataSize)
                     memcpy(rendererState, state.first, dataSize)
                     saveStateEvent.savedState = rendererState
@@ -160,7 +163,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
     }
 
     private fun getEventPoint(event: CPointer<AInputEvent>?, i: Int) =
-            Vector2(AMotionEvent_getRawX(event, i.signExtend<size_t>()), AMotionEvent_getRawY(event, i.signExtend<size_t>()))
+            Vector2(AMotionEvent_getRawX(event, i.signExtend<platform.posix.size_t>()), AMotionEvent_getRawY(event, i.signExtend<platform.posix.size_t>()))
 
     private fun getEventTime(event: CPointer<AInputEvent>?) =
             AMotionEvent_getEventTime(event) / 1_000_000_000.0f

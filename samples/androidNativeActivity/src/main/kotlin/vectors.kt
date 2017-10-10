@@ -15,7 +15,8 @@
  */
 
 import kotlinx.cinterop.*
-import android.*
+import platform.android.*
+import platform.posix.*
 
 class Vector2(val x: Float, val y: Float) {
     val length by lazy { sqrtf(x * x + y * y) }
