@@ -61,6 +61,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
 
     private var needRedraw = true
     private var animating = false
+    private val pointerSize = CPointerVar.size
 
     fun mainLoop() {
         while (true) {
@@ -98,7 +99,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
 
     private fun processSysEvent(fd: IntVar): Boolean = memScoped {
         val eventPointer = alloc<COpaquePointerVar>()
-        val readBytes = read(fd.value, eventPointer.ptr, pointerSize.signExtend<platform.posix.size_t>()).toLong()
+        val readBytes = read(fd.value, eventPointer.ptr, pointerSize.narrow()).toLong()
         if (readBytes != pointerSize.toLong()) {
             logError("Failure reading event, $readBytes read: ${getUnixError()}")
             return true
