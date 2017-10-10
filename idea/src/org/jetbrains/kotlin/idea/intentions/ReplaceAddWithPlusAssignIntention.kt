@@ -29,15 +29,17 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverVa
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class ReplaceAddWithPlusAssignIntention : SelfTargetingOffsetIndependentIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace with '+='") {
+class ReplaceAddWithPlusAssignIntention : SelfTargetingOffsetIndependentIntention<KtDotQualifiedExpression>(
+        KtDotQualifiedExpression::class.java,
+        "Replace with '+='"
+) {
+    private val compatibleNames = setOf("add", "addAll")
+
     override fun isApplicableTo(element: KtDotQualifiedExpression): Boolean {
         if (element.callExpression?.valueArguments?.size != 1) return false
 
-        when (element.calleeName) {
-            "add" -> text = "Replace 'add()' with '+='"
-            "addAll" -> text = "Replace 'addAll()' with '+='"
-            else -> return false
-        }
+        if (element.calleeName !in compatibleNames) return false
+        text = "Replace '${element.calleeName}()' with '+='"
 
         val context = element.analyze(BodyResolveMode.PARTIAL)
         BindingContextUtils.extractVariableDescriptorFromReference(context, element.receiverExpression)?.let {
