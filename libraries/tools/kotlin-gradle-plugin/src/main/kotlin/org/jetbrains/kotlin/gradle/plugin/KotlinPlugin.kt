@@ -290,6 +290,8 @@ internal class Kotlin2JsSourceSetProcessor(
         kotlinTask.source(kotlinSourceSet.kotlin)
         createCleanSourceMapTask()
 
+        sourceSet.clearJavaSrcDirs()
+
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.afterEvaluate { project ->
             val subpluginEnvironment: SubpluginEnvironment = loadSubplugins(project)
@@ -342,6 +344,8 @@ internal class KotlinCommonSourceSetProcessor(
         compileTaskNameSuffix = "kotlinCommon"
 ) {
     override fun doTargetSpecificProcessing() {
+        sourceSet.clearJavaSrcDirs()
+
         project.afterEvaluate { project ->
             kotlinTask.source(kotlinSourceSet.kotlin)
             project.tasks.findByName(sourceSet.classesTaskName).dependsOn(kotlinTask)
@@ -707,6 +711,10 @@ internal fun createSyncOutputTask(
     project.logger.kotlinDebug { "Created task ${syncTask.path} to copy kotlin classes from $kotlinDir to $javaDir" }
 
     return syncTask
+}
+
+private fun SourceSet.clearJavaSrcDirs() {
+    java.setSrcDirs(emptyList<File>())
 }
 
 private val KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX = "kotlin-annotation-processing-[\\-0-9A-Za-z.]+\\.jar".toRegex()
