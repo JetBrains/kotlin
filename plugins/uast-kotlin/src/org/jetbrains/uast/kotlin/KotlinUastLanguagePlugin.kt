@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.lang.Language
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -44,6 +45,8 @@ interface KotlinUastBindingContextProviderService {
     fun getBindingContext(element: KtElement): BindingContext
     fun getTypeMapper(element: KtElement): KotlinTypeMapper?
 }
+
+var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))
 
 class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override val priority = 10
@@ -367,6 +370,7 @@ internal object KotlinConverter {
                         val psiFactory = KtPsiFactory(expression.project)
                         val initializer = psiFactory.createAnalyzableExpression("${tempAssignment.name}.component${i + 1}()",
                                                                                 expression.containingFile)
+                        initializer.destructuringDeclarationInitializer = true
                         KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, declarationsExpression, initializer), declarationsExpression)
                     }
                     declarations = listOf(tempAssignment) + destructuringAssignments

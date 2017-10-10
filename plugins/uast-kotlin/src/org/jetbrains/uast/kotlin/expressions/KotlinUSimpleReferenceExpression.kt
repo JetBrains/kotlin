@@ -49,6 +49,14 @@ open class KotlinUSimpleReferenceExpression(
     override fun accept(visitor: UastVisitor) {
         visitor.visitSimpleNameReferenceExpression(this)
 
+        if (psi.parent.destructuringDeclarationInitializer != true) {
+            visitAccessorCalls(visitor)
+        }
+
+        visitor.afterVisitSimpleNameReferenceExpression(this)
+    }
+
+    private fun visitAccessorCalls(visitor: UastVisitor) {
         // Visit Kotlin get-set synthetic Java property calls as function calls
         val bindingContext = psi.analyze()
         val access = psi.readWriteAccess()
@@ -78,8 +86,6 @@ open class KotlinUSimpleReferenceExpression(
                 }
             }
         }
-
-        visitor.afterVisitSimpleNameReferenceExpression(this)
     }
 
     private tailrec fun findAssignment(prev: PsiElement?, element: PsiElement?): KtBinaryExpression? = when (element) {
