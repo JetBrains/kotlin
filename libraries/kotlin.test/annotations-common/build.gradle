@@ -1,4 +1,4 @@
-description = 'Kotlin Test Common'
+description = 'Kotlin Test Annotations Common'
 
 apply plugin: 'kotlin-platform-common'
 
@@ -7,7 +7,6 @@ configurePublishing(project)
 
 dependencies {
     compile project(':kotlin-stdlib-common')
-    testCompile project(":kotlin-test:kotlin-test-annotations-common")
 }
 
 jar {

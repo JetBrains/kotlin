@@ -1,7 +1,7 @@
 @file:Suppress("DEPRECATION")
 package kotlin.test.tests
 
-import org.junit.*
+import org.junit.Assert
 import java.util.*
 import kotlin.test.*
 

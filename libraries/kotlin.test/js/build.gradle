@@ -5,7 +5,8 @@ apply plugin: 'kotlin-platform-js'
 configurePublishing(project)
 
 dependencies {
-    implement project(':kotlin-test:kotlin-test-common')
+    expectedBy project(':kotlin-test:kotlin-test-common')
+    compile project(':kotlin-test:kotlin-test-annotations-common') // TODO: replace with impl-dependency
     compile project(':kotlin-stdlib-js')
 }
 

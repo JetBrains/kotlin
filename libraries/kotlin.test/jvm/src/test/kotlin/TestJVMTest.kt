@@ -17,7 +17,6 @@
 package kotlin.test.tests
 
 import kotlin.test.*
-import org.junit.Test
 
 class TestJVMTest {
 
