@@ -193,8 +193,15 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @Override
     public void visitScript(@NotNull KtScript script) {
-        classStack.push(bindingContext.get(SCRIPT, script));
-        nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(script.getFqName()));
+        ClassDescriptor scriptDescriptor = bindingContext.get(SCRIPT, script);
+        // working around a problem with shallow analysis
+        if (scriptDescriptor == null) return;
+
+        String scriptInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(script.getFqName());
+        recordClosure(scriptDescriptor, scriptInternalName);
+
+        classStack.push(scriptDescriptor);
+        nameStack.push(scriptInternalName);
         script.acceptChildren(this);
         nameStack.pop();
         classStack.pop();
