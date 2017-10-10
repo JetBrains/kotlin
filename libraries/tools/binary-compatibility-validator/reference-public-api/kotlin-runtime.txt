@@ -627,6 +627,24 @@ public final class kotlin/jvm/internal/LongSpreadBuilder : kotlin/jvm/internal/P
 	public final fun toArray ()[J
 }
 
+public class kotlin/jvm/internal/MagicApiIntrinsics {
+	public fun <init> ()V
+	public static fun anyMagicApiCall (I)Ljava/lang/Object;
+	public static fun anyMagicApiCall (IJJLjava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (IJLjava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun intMagicApiCall (I)I
+	public static fun intMagicApiCall (IJJLjava/lang/Object;)I
+	public static fun intMagicApiCall (IJLjava/lang/Object;)I
+	public static fun intMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;)I
+	public static fun intMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)I
+	public static fun intMagicApiCall (Ljava/lang/Object;)I
+	public static fun voidMagicApiCall (I)V
+	public static fun voidMagicApiCall (Ljava/lang/Object;)V
+}
+
 public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
