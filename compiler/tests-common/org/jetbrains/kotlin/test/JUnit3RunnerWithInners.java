@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.test;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.junit.internal.MethodSorter;
@@ -27,26 +26,28 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
- * This runner runs class with all inners test classes, but monitors situation when those classes are planned to be executed
- * with IDEA package test runner.
+ * This runner runs class with all inners test classes, but monitors situation when
+ * inner classes are already processed.
  */
 public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortable {
-    private static final Set<Class> requestedRunners = new HashSet<>();
+    private static final Set<Class> processedClasses = new HashSet<>();
 
     private JUnit38ClassRunner delegateRunner;
     private final Class<?> klass;
     private boolean isFakeTest = false;
 
-    private static class FakeEmptyClassTest implements Test {
-        private final Class<?> klass;
+    private static class FakeEmptyClassTest implements Test, Filterable {
+        private final String klassName;
 
-        public FakeEmptyClassTest(Class<?> klass) {
-            this.klass = klass;
+        FakeEmptyClassTest(Class<?> klass) {
+            this.klassName = klass.getName();
         }
 
         @Override
@@ -60,19 +61,19 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
             result.endTest(this);
         }
 
-        public Class<?> getTestClass() {
-            return klass;
+        @Override
+        public String toString() {
+            return "Empty class with inners for " + klassName;
         }
 
         @Override
-        public String toString() {
-            return "Empty class with inners";
+        public void filter(Filter filter) throws NoTestsRemainException {
+            throw new NoTestsRemainException();
         }
     }
 
     public JUnit3RunnerWithInners(Class<?> klass) {
         this.klass = klass;
-        requestedRunners.add(klass);
     }
 
     @Override
@@ -89,7 +90,6 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
 
     @Override
     public void filter(Filter filter) throws NoTestsRemainException {
-        delegateRunner = new JUnit38ClassRunner(klass);
         delegateRunner.filter(filter);
     }
 
@@ -99,34 +99,40 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
         delegateRunner.sort(sorter);
     }
 
-    protected void initialize() {
+    private void initialize() {
         if (delegateRunner != null) return;
-        delegateRunner = new JUnit38ClassRunner(getCollectedTests());
+        Test collectedTests = getCollectedTests();
+
+        delegateRunner = new JUnit38ClassRunner(collectedTests) {
+            @Override public void filter(Filter filter) throws NoTestsRemainException {
+                String classDescription = collectedTests.toString();
+                String classPatternString = getGradleClassPattern(filter);
+
+                if (classPatternString != null) {
+                    if (Pattern.compile(classPatternString + "\\$.*").matcher(classDescription).matches()) {
+                        return;
+                    }
+                }
+
+                super.filter(filter);
+            }
+        };
     }
 
-    protected Test getCollectedTests() {
-        List<Class> innerClasses = collectDeclaredClasses(klass, false);
-        Set<Class> unprocessedInnerClasses = unprocessedClasses(innerClasses);
+    private Test getCollectedTests() {
+        if (processedClasses.contains(klass)) {
+            isFakeTest = true;
+            return new FakeEmptyClassTest(klass);
+        }
 
-        if (unprocessedInnerClasses.isEmpty()) {
-            if (!innerClasses.isEmpty() && !hasTestMethods(klass)) {
-                isFakeTest = true;
-                return new FakeEmptyClassTest(klass);
-            }
-            else {
-                return new TestSuite(klass.asSubclass(TestCase.class));
-            }
-        }
-        else if (unprocessedInnerClasses.size() == innerClasses.size()) {
-            return createTreeTestSuite(klass);
-        }
-        else {
-            return new TestSuite(klass.asSubclass(TestCase.class));
-        }
+        Set<Class> classes = collectDeclaredClasses(klass, true);
+        Set<Class> unprocessedClasses = unprocessedClasses(classes);
+        processedClasses.addAll(unprocessedClasses);
+
+        return createTreeTestSuite(klass, unprocessedClasses);
     }
 
-    private static Test createTreeTestSuite(Class root) {
-        Set<Class> classes = new LinkedHashSet<>(collectDeclaredClasses(root, true));
+    private static Test createTreeTestSuite(Class root, Set<Class> classes) {
         Map<Class, TestSuite> classSuites = new HashMap<>();
 
         for (Class aClass : classes) {
@@ -145,7 +151,7 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     private static Set<Class> unprocessedClasses(Collection<Class> classes) {
         Set<Class> result = new LinkedHashSet<>();
         for (Class aClass : classes) {
-            if (!requestedRunners.contains(aClass)) {
+            if (!processedClasses.contains(aClass)) {
                 result.add(aClass);
             }
         }
@@ -153,8 +159,8 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
         return result;
     }
 
-    private static List<Class> collectDeclaredClasses(Class klass, boolean withItself) {
-        List<Class> result = new ArrayList<>();
+    private static Set<Class> collectDeclaredClasses(Class klass, boolean withItself) {
+        Set<Class> result = new HashSet<>();
         if (withItself) {
             result.add(klass);
         }
@@ -181,5 +187,49 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
                method.getName().startsWith("test") &&
                method.getReturnType().equals(Void.TYPE) &&
                Modifier.isPublic(method.getModifiers());
+    }
+
+    private static String getGradleClassPattern(Filter filter) {
+        try {
+            Class<? extends Filter> filterClass = filter.getClass();
+            if (!"org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter$MethodNameFilter".equals(filterClass.getName())) {
+                return null;
+            }
+
+            Field matcherField = filterClass.getDeclaredField("matcher");
+            matcherField.setAccessible(true);
+            Object testSelectionMatcher = matcherField.get(filter);
+            Class<?> testSelectionMatcherClass = testSelectionMatcher.getClass();
+            if (!"org.gradle.api.internal.tasks.testing.filter.TestSelectionMatcher".equals(testSelectionMatcherClass.getName())) {
+                return null;
+            }
+
+            Field includePatternsField;
+            try {
+                includePatternsField = testSelectionMatcherClass.getDeclaredField("includePatterns");
+            }
+            catch (NoSuchFieldException exception) {
+                includePatternsField = testSelectionMatcherClass.getDeclaredField("buildScriptIncludePatterns");
+            }
+
+            includePatternsField.setAccessible(true);
+            @SuppressWarnings("unchecked") ArrayList<Pattern> includePatterns =
+                    (ArrayList<Pattern>) includePatternsField.get(testSelectionMatcher);
+
+            if (includePatterns.size() != 1) {
+                return null;
+            }
+
+            Pattern pattern = includePatterns.get(0);
+            String patternStr = pattern.pattern();
+
+            if (patternStr.endsWith("*")) {
+                return null;
+            }
+
+            return patternStr;
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
