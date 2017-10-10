@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.*
 
 class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixAction<KtParameter>(parameter) {
     override fun getFamilyName() = ChangeFunctionSignatureFix.FAMILY_NAME
@@ -36,8 +34,16 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val parameterDescriptor = element.unsafeResolveToDescriptor() as ValueParameterDescriptor
-        ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
+        val primaryConstructorParameterList = (element.parent as? KtParameterList)?.takeIf { it.parent is KtPrimaryConstructor }
+        if (primaryConstructorParameterList?.parameters?.size == 1) {
+            runWriteAction {
+                primaryConstructorParameterList.delete()
+            }
+        }
+        else {
+            val parameterDescriptor = element.unsafeResolveToDescriptor() as ValueParameterDescriptor
+            ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
+        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
