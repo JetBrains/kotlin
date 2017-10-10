@@ -23,19 +23,23 @@ import org.jetbrains.uast.*
 
 class KotlinUNamedExpression private constructor(
         override val name: String?,
+        override val sourcePsi: PsiElement?,
         givenParent: UElement?,
         expressionProducer: (UElement) -> UExpression
 ) : KotlinAbstractUElement(givenParent), UNamedExpression {
+
     override val expression: UExpression by lz { expressionProducer(this) }
 
     override val annotations: List<UAnnotation> = emptyList()
 
     override val psi: PsiElement? = null
 
+    override val javaPsi: PsiElement? = null
+
     companion object {
         internal fun create(name: String?, valueArgument: ValueArgument, uastParent: UElement?): UNamedExpression {
             val expression = valueArgument.getArgumentExpression()
-            return KotlinUNamedExpression(name, uastParent) { expressionParent ->
+            return KotlinUNamedExpression(name, valueArgument.asElement(), uastParent) { expressionParent ->
                 expression?.let { expressionParent.getLanguagePlugin().convert<UExpression>(it, expressionParent) } ?: UastEmptyExpression
             }
         }
@@ -44,7 +48,7 @@ class KotlinUNamedExpression private constructor(
                 name: String?,
                 valueArguments: List<ValueArgument>,
                 uastParent: UElement?): UNamedExpression {
-            return KotlinUNamedExpression(name, uastParent) { expressionParent ->
+            return KotlinUNamedExpression(name, null, uastParent) { expressionParent ->
                 KotlinUVarargExpression(valueArguments, expressionParent)
             }
         }
