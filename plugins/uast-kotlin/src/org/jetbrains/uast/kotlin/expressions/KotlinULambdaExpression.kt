@@ -35,7 +35,7 @@ class KotlinULambdaExpression(
     
     override val valueParameters by lz {
         psi.valueParameters.mapIndexed { i, p ->
-            KotlinUParameter(UastKotlinPsiParameter.create(p, psi, this, i), this)
+            KotlinUParameter(UastKotlinPsiParameter.create(p, psi, this, i), psi, this)
         }
     }
     
