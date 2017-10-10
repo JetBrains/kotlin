@@ -5,6 +5,7 @@ apply plugin: 'kotlin'
 configureJvm6Project(project)
 configurePublishing(project)
 ext.javaHome = JDK_18
+ext.jvmTarget = "1.8"
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -58,7 +59,6 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
-    jvmTarget = "1.8"
 }
 
 kotlin.experimental.coroutines 'enable'
