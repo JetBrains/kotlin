@@ -1263,6 +1263,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return parseProperty(isScriptTopLevel ? PropertyParsingMode.SCRIPT_TOPLEVEL : PropertyParsingMode.LOCAL);
     }
 
+    private IElementType newParseProperty() {
+        parseProperty(PropertyParsingMode.MEMBER_OR_TOPLEVEL);
+        return PROPERTY;
+    }
+
+    public IElementType newParseLocalProperty(boolean isScriptTopLevel) {
+        parseProperty(isScriptTopLevel ? PropertyParsingMode.SCRIPT_TOPLEVEL : PropertyParsingMode.LOCAL);
+        return PROPERTY;
+    }
+
     enum PropertyParsingMode {
         MEMBER_OR_TOPLEVEL(false, true),
         LOCAL(true, false),
@@ -1359,6 +1369,72 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
     }
+
+    public void newParseProperty(PropertyParsingMode mode) {
+        assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
+        advance(); // VAL_KEYWORD or VAR_KEYWORD
+
+        boolean typeParametersDeclared = at(LT) && parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
+
+        TokenSet propertyNameFollow =
+                TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
+
+        myBuilder.disableJoiningComplexTokens();
+
+        boolean receiverTypeDeclared = parseReceiverType("property", propertyNameFollow);
+
+        myBuilder.restoreJoiningComplexTokensState();
+
+        boolean isNameOnTheNextLine = eol();
+        PsiBuilder.Marker beforeName = mark();
+
+        boolean noTypeReference = !(at(IDENTIFIER) && at(1, COLON));
+
+        PsiBuilder.Marker patternMarker = mark();
+        boolean isSimple = parsePattern();
+        boolean falsePatternAssign = !isSimple && !mode.desctructuringAllowed;
+        errorIf(patternMarker, falsePatternAssign, "Pattern assign are only allowed for local variables/values");
+
+        parseTypeConstraintsGuarded(typeParametersDeclared);
+
+        if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
+            // Do not parse property identifier on the next line if declaration is invalid
+            // In most cases this identifier relates to next statement/declaration
+            beforeName.rollbackTo();
+            error("Expecting property name or receiver type");
+            return;
+        }
+
+        beforeName.drop();
+
+        if (mode.accessorsAllowed) {
+            // It's only needed for non-local properties, because in local ones:
+            // "val a = 1; b" must not be an infix call of b on "val ...;"
+
+            myBuilder.enableNewlines();
+            boolean hasNewLineWithSemicolon = consumeIf(SEMICOLON) && myBuilder.newlineBeforeCurrentToken();
+            myBuilder.restoreNewlinesState();
+
+            if (!hasNewLineWithSemicolon) {
+                AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
+                if (accessorKind != null) {
+                    parsePropertyGetterOrSetter(accessorKind);
+                }
+
+                if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
+                    if (getLastToken() != SEMICOLON) {
+                        errorUntil(
+                                "Property getter or setter expected",
+                                TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
+                    }
+                }
+                else {
+                    consumeIf(SEMICOLON);
+                }
+            }
+        }
+    }
+
 
     private boolean parsePropertyDelegateOrAssignment() {
         if (at(BY_KEYWORD)) {
@@ -1901,159 +1977,204 @@ public class KotlinParsing extends AbstractKotlinParsing {
         mark.done(TYPE_PARAMETER);
     }
 
-    /*
+    /**
      * pattern
-     *   : patternEntry{'@'} guard?
-     *   ;
-     *
+     * : patternExpression
+     * ;
+     * <p>
+     * patternExpression
+     * : patternEntry{'@'} guard?
+     * ;
+     * <p>
      * patternEntry
-     *   : patternTypedTuple
-     *   : literalConstant
-     *   : stringConstant
-     *   : patternHashParameter
-     *   : patternHashExpression
-     *   : patternProperty
-     *   ;
-     *
+     * : patternTypedTuple
+     * : literalConstant
+     * : stringConstant
+     * : patternHashParameter
+     * : patternHashExpression
+     * : simpleProperty
+     * ;
+     * <p>
      * patternTypedTuple
-     *   : ('(' typeRef ')')? tuple
-     *   : typeRefNotLambdaRef? tuple
-     *   ;
-     *
+     * : ('(' typeRef ')')? tuple
+     * : typeRefNotLambdaRef? tuple
+     * ;
+     * <p>
      * patternHashParameter
-     *   : "#" identifier
-     *   ;
-     *
+     * : "#" identifier
+     * ;
+     * <p>
      * patternHashExpression
-     *   : "#" "(" expression ")"
-     *   ;
-     *
-     * patternProperty
-     *   : identifier (":" typeRef)?
-     *   ;
-     *
+     * : "#" "(" expression ")"
+     * ;
+     * <p>
+     * simpleProperty
+     * : identifier (":" typeRef)?
+     * ;
+     * <p>
      * tuple
-     *   : "(" pattern{","}? ")"
-     *   ;
-     *
+     * : "(" patternExpression{","}? ")"
+     * ;
+     * <p>
      * guard
-     *   : "if" "(" expression ")"
-     *   ;
+     * : "if" "(" expression ")"
+     * ;
      */
-    private void parsePattern() {
+    boolean parsePattern() {
         PsiBuilder.Marker patternMarker = mark();
-        unexpectAndAdvance(AT, "Expected pattern before '@'");
-        do {
-            parsePatternEntry();
-        }
-        while (!at(AT));
+        boolean isSimple = parsePatternExpression();
         patternMarker.done(PATTERN);
+        return isSimple;
+    }
+
+    private boolean parsePatternExpression() {
+        PsiBuilder.Marker patternExpressionMarker = mark();
+        boolean isSimple = at(IDENTIFIER) && !at(1, LPAR);
+        while (at(AT)) errorAndAdvance("Expected pattern before '@'");
+        int counter = 0;
+        do {
+            if (at(AT)) {
+                advance(); // AT
+            }
+            parsePatternEntry();
+            counter++;
+        }
+        while (at(AT));
+        patternExpressionMarker.done(PATTERN_EXPRESSION);
+        return isSimple && counter == 1;
     }
 
     private void parsePatternEntry() {
-        PsiBuilder.Marker patternEntryMarker = mark();
         if (at(LPAR)) {
-            // Parse typed tuple code like:
-            //     '(Int)(a, b, c)'
-            //     '((Int, List<Float>) -> Boolean)(e, f)'
-            //     '(a, b, c)'
-            PsiBuilder.Marker patternTypedTupleMarker = mark();
-            int open_brackets = 0;
-            int offset = 0;
-            do {
-                if (at(LPAR)) {
-                    open_brackets++;
-                }
-                else if (at(RPAR)) {
-                    open_brackets--;
-                }
-                advance();
-                offset++;
-            }
-            while (open_brackets > 0);
-            patternTypedTupleMarker.rollbackTo();
-            advance(); // LPAR
-            createTruncatedBuilder(offset).parseTypeRef();
-            expect(RPAR, "Parse type error");
-            if (!at(LPAR)) {
-                patternTypedTupleMarker.rollbackTo();
-            }
-            parseTuple();
-            patternTypedTupleMarker.done(PATTERN_TYPED_TUPLE);
+            parseEscapedTypedTuple();
         }
         else if (myExpressionParsing.parseLiteralConstant()) {
-            // Literal constant
+            // nothing
         }
         else if (at(OPEN_QUOTE)) {
-            // String constant
             myExpressionParsing.parseStringTemplate();
         }
-        else if (at(HASH) && at(1, IDENTIFIER)) {
-            // Parse hash parameter code like:
-            //     '#x'
-            //     '#y'
-            PsiBuilder.Marker patternHashParameterMarker = mark();
-            advance(); // HASH
-            advance(); // IDENTIFIER
-            patternHashParameterMarker.done(PATTERN_HASH_PARAMETER);
-        }
         else if (at(HASH)) {
-            // Parse hash expression code like:
-            //     '#(a + b)'
-            //     '#(a + 10)'
-            //     '#(a)'
-            PsiBuilder.Marker patternHashExprMarker = mark();
-            advance(); // HASH
-            expect(LPAR, "Expected '(' before pattern expression");
-            myExpressionParsing.parseExpression();
-            expect(RPAR, "Expected ')' after pattern expression");
-            patternHashExprMarker.done(PATTERN_HASH_EXPRESSION);
+            parseHashExpression();
+        }
+        else if (at(COLON)) {
+            parseTypeConstraintWithoutIdentifier();
         }
         else {
-            // Parse typed tuple code like:
-            //     'Pair(a, b)'
-            //     'List<Int>(a, b)'
-            // or property:
-            //     'a'
-            //     'b'
-            //     'x: Int'
-            //     'y: List<Float>'
-            //     'z: (Int) -> Int'
-            PsiBuilder.Marker marker = mark();
-            expectNoAdvance(IDENTIFIER, "Expected identifier");
-            parseTypeRef();
-            if (at(LPAR)) {
-                parseTuple();
-                marker.done(PATTERN_TYPED_TUPLE);
-            }
-            else {
-                marker.rollbackTo();
-                expect(IDENTIFIER, "Expected identifier");
-                if (at(1, COLON)) {
-                    advance(); // COLON
-                    parseTypeRef();
-                }
-                marker.done(PATTERN_PROPERTY);
-            }
+            parseTypeConstraintOrTypedTuple();
         }
         if (at(IF_KEYWORD)) {
-            // Parse code like:
-            //     'if (a > 3 && b is Int)'
             parseGuard();
         }
-        patternEntryMarker.done(PATTERN_ENTRY);
+    }
+
+    /**
+     * Parse typed tuple code like:
+     * '(Int)(a, b, c)'
+     * '((Int, List&lt;Float&gt;) -> Boolean)(e, f)'
+     * '(a, b, c)'
+     */
+    private void parseEscapedTypedTuple() {
+        assert at(LPAR);
+
+        PsiBuilder.Marker patternTypedTupleMarker = mark();
+        advance(); // LPAR
+        parseTypeRef();
+        if (!at(RPAR) && !at(1, LPAR)) {
+            patternTypedTupleMarker.rollbackTo();
+            patternTypedTupleMarker = mark();
+        }
+        else {
+            advance(); // RPAR
+        }
+        parseTuple();
+        patternTypedTupleMarker.done(PATTERN_TYPED_TUPLE);
+    }
+
+    /**
+     * Parse hash expression code like:
+     * '#x'
+     * '#y'
+     * '#(a + b)'
+     * '#(a + 10)'
+     * '#(a)'
+     */
+    private void parseHashExpression() {
+        assert at(HASH);
+
+        PsiBuilder.Marker patternHashExpressionMarker = mark();
+        advance(); // HASH
+        if (at(LPAR)) {
+            advance(); // LPAR
+            myExpressionParsing.parseExpression();
+            expect(RPAR, "Expected ')' after pattern expression");
+        }
+        else {
+            myExpressionParsing.parseSimpleNameExpression();
+        }
+        patternHashExpressionMarker.done(PATTERN_HASH_EXPRESSION);
+    }
+
+    /**
+     * Parse type constraint code like:
+     * ':Int'
+     * ':List&lt;Float&gt;'
+     * ':(Int) -> Int'
+     */
+    private void parseTypeConstraintWithoutIdentifier() {
+        assert at(COLON);
+
+        PsiBuilder.Marker typeConstraintMarker = mark();
+        advance(); // COLON
+        parseTypeRef();
+        typeConstraintMarker.done(PATTERN_TYPE_CONSTRAINT);
+    }
+
+    /**
+     * Parse typed tuple code like:
+     * 'Pair(a, b)'
+     * 'List&lt;Int&gt;(a, b)'
+     * or type constraint:
+     * 'a'
+     * 'b'
+     * 'x: Int'
+     * 'y: List&lt;Float&gt;'
+     * 'z: (Int) -> Int'
+     */
+    private void parseTypeConstraintOrTypedTuple() {
+        PsiBuilder.Marker marker = mark();
+        expectWithoutAdvance(IDENTIFIER, "Expected identifier");
+        parseTypeRef();
+        if (at(LPAR)) {
+            parseTuple();
+            marker.done(PATTERN_TYPED_TUPLE);
+        }
+        else {
+            marker.rollbackTo();
+            marker = mark();
+            expect(IDENTIFIER, "Expected identifier");
+            if (at(COLON)) {
+                advance(); // COLON
+                parseTypeRef();
+            }
+            marker.done(PATTERN_TYPE_CONSTRAINT);
+        }
     }
 
     private void parseTuple() {
         assert at(LPAR);
         PsiBuilder.Marker tupleMarker = mark();
         advance(); // LPAR
-        unexpectAndAdvance(COMMA, "Expected pattern parameter before ','");
+        while (at(COMMA)) errorAndAdvance("Expected pattern parameter before ','");
         do {
-            parsePattern();
+            if (at(COMMA)) {
+                advance(); // COMMA
+            }
+            parsePatternExpression();
         }
-        while (!at(COMMA));
-        tupleMarker.done(TUPLE);
+        while (at(COMMA));
+        expect(RPAR, "Expected ')' token at end of destructing tuple");
+        tupleMarker.done(PATTERN_TUPLE);
     }
 
     private void parseGuard() {
@@ -2061,7 +2182,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker guardMarker = mark();
         advance(); // IF_KEYWORD
         myExpressionParsing.parseCondition();
-        guardMarker.done(GUARD);
+        guardMarker.done(PATTERN_GUARD);
     }
 
     /*

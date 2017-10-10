@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.pattern.KtWhenConditionMatchPattern
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionInformation
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiOperation
@@ -378,6 +379,14 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                         }
                     }
                 }
+            }
+
+            override fun visitWhenConditionMatchPattern(condition: KtWhenConditionMatchPattern) {
+                if (subjectExpression == null) {
+                    context.trace.report(EXPECTED_CONDITION.on(condition))
+                }
+
+                println(condition.text)
             }
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {

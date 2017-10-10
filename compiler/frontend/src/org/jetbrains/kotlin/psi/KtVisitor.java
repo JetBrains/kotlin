@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.pattern.*;
 
 public class KtVisitor<R, D> extends PsiElementVisitor {
     public R visitKtElement(@NotNull KtElement element, D data) {
@@ -124,6 +125,38 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
 
     public R visitTypeParameter(@NotNull KtTypeParameter parameter, D data) {
         return visitNamedDeclaration(parameter, data);
+    }
+
+    public R visitPattern(@NotNull KtPattern node, D data) {
+        return visitKtElement(node, data);
+    }
+
+    public R visitPatternEntry(@NotNull KtPatternEntry node, D data) {
+        return visitKtElement(node, data);
+    }
+
+    public R visitPatternExpression(@NotNull KtPatternExpression node, D data) {
+        return visitPatternEntry(node, data);
+    }
+
+    public R visitPatternGuard(@NotNull KtPatternGuard node, D data) {
+        return visitPatternEntry(node, data);
+    }
+
+    public R visitPatternHashExpression(@NotNull KtPatternHashExpression node, D data) {
+        return visitPatternEntry(node, data);
+    }
+
+    public R visitPatternTuple(@NotNull KtPatternTuple node, D data) {
+        return visitPatternEntry(node, data);
+    }
+
+    public R visitPatternTypeConstraint(@NotNull KtPatternTypeConstraint node, D data) {
+        return visitPatternEntry(node, data);
+    }
+
+    public R visitPatternTypedTuple(@NotNull KtPatternTypedTuple node, D data) {
+        return visitPatternEntry(node, data);
     }
 
     public R visitEnumEntry(@NotNull KtEnumEntry enumEntry, D data) {
@@ -412,6 +445,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
 
     public R visitIsExpression(@NotNull KtIsExpression expression, D data) {
         return visitExpression(expression, data);
+    }
+
+    public R visitWhenConditionMatchPattern(@NotNull KtWhenConditionMatchPattern condition, D data) {
+        return visitKtElement(condition, data);
     }
 
     public R visitWhenConditionIsPattern(@NotNull KtWhenConditionIsPattern condition, D data) {

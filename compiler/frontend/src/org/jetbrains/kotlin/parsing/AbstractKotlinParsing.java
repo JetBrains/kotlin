@@ -130,21 +130,17 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         }
     }
 
-    private void errorAndAdvanceIf(boolean condition, String message) {
-        if (condition) {
-            error(message);
-            advance();
-        }
+    private void errorIfNot(boolean condition, String message) {
+        errorIf(!condition, message);
     }
 
-    protected void unexpectAndAdvance(KtToken expectation, String message) {
-        errorAndAdvanceIf(at(expectation), message);
-    }
-
-    protected void unexpectNoAdvance(KtToken expectation, String message) {
+    protected void unexpect(KtToken expectation, String message) {
         errorIf(at(expectation), message);
     }
 
+    protected void expectWithoutAdvance(KtToken expectation, String message) {
+        errorIfNot(at(expectation), message);
+    }
 
     protected boolean eof() {
         return myBuilder.eof();

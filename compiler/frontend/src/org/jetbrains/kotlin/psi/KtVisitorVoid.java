@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.pattern.KtWhenConditionMatchPattern;
 
 public class KtVisitorVoid extends KtVisitor<Void, Void> {
     // methods with void return
@@ -407,6 +408,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
 
     public void visitWhenConditionWithExpression(@NotNull KtWhenConditionWithExpression condition) {
         super.visitWhenConditionWithExpression(condition, null);
+    }
+
+    public void visitWhenConditionMatchPattern(@NotNull KtWhenConditionMatchPattern condition) {
+        super.visitWhenConditionMatchPattern(condition, null);
     }
 
     public void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration) {
@@ -999,6 +1004,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitWhenConditionWithExpression(@NotNull KtWhenConditionWithExpression condition, Void data) {
         visitWhenConditionWithExpression(condition);
+        return null;
+    }
+
+    @Override
+    public final Void visitWhenConditionMatchPattern(@NotNull KtWhenConditionMatchPattern condition, Void data) {
+        visitWhenConditionMatchPattern(condition);
         return null;
     }
 

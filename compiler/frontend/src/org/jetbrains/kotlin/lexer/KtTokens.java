@@ -134,21 +134,23 @@ public interface KtTokens {
 
     KtSingleValueToken COMMA       = new KtSingleValueToken("COMMA", ",");
 
-    KtToken EOL_OR_SEMICOLON   = new KtToken("EOL_OR_SEMICOLON");
-    KtKeywordToken FILE_KEYWORD    = KtKeywordToken.softKeyword("file");
-    KtKeywordToken FIELD_KEYWORD     = KtKeywordToken.softKeyword("field");
+    KtToken EOL_OR_SEMICOLON            = new KtToken("EOL_OR_SEMICOLON");
+
+    KtKeywordToken FILE_KEYWORD         = KtKeywordToken.softKeyword("file");
+    KtKeywordToken FIELD_KEYWORD        = KtKeywordToken.softKeyword("field");
     KtKeywordToken PROPERTY_KEYWORD     = KtKeywordToken.softKeyword("property");
     KtKeywordToken RECEIVER_KEYWORD     = KtKeywordToken.softKeyword("receiver");
-    KtKeywordToken PARAM_KEYWORD     = KtKeywordToken.softKeyword("param");
-    KtKeywordToken SETPARAM_KEYWORD  = KtKeywordToken.softKeyword("setparam");
-    KtKeywordToken DELEGATE_KEYWORD  = KtKeywordToken.softKeyword("delegate");
-    KtKeywordToken IMPORT_KEYWORD    = KtKeywordToken.softKeyword("import");
-    KtKeywordToken WHERE_KEYWORD     = KtKeywordToken.softKeyword("where");
-    KtKeywordToken BY_KEYWORD        = KtKeywordToken.softKeyword("by");
-    KtKeywordToken GET_KEYWORD       = KtKeywordToken.softKeyword("get");
-    KtKeywordToken SET_KEYWORD       = KtKeywordToken.softKeyword("set");
-    KtKeywordToken CONSTRUCTOR_KEYWORD = KtKeywordToken.softKeyword("constructor");
-    KtKeywordToken INIT_KEYWORD        = KtKeywordToken.softKeyword("init");
+    KtKeywordToken PARAM_KEYWORD        = KtKeywordToken.softKeyword("param");
+    KtKeywordToken SETPARAM_KEYWORD     = KtKeywordToken.softKeyword("setparam");
+    KtKeywordToken DELEGATE_KEYWORD     = KtKeywordToken.softKeyword("delegate");
+    KtKeywordToken IMPORT_KEYWORD       = KtKeywordToken.softKeyword("import");
+    KtKeywordToken WHERE_KEYWORD        = KtKeywordToken.softKeyword("where");
+    KtKeywordToken BY_KEYWORD           = KtKeywordToken.softKeyword("by");
+    KtKeywordToken GET_KEYWORD          = KtKeywordToken.softKeyword("get");
+    KtKeywordToken SET_KEYWORD          = KtKeywordToken.softKeyword("set");
+    KtKeywordToken CONSTRUCTOR_KEYWORD  = KtKeywordToken.softKeyword("constructor");
+    KtKeywordToken INIT_KEYWORD         = KtKeywordToken.softKeyword("init");
+    KtKeywordToken MATCH_KEYWORD        = KtKeywordToken.softKeyword("match");
 
     KtModifierKeywordToken ABSTRACT_KEYWORD  = KtModifierKeywordToken.softKeywordModifier("abstract");
     KtModifierKeywordToken ENUM_KEYWORD      = KtModifierKeywordToken.softKeywordModifier("enum");
@@ -214,7 +216,7 @@ public interface KtTokens {
                                              LATEINIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD,
-                                             SUSPEND_KEYWORD, HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD
+                                             SUSPEND_KEYWORD, HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD, MATCH_KEYWORD
     );
 
     /*

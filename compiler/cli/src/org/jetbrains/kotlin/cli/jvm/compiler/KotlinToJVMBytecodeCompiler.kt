@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -244,6 +246,19 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         if (!checkKotlinPackageUsage(environment, environment.getSourceFiles())) return false
+
+        for (file in environment.getSourceFiles()) {
+            var shift = -1;
+            val visitor = object : PsiRecursiveElementVisitor() {
+                override fun visitElement(element: PsiElement) {
+                    ++shift
+                    println("| ".repeat(shift) + element)
+                    super.visitElement(element)
+                    --shift
+                }
+            }
+            file.accept(visitor)
+        }
 
         val generationState = analyzeAndGenerate(environment) ?: return false
 

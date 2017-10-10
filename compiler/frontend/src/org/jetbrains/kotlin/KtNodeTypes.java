@@ -20,6 +20,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.pattern.*;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public interface KtNodeTypes {
@@ -67,14 +68,13 @@ public interface KtNodeTypes {
     KtNodeType LAMBDA_ARGUMENT = new KtNodeType("LAMBDA_ARGUMENT", KtLambdaArgument.class);
     KtNodeType VALUE_ARGUMENT_NAME = new KtNodeType("VALUE_ARGUMENT_NAME", KtValueArgumentName.class);
 
-    KtNodeType PATTERN = new KtNodeType("PATTERN", KtElementImpl.class);
-    KtNodeType PATTERN_TYPED_TUPLE = new KtNodeType("PATTERN_TYPED_TUPLE", KtElementImpl.class);
-    KtNodeType PATTERN_HASH_PARAMETER = new KtNodeType("PATTERN_HASH_PARAMETER", KtElementImpl.class);
-    KtNodeType PATTERN_HASH_EXPRESSION = new KtNodeType("PATTERN_HASH_EXPRESSION", KtElementImpl.class);
-    KtNodeType PATTERN_PROPERTY = new KtNodeType("PATTERN_PROPERTY", KtElementImpl.class);
-    KtNodeType PATTERN_ENTRY = new KtNodeType("PATTERN_ENTRY", KtElementImpl.class);
-    KtNodeType TUPLE = new KtNodeType("TUPLE", KtElementImpl.class);
-    KtNodeType GUARD = new KtNodeType("GUARD", KtElementImpl.class);
+    KtNodeType PATTERN = new KtNodeType("PATTERN", KtPattern.class);
+    KtNodeType PATTERN_EXPRESSION = new KtNodeType("PATTERN_EXPRESSION", KtPatternExpression.class);
+    KtNodeType PATTERN_TYPED_TUPLE = new KtNodeType("PATTERN_TYPED_TUPLE", KtPatternTypedTuple.class);
+    KtNodeType PATTERN_HASH_EXPRESSION = new KtNodeType("PATTERN_HASH_EXPRESSION", KtPatternHashExpression.class);
+    KtNodeType PATTERN_TYPE_CONSTRAINT = new KtNodeType("PATTERN_TYPE_CONSTRAINT", KtPatternTypeConstraint.class);
+    KtNodeType PATTERN_TUPLE = new KtNodeType("PATTERN_TUPLE", KtPatternTuple.class);
+    KtNodeType PATTERN_GUARD = new KtNodeType("PATTERN_GUARD", KtPatternGuard.class);
 
     IElementType TYPE_REFERENCE = KtStubElementTypes.TYPE_REFERENCE;
 
@@ -164,6 +164,7 @@ public interface KtNodeTypes {
 
     KtNodeType WHEN_CONDITION_IN_RANGE = new KtNodeType("WHEN_CONDITION_IN_RANGE", KtWhenConditionInRange.class);
     KtNodeType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);
+    KtNodeType WHEN_CONDITION_MATCH_PATTERN = new KtNodeType("WHEN_CONDITION_MATCH_PATTERN", KtWhenConditionMatchPattern.class);
     KtNodeType WHEN_CONDITION_EXPRESSION = new KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression.class);
 
     KtNodeType COLLECTION_LITERAL_EXPRESSION = new KtNodeType("COLLECTION_LITERAL_EXPRESSION", KtCollectionLiteralExpression.class);
