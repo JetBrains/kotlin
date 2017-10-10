@@ -12,14 +12,15 @@ var Project.bootstrapKotlinRepo: String?
     private set(value) { this.extra["bootstrapKotlinRepo"] = value }
 
 fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
-    val bootstrapVersion = project.findProperty("bootstrap.kotlin.version") as String?
-    val bootstrapRepo = project.findProperty("bootstrap.kotlin.repo") as String?
-    val bootstrapTeamCityVersion = project.findProperty("bootstrap.teamcity.kotlin.version") as String?
+    val customVersion = project.findProperty("bootstrap.kotlin.version") as String?
+    val customRepo = project.findProperty("bootstrap.kotlin.repo") as String?
+    val teamCityVersion = project.findProperty("bootstrap.teamcity.kotlin.version") as String?
+    val teamCityProject = project.findProperty("bootstrap.teamcity.project") as String?
 
     val bootstrapSource = when {
         project.hasProperty("bootstrap.local") -> BootstrapOption.Local(project.findProperty("bootstrap.local.version") as String?, project.findProperty("bootstrap.local.path") as String?)
-        bootstrapTeamCityVersion != null -> BootstrapOption.TeamCity(bootstrapTeamCityVersion, onlySuccessBootstrap = false)
-        bootstrapVersion != null -> BootstrapOption.Custom(kotlinVersion = bootstrapVersion, repo = bootstrapRepo)
+        teamCityVersion != null -> BootstrapOption.TeamCity(teamCityVersion, projectExtId = teamCityProject, onlySuccessBootstrap = false)
+        customVersion != null -> BootstrapOption.Custom(kotlinVersion = customVersion, repo = customRepo)
         else -> defaultSource
     }
 
