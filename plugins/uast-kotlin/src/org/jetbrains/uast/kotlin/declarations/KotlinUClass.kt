@@ -31,7 +31,7 @@ import org.jetbrains.uast.java.AbstractJavaUClass
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 
-abstract class AbstractKotlinUClass(private val givenParent: UElement?) : AbstractJavaUClass() {
+abstract class AbstractKotlinUClass(private val givenParent: UElement?) : AbstractJavaUClass(), JvmDeclarationUElement {
     override val uastParent: UElement? by lz { givenParent ?: convertParent() }
 
     //TODO: should be merged with KotlinAbstractUElement.convertParent() after detaching from AbstractJavaUClass
@@ -42,7 +42,6 @@ abstract class AbstractKotlinUClass(private val givenParent: UElement?) : Abstra
                     else -> it.toUElement()
                 }
             } ?: (psi.parent ?: psi.containingFile).toUElement()
-
 }
 
 open class KotlinUClass private constructor(
@@ -51,6 +50,10 @@ open class KotlinUClass private constructor(
 ) : AbstractKotlinUClass(givenParent), PsiClass by psi {
 
     val ktClass = psi.kotlinOrigin
+
+    override val javaPsi: KtLightClass = psi
+
+    override val sourcePsi: KtClassOrObject? = ktClass
 
     override val psi = unwrap<UClass, PsiClass>(psi)
 
@@ -114,6 +117,7 @@ open class KotlinUClass private constructor(
             else -> KotlinUClass(psi, containingElement)
         }
     }
+
 }
 
 open class KotlinConstructorUMethod(
@@ -148,6 +152,10 @@ open class KotlinConstructorUMethod(
         }
     }
 
+    override val javaPsi = psi
+
+    override val sourcePsi = psi.kotlinOrigin
+
     open protected fun getBodyExpressions(): List<KtExpression> {
         if (isPrimary) return getInitializers()
         val bodyExpression = (psi.kotlinOrigin as? KtFunction)?.bodyExpression ?: return emptyList()
@@ -177,6 +185,10 @@ class KotlinUAnonymousClass(
 
     override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
 
+    override val javaPsi: PsiAnonymousClass = psi
+
+    override val sourcePsi: KtClassOrObject? = (psi as? KtLightClass)?.kotlinOrigin
+
     override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUClass>.getOriginalElement()
 
     override fun getSuperClass(): UClass? = super<AbstractKotlinUClass>.getSuperClass()
@@ -205,6 +217,10 @@ class KotlinScriptUClass(
 
     override val uastAnchor: UElement
         get() = UIdentifier(nameIdentifier, this)
+
+    override val javaPsi: PsiClass = psi
+
+    override val sourcePsi: KtClassOrObject? = psi.kotlinOrigin
 
     override val psi = unwrap<UClass, KtLightClassForScript>(psi)
 
@@ -239,5 +255,7 @@ class KotlinScriptUClass(
             val initializers = script.declarations.filterIsInstance<KtScriptInitializer>()
             KotlinUBlockExpression.create(initializers, this)
         }
+        override val javaPsi = psi
+        override val sourcePsi = psi.kotlinOrigin
     }
 }
