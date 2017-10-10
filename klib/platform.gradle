@@ -35,6 +35,7 @@ task klibInstall(type:Exec) {
     commandLine klibProgram,
             'install',
             konanInterop["$taskName"].interopProcessingTask.klib,
+            '-target', gradle.startParameter.projectProperties.target,
             '-repository',
             repo
 }
