@@ -29,9 +29,9 @@ public annotation class Ignore
 /**
  * Marks a function to be invoked before each test.
  */
-public annotation class Before
+public annotation class BeforeTest
 
 /**
  * Marks a function to be invoked after each test.
  */
-public annotation class After
+public annotation class AfterTest

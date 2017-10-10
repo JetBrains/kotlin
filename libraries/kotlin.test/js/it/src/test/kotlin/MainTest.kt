@@ -5,11 +5,11 @@ var value = 5
 
 class SimpleTest {
 
-    @Before fun beforeFun() {
+    @BeforeTest fun beforeFun() {
         value *= 2
     }
 
-    @After fun afterFun() {
+    @AfterTest fun afterFun() {
         value /= 2
     }
 
