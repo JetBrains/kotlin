@@ -245,6 +245,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt15407.repl")
+        public void testKt15407() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/kt15407.repl");
+            doTest(fileName);
+        }
+
         @TestMetadata("loopWithWrongLabel.repl")
         public void testLoopWithWrongLabel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/loopWithWrongLabel.repl");
