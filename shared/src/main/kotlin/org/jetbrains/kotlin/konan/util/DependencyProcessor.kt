@@ -64,7 +64,8 @@ class DependencyProcessor(dependenciesRoot: File,
                           homeDependencyCache: String = DEFAULT_HOME_DEPENDENCY_CACHE,
                           val airplaneMode: Boolean = false,
                           maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
-                          attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS) {
+                          attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
+                          customProgressCallback: ProgressCallback? = null) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = System.getProperty("user.home")?.let {
@@ -77,7 +78,7 @@ class DependencyProcessor(dependenciesRoot: File,
     private var isInfoShown = false
 
     // TOOO: Rename pause -> interval
-    private val downloader = DependencyDownloader(maxAttempts, attemptIntervalMs)
+    private val downloader = DependencyDownloader(maxAttempts, attemptIntervalMs, customProgressCallback)
     private val extractor = DependencyExtractor()
 
     private val archiveExtension get() = extractor.archiveExtension

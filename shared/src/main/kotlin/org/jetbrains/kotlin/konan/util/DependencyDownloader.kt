@@ -8,10 +8,18 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.concurrent.*
 
+typealias ProgressCallback = (url: String, currentBytes: Long, totalBytes: Long) -> Unit
+
 class DependencyDownloader(
         var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
-        var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS
+        var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS,
+        customProgressCallback: ProgressCallback? = null
 ) {
+
+    private val progressCallback = customProgressCallback ?: { url, currentBytes, totalBytes ->
+        print("\rDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
+    }
+
     val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor(object : ThreadFactory {
         override fun newThread(r: Runnable?): Thread {
             val thread = Thread(r)
@@ -81,10 +89,10 @@ class DependencyDownloader(
 
         var result: Future<Unit>?
         do {
-            updateProgressMsg(originalUrl.toString(), progress.currentBytes, totalBytes)
+            progressCallback(originalUrl.toString(), progress.currentBytes, totalBytes)
             result = executor.poll(1, TimeUnit.SECONDS)
         } while(result == null)
-        updateProgressMsg(originalUrl.toString(), progress.currentBytes, totalBytes)
+        progressCallback(originalUrl.toString(), progress.currentBytes, totalBytes)
 
         try {
             result.get()
@@ -187,10 +195,6 @@ class DependencyDownloader(
             val prefix = "kMGTPE"[exp-1]
             return "%.1f %siB".format(this / Math.pow(1024.0, exp.toDouble()), prefix)
         }
-
-    private fun updateProgressMsg(url: String, currentBytes: Long, totalBytes: Long) {
-        print("\rDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
-    }
 
     companion object {
         const val DEFAULT_MAX_ATTEMPTS = 10
