@@ -33,7 +33,8 @@ val testDistProjects = listOf(
         ":kotlin-preloader",
         ":plugins:android-extensions-compiler",
         ":kotlin-ant",
-        ":kotlin-annotations-jvm")
+        ":kotlin-annotations-jvm",
+        ":kotlin-annotations-android")
 
 dependencies {
     depDistProjects.forEach {
