@@ -139,4 +139,10 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
                "test.property"
        )
     }
+
+    fun testPatchVersion() {
+        doTest(VersionRequirement.Version(1, 1, 50), DeprecationLevel.HIDDEN, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+               "test.Klass"
+        )
+    }
 }

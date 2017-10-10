@@ -615,7 +615,7 @@ class DescriptorSerializer private constructor(
 
         val major = matchResult.groupValues.getOrNull(1)?.toIntOrNull() ?: return null
         val minor = matchResult.groupValues.getOrNull(2)?.toIntOrNull() ?: 0
-        val patch = matchResult.groupValues.getOrNull(3)?.toIntOrNull() ?: 0
+        val patch = matchResult.groupValues.getOrNull(4)?.toIntOrNull() ?: 0
 
         val proto = ProtoBuf.VersionRequirement.newBuilder()
         VersionRequirement.Version(major, minor, patch).encode(
