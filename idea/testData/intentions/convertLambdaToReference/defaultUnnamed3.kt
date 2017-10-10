@@ -4,4 +4,4 @@ class Transformer {
 
 fun bar(x: Int) = x * x
 
-val y = Transformer().transform(2, f = ::bar)
+val y = Transformer().transform(2, 3) { <caret>bar(it) }
