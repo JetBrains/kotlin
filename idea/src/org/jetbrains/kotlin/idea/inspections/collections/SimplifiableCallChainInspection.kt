@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
@@ -52,11 +53,17 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
                     val conversion = actualConversions.firstOrNull {
                         firstResolvedCall.resultingDescriptor.fqNameOrNull()?.asString() == it.firstFqName
                     } ?: return
+
+                    val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return
+
                     // Do not apply on maps due to lack of relevant stdlib functions
-                    val firstReceiverType = firstResolvedCall.extensionReceiver?.type ?: return
-                    val builtIns = firstReceiverType.builtIns
-                    val mapType = builtIns.map.defaultType
-                    if (firstReceiverType.isSubtypeOf(mapType)) return
+                    val firstReceiverType = firstResolvedCall.extensionReceiver?.type
+                    val firstReceiverRawType = firstReceiverType?.constructor?.declarationDescriptor?.defaultType
+                    if (firstReceiverRawType != null) {
+                        if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
+                            firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)) return
+                    }
+
                     // Do not apply for lambdas with return inside
                     val lambdaArgument = firstCallExpression.lambdaArguments.firstOrNull()
                     if (lambdaArgument?.anyDescendantOfType<KtReturnExpression>() == true) return
