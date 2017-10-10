@@ -49,16 +49,14 @@ class KotlinChainTransformerImpl : ChainTransformer<KtCallExpression> {
       intermediateCalls += IntermediateStreamCallImpl(call.callName(),
           call.valueArguments.map { it.toCallArgument() },
           KotlinTypes.ANY, KotlinTypes.ANY,
-          call.textRange,
-          call.receiverType()!!.getPackage(false))
+          call.textRange)
     }
 
     val terminationsPsiCall = callChain.last()
     // TODO: infer true types
     val terminationCall = TerminatorStreamCallImpl(terminationsPsiCall.callName(), emptyList(),
         KotlinTypes.ANY, KotlinTypes.ANY,
-        terminationsPsiCall.textRange,
-        terminationsPsiCall.receiverType()!!.getPackage(false))
+        terminationsPsiCall.textRange)
 
     return StreamChainImpl(qualifier, intermediateCalls, terminationCall, context)
   }
