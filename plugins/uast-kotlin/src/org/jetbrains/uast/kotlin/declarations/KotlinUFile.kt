@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -26,12 +27,16 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
 import java.util.*
 
-class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLanguagePlugin) : UFile {
+class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLanguagePlugin) : UFile, JvmDeclarationUElement {
     override val packageName: String
         get() = psi.packageFqName.asString()
 
     override val annotations: List<UAnnotation>
         get() = psi.annotationEntries.map { KotlinUAnnotation(it, this) }
+
+    override val javaPsi: PsiElement? = null
+
+    override val sourcePsi: PsiElement? = psi
 
     override val allCommentsInFile by lz {
         val comments = ArrayList<UComment>(0)
