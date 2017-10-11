@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
@@ -59,14 +60,16 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
         if (parent is KtStringTemplateEntryWithExpression) {
             parent = parent.parent
         }
-        if ((parent is KtStringTemplateExpression && parent.entries.size == 1) ||
-            parent is KtWhenConditionWithExpression) {
+        if ((parent is KtStringTemplateExpression && parent.entries.size == 1)) {
+            parent = parent.parent
+        }
+        if (parent is KtWhenConditionWithExpression) {
             parent = parent.parent
         }
 
         val result = doConvertParent(this, parent)
         if (result == this) {
-            throw IllegalStateException("Loop in parent structure when converting a $psi")
+            throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}]")
         }
 
         return result
@@ -113,7 +116,7 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         return result.initializingClass
     }
 
-    if (result is USwitchClauseExpressionWithBody && element.psi !is KtWhenCondition) {
+    if (result is USwitchClauseExpressionWithBody && !isInConditionBranch(element, result)) {
         return result.body
     }
 
@@ -131,6 +134,10 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
 
     return result
 }
+
+private fun isInConditionBranch(element: UElement, result: USwitchClauseExpressionWithBody) =
+        element.psi?.parentsWithSelf?.takeWhile { it !== result.psi }?.any { it is KtWhenCondition } ?: false
+
 
 private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter): UClass? {
     val primaryConstructor = parameter.getStrictParentOfType<KtPrimaryConstructor>() ?: return null

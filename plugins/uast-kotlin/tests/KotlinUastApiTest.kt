@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
@@ -123,6 +124,36 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             val binaryExpression = element.getParentOfType<KtBinaryExpression>(false)!!
             val uBinaryExpression = KotlinUastLanguagePlugin().convertElementWithParent(binaryExpression, null)!!
             UsefulTestCase.assertInstanceOf(uBinaryExpression.uastParent, UIfExpression::class.java)
+        }
+    }
+
+    @Test
+    fun testWhenStringLiteral() {
+        doTest("WhenStringLiteral") { _, file ->
+
+            fun UFile.findULiteralExpressionFromPsi(refText: String): ULiteralExpression =
+                    this.psi.findElementAt(file.psi.text.indexOf(refText))!!
+                            .parentsWithSelf.mapNotNull { it.toUElementOfType<ULiteralExpression>() }.first()
+
+            file.findULiteralExpressionFromPsi("abc").let { literalExpression ->
+                val psi = literalExpression.psi!!
+                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
+            }
+
+            file.findULiteralExpressionFromPsi("def").let { literalExpression ->
+                val psi = literalExpression.psi!!
+                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
+            }
+
+            file.findULiteralExpressionFromPsi("def1").let { literalExpression ->
+                val psi = literalExpression.psi!!
+                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                UsefulTestCase.assertInstanceOf(literalExpression.uastParent, UBlockExpression::class.java)
+            }
+
+
         }
     }
 }
