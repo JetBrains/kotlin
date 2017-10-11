@@ -132,6 +132,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         doTest(fileName);
     }
 
+    @TestMetadata("weakIncompatibilityWithoutActualModifier")
+    public void testWeakIncompatibilityWithoutActualModifier() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/multiplatform/classScopes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -108,6 +108,17 @@ object Renderers {
         }
     }
 
+    @JvmField val CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM = ContextDependentRenderer<DeclarationDescriptor> { descriptor, context ->
+        val declarationWithNameAndKind = DECLARATION_NAME_WITH_KIND.render(descriptor, context)
+        val withPlatform = if (descriptor is MemberDescriptor && descriptor.isActual)
+            "actual $declarationWithNameAndKind"
+        else
+            declarationWithNameAndKind
+
+        withPlatform.capitalize()
+    }
+
+
     @JvmField val NAME_OF_CONTAINING_DECLARATION_OR_FILE = Renderer<DeclarationDescriptor> {
         if (DescriptorUtils.isTopLevelDeclaration(it) && it is DeclarationDescriptorWithVisibility && it.visibility == Visibilities.PRIVATE) {
             "file"

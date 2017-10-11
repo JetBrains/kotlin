@@ -14,7 +14,7 @@ expect fun foo3<!JVM:NO_ACTUAL_FOR_EXPECT!>()<!>: Int
 
 // FILE: jvm.kt
 
-<!ACTUAL_WITHOUT_EXPECT!>interface<!> Foo1
+<!DECLARATION_WITH_INCOMPATIBLE_EXPECT!>interface<!> Foo1
 actual <!ACTUAL_WITHOUT_EXPECT!>interface<!> Foo2
 
 actual fun foo1(): <!ACTUAL_WITHOUT_EXPECT!>String<!> = ""

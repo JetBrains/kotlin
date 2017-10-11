@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,7 +177,7 @@ public class IdeErrorMessages {
 
         MAP.put(NO_ACTUAL_FOR_EXPECT, "<html>Expected {0} has no actual declaration in module{1}{2}</html>", DECLARATION_NAME_WITH_KIND,
                 PLATFORM, new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
-        MAP.put(ACTUAL_WITHOUT_EXPECT, "<html>Actual {0} has no corresponding expected declaration{1}</html>", DECLARATION_NAME_WITH_KIND,
+        MAP.put(ACTUAL_WITHOUT_EXPECT, "<html>{0} has no corresponding expected declaration{1}</html>", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "<html>Actual class ''{0}'' has no corresponding members for expected class members:{1}</html>",
