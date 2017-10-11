@@ -33,5 +33,5 @@ headers = aio.h aliases.h a.out.h argp.h argz.h byteswap.h cpio.h crypt.h \
 	sys/ustat.h utime.h sys/utsname.h sys/vfs.h sys/vlimit.h \
 	sys/vt.h sys/vtimes.h sys/xattr.h
 
-compilerOpts = -D_GNU_SOURCE
-#depends = posix
+compilerOpts = -D_ANSI_SOURCE -D_POSIX_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700
+depends = posix

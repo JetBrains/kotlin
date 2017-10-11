@@ -12,7 +12,7 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     sys/queue.h sys/select.h sys/shm.h sys/stat.h sys/socket.h \
     sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
-compilerOpts = -D_ANSI_SOURCE -D_POSIX_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700
+compilerOpts = -D_ANSI_SOURCE -D_POSIX_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700 -D__need_error_t
 
 ---
 // cinterop -target linux -def klib/src/platform/linux/posix.def -o platform.posix.klib
