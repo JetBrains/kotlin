@@ -4,6 +4,11 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions {
 
+    private var allWarningsAsErrorsField: kotlin.Boolean? = null
+    override var allWarningsAsErrors: kotlin.Boolean
+        get() = allWarningsAsErrorsField ?: false
+        set(value) { allWarningsAsErrorsField = value }
+
     private var suppressWarningsField: kotlin.Boolean? = null
     override var suppressWarnings: kotlin.Boolean
         get() = suppressWarningsField ?: false
@@ -13,11 +18,6 @@ internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kot
     override var verbose: kotlin.Boolean
         get() = verboseField ?: false
         set(value) { verboseField = value }
-
-    private var warningsAsErrorsField: kotlin.Boolean? = null
-    override var warningsAsErrors: kotlin.Boolean
-        get() = warningsAsErrorsField ?: false
-        set(value) { warningsAsErrorsField = value }
 
     private var apiVersionField: kotlin.String?? = null
     override var apiVersion: kotlin.String?
@@ -30,18 +30,18 @@ internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kot
         set(value) { languageVersionField = value }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments) {
+        allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
-        warningsAsErrorsField?.let { args.warningsAsErrors = it }
         apiVersionField?.let { args.apiVersion = it }
         languageVersionField?.let { args.languageVersion = it }
     }
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments.fillDefaultValues() {
+    allWarningsAsErrors = false
     suppressWarnings = false
     verbose = false
-    warningsAsErrors = false
     apiVersion = null
     languageVersion = null
 }

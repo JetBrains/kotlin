@@ -4,6 +4,11 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions {
 
+    private var allWarningsAsErrorsField: kotlin.Boolean? = null
+    override var allWarningsAsErrors: kotlin.Boolean
+        get() = allWarningsAsErrorsField ?: false
+        set(value) { allWarningsAsErrorsField = value }
+
     private var suppressWarningsField: kotlin.Boolean? = null
     override var suppressWarnings: kotlin.Boolean
         get() = suppressWarningsField ?: false
@@ -13,11 +18,6 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
     override var verbose: kotlin.Boolean
         get() = verboseField ?: false
         set(value) { verboseField = value }
-
-    private var warningsAsErrorsField: kotlin.Boolean? = null
-    override var warningsAsErrors: kotlin.Boolean
-        get() = warningsAsErrorsField ?: false
-        set(value) { warningsAsErrorsField = value }
 
     private var apiVersionField: kotlin.String?? = null
     override var apiVersion: kotlin.String?
@@ -85,9 +85,9 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         set(value) { typedArraysField = value }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments) {
+        allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
-        warningsAsErrorsField?.let { args.warningsAsErrors = it }
         apiVersionField?.let { args.apiVersion = it }
         languageVersionField?.let { args.languageVersion = it }
         friendModulesDisabledField?.let { args.friendModulesDisabled = it }
@@ -105,9 +105,9 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fillDefaultValues() {
+    allWarningsAsErrors = false
     suppressWarnings = false
     verbose = false
-    warningsAsErrors = false
     apiVersion = null
     languageVersion = null
     friendModulesDisabled = false
