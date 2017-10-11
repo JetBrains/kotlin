@@ -329,8 +329,7 @@ private String defFileToTaskName(String target, String name) {
 }
 
 task distPlatformLibs {
-    def target = TargetManager.host.name().toLowerCase()
-    dependsOn  targetDefFiles(target).collect {defFileToTaskName(target, it.name)}
+    dependsOn targetDefFiles(hostName).collect {defFileToTaskName(hostName, it.name)}
 }
 
 task dist {
@@ -342,7 +341,7 @@ task crossDist {
 }
 
 task bundle(type: (isWindows()) ? Zip : Tar) {
-    dependsOn('distPlatformLibs') // TODO: handle cross target libs.
+    dependsOn('crossDistPlatformLibs')
     dependsOn('crossDist')
     def simpleOsName = TargetManager.simpleOsName()
     baseName = "kotlin-native-$simpleOsName-${project.konanVersion}"
