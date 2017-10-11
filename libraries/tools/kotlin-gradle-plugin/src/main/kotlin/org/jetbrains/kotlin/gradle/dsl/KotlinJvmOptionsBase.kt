@@ -14,6 +14,11 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         get() = verboseField ?: false
         set(value) { verboseField = value }
 
+    private var warningsAsErrorsField: kotlin.Boolean? = null
+    override var warningsAsErrors: kotlin.Boolean
+        get() = warningsAsErrorsField ?: false
+        set(value) { warningsAsErrorsField = value }
+
     private var apiVersionField: kotlin.String?? = null
     override var apiVersion: kotlin.String?
         get() = apiVersionField ?: null
@@ -23,11 +28,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
     override var languageVersion: kotlin.String?
         get() = languageVersionField ?: null
         set(value) { languageVersionField = value }
-
-    private var warningsAsErrorsField: kotlin.Boolean? = null
-    override var warningsAsErrors: kotlin.Boolean
-        get() = warningsAsErrorsField ?: false
-        set(value) { warningsAsErrorsField = value }
 
     private var includeRuntimeField: kotlin.Boolean? = null
     override var includeRuntime: kotlin.Boolean
@@ -67,9 +67,9 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
+        warningsAsErrorsField?.let { args.warningsAsErrors = it }
         apiVersionField?.let { args.apiVersion = it }
         languageVersionField?.let { args.languageVersion = it }
-        warningsAsErrorsField?.let { args.warningsAsErrors = it }
         includeRuntimeField?.let { args.includeRuntime = it }
         javaParametersField?.let { args.javaParameters = it }
         jdkHomeField?.let { args.jdkHome = it }
@@ -83,9 +83,9 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fillDefaultValues() {
     suppressWarnings = false
     verbose = false
+    warningsAsErrors = false
     apiVersion = null
     languageVersion = null
-    warningsAsErrors = false
     includeRuntime = false
     javaParameters = false
     jdkHome = null

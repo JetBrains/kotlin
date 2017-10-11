@@ -17,6 +17,12 @@ interface KotlinCommonToolOptions {
      var verbose: kotlin.Boolean
 
     /**
+     * Report an error if there are any warnings
+     * Default value: false
+     */
+     var warningsAsErrors: kotlin.Boolean
+
+    /**
      * A list of additional compiler arguments
      * Default value: emptyList()
      */

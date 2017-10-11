@@ -14,13 +14,20 @@ internal abstract class KotlinJsDceOptionsBase : org.jetbrains.kotlin.gradle.dsl
         get() = verboseField ?: false
         set(value) { verboseField = value }
 
+    private var warningsAsErrorsField: kotlin.Boolean? = null
+    override var warningsAsErrors: kotlin.Boolean
+        get() = warningsAsErrorsField ?: false
+        set(value) { warningsAsErrorsField = value }
+
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments) {
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
+        warningsAsErrorsField?.let { args.warningsAsErrors = it }
     }
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments.fillDefaultValues() {
     suppressWarnings = false
     verbose = false
+    warningsAsErrors = false
 }
