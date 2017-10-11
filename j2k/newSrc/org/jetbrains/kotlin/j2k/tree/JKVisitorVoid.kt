@@ -13,4 +13,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitLoop(loop: JKLoop, data: Nothing?) = visitLoop(loop)
     fun visitDeclaration(declaration: JKDeclaration) = visitElement(declaration, null)
     override fun visitDeclaration(declaration: JKDeclaration, data: Nothing?) = visitDeclaration(declaration)
+    fun visitBlock(block: JKBlock) = visitElement(block, null)
+    override fun visitBlock(block: JKBlock, data: Nothing?) = visitBlock(block)
 }
