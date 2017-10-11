@@ -1,0 +1,5 @@
+package test
+
+sealed class Seal
+
+object SubSeal : Seal()

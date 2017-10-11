@@ -1,0 +1,26 @@
+<problems>
+    <problem>
+        <file>sealed.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
+        <problem_class severity="WEAK_WARNING" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class can be changed To Object</problem_class>
+        <description>Sealed Sub-class can be changed To Object</description>
+    </problem>
+    <problem>
+        <file>sealed.kt</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
+        <problem_class severity="WEAK_WARNING" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class can be changed To Object</problem_class>
+        <description>Sealed Sub-class can be changed To Object</description>
+    </problem>
+    <problem>
+        <file>sealed.kt</file>
+        <line>11</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
+        <problem_class severity="WEAK_WARNING" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class can be changed To Object</problem_class>
+        <description>Sealed Sub-class can be changed To Object</description>
+    </problem>
+</problems>

@@ -42,6 +42,12 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         doTest(fileName);
     }
 
+    @TestMetadata("convertSealedSubClassToObject/changeBetweenFiles.test")
+    public void testConvertSealedSubClassToObject_ChangeBetweenFiles() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/convertSealedSubClassToObject/changeBetweenFiles.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("implementAbstractMember/implementFunctionInJava/implementAllInJava.test")
     public void testImplementAbstractMember_implementFunctionInJava_ImplementAllInJava() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/implementAbstractMember/implementFunctionInJava/implementAllInJava.test");

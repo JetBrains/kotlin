@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.asJava.classes.KtLightClassImpl
-import org.jetbrains.kotlin.idea.intentions.declarations.ConvertSealedSubClassToObjectIntention
+import org.jetbrains.kotlin.idea.intentions.ConvertSealedSubClassToObjectIntention
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.psi.KtClass
@@ -46,17 +46,17 @@ class SealedSubClassCanBeObject : AbstractKotlinInspection(), CleanupLocalInspec
         }
     }
 
-    private inline fun KtClass.getSubclasses(): List<KtLightClassImpl> {
+    private fun KtClass.getSubclasses(): List<KtLightClassImpl> {
         return HierarchySearchRequest(this, this.useScope, false)
                 .searchInheritors().filterIsInstance<KtLightClassImpl>()
     }
 
-    private inline fun List<KtLightClassImpl>.withEmptyConstructors(): List<KtClass> {
+    private fun List<KtLightClassImpl>.withEmptyConstructors(): List<KtClass> {
         return map { it.kotlinOrigin }.filterIsInstance<KtClass>()
                 .filter { it.primaryConstructorParameters.isEmpty() }
     }
 
-    private inline fun List<KtClass>.withoutInheritors(): List<KtClass> {
+    private fun List<KtClass>.withoutInheritors(): List<KtClass> {
         return filter { HierarchySearchRequest(it, it.useScope, false).searchInheritors().firstOrNull() == null }
     }
 }

@@ -1646,7 +1646,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.declarations.ConvertSealedSubClassToObjectIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertSealedSubClassToObjectIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

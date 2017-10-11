@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.intentions.declarations
+package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.lang.Language
 import com.intellij.openapi.editor.Editor
@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -40,32 +39,44 @@ class ConvertSealedSubClassToObjectIntention :
     override fun applyTo(element: KtElement, editor: Editor?) {
         val klass = element.getParentOfType<KtClass>(false)?: return
 
+
+
         changeInstances(klass)
         changeDeclaration(klass)
     }
 
     override fun applicabilityRange(element: KtElement): TextRange? {
-        return element?.textRange
+        return element.textRange
     }
 
     /**
      * Changes declaration of class to object.
      */
-    private inline fun changeDeclaration(element: KtClass) {
-        val declaration = KtPsiFactory(element).buildDeclaration {
-            appendFixedText("${KtTokens.OBJECT_KEYWORD.value} ")
-            appendName(element.nameAsSafeName)
-            appendFixedText(" ${KtTokens.COLON.value} ")
-            appendFixedText(element.getSuperTypeList()?.text ?: "")
-        }
+    private fun changeDeclaration(element: KtClass) {
+        val factory = KtPsiFactory(element)
 
-        element.replace(declaration)
+        element.removeOpen()
+        element.changeToObject(factory)
+        element.transformToObject(factory)
+    }
+
+    private fun KtClass.removeOpen() {
+        modifierList?.getModifier(KtTokens.OPEN_KEYWORD)?.delete()
+    }
+
+    private fun KtClass.changeToObject(factory: KtPsiFactory) {
+        getClassOrInterfaceKeyword()?.replace(factory.createExpression(KtTokens.OBJECT_KEYWORD.value))
+        primaryConstructor?.delete()
+    }
+
+    private fun KtClass.transformToObject(factory: KtPsiFactory) {
+        replace(factory.createDeclaration<KtObjectDeclaration>(text))
     }
 
     /**
      * Replace instantiations of the class with links to the singleton instance of the object.
      */
-    private inline fun changeInstances(klass: KtClass) {
+    private fun changeInstances(klass: KtClass) {
         mapReferencesByLanguage(klass)
                 .apply {
                     replaceKotlin(klass)
@@ -76,14 +87,14 @@ class ConvertSealedSubClassToObjectIntention :
     /**
      * Map references to this class by language
      */
-    private inline fun mapReferencesByLanguage(klass: KtClass) = ReferencesSearch.search(klass)
+    private fun mapReferencesByLanguage(klass: KtClass) = ReferencesSearch.search(klass)
             .groupBy({ it.element.language }, { it.element.parent })
 
     /**
      * Replace Kotlin instantiations to a straightforward call to the singleton.
      */
-    private inline fun Map<Language, List<PsiElement>>.replaceKotlin(klass: KtClass) {
-        val list = this[KOTLIN_LANG]?: return
+    private fun Map<Language, List<PsiElement>>.replaceKotlin(klass: KtClass) {
+        val list = this[KOTLIN_LANG] ?: return
         val singletonCall = KtPsiFactory(klass).buildExpression { appendName(klass.nameAsSafeName) }
 
         list.filter { it.node.elementType == KtNodeTypes.CALL_EXPRESSION }
@@ -94,8 +105,8 @@ class ConvertSealedSubClassToObjectIntention :
      * Replace Java instantiations to an instance of the object, unless it is the only thing
      * done in the statement, in which IDEA will consider wrong, so I delete the line.
      */
-    private inline fun Map<Language, List<PsiElement>>.replaceJava(klass: KtClass) {
-        val list = this[JAVA_LANG]?: return
+    private fun Map<Language, List<PsiElement>>.replaceJava(klass: KtClass) {
+        val list = this[JAVA_LANG] ?: return
         val first = list.firstOrNull() ?: return
         val elementFactory = JavaPsiFacade.getElementFactory(klass.project)
         val javaSingletonCall = elementFactory.createExpressionFromText("${klass.name}.INSTANCE", first)
