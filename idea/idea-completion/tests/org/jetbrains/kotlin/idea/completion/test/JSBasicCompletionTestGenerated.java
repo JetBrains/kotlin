@@ -1561,6 +1561,30 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromSmart"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("ArrayLiteralAnnotationConstructorAsDefaultValueForArray.kt")
+            public void testArrayLiteralAnnotationConstructorAsDefaultValueForArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationConstructorAsDefaultValueForArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationConstructorAsDefaultValueForVararg.kt")
+            public void testArrayLiteralAnnotationConstructorAsDefaultValueForVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationConstructorAsDefaultValueForVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationUseForArray.kt")
+            public void testArrayLiteralAnnotationUseForArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationUseForArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationUseForVararg.kt")
+            public void testArrayLiteralAnnotationUseForVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationUseForVararg.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("EnumEntries.kt")
             public void testEnumEntries() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/EnumEntries.kt");
