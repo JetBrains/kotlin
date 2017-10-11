@@ -69,7 +69,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     @NotNull
     @Override
     public ExitCode execImpl(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
-        GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector, arguments.getWarningsAsErrors());
+        GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector, arguments.getAllWarningsAsErrors());
 
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
