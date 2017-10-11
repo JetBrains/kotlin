@@ -1,4 +1,4 @@
 public final class DefaultParameterValuesKt {
-    public static final fun foo(a: int, foo: java.lang.String) : void {
+    public static final fun foo(@null a: int, @org.jetbrains.annotations.Nullable foo: java.lang.String) : void {
     }
 }
