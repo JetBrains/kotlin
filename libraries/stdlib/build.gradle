@@ -113,7 +113,7 @@ task dexMethodCount(type: DexMethodCount) {
     from jar
     ownPackages = ['kotlin']
 }
-assemble.dependsOn(dexMethodCount)
+check.dependsOn(dexMethodCount)
 
 compileBuiltinsKotlin {
     dependsOn ":core:builtins:serialize"

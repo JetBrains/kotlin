@@ -175,7 +175,7 @@ task dexMethodCount(type: DexMethodCount) {
     jarFile = artifactJar.file
     ownPackages = ['kotlin.reflect']
 }
-assemble.dependsOn(dexMethodCount)
+check.dependsOn(dexMethodCount)
 
 artifacts {
     mainJar artifactJar
