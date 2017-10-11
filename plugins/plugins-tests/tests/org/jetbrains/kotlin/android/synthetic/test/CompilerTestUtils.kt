@@ -62,29 +62,11 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
 
 fun addAndroidExtensionsRuntimeLibrary(environment: KotlinCoreEnvironment) {
     environment.apply {
-        val runtimeLibrary = File(computeKotlinPaths().libPath, "android-extensions-compiler.jar")
+        val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "android-extensions-compiler.jar")
         updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
     }
 }
 
 fun getResPaths(path: String): List<String> {
     return File(path).listFiles { it -> it.name.startsWith("res") && it.isDirectory }!!.map { "$path${it.name}/" }
-}
-
-val KOTLIN_HOME_PROPERTY = "kotlin.home"
-val KOTLIN_HOME_ENV_VAR = "KOTLIN_HOME"
-
-private fun computeKotlinPaths(): KotlinPaths {
-    val kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY)
-    val kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR)
-    val kotlinHome = when {
-        kotlinHomeProperty != null -> File(kotlinHomeProperty)
-        kotlinHomeEnvVar != null -> File(kotlinHomeEnvVar)
-        else -> null
-    }
-    return when {
-        kotlinHome == null -> PathUtil.kotlinPathsForCompiler
-        kotlinHome.isDirectory -> KotlinPathsFromHomeDir(kotlinHome)
-        else -> throw RuntimeException("Kotlin home does not exist or is not a directory: " + kotlinHome)
-    }
 }
