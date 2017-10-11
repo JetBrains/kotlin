@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.memory.var2
+
+import kotlin.test.*
+
+@Test fun runTest() {
     var x = Any()
 
     for (i in 0..1) {

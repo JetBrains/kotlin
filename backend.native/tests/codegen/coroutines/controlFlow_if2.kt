@@ -1,3 +1,7 @@
+package codegen.coroutines.controlFlow_if2
+
+import kotlin.test.*
+
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -32,7 +36,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     var result = 0
 
     builder {

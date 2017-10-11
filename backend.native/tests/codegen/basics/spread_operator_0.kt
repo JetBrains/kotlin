@@ -1,4 +1,9 @@
-fun main(arg:Array<String>) {
+package codegen.basics.spread_operator_0
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
   val list0 = _arrayOf("K", "o", "t", "l", "i", "n")
   val list1 = _arrayOf("l", "a","n", "g", "u", "a", "g", "e")
   val list = foo(list0, list1)

@@ -1,4 +1,9 @@
-fun main(args: Array<String>) {
+package codegen.basics.typealias1
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
     println(Bar(42).x)
 }
 

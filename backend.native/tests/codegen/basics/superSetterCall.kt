@@ -1,3 +1,7 @@
+package codegen.basics.superSetterCall
+
+import kotlin.test.*
+
 open class C {
     open var p2 = "<prop:C>"
         set(value)  { field = "<prop:C>" + value }
@@ -22,7 +26,8 @@ class C3: C2() {
         }
 }
 
-fun main(args: Array<String>) {
+@Test
+fun runTest() {
     val c1 = C1()
     val c3 = C3()
     c1.p2 = "zzz"

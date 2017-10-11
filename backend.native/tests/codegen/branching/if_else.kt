@@ -1,8 +1,12 @@
+package codegen.boxing.if_else
+
+import kotlin.test.*
+
 fun if_else(b: Boolean): Int {
   if (b) return 42
   else   return 24
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (if_else(false) != 24) throw Error()
 }

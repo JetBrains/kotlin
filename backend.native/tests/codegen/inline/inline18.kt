@@ -1,3 +1,7 @@
+package codegen.inline.inline18
+
+import kotlin.test.*
+
 @Suppress("NOTHING_TO_INLINE")
 inline fun <T> foo2(i2: T, j2: T, p2: (T, T) -> Boolean): Boolean {
     return p2(i2, j2)
@@ -13,6 +17,6 @@ fun bar(): Boolean {
     return result
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(bar().toString())
 }

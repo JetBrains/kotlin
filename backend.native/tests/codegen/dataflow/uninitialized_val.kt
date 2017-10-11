@@ -1,3 +1,7 @@
+package codegen.dataflow.uninitialized_val
+
+import kotlin.test.*
+
 fun foo(b: Boolean): Int {
     val x: Int
     if (b) {
@@ -9,7 +13,7 @@ fun foo(b: Boolean): Int {
     return x
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val uninitializedUnused: Int
 
     println(foo(true))

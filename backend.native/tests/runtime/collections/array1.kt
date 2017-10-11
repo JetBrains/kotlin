@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.collections.array1
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val byteArray = ByteArray(5)
     byteArray[1] = 2
     byteArray[3] = 4

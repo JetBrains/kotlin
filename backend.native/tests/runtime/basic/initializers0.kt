@@ -1,3 +1,7 @@
+package runtime.basic.initializers0
+
+import kotlin.test.*
+
 class A {
     init{
         println ("A::init")
@@ -25,7 +29,7 @@ class A {
     }
 }
 
-fun main(args:Array<String>) {
+@Test fun runTest() {
     println("main")
     A.foo()
     A.foo()

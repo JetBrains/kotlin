@@ -1,3 +1,7 @@
+package codegen.bridges.test2
+
+import kotlin.test.*
+
 // vtable call, bridge inherited
 open class A {
     open fun foo(): Any = "A"
@@ -9,7 +13,7 @@ open class C : A() {
 
 open class D: C()
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val c = D()
     val a: A = c
     println(c.foo().toString())

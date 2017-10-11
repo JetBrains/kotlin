@@ -1,6 +1,10 @@
-import a.*
+package codegen.inline.defaultArgs_linkTest_main
 
-fun main(args: Array<String>) {
+import kotlin.test.*
+
+import codegen.inline.defaultArgs_linkTest.a.*
+
+@Test fun runTest() {
     println(foo(5))
     println(foo(5, 42))
 }

@@ -1,7 +1,11 @@
+package codegen.function.defaults10
+
+import kotlin.test.*
+
 enum class A(one: Int, val two: Int = one) {
     FOO(42)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(A.FOO.two)
 }

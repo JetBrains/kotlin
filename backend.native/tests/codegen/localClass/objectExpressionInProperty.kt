@@ -1,3 +1,7 @@
+package codegen.localClass.objectExpressionInProperty
+
+import kotlin.test.*
+
 abstract class Father {
     abstract inner class InClass {
         abstract fun work(): String
@@ -16,6 +20,6 @@ fun box(): String {
     return Child().ChildInClass.work()
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

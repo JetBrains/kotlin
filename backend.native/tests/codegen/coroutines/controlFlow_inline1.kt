@@ -1,3 +1,7 @@
+package codegen.coroutines.controlFlow_inline1
+
+import kotlin.test.*
+
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -21,7 +25,7 @@ inline suspend fun inline_s2(): Int {
     return 42
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     var result = 0
 
     builder {

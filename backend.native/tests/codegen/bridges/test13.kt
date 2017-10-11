@@ -1,3 +1,7 @@
+package codegen.bridges.test13
+
+import kotlin.test.*
+
 open class A<T> {
     open fun T.foo() {
         println(this.toString())

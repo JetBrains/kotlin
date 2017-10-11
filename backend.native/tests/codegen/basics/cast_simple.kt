@@ -1,3 +1,7 @@
+package codegen.basics.cast_simple
+
+import kotlin.test.*
+
 open class A() {}
 class B(): A() {}
 
@@ -9,6 +13,7 @@ fun castTest(): Boolean {
   return true
 }
 
-fun main(args: Array<String>) {
+@Test
+fun runTest() {
   if (!castTest()) throw Error()
 }

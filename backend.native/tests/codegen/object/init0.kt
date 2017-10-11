@@ -1,3 +1,7 @@
+package codegen.`object`.init0
+
+import kotlin.test.*
+
 class A(a:Int) {
   var i:Int = 0
   init {

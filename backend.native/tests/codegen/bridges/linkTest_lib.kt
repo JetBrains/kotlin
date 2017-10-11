@@ -1,4 +1,4 @@
-package a
+package codegen.bridges.linkTest.a
 
 interface A<T> {
     fun foo(): T

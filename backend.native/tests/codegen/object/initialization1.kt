@@ -1,4 +1,8 @@
-class Test {
+package codegen.`object`.initialization1
+
+import kotlin.test.*
+
+class TestClass {
     constructor() {
         println("constructor1")
     }
@@ -14,7 +18,7 @@ class Test {
     val f = println("field")
 }
 
-fun main(args: Array<String>) {
-    Test()
-    Test(1)
+@Test fun runTest() {
+    TestClass()
+    TestClass(1)
 }

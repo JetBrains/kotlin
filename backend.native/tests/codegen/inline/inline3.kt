@@ -1,3 +1,7 @@
+package codegen.inline.inline3
+
+import kotlin.test.*
+
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(i4: Int, i5: Int): Int {
     try {
@@ -11,6 +15,6 @@ fun bar(i1: Int, i2: Int, i3: Int): Int {
     return i1 + foo(i2, i3)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(bar(1, 8, 2).toString())
 }

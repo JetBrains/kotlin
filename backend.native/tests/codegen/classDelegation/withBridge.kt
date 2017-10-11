@@ -1,3 +1,7 @@
+package codegen.classDelegation.withBridge
+
+import kotlin.test.*
+
 interface A<T> {
     fun foo(t: T): String
 }
@@ -23,6 +27,6 @@ fun box(): String {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

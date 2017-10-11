@@ -1,3 +1,7 @@
+package codegen.localClass.noPrimaryConstructor
+
+import kotlin.test.*
+
 fun box(s: String): String {
     class Local {
         constructor(x: Int) {
@@ -16,6 +20,6 @@ fun box(s: String): String {
     return Local(42).result() + Local("zzz").result()
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     println(box("OK"))
 }

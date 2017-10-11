@@ -1,6 +1,10 @@
+package codegen.dataflow.scope1
+
+import kotlin.test.*
+
 var b = true
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     var x = 1
     if (b) {
         var x = 2

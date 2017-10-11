@@ -1,3 +1,7 @@
+package codegen.localClass.virtualCallFromConstructor
+
+import kotlin.test.*
+
 abstract class WaitFor {
     init {
         condition()
@@ -20,6 +24,6 @@ fun box(): String {
     return result;
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

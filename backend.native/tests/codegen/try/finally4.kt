@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.`try`.finally4
+
+import kotlin.test.*
+
+@Test fun runTest() {
 
     try {
         try {

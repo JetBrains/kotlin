@@ -1,5 +1,10 @@
+package codegen.function.named
+
+import kotlin.test.*
+
 fun foo(a:Int, b:Int) = a - b
-fun main(args:Array<String>) {
+
+@Test fun runTest() {
   if (foo(b = 24, a = 42) != 18)
       throw Error()
 }

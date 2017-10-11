@@ -1,3 +1,7 @@
+package codegen.basics.canonical_name
+
+import kotlin.test.*
+
 interface I<U, T> {
   fun foo(a: U): T
   fun qux(a: T): U
@@ -24,10 +28,7 @@ fun <U, V> baz(i: I<U, V>, u: U, v:V) {
 
 //-----------------------------------------------------------------------------//
 
-fun main(args: Array<String>) {
+@Test
+fun runTest() {
   baz<A1, A2>(A(), A1(), A2())
 }
-
-
-
-

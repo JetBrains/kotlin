@@ -1,3 +1,7 @@
+package codegen.`object`.initialization
+
+import kotlin.test.*
+
 open class A(val a:Int, val b:Int)
 
 open class B(val c:Int, d:Int):A(c, d)
@@ -19,6 +23,6 @@ fun foo(i:Int, j:Int):Int {
    return c.c
 }
 
-fun main(args:Array<String>) {
+@Test fun runTest() {
    if (foo(2, 3) != 5) throw Error()
 }

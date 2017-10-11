@@ -1,3 +1,7 @@
+package runtime.collections.hash_set0
+
+import kotlin.test.*
+
 fun assertTrue(cond: Boolean) {
     if (!cond)
         println("FAIL")
@@ -118,7 +122,7 @@ fun testRetainAll() {
     assertEquals(setOf("1", "3", "5"), s)
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     testBasic()
     testIterator()
     testEquals()

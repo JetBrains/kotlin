@@ -1,3 +1,7 @@
+package codegen.coroutines.degenerate1
+
+import kotlin.test.*
+
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -15,7 +19,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     builder {
         s1()
     }

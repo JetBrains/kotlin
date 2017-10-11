@@ -1,3 +1,7 @@
+package runtime.text.to_string0
+
+import kotlin.test.*
+
 // Based on Apache Harmony tests.
 
 fun assertEquals(actual: String, expected: String, msg: String) {
@@ -34,7 +38,7 @@ fun testLongToStringWithRadix() {
 
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     testIntToStringWithRadix()
     testLongToStringWithRadix()
     println("OK")

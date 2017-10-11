@@ -1,3 +1,7 @@
+package codegen.enum.vCallWithEntryClass
+
+import kotlin.test.*
+
 enum class Zzz {
     Z1 {
         override fun f() = "z1"
@@ -10,6 +14,6 @@ enum class Zzz {
     open fun f() = ""
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(Zzz.Z1.f() + Zzz.Z2.f())
 }

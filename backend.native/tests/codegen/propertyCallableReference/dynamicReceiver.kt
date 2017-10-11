@@ -1,12 +1,16 @@
-class Test {
+package codegen.propertyCallableReference.dynamicReceiver
+
+import kotlin.test.*
+
+class TestClass {
     var x: Int = 42
 }
 
-fun foo(): Test {
+fun foo(): TestClass {
     println(42)
-    return Test()
+    return TestClass()
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     foo()::x
 }

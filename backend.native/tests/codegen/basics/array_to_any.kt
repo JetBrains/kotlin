@@ -1,4 +1,9 @@
-fun main(args: Array<String>) {
+package codegen.basics.array_to_any
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
     foo().hashCode()
 }
 

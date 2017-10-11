@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.controlflow.for_loops_errors
+
+import kotlin.test.*
+
+@Test fun runTest() {
     // Negative step.
     try {
         for (i in 0 .. 4 step -2) print(i); println()

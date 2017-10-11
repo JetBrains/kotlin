@@ -1,3 +1,7 @@
+package codegen.delegatedProperty.local
+
+import kotlin.test.*
+
 import kotlin.reflect.KProperty
 
 fun foo(): Int {
@@ -13,6 +17,6 @@ fun foo(): Int {
     return x
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(foo())
 }

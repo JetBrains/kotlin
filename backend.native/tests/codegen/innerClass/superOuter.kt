@@ -1,3 +1,7 @@
+package codegen.innerClass.superOuter
+
+import kotlin.test.*
+
 open class Outer(val outer: String) {
     open inner class Inner(val inner: String): Outer(inner) {
         fun foo() = outer

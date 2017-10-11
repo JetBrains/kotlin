@@ -1,3 +1,7 @@
+package codegen.`object`.fields2
+
+import kotlin.test.*
+
 var global: Int = 0
     get() {
         println("Get global = $field")
@@ -8,7 +12,7 @@ var global: Int = 0
         field = value
     }
 
-class Test {
+class TestClass {
     var member: Int = 0
         get() {
             println("Get member = $field")
@@ -20,10 +24,10 @@ class Test {
         }
 }
 
-fun main(args:Array<String>) {
+@Test fun runTest() {
     global = 1
 
-    val test = Test()
+    val test = TestClass()
     test.member = 42
 
     global = test.member

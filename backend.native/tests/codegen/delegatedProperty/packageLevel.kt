@@ -1,3 +1,7 @@
+package codegen.delegatedProperty.packageLevel
+
+import kotlin.test.*
+
 import kotlin.reflect.KProperty
 
 class Delegate {
@@ -9,6 +13,6 @@ class Delegate {
 
 val x: Int by Delegate()
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(x)
 }

@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.controlflow.for_loops
+
+import kotlin.test.*
+
+@Test fun runTest() {
 
     // Simple loops
     for (i in 0..4) {

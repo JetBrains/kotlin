@@ -1,3 +1,6 @@
+package runtime.basic.interface0
+
+import kotlin.test.*
 
 interface A {
     fun b() = c()
@@ -10,7 +13,7 @@ class B(): A {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val a:A = B()
     a.b()
 }

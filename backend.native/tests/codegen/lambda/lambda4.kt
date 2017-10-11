@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.lambda.lambda4
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val lambda = bar()
     lambda()
     lambda()

@@ -1,6 +1,10 @@
+package codegen.boxing.when6
+
+import kotlin.test.*
+
 fun foo() {
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     if (true) foo() else foo()
 }

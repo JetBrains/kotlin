@@ -1,3 +1,7 @@
+package codegen.propertyCallableReference.varExtension
+
+import kotlin.test.*
+
 class A(y: Int) {
     var x = y
 }
@@ -8,7 +12,7 @@ var A.z: Int
         this.x = value
     }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val p1 = A::z
     val a = A(42)
     p1.set(a, 117)

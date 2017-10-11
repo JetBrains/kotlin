@@ -1,5 +1,9 @@
 import kotlin.reflect.KClass
 
+@Test fun runTest() {
+    main(emptyArray())
+}
+
 fun main(args: Array<String>) {
     checkClass(Any::class, "kotlin.Any", "Any", Any(), null)
     checkClass(Int::class, "kotlin.Int", "Int", 42, "17")

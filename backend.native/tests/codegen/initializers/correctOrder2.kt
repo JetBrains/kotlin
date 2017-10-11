@@ -1,4 +1,8 @@
-class Test {
+package codegen.initializers.correctOrder2
+
+import kotlin.test.*
+
+class TestClass {
     val x: Int
 
     val y = 42
@@ -8,6 +12,6 @@ class Test {
     }
 }
 
-fun main(args: Array<String>) {
-    println(Test().x)
+@Test fun runTest() {
+    println(TestClass().x)
 }

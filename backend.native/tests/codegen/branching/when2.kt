@@ -1,3 +1,7 @@
+package codegen.boxing.when2
+
+import kotlin.test.*
+
 fun when2(i: Int): Int {
   when (i) {
     0 -> return 42
@@ -5,6 +9,6 @@ fun when2(i: Int): Int {
   }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (when2(0) != 42) throw Error()
 }

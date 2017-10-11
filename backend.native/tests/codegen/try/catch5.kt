@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.`try`.catch5
+
+import kotlin.test.*
+
+@Test fun runTest() {
     try {
         try {
             println("Before")

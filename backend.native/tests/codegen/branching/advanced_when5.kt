@@ -1,3 +1,7 @@
+package codegen.boxing.advanced_when5
+
+import kotlin.test.*
+
 fun advanced_when5(i: Int): Int {
   when (i) {
     0 -> { val v = 42; return v}
@@ -9,6 +13,6 @@ fun advanced_when5(i: Int): Int {
   }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (advanced_when5(5) != 24) throw Error()
 }

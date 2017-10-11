@@ -1,3 +1,7 @@
+package codegen.bridges.test14
+
+import kotlin.test.*
+
 open class A<T, U> {
     open fun foo(x: T, y: U) {
         println(x.toString())
@@ -26,7 +30,7 @@ fun zzz(a: A<Int, Int>) {
     a.foo(42, 56)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val b = B()
     zzz(b)
     val a = A<Int, Int>()

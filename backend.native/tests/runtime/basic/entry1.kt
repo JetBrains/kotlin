@@ -1,3 +1,5 @@
+package runtime.basic.entry1
+
 fun fail() {
     println("Test failed, this is a wrong main() function.")
 }

@@ -1,3 +1,7 @@
+package runtime.memory.escape1
+
+import kotlin.test.*
+
 class B(val s: String)
 
 class A {
@@ -9,6 +13,6 @@ fun foo(): B {
     return a.b
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(foo().s)
 }

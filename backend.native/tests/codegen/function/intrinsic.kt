@@ -1,3 +1,6 @@
+package codegen.function.intrinsic
+
+import kotlin.test.*
 
 // This code fails to link when bultins are taken from the 
 // frontend generated module, instead of our library.
@@ -10,6 +13,6 @@ fun intrinsic(b: Int): Int {
   return sum
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (intrinsic(3) != 4) throw Error()
 }

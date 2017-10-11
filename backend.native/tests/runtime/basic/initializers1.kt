@@ -1,4 +1,8 @@
-class Test {
+package runtime.basic.initializers1
+
+import kotlin.test.*
+
+class TestClass {
     companion object {
         init {
             println("Init Test")
@@ -6,8 +10,8 @@ class Test {
     }
 }
 
-fun main(args : Array<String>) {
-    val t1 = Test()
-    val t2 = Test()
+@Test fun runTest() {
+    val t1 = TestClass()
+    val t2 = TestClass()
     println("Done")
 }

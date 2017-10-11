@@ -1,6 +1,10 @@
-import a.A
+package codegen.propertyCallableReference.linkTest_main
 
-fun main(args: Array<String>) {
+import kotlin.test.*
+
+import codegen.propertyCallableReference.linkTest.a.A
+
+@Test fun runTest() {
     val p1 = A::x
     println(p1.get(A(42)))
     val a = A(117)

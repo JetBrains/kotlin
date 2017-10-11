@@ -1,8 +1,12 @@
+package runtime.basic.initializers5
+
+import kotlin.test.*
+
 object A {
     val a = 42
     val b = A.a
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     println(A.b)
 }

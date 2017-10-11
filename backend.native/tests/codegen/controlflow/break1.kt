@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.controlflow.break1
+
+import kotlin.test.*
+
+@Test fun runTest() {
     loop@ while (true) {
         println("Body")
         break

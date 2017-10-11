@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.memory.var3
+
+import kotlin.test.*
+
+@Test fun runTest() {
     foo().use()
 }
 

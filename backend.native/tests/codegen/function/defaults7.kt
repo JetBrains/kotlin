@@ -1,3 +1,7 @@
+package codegen.function.defaults7
+
+import kotlin.test.*
+
 /**
  * Test fails with code generation:
  * Call parameter type does not match function signature!
@@ -11,6 +15,6 @@ fun <T> foo(a : T, b : Int = 42){
     println(b)
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     foo(1)
 }

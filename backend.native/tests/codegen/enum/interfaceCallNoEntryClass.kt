@@ -1,3 +1,7 @@
+package codegen.enum.interfaceCallNoEntryClass
+
+import kotlin.test.*
+
 interface A {
     fun foo(): String
 }
@@ -12,7 +16,7 @@ enum class Zzz(val zzz: String, val x: Int) : A {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(Zzz.Z3.foo())
     val a: A = Zzz.Z3
     println(a.foo())

@@ -1,3 +1,7 @@
+package codegen.delegatedProperty.observable
+
+import kotlin.test.*
+
 import kotlin.properties.Delegates
 
 class User {
@@ -7,7 +11,7 @@ class User {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val user = User()
     user.name = "first"
     user.name = "second"

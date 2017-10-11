@@ -1,4 +1,4 @@
-package a
+package codegen.enum.linkTest.a
 
 enum class A(val x: Int) {
     Z1(42),

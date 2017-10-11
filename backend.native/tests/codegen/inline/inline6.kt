@@ -1,3 +1,7 @@
+package codegen.inline.inline6
+
+import kotlin.test.*
+
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(body: () -> Unit) {
     println("hello1")
@@ -12,6 +16,6 @@ fun bar() {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     bar()
 }

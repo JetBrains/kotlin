@@ -1,5 +1,8 @@
+package runtime.collections.moderately_large_array
 
-fun main(args: Array<String>) {
+import kotlin.test.*
+
+@Test fun runTest() {
     val a = ByteArray(1000000)
 
     var sum = 0

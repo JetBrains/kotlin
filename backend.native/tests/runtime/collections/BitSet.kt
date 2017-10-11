@@ -1,3 +1,7 @@
+package runtime.collections.BitSet
+
+import kotlin.test.*
+
 fun assertContainsOnly(bitSet: BitSet, trueBits: Set<Int>, size: Int) {
     for (i in 0 until size) {
         val expectedBit = i in trueBits
@@ -437,7 +441,7 @@ fun testEqualsHashCode() {
     assertTrue("Different sized BitSet with higher bits not set returned false", b1 == b3)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     testConstructor()
     testSet()
     testFlip()

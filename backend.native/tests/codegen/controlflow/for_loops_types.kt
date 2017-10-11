@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.controlflow.for_loops_types
+
+import kotlin.test.*
+
+@Test fun runTest() {
     for (i in 0.toByte() .. 4.toByte()) print(i); println()
     for (i in 0.toByte() .. 4.toShort()) print(i); println()
     for (i in 0.toByte() .. 4.toInt()) print(i); println()

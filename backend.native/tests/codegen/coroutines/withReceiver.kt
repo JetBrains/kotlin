@@ -1,3 +1,7 @@
+package codegen.coroutines.withReceiver
+
+import kotlin.test.*
+
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -18,7 +22,7 @@ fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), EmptyContinuation)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     var result = 0
 
     builder {

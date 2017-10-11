@@ -1,4 +1,4 @@
-package foo.bar
+package serialization.serialize_members
 
 class R<T> {
     inline fun bar(t: T) {

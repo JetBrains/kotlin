@@ -1,5 +1,9 @@
+package codegen.function.boolean
+
+import kotlin.test.*
+
 fun bool_yes(): Boolean = true
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     if (!bool_yes()) throw Error()
 }

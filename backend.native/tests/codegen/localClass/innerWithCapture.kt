@@ -1,3 +1,7 @@
+package codegen.localClass.innerWithCapture
+
+import kotlin.test.*
+
 fun box(s: String): String {
     class Local {
         open inner class Inner() {
@@ -8,6 +12,6 @@ fun box(s: String): String {
     return Local().Inner().result()
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     println(box("OK"))
 }

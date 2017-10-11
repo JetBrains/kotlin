@@ -1,3 +1,7 @@
+package runtime.basic.statements0
+
+import kotlin.test.*
+
 fun simple() {
     var a = 238
     a++
@@ -27,7 +31,7 @@ fun fields() {
     println(foo.i)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     simple()
     fields()
 }

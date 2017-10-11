@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.memory.var4
+
+import kotlin.test.*
+
+@Test fun runTest() {
     var x = Error()
 
     for (i in 0..1) {

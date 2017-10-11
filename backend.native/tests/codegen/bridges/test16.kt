@@ -1,3 +1,7 @@
+package codegen.bridges.test16
+
+import kotlin.test.*
+
 interface A {
     fun foo(): String
 }
@@ -12,7 +16,7 @@ open class B: C() {
 
 fun bar(c: C) = c.foo()
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val b = B()
     val c: C = b
     println(bar(b))

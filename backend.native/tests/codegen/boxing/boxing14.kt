@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.boxing.boxing14
+
+import kotlin.test.*
+
+@Test fun runTest() {
     42.println()
 }
 

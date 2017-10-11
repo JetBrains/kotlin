@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package lower.vararg_of_literals
+
+import kotlin.test.*
+
+@Test fun runTest() {
     foo()
     foo()
 }

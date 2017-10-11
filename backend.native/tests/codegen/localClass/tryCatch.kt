@@ -1,3 +1,7 @@
+package codegen.localClass.tryCatch
+
+import kotlin.test.*
+
 private fun foo() {
     val local =
             object {
@@ -11,6 +15,6 @@ private fun foo() {
     local.bar()
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     foo()
 }

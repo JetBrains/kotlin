@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.objectExpression_2
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val a = "a"
 
     val x = object {

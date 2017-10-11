@@ -1,6 +1,10 @@
+package runtime.exceptions.extend0
+
+import kotlin.test.*
+
 class C : Exception("OK")
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     try {
         throw C()
     } catch (e: Throwable) {

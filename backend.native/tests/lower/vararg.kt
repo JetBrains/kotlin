@@ -1,6 +1,10 @@
+package lower.vararg
+
+import kotlin.test.*
+
 fun foo(vararg x: Any?) {}
 fun bar() = foo()
 
-fun main(arg:Array<String>) {
+@Test fun runTest() {
   bar()
 }

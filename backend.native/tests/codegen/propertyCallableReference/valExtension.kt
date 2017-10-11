@@ -1,10 +1,14 @@
+package codegen.propertyCallableReference.valExtension
+
+import kotlin.test.*
+
 class A(y: Int) {
     var x = y
 }
 
 val A.z get() = this.x
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val p1 = A::z
     println(p1.get(A(42)))
     val a = A(117)

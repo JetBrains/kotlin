@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.`try`.catch8
+
+import kotlin.test.*
+
+@Test fun runTest() {
     try {
         throw Error("Error happens")
     } catch (e: Throwable) {

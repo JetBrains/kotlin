@@ -1,3 +1,7 @@
+package codegen.boxing.boxing11
+
+import kotlin.test.*
+
 fun printInt(x: Int) = println(x)
 
 class Foo(val value: Int?) {
@@ -6,7 +10,7 @@ class Foo(val value: Int?) {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     Foo(17).foo()
     Foo(null).foo()
 }

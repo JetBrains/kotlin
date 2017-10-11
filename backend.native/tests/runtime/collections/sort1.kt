@@ -1,4 +1,8 @@
-fun main(a: Array<String>) {
+package runtime.collections.sort1
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val foo = mutableListOf("x", "a", "b")
     foo.sort()
     println(foo.toString())

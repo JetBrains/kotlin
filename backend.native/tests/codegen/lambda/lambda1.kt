@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.lambda.lambda1
+
+import kotlin.test.*
+
+@Test fun runTest() {
     run {
         println("lambda")
     }

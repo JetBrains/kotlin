@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.lambda.lambda7
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val x = foo {
         it + 1
     }

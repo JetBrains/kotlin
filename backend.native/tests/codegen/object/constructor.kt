@@ -1,3 +1,5 @@
+package codegen.`object`.constructor
+
 class A()
 
 class B(val a:Int)

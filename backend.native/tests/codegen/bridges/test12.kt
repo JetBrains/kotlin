@@ -1,3 +1,7 @@
+package codegen.bridges.test12
+
+import kotlin.test.*
+
 abstract class A<in T> {
     abstract fun foo(x: T)
 }
@@ -18,7 +22,7 @@ fun foo(arg: A<Int>) {
     arg.foo(42)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     foo(B())
     foo(C())
 }

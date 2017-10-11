@@ -1,3 +1,7 @@
+package codegen.bridges.test3
+
+import kotlin.test.*
+
 // non-generic interface, generic impl, non-virtual call + interface call
 open class A<T> {
     var size: T = 56 as T
@@ -25,6 +29,6 @@ fun box(): String {
     return "OK"
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

@@ -1,10 +1,14 @@
+package codegen.lateinit.initialized
+
+import kotlin.test.*
+
 class A {
     lateinit var s: String
 
     fun foo() = s
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val a = A()
     a.s = "zzz"
     println(a.foo())

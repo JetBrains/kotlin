@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.controlflow.for_loops_overflow
+
+import kotlin.test.*
+
+@Test fun runTest() {
     for (i in Int.MAX_VALUE - 1 .. Int.MAX_VALUE) { print(i); print(' ') }; println()
     for (i in Int.MAX_VALUE - 1 until Int.MAX_VALUE) { print(i); print(' ') }; println()
     for (i in Int.MIN_VALUE + 1 downTo Int.MIN_VALUE) { print(i); print(' ') }; println()

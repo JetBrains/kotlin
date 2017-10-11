@@ -1,7 +1,11 @@
+package runtime.basic.initializers3
+
+import kotlin.test.*
+
 class Foo(val bar: Int)
 
 var x = Foo(42)
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(x.bar)
 }

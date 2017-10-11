@@ -1,3 +1,7 @@
+package codegen.bridges.test6
+
+import kotlin.test.*
+
 // vtable call + interface call
 interface Z {
     fun foo(): Any
@@ -17,7 +21,7 @@ open class C : A() {
 
 open class D: C(), Y, Z
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val d = D()
     val y: Y = d
     val z: Z = d

@@ -1,3 +1,7 @@
+package codegen.coroutines.returnsUnit1
+
+import kotlin.test.*
+
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -26,7 +30,7 @@ suspend fun s3(x: Int) {
     inline_s2(x)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     var result = 0
 
     builder {

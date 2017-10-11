@@ -1,4 +1,9 @@
-fun main(args: Array<String>) {
+package codegen.basics.unit3
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
     foo(Unit)
 }
 

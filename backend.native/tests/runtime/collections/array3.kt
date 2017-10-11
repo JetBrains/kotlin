@@ -1,6 +1,10 @@
+package runtime.collections.array3
+
+import kotlin.test.*
+
 import konan.*
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     val data = immutableBinaryBlobOf(0x1, 0x2, 0x3, 0x7, 0x8, 0x9, 0x80, 0xff)
     for (b in data) {
         print("$b ")

@@ -1,3 +1,7 @@
+package codegen.basics.superFunCall
+
+import kotlin.test.*
+
 open class C {
     open fun f() = "<fun:C>"
 }
@@ -13,7 +17,8 @@ class C3: C2() {
     override fun f() = super<C2>.f() + "<fun:C3>"
 }
 
-fun main(args: Array<String>) {
+@Test
+fun runTest() {
     println(C1().f())
     println(C3().f())
 }

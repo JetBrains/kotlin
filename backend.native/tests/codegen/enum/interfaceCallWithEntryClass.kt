@@ -1,3 +1,7 @@
+package codegen.enum.interfaceCallWithEntryClass
+
+import kotlin.test.*
+
 interface A {
     fun f(): String
 }
@@ -14,7 +18,7 @@ enum class Zzz: A {
     override fun f() = ""
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(Zzz.Z1.f() + Zzz.Z2.f())
     val a1: A = Zzz.Z1
     val a2: A = Zzz.Z2

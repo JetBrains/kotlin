@@ -1,3 +1,7 @@
+package runtime.memory.escape0
+
+import kotlin.test.*
+
 //fun foo1(arg: String) : String = foo0(arg)
 fun foo1(arg: Any) : Any = foo0(arg)
 
@@ -46,7 +50,7 @@ fun zoo7(arg1: Any, arg2: Any, selector: Int) : Any {
     return if (selector < 2) arg1 else arg2;
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     //val z = zoo7(Any(), Any(), 1)
     val x = zoo5(Any())
     //println(bar(foo1(foo2("")), foo2(foo1(""))))

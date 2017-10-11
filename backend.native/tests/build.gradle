@@ -252,6 +252,18 @@ task sum2(type: RunKonanTest) {
     source = "codegen/function/sum_imm.kt"
 }
 
+task sum_func(type: RunKonanTest) {
+    source = "codegen/function/sum_func.kt"
+}
+
+task sum_mixed(type: RunKonanTest) {
+    source = "codegen/function/sum_mixed.kt"
+}
+
+task sum_illy(type: RunKonanTest) {
+    source = "codegen/function/sum_silly.kt"
+}
+
 task function_defaults(type: RunKonanTest) {
     source = "codegen/function/defaults.kt"
 }
@@ -1173,6 +1185,10 @@ task cycle_do(type: RunKonanTest) {
     source = "codegen/cycles/cycle_do.kt"
 }
 
+task cycle_for(type: RunKonanTest) {
+    source = "codegen/cycles/cycle_for.kt"
+}
+
 task abstract_super(type: RunKonanTest) {
     source = "datagen/rtti/abstract_super.kt"
 }
@@ -1774,9 +1790,22 @@ task memory_throw_cleanup(type: RunKonanTest) {
     source = "runtime/memory/throw_cleanup.kt"
 }
 
+task memory_escape0(type: RunKonanTest) {
+    source = "runtime/memory/escape1.kt"
+}
+
 task memory_escape1(type: RunKonanTest) {
     goldValue = "zzz\n"
     source = "runtime/memory/escape1.kt"
+}
+
+task memory_cycles0(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "runtime/memory/cycles0.kt"
+}
+
+task memory_basic0(type: RunKonanTest) {
+    source = "runtime/memory/cycles0.kt"
 }
 
 task memory_escape2(type: RunKonanTest) {

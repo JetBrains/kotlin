@@ -1,14 +1,16 @@
+package codegen.kclass.kclass1
+
+import kotlin.test.*
+
 // FILE: main.kt
-fun main(args: Array<String>) {
-    com.github.salomonbrys.kmffkn.App(testQualified = true)
+@Test fun runTest() {
+    App(testQualified = true)
 }
 
 // FILE: app.kt
 
 // Taken from:
 // https://github.com/SalomonBrys/kmffkn/blob/master/shared/main/kotlin/com/github/salomonbrys/kmffkn/app.kt
-
-package com.github.salomonbrys.kmffkn
 
 @DslMarker
 annotation class MyDsl
@@ -25,7 +27,7 @@ class KClassDsl {
 
 fun <T: Any> dsl(block: DslMain.() -> T): T = DslMain().block()
 
-class Test
+class TestClass
 
 class App(testQualified: Boolean) {
 
@@ -33,7 +35,7 @@ class App(testQualified: Boolean) {
     var type = dsl {
         kClass {
             //kClass {  } // This should error if uncommented because of `@DslMarker`.
-            of<Test>()
+            of<TestClass>()
         }
     }
 
@@ -45,8 +47,8 @@ class App(testQualified: Boolean) {
         assert(String::class == String::class)
         assert(String::class != Int::class)
 
-        assert(Test()::class == Test()::class)
-        assert(Test()::class == Test::class)
+        assert(TestClass()::class == TestClass()::class)
+        assert(TestClass()::class == TestClass::class)
 
         println("OK :D")
     }

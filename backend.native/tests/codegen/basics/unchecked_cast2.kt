@@ -1,4 +1,9 @@
-fun main(args: Array<String>) {
+package codegen.basics.unchecked_cast2
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
     try {
         val x = cast<String>(Any())
         println(x.length)

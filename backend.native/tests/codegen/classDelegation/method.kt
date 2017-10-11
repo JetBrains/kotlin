@@ -1,3 +1,7 @@
+package codegen.classDelegation.method
+
+import kotlin.test.*
+
 interface A<T> {
     fun foo(): T
 }
@@ -14,6 +18,6 @@ fun box(): String {
     return c.foo() + a.foo()
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

@@ -1,3 +1,7 @@
+package runtime.memory.var1
+
+import kotlin.test.*
+
 class Integer(val value: Int) {
     operator fun inc() = Integer(value + 1)
 }
@@ -7,7 +11,7 @@ fun foo(x: Any, y: Any) {
     y.use()
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     var x = Integer(0)
 
     for (i in 0..1) {

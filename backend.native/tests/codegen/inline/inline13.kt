@@ -1,3 +1,7 @@
+package codegen.inline.inline13
+
+import kotlin.test.*
+
 open class A<T1>()
 class B<T2>() : A<T2>()
 
@@ -10,6 +14,6 @@ fun bar(): Boolean {
     return foo<B<Int>>(B<Int>())
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(bar().toString())
 }

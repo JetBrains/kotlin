@@ -1,3 +1,7 @@
+package codegen.basics
+
+import kotlin.test.*
+
 interface I
 class A() : I {}
 class B() {}
@@ -28,8 +32,8 @@ fun isTypeOfInterface(a: Any) : Boolean {
 
 //-----------------------------------------------------------------------------//
 
-fun main(args: Array<String>) {
-
+@Test
+fun runTest() {
   println(isTypeOf(A()))
   println(isTypeOf(null))
   println(isTypeNullableOf(A()))

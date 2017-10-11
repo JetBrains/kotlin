@@ -1,3 +1,7 @@
+package codegen.bridges.test11
+
+import kotlin.test.*
+
 interface I {
     fun foo(x: Int)
 }
@@ -10,7 +14,7 @@ class B : A<Int>(), I {
     override fun foo(x: Int) = println(x)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val b = B()
     val a: A<Int> = b
     val c: I = b

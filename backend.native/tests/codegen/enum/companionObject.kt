@@ -1,3 +1,7 @@
+package codegen.enum.companionObject
+
+import kotlin.test.*
+
 enum class Game {
     ROCK,
     PAPER,
@@ -21,4 +25,4 @@ fun box(): String {
     return "OK"
 }
 
-fun main(args: Array<String>) = println(box())
+@Test fun runTest() = println(box())

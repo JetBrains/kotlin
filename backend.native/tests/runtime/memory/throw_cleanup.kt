@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package runtime.memory.throw_cleanup
+
+import kotlin.test.*
+
+@Test fun runTest() {
     foo(false)
     try {
         foo(true)

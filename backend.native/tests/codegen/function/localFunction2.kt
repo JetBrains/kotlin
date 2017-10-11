@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.function.localFunction2
+
+import kotlin.test.*
+
+@Test fun runTest() {
     var a = 0
     fun local() {
         class A {

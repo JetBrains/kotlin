@@ -1,3 +1,11 @@
+package runtime.collections.listof0
+
+import kotlin.test.*
+
+@Test fun runTest() {
+    main(arrayOf("a"))
+}
+
 fun main(args : Array<String>) {
     val nonConstStr = args[0]
     val list = arrayListOf(nonConstStr, "b", "c")

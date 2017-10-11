@@ -1,3 +1,7 @@
+package runtime.memory.escape2
+
+import kotlin.test.*
+
 class A(val s: String)
 
 class B {
@@ -17,7 +21,7 @@ fun bar(b: B) {
 
 val global = B()
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     bar(global)
     println(global.a!!.s)
 }

@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.boxing.boxing10
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val FALSE: Boolean? = false
 
     if (FALSE != null) {

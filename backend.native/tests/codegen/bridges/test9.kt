@@ -1,3 +1,7 @@
+package codegen.bridges.test9
+
+import kotlin.test.*
+
 // abstract class vtable call
 abstract class A {
     abstract fun foo(): String
@@ -22,6 +26,6 @@ fun box(): String {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

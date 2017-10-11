@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.controlflow.unreachable1
+
+import kotlin.test.*
+
+@Test fun runTest() {
     println(foo())
 }
 

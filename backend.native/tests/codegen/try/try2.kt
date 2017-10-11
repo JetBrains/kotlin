@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.`try`.try2
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val x = try {
         throw Error()
         5

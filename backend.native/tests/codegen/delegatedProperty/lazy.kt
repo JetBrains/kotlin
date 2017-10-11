@@ -1,9 +1,13 @@
+package codegen.delegatedProperty.lazy
+
+import kotlin.test.*
+
 val lazyValue: String by lazy {
     println("computed!")
     "Hello"
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(lazyValue)
     println(lazyValue)
 }

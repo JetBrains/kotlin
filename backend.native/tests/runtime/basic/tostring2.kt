@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.basic.tostring2
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val hello = "Hello"
     val array = hello.toCharArray()
     for (ch in array) {

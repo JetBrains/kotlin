@@ -1,7 +1,11 @@
+package codegen.boxing.boxing12
+
+import kotlin.test.*
+
 fun foo(x: Number) {
     println(x.toByte())
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     foo(18)
 }

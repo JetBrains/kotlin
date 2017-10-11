@@ -1,3 +1,7 @@
+package serialization.deserialized_inline0
+
+import kotlin.test.*
+
 
 fun inline_todo() {
     try {
@@ -28,7 +32,7 @@ fun inline_areEqual() {
     println(konan.internal.areEqual(b, b))
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     inline_todo()
     inline_assert()
     inline_maxof()

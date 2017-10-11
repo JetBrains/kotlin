@@ -1,7 +1,11 @@
+package codegen.function.defaults3
+
+import kotlin.test.*
+
 fun foo(a:Int = 2, b:String = "Hello", c:Int = 4):String = "$b-$c$a"
 fun foo(a:Int = 3, b:Int = a + 1, c:Int = a + b) = a + b + c
 
-fun main(arg:Array<String>){
+@Test fun runTest() {
     val a = foo(b="Universe")
     if (a != "Universe-42")
         throw Error()

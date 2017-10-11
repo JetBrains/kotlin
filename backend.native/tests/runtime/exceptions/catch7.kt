@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.exceptions.catch7
+
+import kotlin.test.*
+
+@Test fun runTest() {
     try {
         foo()
     } catch (e: Throwable) {

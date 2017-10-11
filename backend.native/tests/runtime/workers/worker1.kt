@@ -1,6 +1,10 @@
+package runtime.workers.worker1
+
+import kotlin.test.*
+
 import konan.worker.*
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val COUNT = 5
     val workers = Array(COUNT, { _ -> startWorker()})
 

@@ -1,3 +1,7 @@
+package codegen.boxing.advanced_when2
+
+import kotlin.test.*
+
 fun advanced_when2(i: Int): Int {
   var value = 1
   when (i) {
@@ -9,6 +13,6 @@ fun advanced_when2(i: Int): Int {
   return value
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (advanced_when2(10) != 42) throw Error()
 }

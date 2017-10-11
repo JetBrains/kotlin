@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.exceptions.catch2
+
+import kotlin.test.*
+
+@Test fun runTest() {
     try {
         println("Before")
         foo()

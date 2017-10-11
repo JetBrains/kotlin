@@ -1,3 +1,7 @@
+package codegen.boxing.when5
+
+import kotlin.test.*
+
 fun when5(i: Int): Int {
   when (i) {
     0 -> return 42
@@ -9,6 +13,6 @@ fun when5(i: Int): Int {
   }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (when5(2) != 3) throw Error()
 }

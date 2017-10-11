@@ -1,4 +1,9 @@
-fun main(args: Array<String>) {
+package codegen.basics.unit4
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
     for (x in 0 .. 8) {
         foo(x, Unit)
     }

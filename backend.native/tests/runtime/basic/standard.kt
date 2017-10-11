@@ -1,10 +1,14 @@
+package runtime.basic.standard
+
+import kotlin.test.*
+
 class Foo(val bar: Int)
 
 fun <T> assertEquals(actual: T, expected: T) {
     if (actual != expected) throw AssertionError("Assertion failed. Expected value: $expected, actual value: $actual")
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     try {
         TODO()
         throw AssertionError("TODO() doesn't throw an exception")

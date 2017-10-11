@@ -1,10 +1,14 @@
+package codegen.enum.values
+
+import kotlin.test.*
+
 enum class E {
     E3,
     E1,
     E2
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(E.values()[0].toString())
     println(E.values()[1].toString())
     println(E.values()[2].toString())

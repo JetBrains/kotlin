@@ -1,3 +1,7 @@
+package codegen.basics.null_check
+
+import kotlin.test.*
+
 //--- Test "eqeq" -------------------------------------------------------------//
 
 fun check_eqeq(a: Any?) = a == null
@@ -22,7 +26,8 @@ fun null_check_eqeqeq2() : Boolean {
   return check_eqeqeq(null)
 }
 
-fun main(args: Array<String>) {
+@Test
+fun runTest() {
   if (null_check_eqeq1())    throw Error()
   if (!null_check_eqeq2())   throw Error()
   if (null_check_eqeqeq1())  throw Error()

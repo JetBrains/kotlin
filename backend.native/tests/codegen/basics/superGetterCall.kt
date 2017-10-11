@@ -1,3 +1,7 @@
+package codegen.basics.superGetterCall
+
+import kotlin.test.*
+
 open class C {
     open val p1 = "<prop:C>"
 }
@@ -13,7 +17,8 @@ class C3: C2() {
     override val p1 = super<C2>.p1 + "<prop:C3>"
 }
 
-fun main(args: Array<String>) {
+@Test
+fun runTest() {
     println(C1().p1)
     println(C3().p1)
 }

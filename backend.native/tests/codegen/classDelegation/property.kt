@@ -1,3 +1,7 @@
+package codegen.classDelegation.property
+
+import kotlin.test.*
+
 interface A {
     val x: Int
 }
@@ -14,6 +18,6 @@ fun box(): String {
     return q.x.toString() + a.x.toString()
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

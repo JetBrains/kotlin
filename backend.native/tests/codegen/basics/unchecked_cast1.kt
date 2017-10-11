@@ -1,4 +1,9 @@
-fun main(args: Array<String>) {
+package codegen.basics.unchecked_cast1
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
     foo<String>("17")
     bar<String>("17")
     foo<String>(42)

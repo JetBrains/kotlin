@@ -1,3 +1,7 @@
+package runtime.basic.tostring3
+
+import kotlin.test.*
+
 fun testByte() {
     val values = ByteArray(2)
     values[0] = Byte.MIN_VALUE
@@ -58,7 +62,7 @@ fun testDouble() {
     }
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     testByte()
     testShort()
     testInt()

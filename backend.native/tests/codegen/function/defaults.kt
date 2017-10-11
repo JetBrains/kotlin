@@ -1,3 +1,7 @@
+package codegen.function.defaults
+
+import kotlin.test.*
+
 /**
  * Created by minamoto on 12/26/16.
  */
@@ -14,9 +18,8 @@ open class A(val a:Int) {
         val one   =  A(1)
         val magic =  A(42)
     }
-
-
 }
+
 //     FUN public fun foo(a: defaults.A = ...): kotlin.Int
 //       a: EXPRESSION_BODY
 //         CALL '<get-magic>(): A' type=defaults.A origin=GET_PROPERTY
@@ -40,7 +43,7 @@ fun foo(a: A = A.magic, b:Int = 0xdeadbeef.toInt()) = a.a
 fun bar(a:A, inc:Int = 0) = A(a.a + inc)
 
 
-fun main(args:Array<String>) {
+@Test fun runTest() {
 
 //  if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
 //    arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -92,6 +95,3 @@ fun main(args:Array<String>) {
     }
     println("all tests passed")
 }
-
-
-

@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.collections.array0
+
+import kotlin.test.*
+
+@Test fun runTest() {
     // Create instances of all array types.
     val byteArray = ByteArray(5)
     println(byteArray.size.toString())

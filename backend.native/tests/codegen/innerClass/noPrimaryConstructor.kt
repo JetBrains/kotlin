@@ -1,3 +1,7 @@
+package codegen.innerClass.noPrimaryConstructor
+
+import kotlin.test.*
+
 class Outer(val s: String) {
     inner class Inner {
         constructor(x: Int) {
@@ -15,7 +19,7 @@ class Outer(val s: String) {
 
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(Outer("OK").Inner(42).foo())
     println(Outer("OK").Inner("zzz").foo())
 }

@@ -1,3 +1,7 @@
+package codegen.inline.inline21
+
+import kotlin.test.*
+
 inline fun foo2(block2: () -> Int) : Int {
     println("foo2")
     return block2()
@@ -13,6 +17,6 @@ fun bar(block: () -> Int) : Int {
     return foo1(block)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(bar { 33 })
 }

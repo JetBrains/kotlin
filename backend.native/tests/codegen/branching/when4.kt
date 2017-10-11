@@ -1,3 +1,7 @@
+package codegen.boxing.when4
+
+import kotlin.test.*
+
 fun when5(i: Int): Int {
   when (i) {
     0 -> return 42

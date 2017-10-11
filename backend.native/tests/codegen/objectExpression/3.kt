@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.objectExpression_3
+
+import kotlin.test.*
+
+@Test fun runTest() {
     var cnt = 0
 
     var x: Any = ""

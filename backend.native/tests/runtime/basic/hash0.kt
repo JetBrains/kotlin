@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.basic.hash0
+
+import kotlin.test.*
+
+@Test fun runTest() {
     println(239.hashCode())
     println((-1L).hashCode())
     println('a'.hashCode())

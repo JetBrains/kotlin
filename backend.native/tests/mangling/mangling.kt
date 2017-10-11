@@ -1,3 +1,7 @@
+package mangling.mangling
+
+import kotlin.test.*
+
 fun test_direct() {
     val mutListInt = mutableListOf<Int>(1, 2, 3, 4)
     val mutListNum = mutableListOf<Number>(9, 10, 11, 12)
@@ -28,7 +32,7 @@ fun test_multiple_constructors() {
     mangle3(number)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     test_direct()
     test_param()
     test_multiple_constructors()

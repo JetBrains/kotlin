@@ -1,3 +1,7 @@
+package codegen.controlflow.`break`
+
+import kotlin.test.*
+
 fun foo() {
   var i = 0
   l1@while (true) {
@@ -45,7 +49,7 @@ fun qux() {
   }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   foo()
   bar()
   qux()

@@ -1,12 +1,17 @@
-fun main(args: Array<String>) {
-    testCast<Test>(Test(), true)
-    testCast<Test>(null, false)
-    testCastToNullable<Test>(null, true)
+package codegen.basics.unchecked_cast3
+
+import kotlin.test.*
+
+@Test
+fun runTest() {
+    testCast<TestKlass>(TestKlass(), true)
+    testCast<TestKlass>(null, false)
+    testCastToNullable<TestKlass>(null, true)
 
     println("Ok")
 }
 
-class Test
+class TestKlass
 
 fun ensure(b: Boolean) {
     if (!b) {

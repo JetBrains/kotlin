@@ -1,3 +1,7 @@
+package codegen.innerClass.simple
+
+import kotlin.test.*
+
 class Outer {
     inner class Inner {
         fun box() = "OK"
@@ -6,7 +10,7 @@ class Outer {
 
 fun box() = Outer().Inner().box()
 
-fun main(args: Array<String>)
+@Test fun runTest()
 {
     println(box())
 }

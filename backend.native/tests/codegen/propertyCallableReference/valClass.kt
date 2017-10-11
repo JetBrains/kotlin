@@ -1,6 +1,10 @@
+package codegen.propertyCallableReference.valClass
+
+import kotlin.test.*
+
 class A(val x: Int)
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val p1 = A::x
     println(p1.get(A(42)))
     val a = A(117)

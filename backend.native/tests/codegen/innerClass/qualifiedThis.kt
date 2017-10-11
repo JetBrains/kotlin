@@ -1,3 +1,7 @@
+package codegen.innerClass.qualifiedThis
+
+import kotlin.test.*
+
 open class ABase
 {
     open fun zzz() = "a_base"

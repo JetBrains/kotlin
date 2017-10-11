@@ -1,3 +1,7 @@
+package codegen.localClass.localHierarchy
+
+import kotlin.test.*
+
 fun foo(s: String): String {
     open class Local {
         fun f() = s
@@ -10,6 +14,6 @@ fun foo(s: String): String {
     return Derived().g()
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(foo("OK"))
 }

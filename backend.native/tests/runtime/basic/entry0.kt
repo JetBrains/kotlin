@@ -1,4 +1,4 @@
-package koko.lala
+package runtime.basic.entry0
 
 fun fail() {
     println("Test failed, this is a wrong main() function.")

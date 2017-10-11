@@ -1,3 +1,7 @@
+package codegen.localClass.innerTakesCapturedFromOuter
+
+import kotlin.test.*
+
 fun box() {
     var previous: Any? = null
     for (i in 0 .. 2) {
@@ -13,6 +17,6 @@ fun box() {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     box()
 }

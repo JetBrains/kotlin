@@ -1,3 +1,7 @@
+package codegen.enum.vCallNoEntryClass
+
+import kotlin.test.*
+
 enum class Zzz(val zzz: String, val x: Int) {
     Z1("z1", 1),
     Z2("z2", 2),
@@ -8,6 +12,6 @@ enum class Zzz(val zzz: String, val x: Int) {
     }
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(Zzz.Z3.toString())
 }

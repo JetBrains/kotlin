@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.controlflow.for_loops_nested
+
+import kotlin.test.*
+
+@Test fun runTest() {
     // Simple
     for (i in 0..2) {
         for (j in 0..2) {

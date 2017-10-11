@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.basic.tostring0
+
+import kotlin.test.*
+
+@Test fun runTest() {
     println(127.toByte().toString())
     println(255.toByte().toString())
     println(239.toShort().toString())

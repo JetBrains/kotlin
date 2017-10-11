@@ -1,3 +1,7 @@
+package runtime.collections.array_list1
+
+import kotlin.test.*
+
 fun assertTrue(cond: Boolean) {
     if (!cond)
        println("FAIL")
@@ -342,7 +346,7 @@ fun testIteratorAdd() {
     assertEquals(listOf("1", "2", "-2", "3", "4", "-4", "5"), a)
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     testBasic()
     testIterator()
     testRemove()

@@ -295,6 +295,7 @@ class TestFailedException extends RuntimeException {
         super(s)
     }
 }
+
 class RunKonanTest extends KonanTest {
     void compileTest(List<String> filesToCompile, String exe) {
         runCompiler(filesToCompile, exe, flags?:[])

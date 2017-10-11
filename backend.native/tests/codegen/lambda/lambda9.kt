@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package codegen.lambda.lambda9
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val lambdas = ArrayList<() -> Unit>()
 
     for (i in 0..1) {

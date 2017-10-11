@@ -1,3 +1,7 @@
+package codegen.cycles.cycle
+
+import kotlin.test.*
+
 fun cycle(cnt: Int): Int {
   var sum = 1
   while (sum == cnt) {
@@ -6,7 +10,7 @@ fun cycle(cnt: Int): Int {
   return sum
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (cycle(1) != 2) throw Error()
   if (cycle(0) != 1) throw Error()
 }

@@ -1,4 +1,8 @@
-fun main(args : Array<String>) {
+package runtime.basic.for0
+
+import kotlin.test.*
+
+@Test fun runTest() {
     val byteArray = ByteArray(3)
     byteArray[0] = 2
     byteArray[1] = 3

@@ -1,3 +1,7 @@
+package codegen.classDelegation.generic
+
+import kotlin.test.*
+
 open class Content() {
     override fun toString() = "OK"
 }
@@ -16,6 +20,6 @@ class ContentBoxDelegate<T : Content>() : ContentBox<T> by (Impl as ContentBox<T
 
 fun box() = ContentBoxDelegate<Content>().get().toString()
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

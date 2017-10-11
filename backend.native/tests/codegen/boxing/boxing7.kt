@@ -1,3 +1,7 @@
+package codegen.boxing.boxing7
+
+import kotlin.test.*
+
 fun printInt(x: Int) = println(x)
 
 fun foo(arg: Any) {
@@ -9,7 +13,7 @@ fun foo(arg: Any) {
     printInt(argAsInt)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     foo(1)
     foo("Hello")
 }

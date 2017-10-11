@@ -1,3 +1,7 @@
+package runtime.text.string_builder0
+
+import kotlin.test.*
+
 // Utils ====================================================================================================
 fun assertTrue(cond: Boolean) {
     if (!cond)
@@ -262,7 +266,7 @@ fun testBasic() {
     assertEquals("", sb.toString())
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     testBasic()
     testInsert()
     testReverse()

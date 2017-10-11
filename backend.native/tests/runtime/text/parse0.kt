@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package runtime.text.parse0
+
+import kotlin.test.*
+
+@Test fun runTest() {
     println("false".toBoolean())
     println("true".toBoolean())
     println("-1".toByte())

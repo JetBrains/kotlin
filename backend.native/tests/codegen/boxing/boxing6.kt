@@ -1,10 +1,14 @@
+package codegen.boxing.boxing6
+
+import kotlin.test.*
+
 fun printInt(x: Int) = println(x)
 
 fun foo(arg: Any) {
     printInt(arg as? Int ?: 16)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     foo(42)
     foo("Hello")
 }

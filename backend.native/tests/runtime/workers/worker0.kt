@@ -1,6 +1,10 @@
+package runtime.workers.worker0
+
+import kotlin.test.*
+
 import konan.worker.*
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     val worker = startWorker()
     val future = worker.schedule(TransferMode.CHECKED, { "Input".shallowCopy()}) {
         input -> input + " processed"

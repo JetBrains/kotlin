@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package lower.tailrec
+
+import kotlin.test.*
+
+@Test fun runTest() {
     println(add(5, 7))
     println(add(100000000, 0))
 

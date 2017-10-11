@@ -1,4 +1,8 @@
-fun main(args: Array<String>) {
+package codegen.boxing.when9
+
+import kotlin.test.*
+
+@Test fun runTest() {
     foo(0)
     println("Ok")
 }

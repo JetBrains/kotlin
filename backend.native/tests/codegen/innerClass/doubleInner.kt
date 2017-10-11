@@ -1,3 +1,7 @@
+package codegen.innerClass.doubleInner
+
+import kotlin.test.*
+
 open class Father(val param: String) {
     abstract inner class InClass {
         fun work(): String {
@@ -16,6 +20,6 @@ fun box(): String {
     return Father("fail").Child("OK").Child2().work()
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     println(box())
 }

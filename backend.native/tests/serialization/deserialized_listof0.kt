@@ -1,3 +1,6 @@
+package serialization.deserialized_listof0
+
+import kotlin.test.*
 
 fun test_arrayList() {
     val l = listOf(1, 2, 3)
@@ -20,7 +23,7 @@ fun test_arrayList3() {
     println(n)
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     test_arrayList()
     test_arrayList2<Int>(5, 6, 7)
     test_arrayList2<String>("a", "b", "c")

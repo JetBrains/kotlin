@@ -1,3 +1,7 @@
+package codegen.inline.inline25
+
+import kotlin.test.*
+
 inline fun foo(block: String.() -> Unit) {
     "Ok".block()
 }
@@ -10,7 +14,7 @@ inline fun baz(block: String.() -> Unit) {
     block("Ok")
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
     bar {
         println(it)
     }

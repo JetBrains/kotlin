@@ -1,3 +1,7 @@
+package codegen.boxing.when_through
+
+import kotlin.test.*
+
 fun when_through(i: Int): Int {
   var value = 1
   when (i) {
@@ -9,6 +13,6 @@ fun when_through(i: Int): Int {
   return value
 }
 
-fun main(args: Array<String>) {
+@Test fun runTest() {
   if (when_through(2) != 1) throw Error()
 }

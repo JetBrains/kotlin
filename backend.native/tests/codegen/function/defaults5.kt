@@ -1,14 +1,18 @@
-class Test(val x: Int) {
+package codegen.function.defaults5
+
+import kotlin.test.*
+
+class TestClass(val x: Int) {
     fun foo(y: Int = x) {
         println(y)
     }
 }
 
-fun Test.bar(y: Int = x) {
+fun TestClass.bar(y: Int = x) {
     println(y)
 }
 
-fun main(args: Array<String>) {
-    Test(5).foo()
-    Test(6).bar()
+@Test fun runTest() {
+    TestClass(5).foo()
+    TestClass(6).bar()
 }
