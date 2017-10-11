@@ -1,5 +1,5 @@
 package = platform.posix
-headers = stdio.h Windef.h Winsock2.h Ws2tcpip.h Ws2def.h io.h
+headers = stdio.h Windef.h Winsock2.h Ws2tcpip.h Ws2def.h io.h math.h
 compilerOpts = -DUNICODE -Wno-incompatible-pointer-types -Wno-deprecated-declarations
 linkerOpts = -lWs2_32
 
