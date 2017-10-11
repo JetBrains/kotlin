@@ -17,16 +17,23 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.psi.JavaElementVisitor
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
+import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKExpression
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKElementBase
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaFieldImpl
 
 class JavaToJKTreeBuilder {
+
+    private class ExpressionTreeVisitor : JavaElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+            element.acceptChildren(this)
+        }
+
+        fun extractExpression(): JKExpression? = object : JKElementBase(), JKExpression {}
+    }
 
     private class ElementVisitor : JavaElementVisitor() {
 
@@ -42,9 +49,12 @@ class JavaToJKTreeBuilder {
         }
 
         override fun visitField(field: PsiField) {
-            currentClass!!.declarations += JKJavaFieldImpl(field.name!!)
+            val initializer = ExpressionTreeVisitor().also { field.initializer?.accept(it) }.extractExpression()
+
+            currentClass!!.declarations += JKJavaFieldImpl(field.name!!, initializer)
             super.visitField(field)
         }
+
     }
 
     fun buildTree(psi: PsiElement): JKElement? {
