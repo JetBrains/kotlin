@@ -224,7 +224,7 @@ fun getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialType
                 return JVMSerialTypeInfo(property, Type.getType("Lkotlin/Unit;"), "Unit", unit = true)
             // todo: more efficient enum support here, but only for enums that don't define custom serializer
             // otherwise, it is a serializer for some other type
-            val serializer = findTypeSerializer(property.module, property.type, type)
+            val serializer = property.serializer?.toClassDescriptor ?: findTypeSerializer(property.module, property.type, type)
             return JVMSerialTypeInfo(property, Type.getType("Ljava/lang/Object;"),
                                      if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
