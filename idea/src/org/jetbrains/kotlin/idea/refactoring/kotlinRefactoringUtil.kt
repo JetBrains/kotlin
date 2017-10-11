@@ -963,6 +963,13 @@ fun checkSuperMethodsWithPopup(
             .showInBestPositionFor(editor)
 }
 
+fun KtNamedDeclaration.isSealed(): Boolean {
+    return if (this is KtPsiClassWrapper)
+        psiClass.modifierList?.hasModifierProperty(KtTokens.SEALED_KEYWORD.value)?: false
+    else
+        hasModifier(KtTokens.SEALED_KEYWORD)
+}
+
 fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
     val containingObject = containingClassOrObject as? KtObjectDeclaration ?: return false
     return containingObject.isCompanion() && containingObject.containingClassOrObject == klass
