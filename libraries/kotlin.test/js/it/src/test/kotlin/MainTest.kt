@@ -1,24 +1,15 @@
-import kotlin.test.*
+import kotlin.test.Ignore
+import kotlin.test.Test
 
-
-var value = 5
 
 class SimpleTest {
 
-    @BeforeTest fun beforeFun() {
-        value *= 2
-    }
-
-    @AfterTest fun afterFun() {
-        value /= 2
-    }
-
     @Test fun testFoo() {
-        assertNotEquals(value, foo())
+        assertNotEquals(10, foo())
     }
 
     @Test fun testBar() {
-        assertEquals(value, foo())
+        assertEquals(10, foo())
     }
 
     @Ignore @Test fun testFooWrong() {
