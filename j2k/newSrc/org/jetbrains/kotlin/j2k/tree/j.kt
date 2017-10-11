@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k.tree
 
 interface JKJavaField : JKDeclaration {
     val name: String
+    var initializer: JKExpression?
 }
 
 interface JKJavaMethod : JKDeclaration

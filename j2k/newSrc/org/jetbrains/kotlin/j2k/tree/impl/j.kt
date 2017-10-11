@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import org.jetbrains.kotlin.j2k.tree.JKExpression
 import org.jetbrains.kotlin.j2k.tree.JKJavaField
 import org.jetbrains.kotlin.j2k.tree.JKJavaVisitor
 import org.jetbrains.kotlin.j2k.tree.JKVisitor
 
-class JKJavaFieldImpl(override val name: String) : JKJavaField, JKElementBase() {
+class JKJavaFieldImpl(override val name: String,
+                      override var initializer: JKExpression?) : JKJavaField, JKElementBase() {
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
         return if (visitor is JKJavaVisitor) {
@@ -30,4 +32,7 @@ class JKJavaFieldImpl(override val name: String) : JKJavaField, JKElementBase() 
             visitor.visitDeclaration(this, data)
         }
     }
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
+            = initializer?.accept(visitor, data) ?: Unit
 }
