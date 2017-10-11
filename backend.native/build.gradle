@@ -44,8 +44,8 @@ allprojects {
         // make Gradle aware of this to avoid multiple Kotlin runtimes in classpath:
         resolutionStrategy.dependencySubstitution {
             substitute module('org.jetbrains.kotlin:kotlin-runtime') with module(kotlinCompilerModule)
-            substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinCompilerModule)
-            substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinCompilerModule)
+            substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinStdLibModule)
+            substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinReflectModule)
         }
         // TODO: probably we should use kotlin-compiler without bundled runtime
     }
@@ -120,6 +120,11 @@ kotlinNativeInterop {
 
 
 configurations {
+    kotlin_compiler_jar
+    kotlin_stdlib_jar
+    kotlin_reflect_jar
+    kotlin_script_runtime_jar
+
     cli_bcRuntime.extendsFrom compilerRuntime
 
     cli_bc {
@@ -128,6 +133,10 @@ configurations {
 }
 
 dependencies {
+    kotlin_compiler_jar "$kotlinCompilerModule@jar"
+    kotlin_stdlib_jar "$kotlinStdLibModule@jar"
+    kotlin_reflect_jar "$kotlinReflectModule@jar"
+    kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
 
     compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
@@ -220,13 +229,26 @@ jar {
     dependsOn ':runtime:hostRuntime', 'external_jars'
 }
 
+def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime']
+
+externalJars.each { arg ->
+    def jar = arg.replace('_', '-') // :(
+    task ("${arg}Copy", type:Copy) {
+        from configurations.getByName("kotlin_${arg}_jar") {
+            include "kotlin-${jar}*.jar"
+            rename "kotlin-${jar}(.*).jar", "kotlin-${jar}.jar"
+
+            into 'build/external_jars'
+        }
+    }
+}
+
 task external_jars(type: Copy) {
+    dependsOn externalJars.collect{"${it}Copy"}
+
     from configurations.compilerCompile {
 
         include "protobuf-java-${protobufVersion}.jar"
-
-        include 'kotlin-compiler*.jar'
-        rename 'kotlin-compiler(.*).jar', 'kotlin-compiler.jar'
 
         into 'build/external_jars'
     }

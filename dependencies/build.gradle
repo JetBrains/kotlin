@@ -48,6 +48,22 @@ configurations {
     kotlin_stdlib_jdk8_pom
     kotlin_stdlib_jdk8_src
     kotlin_stdlib_jdk8_doc
+
+    kotlin_stdlib_jar
+    kotlin_stdlib_pom
+    kotlin_stdlib_src
+    kotlin_stdlib_doc
+
+    kotlin_reflect_jar
+    kotlin_reflect_pom
+    kotlin_reflect_src
+    kotlin_reflect_doc
+
+    kotlin_script_runtime_jar
+    kotlin_script_runtime_pom
+    kotlin_script_runtime_src
+    kotlin_script_runtime_doc
+
 }
 
 def kotlinGradleModule = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinGradlePluginVersion"
@@ -73,12 +89,31 @@ dependencies {
     kotlin_stdlib_jdk8_pom "$kotlinStdLibJdk8Module@pom"
     kotlin_stdlib_jdk8_src "$kotlinStdLibJdk8Module:sources@jar"
     kotlin_stdlib_jdk8_doc "$kotlinStdLibJdk8Module:javadoc@jar"
+
+    kotlin_stdlib_jar "$kotlinStdLibModule@jar"
+    kotlin_stdlib_pom "$kotlinStdLibModule@pom"
+    kotlin_stdlib_src "$kotlinStdLibModule:sources@jar"
+    kotlin_stdlib_doc "$kotlinStdLibModule:javadoc@jar"
+
+    kotlin_reflect_jar "$kotlinReflectModule@jar"
+    kotlin_reflect_pom "$kotlinReflectModule@pom"
+    kotlin_reflect_src "$kotlinReflectModule:sources@jar"
+    kotlin_reflect_doc "$kotlinReflectModule:javadoc@jar"
+
+    kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
+    kotlin_script_runtime_pom "$kotlinScriptRuntimeModule@pom"
+    kotlin_script_runtime_src "$kotlinScriptRuntimeModule:sources@jar"
+    kotlin_script_runtime_doc "$kotlinScriptRuntimeModule:javadoc@jar"
 }
 
-def modules = ['compiler'     : kotlinCompilerModule,
-               'gradle_plugin': kotlinGradleModule,
-               'stdlib_jdk8'  : kotlinStdLibJdk8Module]
-def uploads = ['compiler', 'gradle_plugin', 'stdlib_jdk8']
+def modules = ['compiler'      : kotlinCompilerModule,
+               'gradle_plugin' : kotlinGradleModule,
+               'stdlib_jdk8'   : kotlinStdLibJdk8Module,
+               'stdlib'        : kotlinStdLibModule,
+               'reflect'       : kotlinReflectModule,
+               'script_runtime': kotlinScriptRuntimeModule
+]
+def uploads = modules.keySet()
 uploads.each { target ->
     task("${target}Upload", type:GradleBuild) {
         tasks = ['bintrayUpload']
@@ -99,7 +134,7 @@ uploads.each { target ->
 }
 
 task update_kotlin_compiler(type: DefaultTask) {
-    dependsOn compilerUpload, gradle_pluginUpload, stdlib_jdk8Upload
+    dependsOn uploads.collect{"${it}Upload"}
 }
 
 abstract class NativeDep extends DefaultTask {

@@ -15,6 +15,9 @@ buildscript {
 
 apply plugin: 'com.jfrog.bintray'
 
+def versionMapping = [
+        'kotlin-script-runtime' : kotlinScriptRuntimeVersion
+]
 
 // Hack kotlin-compiler pom-file to resolve the dependency correctly.
 task generatePom(type: DefaultTask) {
@@ -36,6 +39,12 @@ task generatePom(type: DefaultTask) {
             xml.append(groupId)
             xml.append(version)
             xml.remove(parent)
+        }
+        xml.dependencies[0].each {
+            def suggestedVersion = versionMapping[it.artifactId.text()]
+            if (suggestedVersion != null) {
+                it.version[0].setValue(suggestedVersion)
+            }
         }
         new XmlNodePrinter(new PrintWriter(new FileWriter(newPom))).print(xml)
     }

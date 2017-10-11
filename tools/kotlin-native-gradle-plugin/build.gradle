@@ -51,8 +51,8 @@ allprojects {
         // make Gradle aware of this to avoid multiple Kotlin runtimes in classpath:
         resolutionStrategy.dependencySubstitution {
             substitute module('org.jetbrains.kotlin:kotlin-runtime') with module(kotlinCompilerModule)
-            substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinCompilerModule)
-            substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinCompilerModule)
+            substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinStdLibModule)
+            substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinReflectModule)
         }
         // TODO: probably we should use kotlin-compiler without bundled runtime
     }

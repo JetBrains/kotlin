@@ -29,6 +29,9 @@ ext {
     dependenciesDir = rootProject.file("dist/dependencies")
     clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
+    kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdLibVersion}"
+    kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinReflectVersion}"
+    kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinScriptRuntimeVersion}"
 }
 
 allprojects {
