@@ -1,12 +1,12 @@
 public final class Foo {
     public fun Foo() = UastEmptyExpression
     public static final class Bar {
-        private final var a: int
-        private final var b: int
+        @null private final var a: int
+        @null private final var b: int
         public final fun getAPlusB() : int = a + b
         public final fun getA() : int = UastEmptyExpression
         public final fun getB() : int = UastEmptyExpression
-        public fun Bar(a: int, b: int) = UastEmptyExpression
+        public fun Bar(@null a: int, @null b: int) = UastEmptyExpression
         public static final class Baz {
             public final fun doNothing() : void = Unit
             public fun Baz() = UastEmptyExpression
