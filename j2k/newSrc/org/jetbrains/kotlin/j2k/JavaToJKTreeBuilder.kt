@@ -18,16 +18,37 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.JavaElementVisitor
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import org.jetbrains.kotlin.j2k.tree.JKClass
+import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKJavaFieldImpl
 
 class JavaToJKTreeBuilder {
 
-    private class ElementVisitor : JavaElementVisitor()
 
-    fun buildTree(psi: PsiElement): Nothing {
+
+    private class ElementVisitor : JavaElementVisitor() {
+
+        var currentClass: JKClass? = null
+
+        override fun visitClass(aClass: PsiClass) {
+            currentClass = JKClassImpl()
+            super.visitClass(aClass)
+        }
+
+        override fun visitField(field: PsiField) {
+            currentClass!!.declarations.add(JKJavaFieldImpl(field.name!!))
+            super.visitField(field)
+        }
+    }
+
+    fun buildTree(psi: PsiElement): JKElement? {
         assert(psi.language.`is`(JavaLanguage.INSTANCE)) { "Unable to build JK Tree using Java Visitor for language ${psi.language}" }
         val elementVisitor = ElementVisitor()
         psi.accept(elementVisitor)
-        TODO("Tree output type")
+        return elementVisitor.currentClass
     }
 }
