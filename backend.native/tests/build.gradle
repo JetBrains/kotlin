@@ -1227,6 +1227,12 @@ task link_default_libs(type: RunKonanTest) {
     source = "link/default/default.kt"
 }
 
+task no_purge_for_dependencies(type: LinkKonanTest) {
+    goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"
+    source = "link/purge1/prog.kt"
+    lib = "link/purge1/lib.kt"
+}
+
 task for0(type: RunKonanTest) {
     goldValue = "2\n3\n4\n"
     source = "runtime/basic/for0.kt"
