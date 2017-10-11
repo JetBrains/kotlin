@@ -23,11 +23,9 @@ interface JKElement {
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
 }
 
-interface JKClass : JKElement {
+interface JKClass : JKDeclaration {
     val declarations: MutableList<JKDeclaration>
 }
-
-interface JKMember : JKElement
 
 interface JKExpression : JKElement
 

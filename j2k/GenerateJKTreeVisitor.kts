@@ -40,14 +40,16 @@ val JK_JAVA_FILE = File(JK_ROOT, "j.kt")
 val JK_COMMON_FILE = File(JK_ROOT, "jk.kt")
 
 
-val interfaceRegex = "interface (JK[a-zA-Z]+)".toRegex()
+val interfaceRegex = "interface (JK[a-zA-Z]+)\\s?:?\\s?(JK[a-zA-Z]+)?".toRegex()
 
+
+data class InterfaceData(val name: String, val extends: String?)
 
 fun File.interfaceNames() =
         sequenceOf(this)
                 .map { it.readText() }
                 .flatMap { interfaceRegex.findAll(it) }
-                .map { match -> match.groupValues[1] }
+                .map { match -> InterfaceData(match.groupValues[1], match.groupValues.getOrNull(2)) }
                 .toList()
 
 
@@ -56,7 +58,7 @@ fun String.safeVarName() = when (this) {
     else -> this
 }
 
-fun genVisitors(interfaceNames: List<String>, visitorName: String, extends: String = "") {
+fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, extends: String = "") {
 
     val outFile = File(JK_ROOT, "$visitorName.kt")
 
@@ -65,16 +67,17 @@ fun genVisitors(interfaceNames: List<String>, visitorName: String, extends: Stri
         appendln()
         val extends = if (extends.isNotBlank()) ": $extends<R, D>" else ""
         appendln("interface $visitorName<R, D> $extends {")
-        interfaceNames.joinTo(this, separator = "\n") { name ->
+        interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
+            val argName = nameWithoutPrefix.decapitalize().safeVarName()
+            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName, data)" else ""
             """
-            |    fun visit$nameWithoutPrefix(${nameWithoutPrefix.decapitalize().safeVarName()}: $name, data: D): R
+            |    fun visit$nameWithoutPrefix($argName: $name, data: D): R $generifyCall
             """.trimMargin()
         }
         appendln()
         appendln("}")
     })
-
 
     val outVoidFile = File(JK_ROOT, "${visitorName}Void.kt")
 
@@ -82,13 +85,15 @@ fun genVisitors(interfaceNames: List<String>, visitorName: String, extends: Stri
         appendln("package org.jetbrains.kotlin.j2k.tree")
         appendln()
         val extends = if (extends.isNotBlank()) ", ${extends}Void" else ""
+
         appendln("interface ${visitorName}Void : $visitorName<Unit, Nothing?>$extends {")
-        interfaceNames.joinTo(this, separator = "\n") { name ->
+        interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
             val arg = "$argName: $name"
+            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName, null)" else ""
             """
-            |    fun visit$nameWithoutPrefix($arg)
+            |    fun visit$nameWithoutPrefix($arg) $generifyCall
             |    override fun visit$nameWithoutPrefix($arg, data: Nothing?) = visit$nameWithoutPrefix($argName)
             """.trimMargin()
         }
@@ -101,11 +106,9 @@ fun genVisitors(interfaceNames: List<String>, visitorName: String, extends: Stri
 genVisitors(JK_COMMON_FILE.interfaceNames(), "JKVisitor")
 genVisitors(JK_JAVA_FILE.interfaceNames(), "JKJavaVisitor", "JKVisitor")
 genVisitors(JK_KT_FILE.interfaceNames(), "JKKtVisitor", "JKVisitor")
-genVisitors(JK_JAVA_FILE.interfaceNames() + JK_KT_FILE.interfaceNames(), "JKJavaKtVisitor", "JKVisitor")
 
 /*   JKKtVisitor<R,D> : JKVisitor<R,D> + Void
     JKJavaVisitor<R,D> : JKVisitor<R,D> + Void
-    JKJavaKtVisitor<R, D> : JKVisitor<R,D> + Void
  */
 
 //val visitNames =

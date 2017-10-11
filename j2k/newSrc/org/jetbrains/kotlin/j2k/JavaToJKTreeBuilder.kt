@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKJavaFieldImpl
 
 class JavaToJKTreeBuilder {
 
-
-
     private class ElementVisitor : JavaElementVisitor() {
+
+        override fun visitElement(element: PsiElement) {
+            element.acceptChildren(this)
+        }
 
         var currentClass: JKClass? = null
 
@@ -40,7 +42,7 @@ class JavaToJKTreeBuilder {
         }
 
         override fun visitField(field: PsiField) {
-            currentClass!!.declarations.add(JKJavaFieldImpl(field.name!!))
+            currentClass!!.declarations += JKJavaFieldImpl(field.name!!)
             super.visitField(field)
         }
     }

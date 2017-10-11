@@ -1,18 +1,16 @@
 package org.jetbrains.kotlin.j2k.tree
 
 interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
-    fun visitElement(element: JKElement)
+    fun visitElement(element: JKElement) 
     override fun visitElement(element: JKElement, data: Nothing?) = visitElement(element)
-    fun visitClass(klass: JKClass)
+    fun visitClass(klass: JKClass) = visitDeclaration(klass, null)
     override fun visitClass(klass: JKClass, data: Nothing?) = visitClass(klass)
-    fun visitMember(member: JKMember)
-    override fun visitMember(member: JKMember, data: Nothing?) = visitMember(member)
-    fun visitExpression(expression: JKExpression)
+    fun visitExpression(expression: JKExpression) = visitElement(expression, null)
     override fun visitExpression(expression: JKExpression, data: Nothing?) = visitExpression(expression)
-    fun visitStatement(statement: JKStatement)
+    fun visitStatement(statement: JKStatement) = visitElement(statement, null)
     override fun visitStatement(statement: JKStatement, data: Nothing?) = visitStatement(statement)
-    fun visitLoop(loop: JKLoop)
+    fun visitLoop(loop: JKLoop) = visitStatement(loop, null)
     override fun visitLoop(loop: JKLoop, data: Nothing?) = visitLoop(loop)
-    fun visitDeclaration(declaration: JKDeclaration)
+    fun visitDeclaration(declaration: JKDeclaration) = visitElement(declaration, null)
     override fun visitDeclaration(declaration: JKDeclaration, data: Nothing?) = visitDeclaration(declaration)
 }

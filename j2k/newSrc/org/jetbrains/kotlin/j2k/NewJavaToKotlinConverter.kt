@@ -20,17 +20,44 @@ import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.tree.JKClass
+import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKJavaField
+import org.jetbrains.kotlin.j2k.tree.JKJavaKtVisitorVoid
 
 class NewJavaToKotlinConverter(
         private val project: Project,
         private val settings: ConverterSettings
 ) {
 
-    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): Nothing {
+    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): String {
         val treeBuilder = JavaToJKTreeBuilder()
         val fileTrees = files.map(treeBuilder::buildTree)
 
-        TODO("Output generation")
+        val result = buildString {
+
+            for (tree in fileTrees.filterNotNull()) {
+                appendln()
+                tree.accept(object : JKJavaKtVisitorVoid {
+                    override fun visitElement(element: JKElement) {
+                        element.acceptChildren(this, null)
+                    }
+
+                    override fun visitClass(klass: JKClass) {
+                        appendln("class")
+                        super.visitClass(klass)
+                    }
+
+                    override fun visitJavaField(javaField: JKJavaField, data: Nothing?) {
+                        appendln("java field ${javaField.name}")
+                        super.visitJavaField(javaField, data)
+                    }
+
+                }, null)
+                appendln()
+            }
+        }
+
+        return result
     }
 }
