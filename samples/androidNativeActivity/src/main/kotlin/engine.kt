@@ -142,7 +142,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
                 NativeActivityEventKind.SAVE_INSTANCE_STATE -> {
                     val saveStateEvent = eventPointer.value.dereferenceAs<NativeActivitySaveStateEvent>()
                     val state = renderer.getState()
-                    val dataSize = state.second.signExtend<platform.posix.size_t>()
+                    val dataSize = state.second.signExtend<size_t>()
                     rendererState = realloc(rendererState, dataSize)
                     memcpy(rendererState, state.first, dataSize)
                     saveStateEvent.savedState = rendererState
@@ -164,7 +164,7 @@ class Engine(val arena: NativePlacement, val state: NativeActivityState) {
     }
 
     private fun getEventPoint(event: CPointer<AInputEvent>?, i: Int) =
-            Vector2(AMotionEvent_getRawX(event, i.signExtend<platform.posix.size_t>()), AMotionEvent_getRawY(event, i.signExtend<platform.posix.size_t>()))
+            Vector2(AMotionEvent_getRawX(event, i.signExtend<size_t>()), AMotionEvent_getRawY(event, i.signExtend<size_t>()))
 
     private fun getEventTime(event: CPointer<AInputEvent>?) =
             AMotionEvent_getEventTime(event) / 1_000_000_000.0f
