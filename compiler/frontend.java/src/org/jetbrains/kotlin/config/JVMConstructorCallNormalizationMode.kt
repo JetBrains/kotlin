@@ -28,7 +28,7 @@ enum class JVMConstructorCallNormalizationMode(
 
     companion object {
         @JvmField
-        val DEFAULT = DISABLE
+        val DEFAULT = ENABLE
 
         @JvmStatic
         fun fromStringOrNull(string: String?) = values().find { it.description == string }
