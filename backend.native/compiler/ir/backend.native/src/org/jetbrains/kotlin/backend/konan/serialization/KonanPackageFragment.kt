@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,20 +26,24 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
-class KonanPackageFragment(fqNameString: String,
-    packageLoader: (String)->KonanLinkData.PackageFragment,
-    storageManager: StorageManager, module: ModuleDescriptor) : 
-    DeserializedPackageFragment(FqName(fqNameString), 
-        storageManager, module) {
+class KonanPackageFragment(
+        val fqNameString: String,
+        val reader: KonanLibraryReader,
+        storageManager: StorageManager, module: ModuleDescriptor
+) : DeserializedPackageFragment(FqName(fqNameString), storageManager, module) {
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    val proto: KonanLinkData.PackageFragment by lazy {
-        packageLoader(fqNameString)
+    private val protoForNames: KonanLinkData.PackageFragment by lazy {
+        parsePackageFragment(reader.packageMetadata(fqNameString))
+    }
+
+    val proto: KonanLinkData.PackageFragment get() = protoForNames.also {
+        reader.markPackageAccessed(fqNameString)
     }
 
     private val nameResolver by lazy {
-        NameResolverImpl(proto.getStringTable(), proto.getNameTable())
+        NameResolverImpl(protoForNames.getStringTable(), protoForNames.getNameTable())
     }
 
     override val classDataFinder by lazy {
@@ -48,14 +53,23 @@ class KonanPackageFragment(fqNameString: String,
     override fun computeMemberScope(): DeserializedPackageMemberScope {
         val packageProto = proto.getPackage()
 
-        return DeserializedPackageMemberScope( this, packageProto, 
-            nameResolver, /* containerSource = */ null, 
+        return DeserializedPackageMemberScope( this, packageProto,
+            nameResolver, /* containerSource = */ null,
             components, {loadClassNames()} )
     }
 
+    private val classifierNames by lazy {
+        val result = mutableSetOf<Name>()
+        result.addAll(loadClassNames())
+        protoForNames.getPackage().typeAliasList.mapTo(result) { nameResolver.getName(it.name) }
+        result
+    }
+
+    fun hasTopLevelClassifier(name: Name): Boolean = name in classifierNames
+
     private fun loadClassNames(): Collection<Name> {
 
-        val classNameList = proto.getClasses().getClassNameList()
+        val classNameList = protoForNames.getClasses().getClassNameList()
 
         val names = classNameList.mapNotNull { 
             val classId = nameResolver.getClassId(it)

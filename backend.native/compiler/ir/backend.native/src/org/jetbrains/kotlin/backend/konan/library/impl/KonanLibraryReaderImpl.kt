@@ -71,29 +71,28 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
     override val dependencies: List<String>
         get() = manifestProperties.propertyList("dependencies")
 
-    val moduleHeaderData: ByteArray by lazy {
+    override val moduleHeaderData: ByteArray by lazy {
         reader.loadSerializedModule()
     }
 
-    override val isNeededForLink: Boolean
-        get() {
-            packagesAccessed.forEach {
-                if (!emptyPackages(moduleHeaderData).contains(it)) {
-                    return true
-                }
-            }
-            return false
+    override var isNeededForLink: Boolean = false
+        private set
+
+    private val emptyPackages by lazy { emptyPackages(moduleHeaderData) }
+
+    override fun markPackageAccessed(fqName: String) {
+        if (!isNeededForLink // fast path
+                && !emptyPackages.contains(fqName)) {
+            isNeededForLink = true
         }
+    }
 
-    val packagesAccessed = mutableSetOf<String>()
-
-    fun packageMetadata(fqName: String): ByteArray {
-        packagesAccessed.add(fqName)
+    override fun packageMetadata(fqName: String): ByteArray {
         return reader.loadSerializedPackageFragment(fqName)
     }
 
     override fun moduleDescriptor(specifics: LanguageVersionSettings) 
-        = deserializeModule(specifics, {packageMetadata(it)}, moduleHeaderData, createInteropLibrary(this))
+        = deserializeModule(specifics, this)
 
 }
 

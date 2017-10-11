@@ -31,6 +31,9 @@ interface KonanLibraryReader {
     val isNeededForLink: Boolean get() = true
     val isDefaultLink: Boolean get() = false
     val manifestProperties: Properties
+    val moduleHeaderData: ByteArray
+    fun packageMetadata(fqName: String): ByteArray
+    fun markPackageAccessed(fqName: String)
     fun moduleDescriptor(specifics: LanguageVersionSettings): ModuleDescriptor
 }
 

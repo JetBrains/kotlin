@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
+import org.jetbrains.kotlin.backend.konan.serialization.KonanPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -72,14 +73,18 @@ class ExportedForwardDeclarationsPackageFragmentDescriptor(
  * The package fragment that redirects all requests for classifier lookup to its targets.
  */
 class ClassifierAliasingPackageFragmentDescriptor(
-        targets: List<PackageFragmentDescriptor>, module: ModuleDescriptor, fqName: FqName
+        targets: List<KonanPackageFragment>, module: ModuleDescriptor, fqName: FqName
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
     private val memberScope = object : MemberScopeImpl() {
 
         override fun getContributedClassifier(name: Name, location: LookupLocation) =
                 targets.firstNotNullResult {
-                    it.getMemberScope().getContributedClassifier(name, location)
+                    if (it.hasTopLevelClassifier(name)) {
+                        it.getMemberScope().getContributedClassifier(name, location)
+                    } else {
+                        null
+                    }
                 }
 
         override fun printScopeStructure(p: Printer) {

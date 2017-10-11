@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.InteropLibrary
-import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
@@ -76,15 +74,17 @@ object NullFlexibleTypeDeserializer : FlexibleTypeDeserializer {
 }
 
 fun createKonanPackageFragmentProvider(
+        reader: KonanLibraryReader,
         fragmentNames: List<String>,
-        packageLoader: (String)->KonanLinkData.PackageFragment,
         storageManager: StorageManager, module: ModuleDescriptor,
-        configuration: DeserializationConfiguration,
-        interopLibrary: InteropLibrary?): PackageFragmentProvider {
+        configuration: DeserializationConfiguration): PackageFragmentProvider {
 
     val packageFragments = fragmentNames.map{ 
-        KonanPackageFragment(it, packageLoader, storageManager, module) 
+        KonanPackageFragment(it, reader, storageManager, module)
     }
+
+    val interopLibrary = createInteropLibrary(reader)
+
     val syntheticInteropPackageFragments =
             interopLibrary?.createSyntheticPackages(module, packageFragments) ?: emptyList()
 
@@ -123,10 +123,10 @@ public fun emptyPackages(libraryData: ByteArray)
     = parseModuleHeader(libraryData).emptyPackageList
 
 internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
-                               packageLoader:(String)->ByteArray, library: ByteArray,
-                               interopLibrary: InteropLibrary?): ModuleDescriptorImpl {
+                               reader: KonanLibraryReader): ModuleDescriptorImpl {
 
-    val libraryProto = parseModuleHeader(library)
+    val libraryProto = parseModuleHeader(reader.moduleHeaderData)
+
     val moduleName = libraryProto.moduleName
 
     val storageManager = LockBasedStorageManager()
@@ -137,10 +137,10 @@ internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
     val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
     val provider = createKonanPackageFragmentProvider(
-        libraryProto.packageFragmentNameList,
-        {it -> parsePackageFragment(packageLoader(it))},
-        storageManager, 
-        moduleDescriptor, deserializationConfiguration, interopLibrary)
+            reader,
+            libraryProto.packageFragmentNameList,
+            storageManager,
+            moduleDescriptor, deserializationConfiguration)
 
     moduleDescriptor.initialize(provider)
 
