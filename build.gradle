@@ -310,6 +310,9 @@ private ArrayList<DefFile> targetDefFiles(String target) {
     project(':klib').file("src/platform/$platform")
             .listFiles()
             .findAll { it.name.endsWith(".def") }
+            // The libz.a/libz.so and zlib.h are missing in raspberrypi and mips sysroots.
+            // Just workaround it until we have sysroots corrected.
+            .findAll { ! ((target == 'raspberrypi' || target == 'linux_mips32' || target == 'linux_mipsel32') && it.name == 'zlib.def') }
             .collect { new DefFile(it, substitution) }
 }
 
