@@ -339,7 +339,7 @@ task crossDist {
 }
 
 task bundle(type: (isWindows()) ? Zip : Tar) {
-    dependsOn('crossDistPlatformLibs')
+    dependsOn('distPlatformLibs') // TODO: handle cross target libs.
     dependsOn('crossDist')
     def simpleOsName = TargetManager.simpleOsName()
     baseName = "kotlin-native-$simpleOsName-${project.konanVersion}"
