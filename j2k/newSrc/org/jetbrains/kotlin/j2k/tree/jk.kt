@@ -34,3 +34,5 @@ interface JKStatement : JKElement
 interface JKLoop : JKStatement
 
 interface JKDeclaration : JKElement
+
+interface JKBlock : JKElement

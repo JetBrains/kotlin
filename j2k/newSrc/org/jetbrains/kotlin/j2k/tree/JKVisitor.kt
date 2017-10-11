@@ -7,4 +7,5 @@ interface JKVisitor<R, D>  {
     fun visitStatement(statement: JKStatement, data: D): R = visitElement(statement, data)
     fun visitLoop(loop: JKLoop, data: D): R = visitStatement(loop, data)
     fun visitDeclaration(declaration: JKDeclaration, data: D): R = visitElement(declaration, data)
+    fun visitBlock(block: JKBlock, data: D): R = visitElement(block, data)
 }
