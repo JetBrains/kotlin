@@ -16,6 +16,7 @@
 
 buildscript {
    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+   apply plugin: 'project-report'
 
    repositories {
        mavenCentral()
