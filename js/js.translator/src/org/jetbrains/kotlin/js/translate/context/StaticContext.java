@@ -247,7 +247,11 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression getQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
-        JsExpression fqn = fqnCache.computeIfAbsent(descriptor, this::buildQualifiedExpression);
+        JsExpression fqn = fqnCache.get(descriptor);
+        if (fqn == null) {
+            fqn = buildQualifiedExpression(descriptor);
+            fqnCache.put(descriptor, fqn);
+        }
         return fqn.deepCopy();
     }
 
@@ -810,12 +814,12 @@ public final class StaticContext {
 
     @NotNull
     public JsExpression exportModuleForInline(@NotNull String moduleId, @NotNull JsName moduleName) {
-        return modulesImportedForInline.computeIfAbsent(moduleId, k -> {
+        JsExpression moduleRef = modulesImportedForInline.get(moduleId);
+        if (moduleRef == null) {
             JsExpression currentModuleRef = pureFqn(getInnerNameForDescriptor(getCurrentModule()), null);
             JsExpression importsRef = pureFqn(Namer.IMPORTS_FOR_INLINE_PROPERTY, currentModuleRef);
             JsExpression currentImports = pureFqn(getNameForImportsForInline(), null);
 
-            JsExpression moduleRef;
             JsExpression lhsModuleRef;
             if (NameSuggestionKt.isValidES5Identifier(moduleId)) {
                 moduleRef = pureFqn(moduleId, importsRef);
@@ -832,8 +836,10 @@ public final class StaticContext {
             MetadataProperties.setExportedTag(importStmt, "imports:" + moduleId);
             getFragment().getExportBlock().getStatements().add(importStmt);
 
-            return moduleRef;
-        }).deepCopy();
+            modulesImportedForInline.put(moduleId, moduleRef);
+        }
+
+        return moduleRef.deepCopy();
     }
 
     @NotNull
