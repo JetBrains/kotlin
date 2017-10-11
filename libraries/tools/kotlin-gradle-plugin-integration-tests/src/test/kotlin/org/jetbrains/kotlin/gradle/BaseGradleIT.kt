@@ -38,7 +38,7 @@ abstract class BaseGradleIT {
         val sdkLicense = File(sdkLicenses, "android-sdk-license")
         if (!sdkLicense.exists()) {
             sdkLicense.createNewFile()
-            sdkLicense.writeText("8933bad161af4178b1185d1a37fbf41ea5269c55")
+            sdkLicense.writeText("d56f5187479451eabf01fb78af6dfcb131a6481e")
         }
 
         val sdkPreviewLicense = File(sdkLicenses, "android-sdk-preview-license")
