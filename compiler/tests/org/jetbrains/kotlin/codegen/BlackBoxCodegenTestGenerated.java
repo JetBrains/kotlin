@@ -4337,6 +4337,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("loopInInlineFunInSuperConstructorCallWithEnabledNormalization.kt")
+        public void testLoopInInlineFunInSuperConstructorCallWithEnabledNormalization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/loopInInlineFunInSuperConstructorCallWithEnabledNormalization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("loopInInlineFunWithEnabledNormalization.kt")
+        public void testLoopInInlineFunWithEnabledNormalization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/loopInInlineFunWithEnabledNormalization.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nestedConstructorCallWithJumpOutInConstructorArguments.kt")
         public void testNestedConstructorCallWithJumpOutInConstructorArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/constructorCall/nestedConstructorCallWithJumpOutInConstructorArguments.kt");
