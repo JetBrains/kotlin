@@ -70,13 +70,26 @@ fun SearchPathResolver.resolveLibrariesRecursive(immediateLibraries: List<Librar
     result.putAll(immediateLibraries.map { it.libraryFile.absoluteFile to it })
     var newDependencies: Map<File, LibraryReaderImpl> = result
     do {
+        val defaultOverrides = mutableSetOf<File>()
         newDependencies = newDependencies.values.asSequence()
                 .flatMap { it.dependencies.asSequence() }
                 .map { resolve(it).absoluteFile }
+                .onEach {
+                    if (result[it]?.isDefaultLink == true) {
+                        defaultOverrides.add(it)
+                    }
+                }
                 .filter { it !in result }
                 .map { it to LibraryReaderImpl(it, abiVersion, target) }.toMap()
 
         result.putAll(newDependencies)
+
+        // If there is a default link in immediateLibraries,
+        // and we get the same library as a dependency,
+        // the resultant surviving library should not be a defaultLink anymore.
+        defaultOverrides.forEach {
+            result[it] = LibraryReaderImpl(it, abiVersion, target)
+        }
     } while (newDependencies.isNotEmpty())
     return result.values.toList()
 }
