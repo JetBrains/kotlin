@@ -33,7 +33,7 @@ def testCasesDeclarationsDump = "${buildDir}/cases-declarations.json".toString()
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-Xdump-declarations-to=$testCasesDeclarationsDump"]
+        freeCompilerArgs = ["-Xdump-declarations-to=$testCasesDeclarationsDump", "-Xnormalize-constructor-calls=enable"]
     }
 }
 

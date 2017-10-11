@@ -240,7 +240,7 @@ allprojects {
         kotlinOptions {
             languageVersion = kotlinLanguageVersion
             apiVersion = kotlinLanguageVersion
-            freeCompilerArgs = listOf("-Xallow-kotlin-package")
+            freeCompilerArgs = listOf("-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable")
         }
     }
 

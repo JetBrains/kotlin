@@ -30,7 +30,8 @@ dist {
 
 compileKotlin {
     // TODO: Why "-Xmulti-platfrom" ?
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.archivesBaseName]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
+                                      "-Xmulti-platform", "-module-name", project.archivesBaseName]
 }
 
 compileTestKotlin {

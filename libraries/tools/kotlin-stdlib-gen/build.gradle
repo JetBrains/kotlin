@@ -13,7 +13,7 @@ compileKotlin {
     kotlinOptions {
         languageVersion = "1.1"
         apiVersion = "1.1"
-        freeCompilerArgs = ["-version"]
+        freeCompilerArgs = ["-version", "-Xnormalize-constructor-calls=enable"]
     }
 }
 

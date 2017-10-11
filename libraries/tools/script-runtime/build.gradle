@@ -38,6 +38,7 @@ dist {
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
+            "-Xnormalize-constructor-calls=enable",
             "-module-name", project.name
     ]
 }

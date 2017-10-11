@@ -133,6 +133,7 @@ compileKotlin {
                 "-version",
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
+                "-Xnormalize-constructor-calls=enable",
                 "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json",
                 "-module-name", project.name
         ]
