@@ -4535,6 +4535,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("withNestedReturn.kt")
+        public void testWithNestedReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/withNestedReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withReturn.kt")
+        public void testWithReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/withReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("zeroArguments.kt")
         public void testZeroArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/zeroArguments.kt");
