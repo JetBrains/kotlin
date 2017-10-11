@@ -14,17 +14,17 @@ public abstract annotation MyAnnotation5 {
 }
 
 public final class Test1 {
-    private var bar: int
+    @null private var bar: int
     public final fun getBar() : int = UastEmptyExpression
-    public final fun setBar(p: int) : void = UastEmptyExpression
-    public fun Test1(bar: int) = UastEmptyExpression
+    public final fun setBar(@null p: int) : void = UastEmptyExpression
+    public fun Test1(@MyAnnotation @null bar: int) = UastEmptyExpression
 }
 
 public final class Test2 {
-    private var bar: int
+    @MyAnnotation5 @null private var bar: int
     @MyAnnotation
     public final fun getBar() : int = UastEmptyExpression
     @MyAnnotation2
-    public final fun setBar(p: int) : void = UastEmptyExpression
-    public fun Test2(bar: int) = UastEmptyExpression
+    public final fun setBar(@MyAnnotation3 @null p: int) : void = UastEmptyExpression
+    public fun Test2(@null bar: int) = UastEmptyExpression
 }
