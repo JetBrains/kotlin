@@ -651,7 +651,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val sourceRoots = representativeModule.contentRootsList.urls
                 .map { URI.create(it) }
                 .filter { it.scheme == "file" }
-                .map { File(it) }
+                .map { File(it.path) }
 
         val friendPaths = KotlinBuilderModuleScriptGenerator.getProductionModulesWhichInternalsAreVisible(representativeTarget).mapNotNull {
             val file = getOutputMetaFile(it, false)
