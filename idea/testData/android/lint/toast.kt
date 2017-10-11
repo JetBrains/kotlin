@@ -66,7 +66,7 @@ class ToastTest(context: Context) : Activity() {
         @android.annotation.SuppressLint("ShowToast", "Lorem ipsum")
         val toast2 = Toast.makeText(this, "MyToast", Toast.LENGTH_LONG)
 
-        @android.annotation.SuppressLint(value = "ShowToast")
+        @android.annotation.SuppressLint(value = ["ShowToast"])
         val toast3 = Toast.makeText(this, "MyToast", Toast.LENGTH_LONG)
     }
 
