@@ -106,14 +106,21 @@ public interface LocalLookup {
                 BindingContext bindingContext = state.getBindingContext();
                 Type localType = asmTypeForAnonymousClass(bindingContext, vd);
 
-                MutableClosure localFunClosure = bindingContext.get(CLOSURE, bindingContext.get(CLASS_FOR_CALLABLE, vd));
+                ClassDescriptor callableClass = bindingContext.get(CLASS_FOR_CALLABLE, vd);
+                assert callableClass != null : "No CLASS_FOR_CALLABLE:" + vd;
+
+                MutableClosure localFunClosure = bindingContext.get(CLOSURE, callableClass);
                 if (localFunClosure != null && JvmCodegenUtil.isConst(localFunClosure)) {
                     // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
                     // (instead of passing this instance to the constructor and storing as a field)
                     return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.LOCAL_0, vd);
                 }
 
-                String fieldName = "$" + vd.getName();
+                String localFunClassName = callableClass.getName().asString();
+                int localClassIndexStart = localFunClassName.lastIndexOf('$');
+                String localFunSuffix = localClassIndexStart >= 0 ? localFunClassName.substring(localClassIndexStart) : "";
+
+                String fieldName = "$" + vd.getName() + localFunSuffix;
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false,
                                                                                       StackValue.LOCAL_0, vd);
 
