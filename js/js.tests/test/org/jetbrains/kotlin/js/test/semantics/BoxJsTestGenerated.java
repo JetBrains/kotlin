@@ -7667,6 +7667,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("prototypeUsedToFindInterface.kt")
+        public void testPrototypeUsedToFindInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/prototypeUsedToFindInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("rttiForClass.kt")
         public void testRttiForClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/rttiForClass.kt");

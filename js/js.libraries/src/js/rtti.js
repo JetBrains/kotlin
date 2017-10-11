@@ -52,22 +52,22 @@ Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
     }
 };
 
-function isInheritanceFromInterface(metadata, iface) {
-    if (metadata == null) return false;
+function isInheritanceFromInterface(ctor, iface) {
+    if (ctor === iface) return true;
 
-    var interfaces = metadata.interfaces;
-    var i;
-    for (i = 0; i < interfaces.length; i++) {
-        if (interfaces[i] === iface) {
-            return true;
+    var metadata = ctor.$metadata$;
+    if (metadata != null) {
+        var interfaces = metadata.interfaces;
+        for (var i = 0; i < interfaces.length; i++) {
+            if (isInheritanceFromInterface(interfaces[i], iface)) {
+                return true;
+            }
         }
     }
-    for (i = 0; i < interfaces.length; i++) {
-        if (isInheritanceFromInterface(interfaces[i].$metadata$, iface)) {
-            return true;
-        }
-    }
-    return false;
+
+    var superPrototype = ctor.prototype != null ? Object.getPrototypeOf(ctor.prototype) : null;
+    var superConstructor = superPrototype != null ? superPrototype.constructor : null;
+    return superConstructor != null && isInheritanceFromInterface(superConstructor, iface);
 }
 
 /**
@@ -114,10 +114,7 @@ Kotlin.isType = function (object, klass) {
     }
 
     if (klassMetadata.kind === Kotlin.Kind.INTERFACE && object.constructor != null) {
-        metadata = object.constructor.$metadata$;
-        if (metadata != null) {
-            return isInheritanceFromInterface(metadata, klass);
-        }
+        return isInheritanceFromInterface(object.constructor, klass);
     }
 
     return false;
