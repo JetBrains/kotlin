@@ -42,6 +42,13 @@ public final expect annotation class Foo6 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final expect annotation class Foo7 : kotlin.Annotation {
+    public constructor Foo7()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 
 // -- Module: <m2-jvm> --
 package
@@ -89,5 +96,14 @@ public final actual annotation class Foo5 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final actual annotation class Foo6 : kotlin.Annotation {
+    public constructor Foo6(/*0*/ s: kotlin.String = ...)
+    public final val s: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 public typealias Foo1 = Bar1
 public typealias Foo4 = Bar2
+public typealias Foo7 = Bar2

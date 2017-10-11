@@ -8,6 +8,36 @@ expect fun f21(c: suspend Unit.() -> Unit)
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
+compiler/testData/multiplatform/incompatibleCallables/common.kt:5:14: error: expected function 'f3' has no actual declaration in module
+The following declaration is incompatible because parameter types are different:
+    public actual fun f3(name: Double): Unit
+
+expect fun f3(name: String)
+             ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:6:24: error: expected function 'f3ext' has no actual declaration in module
+The following declaration is incompatible because parameter types are different:
+    public actual fun Double.f3ext(): Unit
+
+expect fun String.f3ext()
+                       ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:12:14: error: expected function 'f6' has no actual declaration in module
+The following declaration is incompatible because number of value parameters is different:
+    public actual fun f6(p2: Int): Unit
+
+expect fun f6(p1: String, p2: Int)
+             ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:32:15: error: expected function 'f21' has no actual declaration in module
+The following declaration is incompatible because parameter types are different:
+    public actual fun f21(c: Unit.() -> Unit): Unit
+
+expect fun f21(c: suspend Unit.() -> Unit)
+              ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:33:15: error: expected function 'f22' has no actual declaration in module
+The following declaration is incompatible because parameter types are different:
+    public actual fun f22(c: suspend Unit.() -> Unit): Unit
+
+expect fun f22(c: Unit.() -> Unit)
+              ^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:1:18: error: actual function 'f1' has no corresponding expected declaration
 The following declaration is incompatible because return type is different:
     public expect fun f1(): Unit

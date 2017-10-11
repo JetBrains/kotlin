@@ -14127,6 +14127,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("expectDeclarationWithStrongIncompatibilities.kt")
+                public void testExpectDeclarationWithStrongIncompatibilities() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/expectDeclarationWithStrongIncompatibilities.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expectDeclarationWithWeakIncompatibilities.kt")
+                public void testExpectDeclarationWithWeakIncompatibilities() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/expectDeclarationWithWeakIncompatibilities.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("explicitConstructorDelegation.kt")
                 public void testExplicitConstructorDelegation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/explicitConstructorDelegation.kt");
