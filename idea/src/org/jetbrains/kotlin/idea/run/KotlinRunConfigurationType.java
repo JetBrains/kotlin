@@ -28,7 +28,7 @@ public class KotlinRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public KotlinRunConfigurationType() {
-        super("KotlinRunConfigurationType", KotlinLanguage.NAME, KotlinLanguage.NAME, KotlinIcons.SMALL_LOGO_13);
+        super("JetRunConfigurationType", KotlinLanguage.NAME, KotlinLanguage.NAME, KotlinIcons.SMALL_LOGO_13);
         addFactory(new KotlinRunConfigurationFactory(this));
     }
 
