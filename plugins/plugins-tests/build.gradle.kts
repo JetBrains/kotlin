@@ -8,6 +8,7 @@ dependencies {
     testCompile(project(":compiler.tests-common"))
     testCompile(project(":plugins:android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-ide"))
+    testCompile(project(":kotlin-android-extensions-runtime"))
     testCompile(project(":allopen-ide-plugin")) { isTransitive = false }
     testCompile(project(":kotlin-allopen-compiler-plugin"))
     testCompile(project(":noarg-ide-plugin")) { isTransitive = false }
