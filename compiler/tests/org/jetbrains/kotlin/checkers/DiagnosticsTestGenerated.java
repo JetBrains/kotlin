@@ -14199,6 +14199,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("modalityCheckForExplicitAndImplicitOverride.kt")
+                public void testModalityCheckForExplicitAndImplicitOverride() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/modalityCheckForExplicitAndImplicitOverride.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("nestedClasses.kt")
                 public void testNestedClasses() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/nestedClasses.kt");
