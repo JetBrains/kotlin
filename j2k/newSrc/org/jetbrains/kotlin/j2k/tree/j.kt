@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKJavaElement : JKElement
+interface JKJavaField : JKDeclaration {
+    val name: String
+}
 
-interface JKJavaField : JKJavaElement, JKDeclaration, JKMember
+interface JKJavaMethod : JKDeclaration
 
-interface JKJavaMethod : JKJavaElement, JKDeclaration, JKMember
-
-interface JKJavaForLoop : JKJavaElement, JKLoop
+interface JKJavaForLoop : JKLoop

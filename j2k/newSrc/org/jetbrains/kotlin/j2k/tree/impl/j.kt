@@ -16,26 +16,12 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import org.jetbrains.kotlin.j2k.tree.JKJavaElement
 import org.jetbrains.kotlin.j2k.tree.JKJavaField
 import org.jetbrains.kotlin.j2k.tree.JKJavaVisitor
 import org.jetbrains.kotlin.j2k.tree.JKVisitor
 
-abstract class JKJavaElementBase : JKJavaElement {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
-        return if (visitor is JKJavaVisitor) {
-            visitor.visitJavaElement(this, data)
-        }
-        else {
-            visitor.visitElement(this, data)
-        }
-    }
+class JKJavaFieldImpl(override val name: String) : JKJavaField, JKElementBase() {
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
-}
-
-
-class JKJavaFieldImpl(val name: String) : JKJavaField, JKJavaElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
         return if (visitor is JKJavaVisitor) {
             visitor.visitJavaField(this, data)
