@@ -1,4 +1,6 @@
 
+import org.gradle.jvm.tasks.Jar
+
 description = "Compiler runner + daemon client"
 
 apply { plugin("kotlin") }
@@ -13,6 +15,7 @@ dependencies {
     compileOnly(project(":compiler:daemon-common"))
     compile(project(":kotlin-daemon-client"))
     compileOnly(project(":compiler:util"))
+    runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
 
 sourceSets {
@@ -20,10 +23,13 @@ sourceSets {
     "test" {}
 }
 
-runtimeJar {
+val jar: Jar by tasks
+jar.apply {
     from(getSourceSetsFrom(":kotlin-daemon-client")["main"].output.classesDirs)
     from(getSourceSetsFrom(":compiler:daemon-common")["main"].output.classesDirs)
 }
+
+runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()
 javadocJar()
 
