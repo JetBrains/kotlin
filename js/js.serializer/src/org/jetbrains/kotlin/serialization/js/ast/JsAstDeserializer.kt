@@ -103,6 +103,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
     private fun deserialize(proto: ClassModel): JsClassModel {
         val superName = if (proto.hasSuperNameId()) deserializeName(proto.superNameId) else null
         return JsClassModel(deserializeName(proto.nameId), superName).apply {
+            proto.interfaceNameIdList.mapTo(interfaces) { deserializeName(it) }
             if (proto.hasPostDeclarationBlock()) {
                 postDeclarationBlock.statements += deserializeGlobalBlock(proto.postDeclarationBlock).statements
             }
