@@ -2,7 +2,6 @@
 package test.io
 
 import java.io.*
-import org.junit.Test
 import kotlin.test.*
 
 private class Serial(val name: String) : Serializable {

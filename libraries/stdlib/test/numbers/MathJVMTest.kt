@@ -2,7 +2,6 @@
 package test.numbers
 
 import kotlin.test.*
-import org.junit.Test
 import kotlin.math.*
 
 class MathJVMTest {

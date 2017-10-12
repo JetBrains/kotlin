@@ -3,7 +3,6 @@ package test.text
 import kotlin.text.*
 
 import kotlin.test.*
-import org.junit.Test
 
 class RegexTest {
 

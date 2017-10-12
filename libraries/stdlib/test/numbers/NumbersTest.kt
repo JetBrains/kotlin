@@ -1,6 +1,5 @@
 package test.numbers
 
-import org.junit.Test
 import kotlin.test.*
 
 object NumbersTestConstants {

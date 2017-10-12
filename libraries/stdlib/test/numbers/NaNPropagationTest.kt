@@ -1,9 +1,7 @@
 package numbers
 
-import org.junit.Test
-import kotlin.test.assertTrue
+import kotlin.test.*
 import kotlin.comparisons.*
-import kotlin.test.assertEquals
 
 val Double.Companion.values get() = listOf(0.0, NEGATIVE_INFINITY, MIN_VALUE, MAX_VALUE, POSITIVE_INFINITY, NaN)
 val Float.Companion.values get() = listOf(0.0f, NEGATIVE_INFINITY, MIN_VALUE, MAX_VALUE, POSITIVE_INFINITY, NaN)

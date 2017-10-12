@@ -2,7 +2,6 @@ package test.collections
 
 import kotlin.test.*
 import test.*
-import org.junit.Test
 
 class MapTest {
 

@@ -2,7 +2,6 @@ package test.collections
 
 import kotlin.test.*
 
-import org.junit.Test
 
 class MutableCollectionTest {
     fun <T, C: MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C)

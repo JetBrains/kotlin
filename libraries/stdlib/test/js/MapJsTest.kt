@@ -1,7 +1,6 @@
 package test.collections.js
 
 import kotlin.test.*
-import org.junit.Test
 import test.collections.*
 import test.collections.behaviors.*
 

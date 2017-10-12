@@ -7,7 +7,6 @@ import kotlin.test.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.Timer
 
-import org.junit.Test
 
 class TimerTest {
     @Test fun scheduledTask() {

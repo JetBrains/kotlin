@@ -19,17 +19,16 @@ package test.js
 import kotlin.js.*
 
 import kotlin.test.*
-import org.junit.Test as test
 
 class RegExpTest {
 
-    @test fun regExpToString() {
+    @Test fun regExpToString() {
         val pattern = "q(\\d+)d"
         val re = RegExp(pattern, "i")
         assertEquals("/$pattern/i", re.toString())
     }
 
-    @test fun regExpProperties() {
+    @Test fun regExpProperties() {
         val re1 = RegExp("[a-z]", "img")
         assertTrue(re1.global)
         assertTrue(re1.ignoreCase)
@@ -40,7 +39,7 @@ class RegExpTest {
         assertFalse(re2.multiline)
     }
 
-    @test fun regExpTest() {
+    @Test fun regExpTest() {
         val pattern = "q(\\d+)d"
         val re = RegExp(pattern, "i")
 
@@ -51,7 +50,7 @@ class RegExpTest {
     }
 
 
-    @test fun regExpExec() {
+    @Test fun regExpExec() {
         val string = "R2D2 beats A5D5 "
         var re = RegExp("""(\w\d)(\w\d)""", "g")
         val m1 = re.exec(string)!!

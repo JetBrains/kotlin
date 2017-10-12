@@ -1,7 +1,6 @@
 @file:kotlin.jvm.JvmVersion
 package test.io
 
-import org.junit.Test
 import java.io.File
 import java.io.IOException
 import java.util.*

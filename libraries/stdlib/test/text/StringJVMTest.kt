@@ -5,7 +5,6 @@ import test.collections.assertArrayNotSameButEquals
 import java.util.*
 import kotlin.test.*
 
-import org.junit.Test
 
 class StringJVMTest {
 

@@ -18,7 +18,6 @@
 package test.text
 
 import kotlin.test.*
-import org.junit.Test
 import test.collections.compare
 import test.io.*
 import java.util.regex.Pattern

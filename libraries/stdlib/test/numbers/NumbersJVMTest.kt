@@ -2,7 +2,6 @@
 package test.numbers
 
 import java.math.BigDecimal
-import org.junit.Test
 import kotlin.test.*
 
 class NumbersJVMTest {

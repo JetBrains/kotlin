@@ -19,7 +19,6 @@ package test.collections
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.test.*
-import org.junit.Test
 import kotlin.comparisons.*
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual && expected contentEquals actual, message) }

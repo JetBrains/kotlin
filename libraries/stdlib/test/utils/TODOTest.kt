@@ -18,7 +18,6 @@ package test.utils
 
 import kotlin.*
 import kotlin.test.*
-import org.junit.Test
 
 class TODOTest {
     private class PartiallyImplementedClass {

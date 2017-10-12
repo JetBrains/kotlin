@@ -2,7 +2,6 @@ package test.utils
 
 import kotlin.*
 import kotlin.test.*
-import org.junit.Test
 
 class LazyTest {
 

@@ -1,6 +1,5 @@
 package test.ranges
 
-import org.junit.Test
 import kotlin.test.*
 
 class CoercionTest {

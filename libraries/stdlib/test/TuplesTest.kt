@@ -1,9 +1,6 @@
 package test.tuples
 
-import org.junit.Test
-import kotlin.test.assertTrue
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import kotlin.test.*
 
 class PairTest {
     val p = Pair(1, "a")

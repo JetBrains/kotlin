@@ -1,7 +1,6 @@
 package test.numbers
 
 import kotlin.test.*
-import org.junit.Test
 
 // TODO: Run these tests during compiler test only (JVM & JS)
 class BitwiseOperationsTest {

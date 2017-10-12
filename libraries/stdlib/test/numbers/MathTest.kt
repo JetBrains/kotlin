@@ -16,7 +16,6 @@
 
 package test.numbers
 
-import org.junit.Test
 import kotlin.math.*
 import kotlin.test.*
 

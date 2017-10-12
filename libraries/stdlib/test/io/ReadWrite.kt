@@ -1,15 +1,12 @@
 @file:kotlin.jvm.JvmVersion
 package test.io
 
-import org.junit.Test
+import kotlin.test.*
 import java.io.File
-import kotlin.test.assertEquals
 import java.io.Reader
 import java.io.StringReader
 import java.net.URL
 import java.util.ArrayList
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 fun sample(): Reader = StringReader("Hello\nWorld");
 

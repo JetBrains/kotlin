@@ -18,7 +18,6 @@ package test.text
 
 import kotlin.test.*
 import test.*
-import org.junit.Test
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
 

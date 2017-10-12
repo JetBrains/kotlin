@@ -4,7 +4,6 @@ package test.concurrent
 import kotlin.concurrent.*
 import kotlin.test.*
 
-import org.junit.Test
 
 import java.util.concurrent.*
 import java.util.concurrent.TimeUnit.*

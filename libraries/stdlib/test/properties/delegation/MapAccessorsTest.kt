@@ -1,7 +1,6 @@
 package test.properties.delegation.map
 
 import kotlin.test.*
-import org.junit.Test
 
 class ValByMapExtensionsTest {
     val map: Map<String, String> = hashMapOf("a" to "all", "b" to "bar", "c" to "code")
