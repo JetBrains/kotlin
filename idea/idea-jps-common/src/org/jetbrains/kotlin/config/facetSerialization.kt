@@ -59,6 +59,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         val jsArgumentsElement = compilerInfoElement?.getOptionBody("k2jsCompilerArguments")
 
         val compilerArguments = targetPlatform.createCompilerArguments()
+        compilerArguments.freeArgs = ArrayList()
 
         commonArgumentsElement?.let { XmlSerializer.deserializeInto(compilerArguments, it) }
         when (compilerArguments) {

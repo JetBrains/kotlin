@@ -121,10 +121,10 @@ class IncrementalJsCompilerRunner(
             services: Services,
             messageCollector: MessageCollector
     ): ExitCode {
-        val freeArgsBackup = args.freeArgs.toMutableList()
+        val freeArgsBackup = args.freeArgs
 
         try {
-            sourcesToCompile.mapTo(args.freeArgs) { it.absolutePath }
+            args.freeArgs += sourcesToCompile.map() { it.absolutePath }
             val exitCode = K2JSCompiler().exec(messageCollector, services, args)
             reporter.reportCompileIteration(sourcesToCompile, exitCode)
             return exitCode
