@@ -133,12 +133,19 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
         assert(superDescriptor.name == subDescriptor.name)
 
         val superClass = superDescriptor.containingDeclaration as? ClassDescriptor
-        if (superClass == null || !superClass.isObjCClass()) {
+        val subClass = subDescriptor.containingDeclaration as? ClassDescriptor
+
+        if (superClass == null || !superClass.isObjCClass() || subClass == null) {
             return ExternalOverridabilityCondition.Result.UNKNOWN
         }
 
         return if (areSelectorsEqual(superDescriptor, subDescriptor)) {
-            ExternalOverridabilityCondition.Result.OVERRIDABLE
+            // Also check the method signatures if the subclass is user-defined:
+            if (subClass.isExternalObjCClass()) {
+                ExternalOverridabilityCondition.Result.OVERRIDABLE
+            } else {
+                ExternalOverridabilityCondition.Result.UNKNOWN
+            }
         } else {
             ExternalOverridabilityCondition.Result.INCOMPATIBLE
         }

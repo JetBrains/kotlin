@@ -48,8 +48,8 @@ fun MutablePairProtocol.swap() {
 }
 
 class Bar : Foo() {
-    override fun helloWithPrinter(printer: PrinterProtocol) = memScoped {
-        printer.print("Hello from Kotlin".cstr.getPointer(memScope))
+    override fun helloWithPrinter(printer: PrinterProtocol?) = memScoped {
+        printer!!.print("Hello from Kotlin".cstr.getPointer(memScope))
     }
 }
 
