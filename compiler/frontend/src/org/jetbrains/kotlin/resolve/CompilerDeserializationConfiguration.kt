@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVersionSettings) : DeserializationConfiguration {
     override val skipMetadataVersionCheck = languageVersionSettings.getFlag(AnalysisFlag.skipMetadataVersionCheck)
 
-    override val skipPreReleaseCheck = skipMetadataVersionCheck
+    override val skipPreReleaseCheck = skipMetadataVersionCheck || !languageVersionSettings.languageVersion.isStable
 
     override val typeAliasesAllowed = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
 
