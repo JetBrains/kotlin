@@ -2,6 +2,7 @@
 buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     extra["buildSrcKotlinRepo"] = findProperty("buildSrc.kotlin.repo")
+    extra["versions.shadow"] = "2.0.1"
 
     repositories {
         extra["buildSrcKotlinRepo"]?.let {
@@ -33,6 +34,7 @@ repositories {
         maven { setUrl(it) }
     }
 //    maven { setUrl("https://repo.gradle.org/gradle/libs-releases-local") }
+    jcenter()
 }
 
 dependencies {
@@ -40,6 +42,7 @@ dependencies {
 //    compile("net.rubygrapefruit:native-platform:0.14")
     // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
+    compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
 }
 
 samWithReceiver {
