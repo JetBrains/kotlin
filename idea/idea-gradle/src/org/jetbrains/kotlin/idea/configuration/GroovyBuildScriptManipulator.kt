@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
@@ -33,7 +34,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner
 
 class GroovyBuildScriptManipulator(private val groovyScript: GroovyFile) : GradleBuildScriptManipulator {
     override fun isConfigured(kotlinPluginName: String): Boolean {
-        val fileText = groovyScript.text
+        val fileText = runReadAction { groovyScript.text }
         return containsDirective(fileText, getApplyPluginDirective(kotlinPluginName)) &&
                fileText.contains("org.jetbrains.kotlin") &&
                fileText.contains("kotlin-stdlib")
