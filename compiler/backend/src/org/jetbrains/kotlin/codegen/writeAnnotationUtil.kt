@@ -37,7 +37,9 @@ fun writeKotlinMetadata(
     av.visit(JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME, JvmBytecodeBinaryVersion.INSTANCE.toArray())
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)
     var flags = extraFlags
-    if (KotlinCompilerVersion.isPreRelease() && state.languageVersionSettings.languageVersion == LanguageVersion.LATEST_STABLE) {
+    val languageVersion = state.languageVersionSettings.languageVersion
+    if (KotlinCompilerVersion.isPreRelease() && languageVersion == LanguageVersion.LATEST_STABLE ||
+        !languageVersion.isStable) {
         flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
     }
     if (flags != 0) {
