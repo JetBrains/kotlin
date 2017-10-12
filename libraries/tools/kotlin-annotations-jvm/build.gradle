@@ -30,6 +30,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
+            "-Xnormalize-constructor-calls=enable",
             "-module-name", project.name
     ]
 }

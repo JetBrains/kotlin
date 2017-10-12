@@ -29,7 +29,7 @@ sourceSets {
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xdump-declarations-to', "${buildDir}/cases-declarations.json"]
+        freeCompilerArgs = ["-Xnormalize-constructor-calls=enable", '-Xdump-declarations-to', "${buildDir}/cases-declarations.json"]
     }
 }
 
