@@ -32909,6 +32909,19 @@ public final class JsAstProtoBuf {
     int getSuperNameId();
 
     /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    java.util.List<java.lang.Integer> getInterfaceNameIdList();
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    int getInterfaceNameIdCount();
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    int getInterfaceNameId(int index);
+
+    /**
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
      */
     boolean hasPostDeclarationBlock();
@@ -32990,6 +33003,27 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000004;
               break;
             }
+            case 32: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                interfaceNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              interfaceNameId_.add(input.readInt32());
+              break;
+            }
+            case 34: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+                interfaceNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                interfaceNameId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -32998,6 +33032,9 @@ public final class JsAstProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          interfaceNameId_ = java.util.Collections.unmodifiableList(interfaceNameId_);
+        }
         try {
           unknownFieldsCodedOutput.flush();
         } catch (java.io.IOException e) {
@@ -33054,6 +33091,28 @@ public final class JsAstProtoBuf {
       return superNameId_;
     }
 
+    public static final int INTERFACE_NAME_ID_FIELD_NUMBER = 4;
+    private java.util.List<java.lang.Integer> interfaceNameId_;
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getInterfaceNameIdList() {
+      return interfaceNameId_;
+    }
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    public int getInterfaceNameIdCount() {
+      return interfaceNameId_.size();
+    }
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    public int getInterfaceNameId(int index) {
+      return interfaceNameId_.get(index);
+    }
+
     public static final int POST_DECLARATION_BLOCK_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock postDeclarationBlock_;
     /**
@@ -33072,6 +33131,7 @@ public final class JsAstProtoBuf {
     private void initFields() {
       nameId_ = 0;
       superNameId_ = 0;
+      interfaceNameId_ = java.util.Collections.emptyList();
       postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -33106,6 +33166,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(3, postDeclarationBlock_);
       }
+      for (int i = 0; i < interfaceNameId_.size(); i++) {
+        output.writeInt32(4, interfaceNameId_.get(i));
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -33126,6 +33189,15 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(3, postDeclarationBlock_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < interfaceNameId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(interfaceNameId_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getInterfaceNameIdList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -33225,8 +33297,10 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         superNameId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
+        interfaceNameId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
+        postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -33258,7 +33332,12 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.superNameId_ = superNameId_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          interfaceNameId_ = java.util.Collections.unmodifiableList(interfaceNameId_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.interfaceNameId_ = interfaceNameId_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000004;
         }
         result.postDeclarationBlock_ = postDeclarationBlock_;
@@ -33273,6 +33352,16 @@ public final class JsAstProtoBuf {
         }
         if (other.hasSuperNameId()) {
           setSuperNameId(other.getSuperNameId());
+        }
+        if (!other.interfaceNameId_.isEmpty()) {
+          if (interfaceNameId_.isEmpty()) {
+            interfaceNameId_ = other.interfaceNameId_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureInterfaceNameIdIsMutable();
+            interfaceNameId_.addAll(other.interfaceNameId_);
+          }
+          
         }
         if (other.hasPostDeclarationBlock()) {
           mergePostDeclarationBlock(other.getPostDeclarationBlock());
@@ -33379,12 +33468,78 @@ public final class JsAstProtoBuf {
         return this;
       }
 
+      private java.util.List<java.lang.Integer> interfaceNameId_ = java.util.Collections.emptyList();
+      private void ensureInterfaceNameIdIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          interfaceNameId_ = new java.util.ArrayList<java.lang.Integer>(interfaceNameId_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getInterfaceNameIdList() {
+        return java.util.Collections.unmodifiableList(interfaceNameId_);
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public int getInterfaceNameIdCount() {
+        return interfaceNameId_.size();
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public int getInterfaceNameId(int index) {
+        return interfaceNameId_.get(index);
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder setInterfaceNameId(
+          int index, int value) {
+        ensureInterfaceNameIdIsMutable();
+        interfaceNameId_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder addInterfaceNameId(int value) {
+        ensureInterfaceNameIdIsMutable();
+        interfaceNameId_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder addAllInterfaceNameId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureInterfaceNameIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, interfaceNameId_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder clearInterfaceNameId() {
+        interfaceNameId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        
+        return this;
+      }
+
       private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
        */
       public boolean hasPostDeclarationBlock() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+        return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
@@ -33401,7 +33556,7 @@ public final class JsAstProtoBuf {
         }
         postDeclarationBlock_ = value;
 
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
@@ -33411,14 +33566,14 @@ public final class JsAstProtoBuf {
           org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.Builder builderForValue) {
         postDeclarationBlock_ = builderForValue.build();
 
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
        */
       public Builder mergePostDeclarationBlock(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock value) {
-        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
             postDeclarationBlock_ != org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance()) {
           postDeclarationBlock_ =
             org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.newBuilder(postDeclarationBlock_).mergeFrom(value).buildPartial();
@@ -33426,7 +33581,7 @@ public final class JsAstProtoBuf {
           postDeclarationBlock_ = value;
         }
 
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
@@ -33435,7 +33590,7 @@ public final class JsAstProtoBuf {
       public Builder clearPostDeclarationBlock() {
         postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
