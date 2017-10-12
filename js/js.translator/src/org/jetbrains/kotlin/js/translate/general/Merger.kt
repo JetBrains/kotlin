@@ -129,6 +129,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         val classes = fragment.classes.values.map { cls ->
             JsClassModel(rename(cls.name), cls.superName?.let { rename(it) }).apply {
                 postDeclarationBlock.statements += rename(cls.postDeclarationBlock).statements
+                cls.interfaces.mapTo(interfaces) { rename(it) }
             }
         }
         fragment.classes.clear()
@@ -214,10 +215,8 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     ) {
         if (!visited.add(name)) return
         val cls = classes[name] ?: return
-        val superName = cls.superName
-        if (superName != null) {
-            addClassPostDeclarations(superName, visited, statements)
-        }
+        cls.superName?.let { addClassPostDeclarations(it, visited, statements) }
+        cls.interfaces.forEach { addClassPostDeclarations(it, visited, statements) }
         statements += cls.postDeclarationBlock.statements
     }
 }

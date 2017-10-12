@@ -403,6 +403,7 @@ message NameBinding {
 message ClassModel {
     required int32 name_id = 1;
     optional int32 super_name_id = 2;
+    repeated int32 interface_name_id = 4;
     optional GlobalBlock post_declaration_block = 3;
 }
 

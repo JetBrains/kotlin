@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -40,6 +41,7 @@ class ClassModelGenerator(val context: TranslationContext) {
     fun generateClassModel(descriptor: ClassDescriptor): JsClassModel {
         val superName = descriptor.getSuperClassNotAny()?.let { context.getInlineableInnerNameForDescriptor(it) }
         val model = JsClassModel(context.getInlineableInnerNameForDescriptor(descriptor), superName)
+        descriptor.getSuperInterfaces().mapTo(model.interfaces) { context.getInlineableInnerNameForDescriptor(it) }
         if (descriptor.kind != ClassKind.ANNOTATION_CLASS && !AnnotationsUtils.isNativeObject(descriptor)) {
             copyDefaultMembers(descriptor, model)
             generateBridgeMethods(descriptor, model)
