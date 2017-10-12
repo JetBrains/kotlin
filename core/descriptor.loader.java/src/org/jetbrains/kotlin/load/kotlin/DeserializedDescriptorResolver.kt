@@ -76,7 +76,7 @@ class DeserializedDescriptorResolver {
         }
 
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
-        get() = !skipMetadataVersionCheck &&
+        get() = !components.configuration.skipPreReleaseCheck &&
                 !KotlinCompilerVersion.isPreRelease() &&
                 (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)
 
