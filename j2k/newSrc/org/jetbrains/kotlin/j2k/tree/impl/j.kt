@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import org.jetbrains.kotlin.j2k.tree.JKExpression
-import org.jetbrains.kotlin.j2k.tree.JKJavaField
-import org.jetbrains.kotlin.j2k.tree.JKJavaVisitor
-import org.jetbrains.kotlin.j2k.tree.JKVisitor
+import org.jetbrains.kotlin.j2k.tree.*
 
-class JKJavaFieldImpl(override val name: String,
+class JKJavaFieldImpl(override var type: JKTypeIdentifier,
+                      override var name: JKNameIdentifier,
                       override var initializer: JKExpression?) : JKJavaField, JKElementBase() {
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
@@ -34,5 +32,41 @@ class JKJavaFieldImpl(override val name: String,
     }
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
-            = initializer?.accept(visitor, data) ?: Unit
+            = listOfNotNull(type, name, initializer).forEach { it.accept(visitor, data) }
+}
+
+
+class JKJavaTypeIdentifierImpl(override val typeName: String) : JKJavaTypeIdentifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
+        return if (visitor is JKJavaVisitor) {
+            visitor.visitJavaTypeIdentifier(this, data)
+        }
+        else {
+            visitor.visitTypeIdentifier(this, data)
+        }
+    }
+}
+
+
+class JKJavaStringLiteralExpressionImpl(override val text: String) : JKJavaStringLiteralExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
+        return if (visitor is JKJavaVisitor) {
+            visitor.visitJavaStringLiteralExpression(this, data)
+        }
+        else {
+            visitor.visitLiteralExpression(this, data)
+        }
+    }
+}
+
+
+class JKJavaAccessModifierImpl(override val type: JKJavaAccessModifier.AccessModifierType) : JKJavaAccessModifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
+        return if (visitor is JKJavaVisitor) {
+            visitor.visitJavaAccessModifier(this, data)
+        }
+        else {
+            visitor.visitAccessModifier(this, data)
+        }
+    }
 }

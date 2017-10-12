@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKKtFun: JKDeclaration
+interface JKKtFun : JKDeclaration
 
-interface JKKtConstructor: JKDeclaration
+interface JKKtConstructor : JKDeclaration
 
-interface JKKtPrimaryConstructor: JKKtConstructor
+interface JKKtPrimaryConstructor : JKKtConstructor
+
+interface JKKtAssignmentStatement : JKStatement
+
+interface JKKtCall : JKCall
