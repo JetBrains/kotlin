@@ -1228,6 +1228,7 @@ task link_default_libs(type: RunKonanTest) {
 }
 
 task no_purge_for_dependencies(type: LinkKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
     goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"
     source = "link/purge1/prog.kt"
     lib = "link/purge1/lib.kt"
