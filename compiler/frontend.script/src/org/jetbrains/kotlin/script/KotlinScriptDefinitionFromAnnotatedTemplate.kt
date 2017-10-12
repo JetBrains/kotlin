@@ -80,6 +80,9 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
         try {
+            resolverClass.objectInstance?.let {
+                return it
+            }
             val constructorWithoutParameters = resolverClass.constructors.find { it.parameters.all { it.isOptional } }
             if (constructorWithoutParameters == null) {
                 log.warn("[kts] ${resolverClass.qualifiedName} must have a constructor without required parameters")
