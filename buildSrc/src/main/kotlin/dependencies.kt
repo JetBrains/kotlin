@@ -1,12 +1,13 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.gradle.api.*
+import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.project
 import java.io.File
 
 
@@ -29,8 +30,11 @@ fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File
         throw GradleException("Invalid base directory $dir")
     }
     val matchingFiles = dir.listFiles { file -> artifactBaseNames.any { file.matchMaybeVersionedArtifact(it) } }
-    if (matchingFiles == null || matchingFiles.size < artifactBaseNames.size)
-        throw GradleException("Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' (found: ${matchingFiles?.joinToString { it.name }})")
+    if (matchingFiles == null || matchingFiles.size < artifactBaseNames.size) {
+        throw GradleException("Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' " +
+                              "(missing: ${artifactBaseNames.filterNot { request -> matchingFiles.any { it.matchMaybeVersionedArtifact(request) } }.joinToString()};" +
+                              " found: ${matchingFiles?.joinToString { it.name }})")
+    }
     return files(*matchingFiles.map { it.canonicalPath }.toTypedArray())
 }
 
