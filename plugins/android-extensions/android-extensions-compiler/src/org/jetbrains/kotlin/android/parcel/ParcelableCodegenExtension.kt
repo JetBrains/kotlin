@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy.CodegenBased
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.context.ClassContext
+import org.jetbrains.kotlin.codegen.coroutines.UninitializedStoresProcessor
 import org.jetbrains.kotlin.codegen.writeSyntheticClassMetadata
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -100,6 +101,8 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val containerAsmType = codegen.typeMapper.mapType(this.defaultType)
 
         return findFunction(WRITE_TO_PARCEL)?.write(codegen) {
+            v.visitAnnotation(UninitializedStoresProcessor.AVOID_UNINITIALIZED_OBJECT_COPYING_CHECK_ANNOTATION_DESCRIPTOR, false)
+
             if (parcelerObject != null) {
                 val (companionAsmType, companionFieldName) = getCompanionClassType(containerAsmType, parcelerObject)
 
@@ -178,6 +181,8 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val containerAsmType = codegen.typeMapper.mapType(parcelableClass)
 
         createMethod(creatorClass, CREATE_FROM_PARCEL, parcelableClass.builtIns.anyType, "in" to parcelClassType).write(codegen) {
+            v.visitAnnotation(UninitializedStoresProcessor.AVOID_UNINITIALIZED_OBJECT_COPYING_CHECK_ANNOTATION_DESCRIPTOR, false)
+
             if (parcelerObject != null) {
                 val (companionAsmType, companionFieldName) = getCompanionClassType(containerAsmType, parcelerObject)
 
