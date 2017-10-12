@@ -7,7 +7,7 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
  * [Try Kotlin](http://try.kotlinlang.org/)
  * [Kotlin Standard Library](http://kotlinlang.org/api/latest/jvm/stdlib/index.html)
  * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
- * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
+ * [Forum](https://discuss.kotlinlang.org/)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
  * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
  * [Public Slack channel](http://slack.kotlinlang.org/)
