@@ -93,6 +93,8 @@ jar {
     manifestAttributes(manifest, project)
 }
 
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+
 artifacts {
     archives sourcesJar
     archives javadocJar

@@ -2,16 +2,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 description = "Annotation Processor wrapper for Kotlin"
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
-
 apply { plugin("kotlin") }
 
 val packedJars by configurations.creating
@@ -25,16 +15,19 @@ dependencies {
     testCompile("com.android.tools.build:gradle:1.1.0")
     testCompile(commonDep("junit:junit"))
     packedJars(project(":kotlin-annotation-processing")) { isTransitive = false }
+    runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
 
 projectTest {
     workingDir = projectDir
 }
 
-runtimeJar(task<ShadowJar>("shadowJar")) {
+val originalJar by task<ShadowJar> {
     from(packedJars)
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
 }
+
+runtimeJar(rewriteDepsToShadedCompiler(originalJar))
 sourcesJar()
 javadocJar()
 
