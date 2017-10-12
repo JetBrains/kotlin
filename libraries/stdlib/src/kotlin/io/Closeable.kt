@@ -29,6 +29,7 @@ import kotlin.internal.*
  * @return the result of [block] function invoked on this resource.
  */
 @InlineOnly
+@RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
     var exception: Throwable? = null
     try {
