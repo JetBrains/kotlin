@@ -98,7 +98,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
             // Remove the root project buildscript dependency, needed for the same purpose:
             File(projectDir, "build.gradle").modify {
-                it.replace("classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:\$kotlin_version'", "")
+                it.replace("classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:\$kotlin_version\"", "")
                         .apply { assert(!equals(it)) }
             }
 
