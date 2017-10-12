@@ -23,10 +23,10 @@ open class Open {
 }
 
 actual open class Foo1 : Open() {
-    override val <!ACTUAL_WITHOUT_EXPECT!>x<!> = super.x
+    override val <!ACTUAL_MISSING!>x<!> = super.x
 }
 
-actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo2<!> : Open()
+actual open class Foo2 : Open()
 
 open class WithFinal {
     val x = "42"

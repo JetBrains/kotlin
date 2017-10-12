@@ -397,7 +397,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (b.hasStableParameterNames() && !equalsBy(aParams, bParams, ValueParameterDescriptor::getName)) return Incompatible.ParameterNames
         if (!equalsBy(aTypeParams, bTypeParams, TypeParameterDescriptor::getName)) return Incompatible.TypeParameterNames
 
-        if (a.modality != b.modality) return Incompatible.Modality
+        if (!areCompatibleModalities(a.modality, b.modality)) return Incompatible.Modality
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
@@ -535,7 +535,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         val bTypeParams = b.declaredTypeParameters
         if (aTypeParams.size != bTypeParams.size) return Incompatible.TypeParameterCount
 
-        if (a.modality != b.modality && !(a.modality == Modality.FINAL && b.modality == Modality.OPEN)) return Incompatible.Modality
+        if (!areCompatibleModalities(a.modality, b.modality)) return Incompatible.Modality
 
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
@@ -554,6 +554,11 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         areCompatibleClassScopes(a, b, platformModule, substitutor).let { if (it != Compatible) return it }
 
         return Compatible
+    }
+
+    private fun areCompatibleModalities(a: Modality, b: Modality): Boolean {
+        return a == Modality.FINAL && b == Modality.OPEN ||
+               a == b
     }
 
 
