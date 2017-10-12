@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -41,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<KtFile> {
@@ -104,6 +107,12 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, 0, av -> {
             writeAnnotationData(av, serializedPart.getFirst(), serializedPart.getSecond());
+
+            FqName kotlinPackageFqName = element.getPackageFqName();
+            if (!kotlinPackageFqName.equals(JvmClassName.byInternalName(packagePartType.getInternalName()).getPackageFqName())) {
+                av.visit(METADATA_PACKAGE_NAME_FIELD_NAME, kotlinPackageFqName.asString());
+            }
+
             return Unit.INSTANCE;
         });
     }
