@@ -77,7 +77,7 @@ class BasicAssertionsTest {
     fun testAssertSameFails() {
         val instance1: Any = object {}
         val instance2: Any = object {}
-        checkFailedAssertion { assertEquals(instance1, instance2) }
+        checkFailedAssertion { assertSame(instance1, instance2) }
     }
 
     @Test
@@ -124,7 +124,7 @@ class BasicAssertionsTest {
     fun testAssertNotSame() {
         val instance1: Any = object {}
         val instance2: Any = object {}
-        assertNotEquals(instance1, instance2)
+        assertNotSame(instance1, instance2)
     }
 
     @Test()
@@ -135,7 +135,7 @@ class BasicAssertionsTest {
     @Test
     fun testAssertNotSameFails() {
         val instance: Any = object {}
-        checkFailedAssertion { assertNotEquals(instance, instance) }
+        checkFailedAssertion { assertNotSame(instance, instance) }
     }
 
     @Test
