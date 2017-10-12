@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 fun KotlinCommonToolOptions.copyFreeCompilerArgsToArgs(args: CommonToolArguments) {
     // cast to List<Any> is important because in Groovy a GString can be inside of a list
     val freeArgs = (freeCompilerArgs as List<Any>).map(Any::toString)
-    args.freeArgs.addAll(freeArgs)
+    args.freeArgs += freeArgs
 }
