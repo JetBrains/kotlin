@@ -18,21 +18,48 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKElement
-import org.jetbrains.kotlin.j2k.tree.JKExpression
-import org.jetbrains.kotlin.j2k.tree.impl.JKClassImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKElementBase
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaFieldImpl
+import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
+import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.impl.*
 
 class JavaToJKTreeBuilder {
 
     private class ExpressionTreeVisitor : JavaElementVisitor() {
-        override fun visitElement(element: PsiElement) {
-            element.acceptChildren(this)
+
+        private var resultExpression: JKExpression? = null
+
+        override fun visitLiteralExpression(expression: PsiLiteralExpression?) {
+            if (expression is PsiLiteralExpressionImpl) {
+
+                when (expression.literalElementType) {
+                    JavaTokenType.STRING_LITERAL ->
+                        resultExpression = JKJavaStringLiteralExpressionImpl(expression.innerText!!)
+                }
+            }
         }
 
-        fun extractExpression(): JKExpression? = object : JKElementBase(), JKExpression {}
+        fun result(): JKExpression = resultExpression!!
+    }
+
+    private object ModifierMapper {
+        fun PsiModifierList?.toJK(): JKModifierList {
+
+            val modifierList = JKModifierListImpl()
+            if (this == null) return modifierList
+
+            PsiModifier.MODIFIERS
+                    .filter { hasExplicitModifier(it) }
+                    .mapTo(modifierList.modifiers) { modifierToJK(it) }
+
+            return modifierList
+        }
+
+        fun modifierToJK(name: String): JKModifier = when (name) {
+            PsiModifier.PUBLIC -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PUBLIC)
+            PsiModifier.PRIVATE -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PRIVATE)
+            PsiModifier.PROTECTED -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PROTECTED)
+            else -> TODO("Not yet supported")
+        }
     }
 
     private class ElementVisitor : JavaElementVisitor() {
@@ -44,18 +71,28 @@ class JavaToJKTreeBuilder {
         var currentClass: JKClass? = null
 
         override fun visitClass(aClass: PsiClass) {
-            currentClass = JKClassImpl()
+
+            val name = JKNameIdentifierImpl(aClass.name!!)
+            val modifierList = with(ModifierMapper) {
+                aClass.modifierList.toJK()
+            }
+
+            currentClass = JKClassImpl(modifierList, name)
             super.visitClass(aClass)
         }
 
         override fun visitField(field: PsiField) {
-            val initializer = ExpressionTreeVisitor().also { field.initializer?.accept(it) }.extractExpression()
+            val initializer = field.initializer?.buildTreeForExpression()
 
-            currentClass!!.declarations += JKJavaFieldImpl(field.name!!, initializer)
+            val type = JKJavaTypeIdentifierImpl(field.type.canonicalText)
+            val name = JKNameIdentifierImpl(field.name!!)
+
+            currentClass!!.declarations += JKJavaFieldImpl(type, name, initializer)
             super.visitField(field)
         }
 
     }
+
 
     fun buildTree(psi: PsiElement): JKElement? {
         assert(psi.language.`is`(JavaLanguage.INSTANCE)) { "Unable to build JK Tree using Java Visitor for language ${psi.language}" }
@@ -63,4 +100,10 @@ class JavaToJKTreeBuilder {
         psi.accept(elementVisitor)
         return elementVisitor.currentClass
     }
+
+    companion object {
+        private fun PsiExpression.buildTreeForExpression(): JKExpression =
+                JavaToJKTreeBuilder.ExpressionTreeVisitor().apply { accept(this) }.result()
+    }
 }
+

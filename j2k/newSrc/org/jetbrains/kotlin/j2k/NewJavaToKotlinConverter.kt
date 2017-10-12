@@ -20,10 +20,8 @@ import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKElement
-import org.jetbrains.kotlin.j2k.tree.JKJavaField
-import org.jetbrains.kotlin.j2k.tree.JKJavaKtVisitorVoid
+import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.utils.Printer
 
 class NewJavaToKotlinConverter(
         private val project: Project,
@@ -38,25 +36,12 @@ class NewJavaToKotlinConverter(
 
             for (tree in fileTrees.filterNotNull()) {
                 appendln()
-                tree.accept(object : JKJavaKtVisitorVoid {
-                    override fun visitElement(element: JKElement) {
-                        element.acceptChildren(this, null)
-                    }
-
-                    override fun visitClass(klass: JKClass) {
-                        appendln("class")
-                        super.visitClass(klass)
-                    }
-
-                    override fun visitJavaField(javaField: JKJavaField, data: Nothing?) {
-                        appendln("java field ${javaField.name}")
-                        super.visitJavaField(javaField, data)
-                    }
-
-                }, null)
+                appendln(tree.prettyDebugPrintTree())
                 appendln()
             }
         }
+
+        println(result)
 
         return result
     }

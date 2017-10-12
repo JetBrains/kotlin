@@ -24,15 +24,37 @@ interface JKElement {
 }
 
 interface JKClass : JKDeclaration {
+    var modifierList: JKModifierList
+    var name: JKNameIdentifier
     val declarations: MutableList<JKDeclaration>
 }
 
-interface JKExpression : JKElement
-
 interface JKStatement : JKElement
+
+interface JKExpression : JKStatement
 
 interface JKLoop : JKStatement
 
 interface JKDeclaration : JKElement
 
 interface JKBlock : JKElement
+
+interface JKCall : JKExpression
+
+interface JKIdentifier : JKElement
+
+interface JKTypeIdentifier : JKIdentifier
+
+interface JKNameIdentifier : JKIdentifier {
+    val name: String
+}
+
+interface JKLiteralExpression : JKExpression
+
+interface JKModifierList : JKElement {
+    val modifiers: MutableList<JKModifier>
+}
+
+interface JKModifier : JKElement
+
+interface JKAccessModifier : JKModifier

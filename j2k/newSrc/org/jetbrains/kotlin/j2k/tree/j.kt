@@ -17,10 +17,31 @@
 package org.jetbrains.kotlin.j2k.tree
 
 interface JKJavaField : JKDeclaration {
-    val name: String
+    var type: JKTypeIdentifier
+    var name: JKNameIdentifier
     var initializer: JKExpression?
 }
 
 interface JKJavaMethod : JKDeclaration
 
 interface JKJavaForLoop : JKLoop
+
+interface JKJavaAssignmentExpression : JKExpression
+
+interface JKJavaCall : JKCall
+
+interface JKJavaTypeIdentifier : JKTypeIdentifier {
+    val typeName: String
+}
+
+interface JKJavaStringLiteralExpression : JKLiteralExpression {
+    val text: String
+}
+
+interface JKJavaAccessModifier : JKAccessModifier {
+    val type: AccessModifierType
+
+    enum class AccessModifierType {
+        PUBLIC, PROTECTED, PRIVATE
+    }
+}

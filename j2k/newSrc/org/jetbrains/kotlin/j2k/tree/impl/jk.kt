@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKDeclaration
-import org.jetbrains.kotlin.j2k.tree.JKElement
-import org.jetbrains.kotlin.j2k.tree.JKVisitor
+import org.jetbrains.kotlin.j2k.tree.*
 
 abstract class JKElementBase : JKElement {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
@@ -27,12 +24,29 @@ abstract class JKElementBase : JKElement {
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
 }
 
-class JKClassImpl : JKClass, JKElementBase() {
+
+class JKClassImpl(override var modifierList: JKModifierList, override var name: JKNameIdentifier) : JKClass, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
+        (listOf(modifierList, name) + declarations).forEach { it.accept(visitor, data) }
     }
 
     override val declarations = mutableListOf<JKDeclaration>()
+}
+
+
+class JKNameIdentifierImpl(override val name: String) : JKNameIdentifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitNameIdentifier(this, data)
+}
+
+
+class JKModifierListImpl : JKModifierList, JKElementBase() {
+    override val modifiers = mutableListOf<JKModifier>()
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModifierList(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        modifiers.forEach { it.accept(visitor, data) }
+    }
 }
