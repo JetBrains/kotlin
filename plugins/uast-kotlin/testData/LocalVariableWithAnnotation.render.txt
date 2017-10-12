@@ -1,6 +1,6 @@
 public final class LocalVariableWithAnnotationKt {
     public static final fun foo() : void {
-        @TestAnnotation var bar: <ErrorType> = "lorem ipsum"
+        @TestAnnotation var bar: java.lang.String = "lorem ipsum"
     }
 }
 
