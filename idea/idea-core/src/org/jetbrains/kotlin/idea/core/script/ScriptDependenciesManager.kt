@@ -51,7 +51,7 @@ class ScriptDependenciesManager internal constructor(
     }
 
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> = toVfsRoots(cacheUpdater.getCurrentDependencies(file).classpath)
-    fun getScriptDependencies(file: VirtualFile) = cacheUpdater.getCurrentDependencies(file)
+    fun getScriptDependencies(file: VirtualFile): ScriptDependencies = cacheUpdater.getCurrentDependencies(file)
 
     private fun reloadScriptDefinitions() {
         val def = makeScriptDefsFromTemplatesProviderExtensions(

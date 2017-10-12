@@ -58,6 +58,8 @@ class ScriptDependenciesCache(private val project: Project) {
         NonClasspathDirectoriesScope(allLibrarySources)
     }
 
+    fun <T> inspectCache(body: (Map<String, ScriptDependencies>) -> T): T = cacheLock.read { body(cache) }
+
     private fun onChange(file: VirtualFile?) {
         this::allScriptsClasspath.clearValue()
         this::allScriptsClasspathScope.clearValue()

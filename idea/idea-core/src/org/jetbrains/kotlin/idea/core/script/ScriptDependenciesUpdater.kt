@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.isProjectOrWorkspaceFile
@@ -35,11 +34,13 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
@@ -77,20 +78,33 @@ internal class ScriptDependenciesUpdater(
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
         cache[file]?.let { return it }
 
-        tryLoadingFromDisk(file)
+        val loaded = tryLoadingFromDisk(file)
+
+        if (!loaded) {
+            tryUsingDefault(file)
+        }
 
         updateCache(listOf(file))
 
         return cache[file] ?: ScriptDependencies.Empty
     }
 
-    private fun tryLoadingFromDisk(file: VirtualFile) {
-        ScriptDependenciesFileAttribute.read(file)?.let { deserialized ->
-            val rootsChanged = cache.hasNotCachedRoots(deserialized)
-            cache.save(file, deserialized)
-            if (rootsChanged) {
-                notifyRootsChanged()
-            }
+    private fun tryUsingDefault(file: VirtualFile) {
+        val defaults = DefaultScriptDependenciesProvider.getInstances(project).firstNotNullResult { it.defaultDependenciesFor(file) } ?: return
+        saveToCache(defaults, file)
+    }
+
+    private fun tryLoadingFromDisk(file: VirtualFile): Boolean {
+        val deserializedDependencies = ScriptDependenciesFileAttribute.read(file) ?: return false
+        saveToCache(deserializedDependencies, file)
+        return true
+    }
+
+    private fun saveToCache(deserialized: ScriptDependencies, file: VirtualFile) {
+        val rootsChanged = cache.hasNotCachedRoots(deserialized)
+        cache.save(file, deserialized)
+        if (rootsChanged) {
+            notifyRootsChanged()
         }
     }
 
@@ -281,3 +295,13 @@ private object TimeStamps {
 
 @set: TestOnly
 var Application.isScriptDependenciesUpdaterDisabled by NotNullableUserDataProperty(Key.create("SCRIPT_DEPENDENCIES_UPDATER_DISABLED"), false)
+
+interface DefaultScriptDependenciesProvider {
+    fun defaultDependenciesFor(scriptFile: VirtualFile): ScriptDependencies?
+
+    companion object : ProjectExtensionDescriptor<DefaultScriptDependenciesProvider>(
+            "org.jetbrains.kotlin.defaultScriptDependenciesProvider",
+            DefaultScriptDependenciesProvider::class.java
+    )
+
+}
