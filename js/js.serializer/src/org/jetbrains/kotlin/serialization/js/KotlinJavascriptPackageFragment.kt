@@ -80,7 +80,7 @@ class KotlinJavascriptPackageFragment(
             get() = null
 
         override val isPreReleaseInvisible: Boolean =
-                !configuration.skipMetadataVersionCheck && (header.flags and 1) != 0 && !KotlinCompilerVersion.isPreRelease()
+                !configuration.skipPreReleaseCheck && (header.flags and 1) != 0 && !KotlinCompilerVersion.isPreRelease()
 
         override val presentableString: String
             get() = "Package '$fqName'"
