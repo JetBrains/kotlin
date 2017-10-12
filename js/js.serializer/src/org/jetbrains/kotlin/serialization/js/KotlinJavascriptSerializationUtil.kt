@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.shouldWritePreReleaseFlag
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
@@ -116,10 +117,16 @@ object KotlinJavascriptSerializationUtil {
         return builder.build()
     }
 
-    fun metadataAsString(bindingContext: BindingContext, jsDescriptor: JsModuleDescriptor<ModuleDescriptor>): String =
-            KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, jsDescriptor.serializeToBinaryMetadata(bindingContext))
+    fun metadataAsString(
+            bindingContext: BindingContext,
+            jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
+            languageVersionSettings: LanguageVersionSettings
+    ): String = KotlinJavascriptMetadataUtils.formatMetadataAsString(
+            jsDescriptor.name,
+            jsDescriptor.serializeToBinaryMetadata(bindingContext, languageVersionSettings)
+    )
 
-    fun serializePackageFragment(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): ProtoBuf.PackageFragment {
+    private fun serializePackageFragment(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): ProtoBuf.PackageFragment {
         val packageView = module.getPackage(fqName)
         return serializeDescriptors(bindingContext, module, packageView.memberScope.getContributedDescriptors(), fqName)
     }
@@ -200,7 +207,11 @@ object KotlinJavascriptSerializationUtil {
         return filesProto.build()
     }
 
-    fun toContentMap(bindingContext: BindingContext, module: ModuleDescriptor): Map<String, ByteArray> {
+    fun toContentMap(
+            bindingContext: BindingContext,
+            module: ModuleDescriptor,
+            languageVersionSettings: LanguageVersionSettings
+    ): Map<String, ByteArray> {
         val contentMap = hashMapOf<String, ByteArray>()
 
         for (fqName in getPackagesFqNames(module)) {
@@ -216,7 +227,7 @@ object KotlinJavascriptSerializationUtil {
                 version.forEach(this::writeInt)
             }
 
-            serializeHeader(fqName).writeDelimitedTo(stream)
+            serializeHeader(fqName, languageVersionSettings).writeDelimitedTo(stream)
             part.writeTo(stream)
 
             contentMap[JsSerializerProtocol.getKjsmFilePath(fqName)] = stream.toByteArray()
@@ -225,14 +236,14 @@ object KotlinJavascriptSerializationUtil {
         return contentMap
     }
 
-    fun serializeHeader(packageFqName: FqName?): JsProtoBuf.Header {
+    fun serializeHeader(packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings): JsProtoBuf.Header {
         val header = JsProtoBuf.Header.newBuilder()
 
         if (packageFqName != null) {
             header.packageFqName = packageFqName.asString()
         }
 
-        if (KotlinCompilerVersion.isPreRelease()) {
+        if (languageVersionSettings.shouldWritePreReleaseFlag()) {
             header.flags = 1
         }
 
@@ -261,10 +272,13 @@ object KotlinJavascriptSerializationUtil {
         }
     }
 
-    private fun JsModuleDescriptor<ModuleDescriptor>.serializeToBinaryMetadata(bindingContext: BindingContext): ByteArray {
+    private fun JsModuleDescriptor<ModuleDescriptor>.serializeToBinaryMetadata(
+            bindingContext: BindingContext,
+            languageVersionSettings: LanguageVersionSettings
+    ): ByteArray {
         return ByteArrayOutputStream().apply {
             GZIPOutputStream(this).use { stream ->
-                serializeHeader(null).writeDelimitedTo(stream)
+                serializeHeader(null, languageVersionSettings).writeDelimitedTo(stream)
                 serializeMetadata(bindingContext, data, kind, imported).writeTo(stream)
             }
         }.toByteArray()

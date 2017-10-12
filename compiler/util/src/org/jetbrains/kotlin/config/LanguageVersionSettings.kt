@@ -184,3 +184,9 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
         val DEFAULT = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
     }
 }
+
+fun LanguageVersionSettings.shouldWritePreReleaseFlag(): Boolean {
+    if (!languageVersion.isStable) return true
+
+    return KotlinCompilerVersion.isPreRelease() && languageVersion == LanguageVersion.LATEST_STABLE
+}
