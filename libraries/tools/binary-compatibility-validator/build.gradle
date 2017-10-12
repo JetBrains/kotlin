@@ -17,7 +17,7 @@ dependencies {
     testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
     // legacy
-//    testArtifacts project(':kotlin-runtime')
+    testArtifacts project(':kotlin-runtime')
     testArtifacts files(project(':kotlin-stdlib').tasks.originalStdlibJar)
 }
 
