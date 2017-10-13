@@ -116,7 +116,7 @@ class SyntheticClassOrObjectDescriptor(
         override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
         override fun isFinal(): Boolean = true
         override fun isDenotable(): Boolean = true
-        override fun getDeclarationDescriptor(): ClassifierDescriptor = thisDescriptor
+        override fun getDeclarationDescriptor(): ClassDescriptor = thisDescriptor
         override fun computeSupertypes(): Collection<KotlinType> = syntheticSupertypes
         override val supertypeLoopChecker: SupertypeLoopChecker = SupertypeLoopChecker.EMPTY
     }

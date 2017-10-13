@@ -39,7 +39,7 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
         if (currentHashCode != 0) return currentHashCode;
 
         ClassifierDescriptor descriptor = getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
+        if (hasMeaningfulFqName(descriptor)) {
             currentHashCode = DescriptorUtils.getFqName(descriptor).hashCode();
         }
         else {
@@ -51,7 +51,7 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
 
     @NotNull
     @Override
-    public abstract ClassifierDescriptor getDeclarationDescriptor();
+    public abstract ClassDescriptor getDeclarationDescriptor();
 
     @NotNull
     @Override
@@ -81,7 +81,7 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
             return false;
         }
 
-        if (myDescriptor instanceof ClassDescriptor && otherDescriptor instanceof ClassDescriptor) {
+        if (otherDescriptor instanceof ClassDescriptor) {
             return areFqNamesEqual(((ClassDescriptor) myDescriptor), ((ClassDescriptor) otherDescriptor));
         }
 

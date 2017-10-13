@@ -257,9 +257,9 @@ class LazyJavaClassDescriptor(
 
         override fun isFinal(): Boolean = isFinalClass
 
-        override fun isDenotable() = true
+        override fun isDenotable(): Boolean = true
 
-        override fun getDeclarationDescriptor() = this@LazyJavaClassDescriptor
+        override fun getDeclarationDescriptor(): ClassDescriptor = this@LazyJavaClassDescriptor
 
         override fun toString(): String = name.asString()
     }
