@@ -69,8 +69,8 @@ fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transfo
         appendln()
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
         appendln()
-        val extends = visitorExtends?.let { " : $it<R, D>" } ?: ""
-        appendln("interface $visitorName<R, D>$extends {")
+        val extends = visitorExtends?.let { " : $it<out R, in D>" } ?: ""
+        appendln("interface $visitorName<out R, in D>$extends {")
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
@@ -111,16 +111,16 @@ fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transfo
         appendln()
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
         appendln()
-        val extends = transformerExtends?.let { " : $it<D>" } ?: ""
+        val extends = transformerExtends?.let { " : $it<in D>" } ?: ""
 
-        appendln("interface $transformerName<D>$extends {")
+        appendln("interface $transformerName<in D>$extends {")
 
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
             val generifyCall = if (name != "JKElement") "= transform${ext!!.removePrefix("JK")}($argName, data)" else ""
             """
-            |    fun transform$nameWithoutPrefix($argName: $name, data: D): JKElement $generifyCall
+            |    fun <E: $name> transform$nameWithoutPrefix($argName: $name, data: D): E $generifyCall
             """.trimMargin()
         }
         appendln()
@@ -140,10 +140,10 @@ fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transfo
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
             val arg = "$argName: $name"
-            val generifyCall = if (name != "JKElement") "= transform${ext!!.removePrefix("JK")}($argName, null)" else ": JKElement"
+            val generifyCall = if (name != "JKElement") "= transform${ext!!.removePrefix("JK")}($argName, null)" else ""
             """
-            |    fun transform$nameWithoutPrefix($arg) $generifyCall
-            |    override fun transform$nameWithoutPrefix($arg, data: Nothing?) = transform$nameWithoutPrefix($argName)
+            |    fun <E: $name> transform$nameWithoutPrefix($arg): E $generifyCall
+            |    override fun <E: $name> transform$nameWithoutPrefix($arg, data: Nothing?): E = transform$nameWithoutPrefix($argName)
             """.trimMargin()
         }
         appendln()
@@ -151,8 +151,4 @@ fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transfo
     })
 }
 
-genVisitors(JK_COMMON_FILE.interfaceNames(), "JKVisitor", "JKTransformer")
-genVisitors(JK_JAVA_FILE.interfaceNames(), "JKJavaVisitor", "JKJavaTransformer", "JKVisitor", "JKTransformer")
-genVisitors(JK_KT_FILE.interfaceNames(), "JKKtVisitor", "JKKtTransformer", "JKVisitor", "JKTransformer")
-
-
+genVisitors(JK_COMMON_FILE.interfaceNames() + JK_JAVA_FILE.interfaceNames() + JK_KT_FILE.interfaceNames(), "JKVisitor", "JKTransformer")

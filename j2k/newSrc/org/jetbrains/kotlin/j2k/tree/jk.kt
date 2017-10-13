@@ -25,7 +25,7 @@ interface JKElement {
 
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
 
-    fun <D> transform(transformer: JKTransformer<D>, data: D): JKElement
+    fun <E: JKElement, D> transform(transformer: JKTransformer<D>, data: D): E
 
     fun <D> transformChildren(transformer: JKTransformer<D>, data: D)
 }

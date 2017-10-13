@@ -25,7 +25,7 @@ abstract class JKElementBase : JKElement {
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
 
-    override fun <D> transform(transformer: JKTransformer<D>, data: D): JKElement = transformer.transformElement(this, data)
+    override fun <E : JKElement, D> transform(transformer: JKTransformer<D>, data: D): E = transformer.transformElement(this, data)
 
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {}
 }
