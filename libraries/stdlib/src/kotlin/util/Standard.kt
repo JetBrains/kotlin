@@ -113,6 +113,9 @@ public inline fun <T> T.takeIf(predicate: (T) -> Boolean): T? {
 @kotlin.internal.InlineOnly
 @SinceKotlin("1.1")
 public inline fun <T> T.takeUnless(predicate: (T) -> Boolean): T? {
+    contract {
+        callsInPlace(predicate, InvocationKind.EXACTLY_ONCE)
+    }
     return if (!predicate(this)) this else null
 }
 
