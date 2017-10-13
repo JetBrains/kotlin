@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -32,17 +33,14 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
     private final ClassDescriptor classDescriptor;
     private final List<TypeParameterDescriptor> parameters;
     private final Collection<KotlinType> supertypes;
-    private final boolean isFinal;
 
     public ClassTypeConstructorImpl(
             @NotNull ClassDescriptor classDescriptor,
-            boolean isFinal,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
             @NotNull Collection<KotlinType> supertypes
     ) {
         super(LockBasedStorageManager.NO_LOCKS);
         this.classDescriptor = classDescriptor;
-        this.isFinal = isFinal;
         this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
         this.supertypes = Collections.unmodifiableCollection(supertypes);
     }
@@ -60,7 +58,7 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
 
     @Override
     public boolean isFinal() {
-        return isFinal;
+        return classDescriptor.getModality() == Modality.FINAL;
     }
 
     @Override
