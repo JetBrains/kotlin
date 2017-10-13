@@ -17,11 +17,17 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
+import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 abstract class JKElementBase : JKElement {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
+
+    override fun <D> transform(transformer: JKTransformer<D>, data: D): JKElement = transformer.transformElement(this, data)
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {}
 }
 
 

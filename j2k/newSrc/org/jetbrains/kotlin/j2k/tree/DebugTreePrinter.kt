@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.visitors.JKJavaKtVisitorVoid
 import org.jetbrains.kotlin.utils.Printer
 
 private class DebugTreePrinter : JKJavaKtVisitorVoid {

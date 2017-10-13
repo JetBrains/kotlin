@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.visitors.JKJavaVisitor
+import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKJavaFieldImpl(override var type: JKTypeIdentifier,
                       override var name: JKNameIdentifier,
