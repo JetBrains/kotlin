@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/libraries" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/examples/browser-example" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/examples/browser-example-with-library" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/examples/js-example" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/examples/kotlin-java-example" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/examples/kotlin-js-library-example" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/idl2k" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-annotation-processing-maven" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-allopen" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-noarg" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-sam-with-receiver" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-osgi-bundle" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/maven-archetypes" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/maven-archetypes/kotlin-archetype-js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/maven-archetypes/kotlin-archetype-jvm" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
