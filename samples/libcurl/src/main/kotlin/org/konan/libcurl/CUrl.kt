@@ -1,6 +1,7 @@
 package org.konan.libcurl
 
 import kotlinx.cinterop.*
+import platform.posix.*
 import libcurl.*
 
 class CUrl(val url: String)  {
