@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -54,11 +53,6 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
     @Override
     public String toString() {
         return DescriptorUtils.getFqName(classDescriptor).asString();
-    }
-
-    @Override
-    public boolean isFinal() {
-        return classDescriptor.getModality() == Modality.FINAL;
     }
 
     @Override

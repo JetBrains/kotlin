@@ -195,8 +195,6 @@ class DeserializedClassDescriptor(
 
         override fun getParameters() = parameters()
 
-        override fun isFinal(): Boolean = isFinalClass
-
         override fun isDenotable() = true
 
         override fun getDeclarationDescriptor() = this@DeserializedClassDescriptor

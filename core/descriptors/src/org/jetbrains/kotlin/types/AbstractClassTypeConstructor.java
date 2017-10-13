@@ -53,6 +53,12 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
     @Override
     public abstract ClassDescriptor getDeclarationDescriptor();
 
+    @Override
+    public final boolean isFinal() {
+        ClassDescriptor descriptor = getDeclarationDescriptor();
+        return descriptor.getModality() == Modality.FINAL && !descriptor.isExpect();
+    }
+
     @NotNull
     @Override
     public KotlinBuiltIns getBuiltIns() {

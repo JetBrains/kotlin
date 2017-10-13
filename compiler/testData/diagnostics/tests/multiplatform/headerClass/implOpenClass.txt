@@ -1,6 +1,7 @@
 // -- Module: <m1-common> --
 package
 
+public fun </*0*/ T : Foo> bar(): kotlin.Unit
 public expect fun getFoo(): Foo
 
 public final expect class Foo {
@@ -13,6 +14,7 @@ public final expect class Foo {
 // -- Module: <m2-jvm> --
 package
 
+public fun </*0*/ T : Foo> bar(): kotlin.Unit
 public actual fun getFoo(): Foo
 
 public final class Bar : Foo {

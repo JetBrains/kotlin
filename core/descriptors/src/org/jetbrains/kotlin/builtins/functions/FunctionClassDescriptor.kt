@@ -152,7 +152,6 @@ class FunctionClassDescriptor(
 
         override fun getDeclarationDescriptor() = this@FunctionClassDescriptor
         override fun isDenotable() = true
-        override fun isFinal() = false
 
         override fun toString() = declarationDescriptor.toString()
 
