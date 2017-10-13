@@ -449,7 +449,7 @@ tasks {
     "check" { dependsOn("test") }
 }
 
-the<IdeaModel>().apply {
+configure<IdeaModel> {
     module {
         excludeDirs = files(
                 project.buildDir,

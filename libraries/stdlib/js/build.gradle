@@ -5,6 +5,7 @@ plugins {
 description = 'Kotlin Standard Library for JS'
 
 apply plugin: 'kotlin2js'
+apply plugin: 'idea'
 
 configurePublishing(project)
 
@@ -58,6 +59,12 @@ configurations {
 dependencies {
     testCompile project(':kotlin-test:kotlin-test-js')
     merger project(":tools:kotlin-stdlib-js-merger")
+}
+
+idea {
+    module {
+        excludeDirs = files('node_modules').toSet()
+    }
 }
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
