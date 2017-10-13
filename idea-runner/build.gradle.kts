@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":idea:idea-jvm"))
 
     compile(intellijDep())
-    
+
     runtimeOnly(files(toolsJar()))
 }
 
