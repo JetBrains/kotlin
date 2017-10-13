@@ -116,7 +116,7 @@ compileBuiltinsKotlin {
                 "-version",
                 "-Xallow-kotlin-package",
                 "-Xnormalize-constructor-calls=enable",
-                "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
+                "-Xdump-declarations-to=${buildDir}/runtime-declarations.json",
                 "-cp", "${rootDir}/dist/builtins",
                 "-module-name", "kotlin-runtime"
         ]
@@ -129,7 +129,7 @@ compileKotlin {
                 "-Xallow-kotlin-package",
                 "-Xnormalize-constructor-calls=enable",
                 "-Xmultifile-parts-inherit",
-                "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json",
+                "-Xdump-declarations-to=${buildDir}/stdlib-declarations.json",
                 "-module-name", project.name
         ]
     }

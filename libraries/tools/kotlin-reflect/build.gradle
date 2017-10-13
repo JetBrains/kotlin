@@ -74,7 +74,7 @@ compileKotlin {
                             "-Xallow-kotlin-package",
                             "-Xnormalize-constructor-calls=enable",
                             "-module-name", "kotlin-reflection",
-                            "-Xdump-declarations-to", "${buildDir}/reflect-declarations.json"]
+                            "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
     }
 }
 
