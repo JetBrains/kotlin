@@ -1,3 +1,6 @@
+/*
+
+
 apply { plugin("kotlin") }
 
 dependencies {
@@ -46,3 +49,6 @@ val runUltimate by task<JavaExec> {
 
     args()
 }
+
+
+*/
