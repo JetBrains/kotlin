@@ -250,4 +250,93 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         assertModuleModuleDepScope("jvm-app_test", "common-lib1_test", DependencyScope.COMPILE)
         assertModuleModuleDepScope("jvm-app_test", "common-lib2_test", DependencyScope.COMPILE)
     }
+
+    @Test
+    fun testTransitiveImplement() {
+        createProjectSubFile(
+                "settings.gradle",
+                "include ':project1', ':project2', ':project3'"
+        )
+
+        val kotlinVersion = "1.1.51"
+
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                }
+            }
+
+            project('project1') {
+                apply plugin: 'kotlin-platform-common'
+
+                sourceSets {
+                    custom
+                }
+            }
+
+            project('project2') {
+                repositories {
+                    mavenCentral()
+                }
+
+                apply plugin: 'kotlin-platform-jvm'
+
+                sourceSets {
+                    custom
+                }
+
+                dependencies {
+                    implement project(':project1')
+                }
+            }
+
+            project('project3') {
+                repositories {
+                    mavenCentral()
+                }
+
+                apply plugin: 'kotlin-platform-jvm'
+                apply plugin: 'kotlin'
+
+                sourceSets {
+                    custom
+                }
+
+                dependencies {
+                    compile project(':project2')
+                    customCompile project(':project2')
+                    testCompile(project(':project2').sourceSets.test.output)
+                }
+            }
+        """)
+
+        importProject()
+
+        assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
+
+        assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
+
+        assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
+
+        assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
+
+        assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
+
+        assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+
+        assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+    }
 }
