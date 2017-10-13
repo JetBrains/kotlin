@@ -718,6 +718,7 @@ public class KotlinTestUtils {
                 String moduleDependencies = matcher.group(2);
                 String moduleFriends = matcher.group(3);
                 if (moduleName != null) {
+                    moduleName = moduleName.trim();
                     hasModules = true;
                     module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
                 }
