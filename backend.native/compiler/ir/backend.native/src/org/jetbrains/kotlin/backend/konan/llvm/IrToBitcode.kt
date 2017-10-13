@@ -2081,7 +2081,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         assert(!classDescriptor.isInterface)
 
         return if (classDescriptor.isExternalObjCClass()) {
-            val lookUpFunction = context.llvm.externalFunction("objc_lookUpClass",
+            val lookUpFunction = context.llvm.externalFunction("Kotlin_Interop_getObjCClass",
                     functionType(int8TypePtr, false, int8TypePtr))
 
             call(lookUpFunction,

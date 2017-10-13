@@ -27,6 +27,8 @@
 
 extern "C" {
 
+Class Kotlin_Interop_getObjCClass(const char* name);
+
 struct KotlinClassData {
   const TypeInfo* typeInfo;
   int32_t bodyOffset;
@@ -67,8 +69,7 @@ static void DeallocImp(id self, SEL _cmd) {
 }
 
 static void AddDeallocMethod(Class clazz) {
-  Class nsObjectClass = objc_getClass("NSObject");
-  RuntimeAssert(nsObjectClass != nullptr, "NSObject class not found");
+  Class nsObjectClass = Kotlin_Interop_getObjCClass("NSObject");
 
   SEL deallocSelector = sel_registerName("dealloc");
   Method nsObjectDeallocMethod = class_getInstanceMethod(nsObjectClass, deallocSelector);
@@ -136,7 +137,7 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
     className = classNameBuffer;
   }
 
-  Class superclass = objc_getClass(info->superclassName);
+  Class superclass = Kotlin_Interop_getObjCClass(info->superclassName);
   Class newClass = objc_allocateClassPair(superclass, className, sizeof(struct KotlinClassData));
   RuntimeAssert(newClass != nullptr, "Failed to allocate Objective-C class");
 
@@ -205,6 +206,10 @@ void Kotlin_objc_release(id ptr) {
   objc_release(ptr);
 }
 
+Class Kotlin_objc_lookUpClass(const char* name) {
+  return objc_lookUpClass(name);
+}
+
 } // extern "C"
 
 #else  // KONAN_OBJC_INTEROP
@@ -233,6 +238,10 @@ void* Kotlin_objc_retain(void* ptr) {
 }
 
 void Kotlin_objc_release(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+}
+
+void* Kotlin_objc_lookUpClass(const char* name) {
   RuntimeAssert(false, "Objective-C interop is disabled");
 }
 

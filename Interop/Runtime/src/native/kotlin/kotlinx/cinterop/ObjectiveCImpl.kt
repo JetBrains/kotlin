@@ -124,6 +124,19 @@ annotation class InteropStubs()
 @Retention(AnnotationRetention.SOURCE)
 private annotation class ObjCMethodImp(val selector: String, val encoding: String)
 
+@konan.internal.ExportForCppRuntime("Kotlin_Interop_getObjCClass")
+private fun getObjCClassByName(name: NativePtr): NativePtr {
+    val result = objc_lookUpClass(name)
+    if (result == nativeNullPtr) {
+        val className = interpretCPointer<ByteVar>(name)!!.toKString()
+        val message = """Objective-C class '$className' not found.
+            |Ensure that the containing framework or library was linked.""".trimMargin()
+
+        throw RuntimeException(message)
+    }
+    return result
+}
+
 @konan.internal.ExportForCompiler
 private fun <T : ObjCObject> allocObjCObject(clazz: NativePtr): T {
     val rawResult = objc_allocWithZone(clazz)
@@ -183,3 +196,6 @@ external fun objc_retain(ptr: NativePtr): NativePtr
 
 @SymbolName("Kotlin_objc_release")
 external fun objc_release(ptr: NativePtr)
+
+@SymbolName("Kotlin_objc_lookUpClass")
+external fun objc_lookUpClass(name: NativePtr): NativePtr
