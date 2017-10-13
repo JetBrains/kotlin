@@ -1,3 +1,5 @@
+/*
+
 
 apply { plugin("kotlin") }
 
@@ -21,3 +23,6 @@ if (intellijUltimateEnabled) {
         dependsOn(":dist", ":ideaPlugin", ":ultimate:ideaUltimatePlugin")
     }
 }
+
+
+*/
