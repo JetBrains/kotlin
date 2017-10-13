@@ -185,8 +185,11 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
     }
 }
 
-fun LanguageVersionSettings.shouldWritePreReleaseFlag(): Boolean {
-    if (!languageVersion.isStable) return true
+fun LanguageVersionSettings.shouldWritePreReleaseFlag(): Boolean =
+        languageVersion.shouldWritePreReleaseFlag()
 
-    return KotlinCompilerVersion.isPreRelease() && languageVersion == LanguageVersion.LATEST_STABLE
+fun LanguageVersion.shouldWritePreReleaseFlag(): Boolean {
+    if (!isStable) return true
+
+    return KotlinCompilerVersion.isPreRelease() && this == LanguageVersion.LATEST_STABLE
 }
