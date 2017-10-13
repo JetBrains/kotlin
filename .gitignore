@@ -27,6 +27,7 @@ build/
 !**/test/**/build
 .idea/modules.xml
 .idea/libraries/Gradle*.xml
+.idea/libraries/Maven*.xml
 .idea/modules
 .idea/modules.xml
 .idea/gradle.xml
