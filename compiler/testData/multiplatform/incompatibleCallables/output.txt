@@ -8,6 +8,12 @@ expect fun f21(c: suspend Unit.() -> Unit)
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
+compiler/testData/multiplatform/incompatibleCallables/common.kt:1:12: error: expected function 'f1' has no actual declaration in module
+The following declaration is incompatible because return type is different:
+    public actual fun f1(): String
+
+expect fun f1()
+           ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:5:14: error: expected function 'f3' has no actual declaration in module
 The following declaration is incompatible because parameter types are different:
     public actual fun f3(name: Double): Unit
@@ -20,12 +26,30 @@ The following declaration is incompatible because parameter types are different:
 
 expect fun String.f3ext()
                        ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:8:14: error: expected function 'f4' has no actual declaration in module
+The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
+    public actual fun String.f4(): Unit
+
+expect fun f4(name: String)
+             ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:10:12: error: expected function 'f5' has no actual declaration in module
+The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
+    public actual fun f5(name: String): Unit
+
+expect fun String.f5()
+           ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:12:14: error: expected function 'f6' has no actual declaration in module
 The following declaration is incompatible because number of value parameters is different:
     public actual fun f6(p2: Int): Unit
 
 expect fun f6(p1: String, p2: Int)
              ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:14:12: error: expected function 'f7' has no actual declaration in module
+The following declaration is incompatible because number of type parameters is different:
+    public actual fun <K, V> f7(): Unit
+
+expect fun <T> f7()
+           ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:32:15: error: expected function 'f21' has no actual declaration in module
 The following declaration is incompatible because parameter types are different:
     public actual fun f21(c: Unit.() -> Unit): Unit

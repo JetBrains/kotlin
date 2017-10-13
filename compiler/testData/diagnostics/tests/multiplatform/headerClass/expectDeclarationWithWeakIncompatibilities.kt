@@ -6,18 +6,23 @@
 expect class Foo1
 expect class Foo2
 
-expect fun foo1(): Int
 expect fun foo2(): Int
-expect fun foo3<!JVM:NO_ACTUAL_FOR_EXPECT!>()<!>: Int
+
+expect val s: String
+
+expect open class <!JVM:PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
 
 // MODULE: m2-jvm(m1-common)
 
 // FILE: jvm.kt
 
-<!DECLARATION_WITH_INCOMPATIBLE_EXPECT!>interface<!> Foo1
+<!ACTUAL_WITHOUT_EXPECT!>interface<!> Foo1
 actual <!ACTUAL_WITHOUT_EXPECT!>interface<!> Foo2
 
-actual fun foo1(): <!ACTUAL_WITHOUT_EXPECT!>String<!> = ""
+actual <!ACTUAL_WITHOUT_EXPECT!>var<!> s: String = "value"
 
 fun <!ACTUAL_MISSING!>foo2<!>(): Int = 0
-fun foo3(x: Int): String = ""
+
+actual class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, ACTUAL_WITHOUT_EXPECT!>Foo3<!>
+
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, ACTUAL_WITHOUT_EXPECT!>Foo3<!>

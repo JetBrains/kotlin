@@ -1,9 +1,8 @@
 // -- Module: <m1-common> --
 package
 
-public expect fun foo1(): kotlin.Int
+public expect val s: kotlin.String
 public expect fun foo2(): kotlin.Int
-public expect fun foo3(): kotlin.Int
 
 public final expect class Foo1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -17,13 +16,18 @@ public final expect class Foo2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public open expect class Foo3 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 
 // -- Module: <m2-jvm> --
 package
 
-public actual fun foo1(): kotlin.String
+public actual var s: kotlin.String
 public fun foo2(): kotlin.Int
-public fun foo3(/*0*/ x: kotlin.Int): kotlin.String
 
 public interface Foo1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -32,6 +36,20 @@ public interface Foo1 {
 }
 
 public actual interface Foo2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual class Foo3 {
+    public constructor Foo3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo3 {
+    public constructor Foo3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

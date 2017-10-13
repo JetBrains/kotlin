@@ -306,13 +306,13 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         sealed class Incompatible(val reason: String?, val kind: IncompatibilityKind = IncompatibilityKind.WEAK) : Compatibility() {
             // Callables
 
-            object ParameterShape : Incompatible("parameter shapes are different (extension vs non-extension)")
+            object ParameterShape : Incompatible("parameter shapes are different (extension vs non-extension)", IncompatibilityKind.STRONG)
 
             object ParameterCount : Incompatible("number of value parameters is different", IncompatibilityKind.STRONG)
-            object TypeParameterCount : Incompatible("number of type parameters is different")
+            object TypeParameterCount : Incompatible("number of type parameters is different", IncompatibilityKind.STRONG)
 
             object ParameterTypes : Incompatible("parameter types are different", IncompatibilityKind.STRONG)
-            object ReturnType : Incompatible("return type is different")
+            object ReturnType : Incompatible("return type is different", IncompatibilityKind.STRONG)
 
             object ParameterNames : Incompatible("parameter names are different")
             object TypeParameterNames : Incompatible("names of type parameters are different")

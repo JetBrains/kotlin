@@ -3,6 +3,8 @@ package
 
 public expect fun foo1(/*0*/ x: kotlin.Int): kotlin.Unit
 public expect fun foo2(/*0*/ x: kotlin.Int): kotlin.Unit
+public expect fun foo3(): kotlin.Int
+public expect fun foo4(): kotlin.Int
 
 public final expect class NoArgConstructor {
     public constructor NoArgConstructor()
@@ -20,6 +22,8 @@ public fun foo1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Unit
 public fun foo1(/*0*/ x: kotlin.String): kotlin.Unit
 public fun foo2(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Unit
 public fun foo2(/*0*/ x: kotlin.String): kotlin.Unit
+public actual fun foo3(): kotlin.String
+public fun foo4(/*0*/ x: kotlin.Int): kotlin.String
 
 public final actual class NoArgConstructor {
     public constructor NoArgConstructor()

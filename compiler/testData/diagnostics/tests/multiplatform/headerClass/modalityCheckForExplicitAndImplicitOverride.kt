@@ -23,7 +23,7 @@ open class Open {
 }
 
 actual open class Foo1 : Open() {
-    override val <!DECLARATION_WITH_INCOMPATIBLE_EXPECT!>x<!> = super.x
+    override val <!ACTUAL_WITHOUT_EXPECT!>x<!> = super.x
 }
 
 actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo2<!> : Open()
