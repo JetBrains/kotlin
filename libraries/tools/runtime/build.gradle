@@ -46,7 +46,7 @@ compileKotlin {
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
                 "-Xnormalize-constructor-calls=enable",
-                "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
+                "-Xdump-declarations-to=${buildDir}/runtime-declarations.json",
                 "-cp", "${rootDir}/dist/builtins",
                 "-module-name", project.name
         ]
