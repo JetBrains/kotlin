@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-import org.jetbrains.kotlin.j2k.tree.visitors.JKJavaKtVisitorVoid
+import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.utils.Printer
 
-private class DebugTreePrinter : JKJavaKtVisitorVoid {
+private class DebugTreePrinter : JKVisitorVoid {
     internal val stringBuilder = StringBuilder()
     private val printer = Printer(stringBuilder)
 
