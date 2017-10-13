@@ -42,7 +42,7 @@ fun getCompileTimeConstant(
     if (!shouldInlineConstVals && !takeUpConstValsAsConst && compileTimeValue.usesVariableAsConstant) {
         val constantChecker = ConstantsChecker(bindingContext)
         expression.accept(constantChecker)
-        if (constantChecker.containsNonInlinedVals) return null
+        if (constantChecker.containsKotlinConstVals) return null
     }
 
     val expectedType = bindingContext.getType(expression) ?: return null
@@ -52,25 +52,21 @@ fun getCompileTimeConstant(
 
 
 private class ConstantsChecker(private val bindingContext: BindingContext) : KtVisitorVoid() {
-    var containsNonInlinedVals = false
+    var containsKotlinConstVals = false
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val resolvedCall = expression.getResolvedCall(bindingContext)
         if (resolvedCall != null) {
             val callableDescriptor = resolvedCall.resultingDescriptor
-            if (callableDescriptor is PropertyDescriptor && isInlinedJavaConstProperty(callableDescriptor as VariableDescriptor)) {
-                containsNonInlinedVals = true
+            if (callableDescriptor is PropertyDescriptor && callableDescriptor !is JavaPropertyDescriptor && callableDescriptor.isConst) {
+                containsKotlinConstVals = true
             }
         }
     }
 
     override fun visitKtElement(element: KtElement) {
-        if (!containsNonInlinedVals) {
+        if (!containsKotlinConstVals) {
             element.acceptChildren(this)
         }
     }
 }
-
-
-fun isInlinedJavaConstProperty(descriptor: VariableDescriptor): Boolean =
-        (descriptor as? JavaPropertyDescriptor)?.isConst ?: false

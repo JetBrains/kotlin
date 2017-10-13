@@ -295,7 +295,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isInlinedJavaConstProperty(VariableDescriptor descriptor) {
-        return JvmConstantsKt.isInlinedJavaConstProperty(descriptor);
+        return descriptor instanceof JavaPropertyDescriptor && descriptor.isConst();
     }
 
     @Nullable

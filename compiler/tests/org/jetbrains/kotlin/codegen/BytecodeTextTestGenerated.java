@@ -1010,6 +1010,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noInlineNonStaticJavaField.kt")
+        public void testNoInlineNonStaticJavaField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/noInlineNonStaticJavaField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noInlineNonStaticJavaField_lv10.kt")
+        public void testNoInlineNonStaticJavaField_lv10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/noInlineNonStaticJavaField_lv10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noInlineNonStaticJavaField_lv11.kt")
+        public void testNoInlineNonStaticJavaField_lv11() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/noInlineNonStaticJavaField_lv11.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableByteAndShort.kt")
         public void testNullableByteAndShort() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/nullableByteAndShort.kt");
