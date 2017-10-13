@@ -39,7 +39,8 @@ val runIde by task<JavaExec> {
             "-Dsun.io.useCanonCaches=false",
             "-Dplugin.path=${ideaPluginDir.absolutePath}",
             "-Dkotlin.internal.mode.enabled=true",
-            "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
+            "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar",
+            "-Didea.platform.prefix=AndroidStudio"
     )
 
     if (project.hasProperty("noPCE")) {
