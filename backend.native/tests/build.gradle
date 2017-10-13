@@ -117,7 +117,7 @@ Set<RunExternalTestGroup> createExternalTests(File testRoot, Closure taskConfigu
         }
 
         def taskDirectory = project.relativePath(it)
-        def taskName = taskDirectory.replaceAll("[-/]", '_')
+        def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
 
         def task = (RunExternalTestGroup)project.task("$taskName", type: RunExternalTestGroup){
             groupDirectory = "$taskDirectory"
