@@ -19,12 +19,15 @@ package kotlin.internal.contracts
 import kotlin.internal.ContractsDsl
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal interface Effect
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal interface ConditionalEffect : Effect
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal interface SimpleEffect {
     @ContractsDsl
     infix fun implies(booleanExpression: Boolean): ConditionalEffect
@@ -32,10 +35,13 @@ internal interface SimpleEffect {
 
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal interface Returns : SimpleEffect
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal interface ReturnsNotNull : SimpleEffect
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal interface CallsInPlace : SimpleEffect

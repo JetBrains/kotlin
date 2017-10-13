@@ -20,6 +20,7 @@ import kotlin.internal.ContractsDsl
 import kotlin.internal.InlineOnly
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal interface ContractBuilder {
     @ContractsDsl fun returns(): Returns
     @ContractsDsl fun returns(value: Any?): Returns
@@ -28,6 +29,7 @@ internal interface ContractBuilder {
 }
 
 @ContractsDsl
+@SinceKotlin("1.2")
 internal enum class InvocationKind {
     @ContractsDsl AT_MOST_ONCE,
     @ContractsDsl AT_LEAST_ONCE,
@@ -37,4 +39,5 @@ internal enum class InvocationKind {
 
 @ContractsDsl
 @InlineOnly
+@SinceKotlin("1.2")
 internal inline fun contract(builder: ContractBuilder.() -> Unit) { }
