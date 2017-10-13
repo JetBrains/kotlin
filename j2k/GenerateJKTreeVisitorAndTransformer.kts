@@ -60,9 +60,18 @@ fun String.safeVarName() = when (this) {
     else -> this
 }
 
-fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transformerName: String, visitorExtends: String? = null, transformerExtends: String? = null) {
+fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceData>, visitorName: String, transformerName: String, visitorExtends: String? = null, transformerExtends: String? = null) {
+
+    val interfaceData = commonData + uncommonData
 
     val pkg = "package org.jetbrains.kotlin.j2k.tree.visitors"
+
+    fun String.firstCommonInterfaceName(): String {
+        val data = interfaceData.find { it.name == this }!!
+        if (commonData.contains(data))
+            return this
+        return data.extends!!.firstCommonInterfaceName()
+    }
 
     File(JK_OUT_ROOT, "$visitorName.kt").writeText(buildString {
         appendln(pkg)
@@ -119,8 +128,10 @@ fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transfo
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
             val generifyCall = if (name != "JKElement") "= transform${ext!!.removePrefix("JK")}($argName, data)" else ""
+
+            val leastCommonName = name.firstCommonInterfaceName()
             """
-            |    fun <E: $name> transform$nameWithoutPrefix($argName: $name, data: D): E $generifyCall
+            |    fun <E: $leastCommonName> transform$nameWithoutPrefix($argName: $name, data: D): E $generifyCall
             """.trimMargin()
         }
         appendln()
@@ -141,9 +152,11 @@ fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transfo
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
             val arg = "$argName: $name"
             val generifyCall = if (name != "JKElement") "= transform${ext!!.removePrefix("JK")}($argName, null)" else ""
+
+            val leastCommonName = name.firstCommonInterfaceName()
             """
-            |    fun <E: $name> transform$nameWithoutPrefix($arg): E $generifyCall
-            |    override fun <E: $name> transform$nameWithoutPrefix($arg, data: Nothing?): E = transform$nameWithoutPrefix($argName)
+            |    fun <E: $leastCommonName> transform$nameWithoutPrefix($arg): E $generifyCall
+            |    override fun <E: $leastCommonName> transform$nameWithoutPrefix($arg, data: Nothing?): E = transform$nameWithoutPrefix($argName)
             """.trimMargin()
         }
         appendln()
@@ -151,4 +164,4 @@ fun genVisitors(interfaceData: List<InterfaceData>, visitorName: String, transfo
     })
 }
 
-genVisitors(JK_COMMON_FILE.interfaceNames() + JK_JAVA_FILE.interfaceNames() + JK_KT_FILE.interfaceNames(), "JKVisitor", "JKTransformer")
+genVisitors(JK_COMMON_FILE.interfaceNames(), JK_JAVA_FILE.interfaceNames() + JK_KT_FILE.interfaceNames(), "JKVisitor", "JKTransformer")
