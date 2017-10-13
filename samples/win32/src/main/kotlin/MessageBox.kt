@@ -1,4 +1,4 @@
-import win32.*
+import platform.windows.*
 
 fun main(args: Array<String>) {
     MessageBoxW(null, "Konan говорит:\nЗДРАВСТВУЙ МИР!\n",
