@@ -17,58 +17,36 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.visitors.JKJavaVisitor
+import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKJavaFieldImpl(override var type: JKTypeIdentifier,
                       override var name: JKNameIdentifier,
                       override var initializer: JKExpression?) : JKJavaField, JKElementBase() {
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
-        return if (visitor is JKJavaVisitor) {
-            visitor.visitJavaField(this, data)
-        }
-        else {
-            visitor.visitDeclaration(this, data)
-        }
-    }
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
             = listOfNotNull(type, name, initializer).forEach { it.accept(visitor, data) }
+
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        type = type.transform(transformer, data)
+        name = name.transform(transformer, data)
+        initializer = initializer?.transform(transformer, data)
+    }
 }
 
 
 class JKJavaTypeIdentifierImpl(override val typeName: String) : JKJavaTypeIdentifier, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
-        return if (visitor is JKJavaVisitor) {
-            visitor.visitJavaTypeIdentifier(this, data)
-        }
-        else {
-            visitor.visitTypeIdentifier(this, data)
-        }
-    }
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaTypeIdentifier(this, data)
 }
 
 
 class JKJavaStringLiteralExpressionImpl(override val text: String) : JKJavaStringLiteralExpression, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
-        return if (visitor is JKJavaVisitor) {
-            visitor.visitJavaStringLiteralExpression(this, data)
-        }
-        else {
-            visitor.visitLiteralExpression(this, data)
-        }
-    }
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaStringLiteralExpression(this, data)
 }
 
 
 class JKJavaAccessModifierImpl(override val type: JKJavaAccessModifier.AccessModifierType) : JKJavaAccessModifier, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
-        return if (visitor is JKJavaVisitor) {
-            visitor.visitJavaAccessModifier(this, data)
-        }
-        else {
-            visitor.visitAccessModifier(this, data)
-        }
-    }
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAccessModifier(this, data)
 }
