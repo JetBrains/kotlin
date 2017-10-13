@@ -15,6 +15,7 @@ where possible options include:
                              Embed source files into source map
   -source-map-prefix         Prefix for paths in a source map
   -target { v5 }             Generate JS files for specific ECMA version
+  -Werror                    Report an error if there are any warnings
   -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
   -X                         Print a synopsis of advanced options
   -help (-h)                 Print a synopsis of standard options
@@ -25,5 +26,4 @@ where possible options include:
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
-  -Werror                    Report an error if there are any warnings
 OK
