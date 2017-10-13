@@ -1,6 +1,8 @@
-package org.jetbrains.kotlin.j2k.tree
+package org.jetbrains.kotlin.j2k.tree.visitors
 
-interface JKVisitor<R, D>  {
+import org.jetbrains.kotlin.j2k.tree.*
+
+interface JKVisitor<R, D> {
     fun visitElement(element: JKElement, data: D): R 
     fun visitClass(klass: JKClass, data: D): R = visitDeclaration(klass, data)
     fun visitStatement(statement: JKStatement, data: D): R = visitElement(statement, data)

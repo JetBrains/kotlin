@@ -1,4 +1,6 @@
-package org.jetbrains.kotlin.j2k.tree
+package org.jetbrains.kotlin.j2k.tree.visitors
+
+import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKKtVisitorVoid : JKKtVisitor<Unit, Nothing?>, JKVisitorVoid {
     fun visitKtFun(ktFun: JKKtFun) = visitDeclaration(ktFun, null)

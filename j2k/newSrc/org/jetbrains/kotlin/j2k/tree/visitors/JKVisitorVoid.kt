@@ -1,4 +1,6 @@
-package org.jetbrains.kotlin.j2k.tree
+package org.jetbrains.kotlin.j2k.tree.visitors
+
+import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     fun visitElement(element: JKElement) 

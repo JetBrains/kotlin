@@ -16,11 +16,18 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
+import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+
 
 interface JKElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
 
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
+
+    fun <D> transform(transformer: JKTransformer<D>, data: D): JKElement
+
+    fun <D> transformChildren(transformer: JKTransformer<D>, data: D)
 }
 
 interface JKClass : JKDeclaration {
