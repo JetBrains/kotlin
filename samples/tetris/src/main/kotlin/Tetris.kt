@@ -15,6 +15,7 @@
  */
 
 import kotlinx.cinterop.*
+import platform.posix.*
 import sdl.*
 
 typealias Field = Array<ByteArray>
