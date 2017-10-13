@@ -259,6 +259,6 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     fun testDependencyOnReflect() {
-        module("usage")
+        module("usage", listOf(ForTestCompileRuntime.reflectJarForTests()))
     }
 }
