@@ -29,36 +29,40 @@ import org.jetbrains.kotlin.idea.core.util.EDT
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
+import kotlin.reflect.jvm.isAccessible
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-internal class ScriptDependenciesCache(private val project: Project) {
+class ScriptDependenciesCache(private val project: Project) {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptDependencies>()
 
     operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.read { cache[virtualFile.path] }
 
-    val allScriptsClasspathCache = ClearableLazyValue(cacheLock) {
+    val allScriptsClasspath by ClearableLazyValue(cacheLock) {
         val files = cache.values.flatMap { it.classpath }.distinct()
         ScriptDependenciesManager.toVfsRoots(files)
     }
 
-    val allScriptsClasspathScope = ClearableLazyValue(cacheLock) {
-        NonClasspathDirectoriesScope(allScriptsClasspathCache.get())
+    val allScriptsClasspathScope by ClearableLazyValue(cacheLock) {
+        NonClasspathDirectoriesScope(allScriptsClasspath)
     }
 
-    val allLibrarySourcesCache = ClearableLazyValue(cacheLock) {
+    val allLibrarySources by ClearableLazyValue(cacheLock) {
         ScriptDependenciesManager.toVfsRoots(cache.values.flatMap { it.sources }.distinct())
     }
 
-    val allLibrarySourcesScope = ClearableLazyValue(cacheLock) {
-        NonClasspathDirectoriesScope(allLibrarySourcesCache.get())
+    val allLibrarySourcesScope by ClearableLazyValue(cacheLock) {
+        NonClasspathDirectoriesScope(allLibrarySources)
     }
 
     private fun onChange(file: VirtualFile?) {
-        allScriptsClasspathCache.clear()
-        allScriptsClasspathScope.clear()
-        allLibrarySourcesCache.clear()
-        allLibrarySourcesScope.clear()
+        this::allScriptsClasspath.clearValue()
+        this::allScriptsClasspathScope.clearValue()
+        this::allLibrarySources.clearValue()
+        this::allLibrarySourcesScope.clearValue()
 
         val kotlinScriptDependenciesClassFinder =
                 Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
@@ -86,8 +90,8 @@ internal class ScriptDependenciesCache(private val project: Project) {
     }
 
     fun hasNotCachedRoots(scriptDependencies: ScriptDependencies): Boolean {
-        return !allScriptsClasspathCache.get().containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.classpath)) ||
-               !allLibrarySourcesCache.get().containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.sources))
+        return !allScriptsClasspath.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.classpath)) ||
+               !allLibrarySources.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.sources))
     }
 
     fun clear() {
@@ -121,10 +125,13 @@ internal class ScriptDependenciesCache(private val project: Project) {
     }
 }
 
-internal class ClearableLazyValue<out T : Any>(private val lock: ReentrantReadWriteLock, private val compute: () -> T) {
-    private var value: T? = null
+private fun <R> KProperty0<R>.clearValue() {
+    isAccessible = true
+    (getDelegate() as ClearableLazyValue<*, *>).clear()
+}
 
-    fun get(): T {
+private class ClearableLazyValue<in R, out T : Any>(private val lock: ReentrantReadWriteLock, private val compute: () -> T): ReadOnlyProperty<R, T> {
+    override fun getValue(thisRef: R, property: KProperty<*>): T {
         lock.read {
             if (value == null) {
                 lock.write {
@@ -135,9 +142,13 @@ internal class ClearableLazyValue<out T : Any>(private val lock: ReentrantReadWr
         }
     }
 
+    private var value: T? = null
+
+
     fun clear() {
         lock.write {
             value = null
         }
     }
 }
+

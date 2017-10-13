@@ -60,10 +60,10 @@ class ScriptDependenciesManager internal constructor(
         scriptDefinitionProvider.setScriptDefinitions(def)
     }
 
-    fun getAllScriptsClasspathScope() = cache.allScriptsClasspathScope.get()
-    fun getAllLibrarySourcesScope() = cache.allLibrarySourcesScope.get()
-    fun getAllLibrarySources() = cache.allLibrarySourcesCache.get()
-    fun getAllScriptsClasspath() = cache.allScriptsClasspathCache.get()
+    fun getAllScriptsClasspathScope() = cache.allScriptsClasspathScope
+    fun getAllLibrarySourcesScope() = cache.allLibrarySourcesScope
+    fun getAllLibrarySources() = cache.allLibrarySources
+    fun getAllScriptsClasspath() = cache.allScriptsClasspath
 
     companion object {
         @JvmStatic
