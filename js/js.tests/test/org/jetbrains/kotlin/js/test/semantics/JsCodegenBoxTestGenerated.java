@@ -12512,6 +12512,24 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("recaptureVarCapturedInLocalClass1.kt")
+        public void testRecaptureVarCapturedInLocalClass1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/recaptureVarCapturedInLocalClass1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("recaptureVarCapturedInLocalClass2.kt")
+        public void testRecaptureVarCapturedInLocalClass2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/recaptureVarCapturedInLocalClass2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("recaptureVarCapturedInLocalClass3.kt")
+        public void testRecaptureVarCapturedInLocalClass3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/recaptureVarCapturedInLocalClass3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("subclassingExtensionReceiverClass.kt")
         public void testSubclassingExtensionReceiverClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/subclassingExtensionReceiverClass.kt");
