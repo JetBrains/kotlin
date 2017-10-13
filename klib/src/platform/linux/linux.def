@@ -9,7 +9,7 @@ headers = aio.h aliases.h a.out.h argp.h argz.h byteswap.h cpio.h crypt.h \
 	nl_types.h nss.h obstack.h \
 	printf.h pty.h re_comp.h \
 	spawn.h stab.h stdc-predef.h stdio_ext.h syscall.h \
-	tar.h termio.h thread_db.h time.h ttyent.h uchar.h ulimit.h \
+	tar.h termio.h thread_db.h ttyent.h uchar.h ulimit.h \
 	ustat.h utmpx.h values.h wait.h wordexp.h \
 	arpa/ftp.h arpa/inet.h arpa/nameser_compat.h \
 	arpa/nameser.h arpa/telnet.h arpa/tftp.h \

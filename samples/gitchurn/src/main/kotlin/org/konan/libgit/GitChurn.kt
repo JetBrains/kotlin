@@ -17,7 +17,7 @@
 package org.konan.libgit
 
 import kotlinx.cinterop.*
-import platform.posix.*
+import platform.linux.*
 import libgit2.*
 
 fun main(args: Array<String>) {
