@@ -1,4 +1,6 @@
-import objc.*
+import platform.objc.*
+import platform.osx.*
+import objective_c.*
 import kotlinx.cinterop.*
 
 fun main(args: Array<String>) {
