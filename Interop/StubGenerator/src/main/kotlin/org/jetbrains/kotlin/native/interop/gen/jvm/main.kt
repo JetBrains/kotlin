@@ -142,6 +142,18 @@ private fun Properties.storeProperties(file: File) {
     }
 }
 
+private fun Properties.putAndRunOnReplace(key: Any, newValue: Any, beforeReplace: (Any, Any, Any) -> Unit) {
+    val oldValue = this[key]
+    if (oldValue != null && oldValue!! != newValue) {
+        beforeReplace(key, oldValue!!, newValue)
+    }
+    this[key] = newValue
+}
+
+private fun warn(msg: String) {
+    println("warning: $msg")
+}
+
 private fun usage() {
     println("""
 Run interop tool with -def <def_file_for_lib>.def
@@ -318,7 +330,13 @@ private fun processLib(args: Map<String, List<String>>,
 
     // TODO: if a library has partially included headers, then it shouldn't be used as a dependency.
     def.manifestAddendProperties["includedHeaders"] = nativeIndex.includedHeaders.joinToString(" ") { it.value }
-    def.manifestAddendProperties["pkg"] = outKtPkg
+
+    def.manifestAddendProperties.putAndRunOnReplace("package", outKtPkg) {
+        key, oldValue, newValue ->
+            warn("The package value `$oldValue` specified in .def file is overriden with explicit $newValue")
+    }
+
+    def.manifestAddendProperties["interop"] = "true"
 
     gen.addManifestProperties(def.manifestAddendProperties)
 

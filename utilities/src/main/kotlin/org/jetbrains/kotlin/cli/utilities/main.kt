@@ -69,7 +69,7 @@ fun invokeCinterop(args: Array<String>) {
         val library = KonanLibrary(it.libraryFile)
         val manifestProperties = library.manifestFile.loadProperties()
         // TODO: handle missing properties?
-        manifestProperties["pkg"]?.let {
+        manifestProperties["package"]?.let {
             val pkg = it as String
             val headerIds = (manifestProperties["includedHeaders"] as String).split(' ')
             val arg = "$pkg:${headerIds.joinToString(",")}"

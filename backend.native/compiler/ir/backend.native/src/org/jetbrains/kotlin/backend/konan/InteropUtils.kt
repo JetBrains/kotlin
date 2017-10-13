@@ -39,7 +39,9 @@ interface InteropLibrary {
 }
 
 fun createInteropLibrary(reader: KonanLibraryReader): InteropLibrary? {
-    val pkg = reader.manifestProperties.getProperty("pkg") ?: return null
+    if (reader.manifestProperties.getProperty("interop") != "true") return null
+    val pkg = reader.manifestProperties.getProperty("package") 
+        ?: error("Inconsistent manifest: interop library ${reader.libraryName} should have `package` specified")
     val exportForwardDeclarations = reader.manifestProperties
             .getProperty("exportForwardDeclarations").split(' ')
             .map { it.trim() }.filter { it.isNotEmpty() }
