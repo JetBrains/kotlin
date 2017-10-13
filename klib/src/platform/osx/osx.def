@@ -6,34 +6,48 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     TargetConditionals.h __cxxabi_config.h _locale.h _types.h _wctype.h \
     aio.h aliasdb.h asl.h bitstring.h bootparams.h bootstrap.h bzlib.h \
     cache.h cache_callbacks.h checkint.h com_err.h compression.h copyfile.h \
-    cpio.h crt_externs.h ctype.h curses.h cxxabi.h db.h \
+    cpio.h crt_externs.h ctype.h cxxabi.h db.h \
     disktab.h dns.h dns_sd.h dns_util.h dtrace.h \
     emmintrin.h eti.h execinfo.h expat.h \
     expat_external.h fmtmsg.h form.h fsproperties.h fstab.h get_compat.h \
     gethostuuid.h glob.h gssapi.h histedit.h ifaddrs.h inttypes.h iso646.h \
-    krb5.h langinfo.h launch.h lber.h lber_types.h ldap.h ldap_cdefs.h ldap_features.h \
-    ldap_schema.h ldap_utf8.h ldif.h libc.h libcharset.h \
+    krb5.h langinfo.h launch.h lber.h lber_types.h ldif.h libc.h libcharset.h \
     libgen.h libproc.h libunwind.h localcharset.h \
     membership.h mmintrin.h monetary.h monitor.h mpool.h \
     nameser.h nc_tparm.h ncurses.h ncurses_dll.h ndbm.h nl_types.h \
     nlist.h notify.h notify_keys.h ntsid.h \
     panel.h pcap-bpf.h pcap-namedb.h pcap.h printerdb.h printf.h \
     profile.h ranlib.h readpassphrase.h removefile.h rune.h \
-    runetype.h sandbox.h slapi-plugin.h stab.h standards.h strhash.h \
+    runetype.h sandbox.h stab.h standards.h strhash.h \
     stringlist.h struct.h sysdir.h sysexits.h tar.h term.h \
     term_entry.h termcap.h tic.h timeconv.h ttyent.h tzfile.h \
-    unctrl.h unwind.h util.h utmpx.h vis.h vproc.h wordexp.h xattr_flags.h \
+    unctrl.h unwind.h utmpx.h vis.h vproc.h wordexp.h xattr_flags.h \
     xmmintrin.h \
     atm/atm_types.h bank/bank_types.h bsm/libbsm.h corpses/task_corpse.h \
     hfs/hfs_format.h hfs/hfs_mount.h hfs/hfs_unistr.h \
     os/activity.h os/availability.h os/base.h os/lock.h \
     os/object.h os/overflow.h os/trace.h \
-    sys/acl.h sys/kauth.h
+     sys/kauth.h
 
 headerFilter = **
 
 compilerOpts = -D_XOPEN_SOURCE
-linkerOpts = -ldl
+excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN vm_map_64 vm_mapped_pages_info vm_region_recurse vm_region xpc_debugger_api_misuse_info \
+                    _dtrace_debug _dtrace_mangled _nc_progname _nc_trace_xnames _nc_tracebits _nc_tracef _traceattr2 _tracechar _tracedump _tracef \
+		    _tracemouse _traceattr _tracechtype _tracechtype2 trace DebugStr Debugger SysBreak SysBreakFunc SysBreakStr \
+		    asl_decode_buffer asl_encode_buffer asl_remove_index au_to_kevent ber_bvreplace ber_decode_oid ber_encode_oid \
+		    ber_flush2 ber_peek_element ber_skip_data ber_skip_element ber_sockbuf_io_debug ber_sockbuf_io_fd \
+		    ber_sockbuf_io_readahead ber_sockbuf_io_tcp ber_sockbuf_io_udp ber_strndup ber_strnlen clock_get_res \
+		    clock_set_res dbm_forder dns_search_list_domain_count dtrace_aggregate_walk_sorted dtrace_print \
+		    error_manager et_asn1_error_table et_k524_error_table et_kdb5_error_table et_krb5_error_table et_kv5m_error_table \
+		    et_prof_error_table gss_export_name_object gss_import_name_object initialize_asn1_error_table initialize_k524_error_table \
+		    initialize_kdb5_error_table initialize_krb5_error_table initialize_kv5m_error_table initialize_prof_error_table \
+		    krb5_c_keylengths krb5_c_prf krb5_c_prf_length krb5_c_random_to_key krb5_cc_get_flags krb5_get_fallback_host_realm \
+		    ldif_debug libcharset_set_relocation_prefix locale_charset mach_vm_region_info mach_vm_region_info_64 map_fd \
+		    nlist os_trace_info_with_payload safe_gets task_wire trace
+
+linkerOpts = -late -lbsm -lbz2 -lcompression -ledit -lexpat -lform -lkrb5 -llber -lldap -lncurses -lpanel -lpcap -ldtrace
+depends = posix
 ---
 
 // menu.h is excluded so far due to interop issues.

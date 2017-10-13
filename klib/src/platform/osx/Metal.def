@@ -4,6 +4,6 @@ package = platform.Metal
 headers = Metal/Metal.h
 
 headerFilter = Metal/**
-
+excludedFunctions = MTLRenderPipelineErrorDomain
 compilerOpts = -framework Metal
 linkerOpts = -framework Metal

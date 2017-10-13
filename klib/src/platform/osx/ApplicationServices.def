@@ -6,5 +6,7 @@ headers = ApplicationServices/ApplicationServices.h
 headerFilter = ApplicationServices/** ATS/** ColorSync/** HIServices/** \
     LangAnalysis/** PrintCore/** QD/** SpeechSynthesis/**
 
+excludedFunctions = kSpeechSynthesizerInfoManufacturer
+
 compilerOpts = -framework ApplicationServices
 linkerOpts = -framework ApplicationServices

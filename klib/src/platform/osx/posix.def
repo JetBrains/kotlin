@@ -13,7 +13,13 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     sys/queue.h sys/select.h sys/shm.h sys/socket.h sys/stat.h \
     sys/syslimits.h sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
-compilerOpts = -D_XOPEN_SOURCE
+compilerOpts = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE
+# -D_ANSI_SOURCE, sigh, breaks user_addr_t
+excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN add_profil             \
+                    addrsel_policy_init                                             \
+		    in6addr_linklocal_allv2routers                                  \
+		    pfctlinput regwnexec_l res_send_setqhook res_send_setrhook      \
+		    unwhiteout zopen profil
 linkerOpts = -ldl -lresolv
 
 ---

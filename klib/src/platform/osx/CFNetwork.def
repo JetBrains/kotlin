@@ -4,6 +4,8 @@ package = platform.CFNetwork
 headers = CFNetwork/CFNetwork.h
 
 headerFilter = CFNetwork/**
+excludedFunctions = kCFHTTPAuthenticationSchemeKerberos kCFHTTPAuthenticationSchemeOAuth1 kCFNetworkProxiesProxyAutoConfigJavaScript kCFProxyAutoConfigurationHTTPResponseKey
+
 
 compilerOpts = -framework CFNetwork
 linkerOpts = -framework CFNetwork

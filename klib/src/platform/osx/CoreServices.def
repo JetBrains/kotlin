@@ -5,6 +5,6 @@ headers = CoreServices/CoreServices.h
 
 headerFilter = CoreServices/** AE/** CarbonCore/** DictionaryServices/** FSEvents/** LaunchServices/** \
     Metadata/** OSServices/** SearchKit/** SharedFileList/**
-
+excludedFunctions = MDItemCopyAttributeList MDQueryGetSortOptionFlagsForAttribute
 compilerOpts = -framework CoreServices
 linkerOpts = -framework CoreServices
