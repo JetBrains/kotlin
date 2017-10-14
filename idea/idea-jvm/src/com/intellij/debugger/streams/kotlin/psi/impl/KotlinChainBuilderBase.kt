@@ -29,7 +29,8 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
   protected abstract val existenceChecker: ExistenceChecker
 
   override fun isChainExists(startElement: PsiElement): Boolean {
-    var element: PsiElement? = PsiUtil.ignoreWhiteSpaces(startElement)
+    var element: PsiElement? = getLatestElementInScope(PsiUtil.ignoreWhiteSpaces(startElement))
+    existenceChecker.reset()
     while (element != null && !existenceChecker.isFound()) {
       existenceChecker.reset()
       element.accept(existenceChecker)

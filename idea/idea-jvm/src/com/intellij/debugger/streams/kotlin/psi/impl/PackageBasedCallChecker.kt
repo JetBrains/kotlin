@@ -13,28 +13,25 @@ import org.jetbrains.kotlin.types.KotlinType
  */
 class PackageBasedCallChecker(private val supportedPackage: String) : StreamCallChecker {
   override fun isIntermediateCall(expression: KtCallExpression): Boolean {
-    return checkCallSupported(expression, true, true)
+    return checkReceiverSupported(expression) && checkResultSupported(expression, true)
   }
 
   override fun isTerminationCall(expression: KtCallExpression): Boolean {
-    return checkCallSupported(expression, true, false)
+    return checkReceiverSupported(expression) && checkResultSupported(expression, false)
   }
 
-  private fun checkCallSupported(expression: KtCallExpression,
-                                 shouldSupportReceiver: Boolean,
-                                 shouldSupportResult: Boolean): Boolean {
-    val receiverType = expression.receiverType()
+  private fun checkResultSupported(expression: KtCallExpression,
+                                   shouldSupportResult: Boolean): Boolean {
     val resultType = expression.resolveType()
-
-    return (receiverType == null || // there is no producer or producer is a static method
-        shouldSupportReceiver == isSupportedType(receiverType)) && shouldSupportResult == isSupportedType(resultType)
+    return shouldSupportResult == isSupportedType(resultType)
   }
 
-  private fun isSupportedType(type: KotlinType?): Boolean {
-    if (type == null) {
-      return false
-    }
+  private fun checkReceiverSupported(expression: KtCallExpression): Boolean {
+    val receiverType = expression.receiverType()
+    return receiverType != null && isSupportedType(receiverType)
+  }
 
+  private fun isSupportedType(type: KotlinType): Boolean {
     val typeName = type.getJetTypeFqName(false)
     return StringUtil.getPackageName(typeName).startsWith(supportedPackage)
   }
