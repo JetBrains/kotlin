@@ -6,12 +6,17 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
-    compile(project(":kotlin-script-runtime"))
-    compile(project(":kotlin-reflect"))
+    runtime(project(":kotlin-stdlib"))
+    runtime(project(":kotlin-script-runtime"))
+    runtime(project(":kotlin-reflect"))
 }
 
 noDefaultJar()
+
+// dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
+compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
+    classifier = "dummy"
+})
 
 runtimeJar(embeddableCompiler())
 
