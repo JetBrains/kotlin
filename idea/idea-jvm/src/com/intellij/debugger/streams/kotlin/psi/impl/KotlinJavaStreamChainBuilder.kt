@@ -15,10 +15,7 @@
  */
 package com.intellij.debugger.streams.kotlin.psi.impl
 
-import com.intellij.debugger.streams.kotlin.psi.StreamApiUtil
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
+import com.intellij.debugger.streams.kotlin.psi.StreamCallChecker
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import java.util.*
@@ -26,42 +23,38 @@ import java.util.*
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinJavaStreamChainBuilder : KotlinChainBuilderBase(KotlinChainTransformerImpl()) {
+class KotlinJavaStreamChainBuilder(private val callChecker: StreamCallChecker) : KotlinChainBuilderBase(KotlinChainTransformerImpl()) {
   override val existenceChecker: ExistenceChecker = MyExistenceChecker()
 
   override fun createChainsBuilder(): ChainBuilder = MyBuilderVisitor()
 
-  private class MyExistenceChecker : ExistenceChecker() {
+  private inner class MyExistenceChecker : ExistenceChecker() {
     override fun visitCallExpression(expression: KtCallExpression) {
-      // TODO: make the check more sophisticated
-      val type = expression.analyze().getType(expression) ?: return
-
-      val name = type.getJetTypeFqName(false)
-      if (StringUtil.getPackageName(name).startsWith("java.util.stream")) {
+      if (callChecker.isTerminationCall(expression)) {
         fireElementFound()
       }
     }
   }
 
-  private class MyBuilderVisitor : ChainBuilder() {
+  private inner class MyBuilderVisitor : ChainBuilder() {
     private val myTerminationCalls = mutableSetOf<KtCallExpression>()
     private val myPreviousCalls = mutableMapOf<KtCallExpression, KtCallExpression>()
 
     override fun visitCallExpression(expression: KtCallExpression) {
       super.visitCallExpression(expression)
-      if (!myPreviousCalls.containsKey(expression) && StreamApiUtil.isStreamCall(expression)) {
+      if (!myPreviousCalls.containsKey(expression) && callChecker.isStreamCall(expression)) {
         updateCallTree(expression)
       }
     }
 
     private fun updateCallTree(expression: KtCallExpression) {
-      if (StreamApiUtil.isTerminationStreamCall(expression)) {
+      if (callChecker.isTerminationCall(expression)) {
         myTerminationCalls.add(expression)
       }
 
       val parent = expression.parent as? KtDotQualifiedExpression ?: return
       val parentCall = (parent.receiverExpression as? KtDotQualifiedExpression)?.selectorExpression
-      if (parentCall is KtCallExpression && StreamApiUtil.isStreamCall(parentCall)) {
+      if (parentCall is KtCallExpression && callChecker.isStreamCall(parentCall)) {
         myPreviousCalls.put(expression, parentCall)
         updateCallTree(parentCall)
       }
@@ -73,7 +66,7 @@ class KotlinJavaStreamChainBuilder : KotlinChainBuilderBase(KotlinChainTransform
         val chain = ArrayList<KtCallExpression>()
         var current: KtCallExpression? = terminationCall
         while (current != null) {
-          if (StreamApiUtil.isProducerStreamCall(current)) {
+          if (!callChecker.isStreamCall(current)) {
             break
           }
           chain.add(current)
