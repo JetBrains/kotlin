@@ -1,5 +1,8 @@
-package com.intellij.debugger.streams.kotlin.psi
+package com.intellij.debugger.streams.kotlin.psi.impl
 
+import com.intellij.debugger.streams.kotlin.psi.StreamCallChecker
+import com.intellij.debugger.streams.kotlin.psi.receiverType
+import com.intellij.debugger.streams.kotlin.psi.resolveType
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -8,20 +11,12 @@ import org.jetbrains.kotlin.types.KotlinType
 /**
  * @author Vitaliy.Bibaev
  */
-object StreamApiUtil {
-  fun isStreamCall(expression: KtCallExpression): Boolean {
-    return isIntermediateStreamCall(expression) || isProducerStreamCall(expression) || isTerminationStreamCall(expression)
-  }
-
-  fun isProducerStreamCall(expression: KtCallExpression): Boolean {
-    return checkCallSupported(expression, false, true)
-  }
-
-  private fun isIntermediateStreamCall(expression: KtCallExpression): Boolean {
+class PackageBasedCallChecker(private val supportedPackage: String) : StreamCallChecker {
+  override fun isIntermediateCall(expression: KtCallExpression): Boolean {
     return checkCallSupported(expression, true, true)
   }
 
-  fun isTerminationStreamCall(expression: KtCallExpression): Boolean {
+  override fun isTerminationCall(expression: KtCallExpression): Boolean {
     return checkCallSupported(expression, true, false)
   }
 
@@ -41,6 +36,6 @@ object StreamApiUtil {
     }
 
     val typeName = type.getJetTypeFqName(false)
-    return StringUtil.getPackageName(typeName).startsWith("java.util.stream")
+    return StringUtil.getPackageName(typeName).startsWith(supportedPackage)
   }
 }
