@@ -32,9 +32,9 @@ dependencies {
     compileOnly project(':compiler:incremental-compilation-impl')
 
     compile project(':kotlin-stdlib')
-    compile project(':kotlin-android-extensions')
-    compile project(':kotlin-build-common')
-    compile project(':kotlin-compiler-runner')
+    compileOnly project(':kotlin-android-extensions')
+    compileOnly project(':kotlin-build-common')
+    compileOnly project(':kotlin-compiler-runner')
     compileOnly project(':kotlin-annotation-processing')
     compileOnly project(':kotlin-annotation-processing-gradle')
 
@@ -44,6 +44,8 @@ dependencies {
 
     runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
     runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
+    runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
+    runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
 
     agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-alpha1'
     agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
@@ -53,6 +55,8 @@ dependencies {
 
     testCompileOnly project(':compiler')
     testCompile project (path: ':kotlin-build-common', configuration: 'tests-jar')
+    testCompile project(':kotlin-android-extensions')
+    testCompile project(':kotlin-compiler-runner')
     testCompile project(':kotlin-test::kotlin-test-junit')
     testCompile "junit:junit:4.12"
     testCompileOnly project(':kotlin-annotation-processing')

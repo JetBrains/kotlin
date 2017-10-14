@@ -1,4 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
+import org.gradle.jvm.tasks.Jar
 
 description = "Annotation Processor wrapper for Kotlin"
 
@@ -22,12 +24,20 @@ projectTest {
     workingDir = projectDir
 }
 
-val originalJar by task<ShadowJar> {
-    from(packedJars)
-    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
-}
-
-runtimeJar(rewriteDepsToShadedCompiler(originalJar))
+//noDefaultJar()
+//tasks.remove(tasks.findByName("jar"))
+//
+//runtimeJar(task<ShadowJar>("jar"))  {
+//    from(packedJars)
+//    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+//    configureRelocation()
+//}
+runtimeJar(rewriteDepsToShadedCompiler(
+        task<ShadowJar>("shadowJar")  {
+            from(packedJars)
+            from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+        }
+))
 sourcesJar()
 javadocJar()
 
