@@ -24,6 +24,8 @@ dependencies {
     testCompile project(path: ':compiler:incremental-compilation-impl', configuration: 'tests-jar')
 
     testCompile 'org.jetbrains.kotlin:gradle-api:2.2'
+
+    testRuntime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
 }
 
 test.dependsOn(":kotlin-allopen:install",
