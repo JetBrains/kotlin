@@ -61,18 +61,10 @@ fun<T> Project.runtimeJarArtifactBy(task: Task, artifactRef: T, body: Configurab
     addArtifact("runtimeJar", task, artifactRef, body)
 }
 
-fun Project.buildVersion(): Dependency {
-    val cfg = configurations.create("build-version")
-    return dependencies.add(cfg.name, dependencies.project(":prepare:build.version", configuration = "buildVersion"))
-}
-
 fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
-    val buildVersionCfg = configurations.create("buildVersion")
-    dependencies.add(buildVersionCfg.name, dependencies.project(":prepare:build.version", configuration = "buildVersion"))
     extra["runtimeJarTask"] = task
     return task.apply {
         setupPublicJar()
-        from(buildVersionCfg) { into("META-INF") }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
         project.runtimeJarArtifactBy(this, this)

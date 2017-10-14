@@ -29,6 +29,6 @@ artifacts.add(buildVersion.name, file(buildVersionFilePath)) {
 val distKotlinHomeDir: String by rootProject.extra
 
 val dist by task<Copy> {
+    from(prepare)
     into(File(distKotlinHomeDir))
-    from(buildVersionFilePath)
 }
