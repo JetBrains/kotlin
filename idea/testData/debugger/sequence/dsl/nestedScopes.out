@@ -1,0 +1,6 @@
+run {
+  this.method()
+  run {
+    this.method()
+  }
+}
