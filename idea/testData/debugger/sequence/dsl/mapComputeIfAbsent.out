@@ -1,0 +1,3 @@
+map.getOrPut(key, { y -> 
+  map.method()
+}
