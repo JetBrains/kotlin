@@ -6,7 +6,7 @@ UFile (package = )
                 UIdentifier (Identifier (readLine))
                 USimpleNameReferenceExpression (identifier = readLine)
         UField (name = b)
-            UAnnotation (fqName = null)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             USwitchExpression
                 USimpleNameReferenceExpression (identifier = a)
                 UExpressionList (when)

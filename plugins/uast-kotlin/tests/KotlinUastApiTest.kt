@@ -210,4 +210,16 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             })
         }
     }
+
+    @Test
+    fun testSimpleAnnotated() {
+        doTest("SimpleAnnotated") { _, file ->
+            file.findElementByTextFromPsi<UField>("@SinceKotlin(\"1.0\")\n    val property: String = \"Mary\"").let { field ->
+                val annotation = field.annotations.assertedFind("kotlin.SinceKotlin") { it.qualifiedName }
+                Assert.assertEquals(annotation.findDeclaredAttributeValue("version")?.evaluateString(), "1.0")
+            }
+        }
+    }
 }
+
+fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T = find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")
