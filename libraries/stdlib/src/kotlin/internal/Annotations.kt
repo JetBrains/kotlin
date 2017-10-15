@@ -95,6 +95,7 @@ internal annotation class AccessibleLateinitPropertyLiteral
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPEALIAS)
 @Retention(AnnotationRetention.SOURCE)
+@SinceKotlin("1.2")
 internal annotation class RequireKotlin(
         val version: String,
         val message: String = "",
@@ -106,6 +107,7 @@ internal annotation class RequireKotlin(
 /**
  * The kind of the version that is required by [RequireKotlin].
  */
+@SinceKotlin("1.2")
 internal enum class RequireKotlinVersionKind {
     LANGUAGE_VERSION,
     COMPILER_VERSION,
