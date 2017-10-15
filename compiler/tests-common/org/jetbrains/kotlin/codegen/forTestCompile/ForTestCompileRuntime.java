@@ -45,6 +45,10 @@ public class ForTestCompileRuntime {
     public static File kotlinTestJarForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-test.jar"));
     }
+    @NotNull
+    public static File kotlinTestJunitJarForTests() {
+        return assertExists(new File("dist/kotlinc/lib/kotlin-test-junit.jar"));
+    }
 
     @NotNull
     public static File reflectJarForTests() {

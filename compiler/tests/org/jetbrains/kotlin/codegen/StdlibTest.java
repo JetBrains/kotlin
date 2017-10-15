@@ -57,6 +57,7 @@ public class StdlibTest extends KotlinTestWithEnvironment {
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, runtimeClasspath);
 
         JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJarForTests());
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJunitJarForTests());
 
         File junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());
