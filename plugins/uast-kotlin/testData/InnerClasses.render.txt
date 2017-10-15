@@ -1,8 +1,8 @@
 public final class Foo {
     public fun Foo() = UastEmptyExpression
     public static final class Bar {
-        @null private final var a: int
-        @null private final var b: int
+        @org.jetbrains.annotations.NotNull private final var a: int
+        @org.jetbrains.annotations.NotNull private final var b: int
         public final fun getAPlusB() : int = a + b
         public final fun getA() : int = UastEmptyExpression
         public final fun getB() : int = UastEmptyExpression

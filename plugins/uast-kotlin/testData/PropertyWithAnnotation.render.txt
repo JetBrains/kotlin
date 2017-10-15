@@ -1,6 +1,6 @@
 public final class PropertyWithAnnotationKt {
-    @null private static final var prop1: int = 0
-    @null private static var prop3: int = 0
+    @TestAnnotation @org.jetbrains.annotations.NotNull private static final var prop1: int = 0
+    @org.jetbrains.annotations.NotNull private static var prop3: int = 0
     public static final fun getProp1() : int = UastEmptyExpression
     @TestAnnotation
     public static final fun getProp2() : int = 0

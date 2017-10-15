@@ -17,19 +17,22 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.java.JavaAbstractUExpression
-import org.jetbrains.uast.java.JavaUAnnotation
-import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
-import org.jetbrains.uast.visitor.UastTypedVisitor
 import org.jetbrains.uast.visitor.UastVisitor
 
 abstract class AbstractKotlinUVariable(givenParent: UElement?)
@@ -167,6 +170,30 @@ open class KotlinUParameter(
     }
 }
 
+class KotlinNullabilityUAnnotation(val nullability: TypeNullability, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
+    override val attributeValues: List<UNamedExpression>
+        get() = emptyList()
+    override val psi: PsiElement?
+        get() = null
+    override val javaPsi: PsiElement?
+        get() = null
+    override val sourcePsi: PsiElement?
+        get() = null
+    override val qualifiedName: String?
+        get() = when (nullability) {
+            TypeNullability.NOT_NULL -> NotNull::class.qualifiedName
+            TypeNullability.NULLABLE -> Nullable::class.qualifiedName
+            TypeNullability.FLEXIBLE -> TODO()
+        }
+
+    override fun findAttributeValue(name: String?): UExpression? = null
+
+    override fun findDeclaredAttributeValue(name: String?): UExpression? = null
+
+    override fun resolve(): PsiClass? = null
+
+}
+
 open class KotlinUField(
         psi: PsiField,
         override val sourcePsi: KtElement?,
@@ -176,6 +203,27 @@ open class KotlinUField(
     override val javaPsi  = unwrap<UField, PsiField>(psi)
 
     override val psi = javaPsi
+
+    // TODO: Move it to AbstractKotlinUVariable
+    override val annotations by lz {
+        val annotationEntries = (sourcePsi as? KtModifierListOwner)?.annotationEntries
+        val kotlinAnnotations = annotationEntries?.
+                filter { annotationEntry ->
+                    annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget().let { target ->
+                         target == AnnotationUseSiteTarget.FIELD ||
+                        (sourcePsi is KtProperty) && (target == null || target == AnnotationUseSiteTarget.PROPERTY)
+                    }
+                }?.
+                map { annotationEntry ->
+                    KotlinUAnnotation(annotationEntry, this)
+                } ?: emptyList<UAnnotation>()
+
+        val targetType = (sourcePsi as? KtCallableDeclaration)?.let { it.typeReference?.getType() }
+                         ?: (sourcePsi as? KtProperty)?.initializer?.let { it.getType(it.analyze()) }
+                         ?: (sourcePsi as? KtProperty)?.delegateExpression?.let { it.getType(it.analyze())?.arguments?.firstOrNull()?.type }
+        val nullability = targetType?.nullability()
+        kotlinAnnotations + (nullability?.let { listOf(KotlinNullabilityUAnnotation(it, this)) } ?: emptyList())
+    }
 
     override fun getInitializer(): PsiExpression? {
         return super<AbstractKotlinUVariable>.getInitializer()

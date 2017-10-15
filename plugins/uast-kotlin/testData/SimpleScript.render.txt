@@ -8,8 +8,8 @@ public class SimpleScript : kotlin.script.templates.standard.ScriptTemplateWithA
         println("Goodbye World!")
     }
     public static final class Bar {
-        @null private final var b: int = 0
-        @null private final var a: int
+        @org.jetbrains.annotations.NotNull private final var b: int = 0
+        @org.jetbrains.annotations.NotNull private final var a: int
         public final fun getB() : int = UastEmptyExpression
         public final fun getAPlusB() : int = a + b
         public final fun getA() : int = UastEmptyExpression
