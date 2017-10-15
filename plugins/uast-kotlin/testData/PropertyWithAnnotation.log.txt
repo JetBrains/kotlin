@@ -16,7 +16,7 @@ UFile (package = )
         UAnnotationMethod (name = setProp3)
             UAnnotation (fqName = TestAnnotation)
             UParameter (name = value)
-                UAnnotation (fqName = null)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UBinaryExpression (operator = =)
                     USimpleNameReferenceExpression (identifier = field)

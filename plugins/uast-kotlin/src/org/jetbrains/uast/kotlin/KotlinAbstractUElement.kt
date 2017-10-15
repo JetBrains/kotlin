@@ -59,6 +59,9 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
                                      ?.takeIf { it.isPropertyParameter() }
                                      ?.let(LightClassUtil::getLightClassBackingField)
                              ?: parent
+                AnnotationUseSiteTarget.SETTER_PARAMETER ->
+                    parent = (parentUnwrapped as? KtParameter)
+                                     ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
             }
         }
         if (psi is UastKotlinPsiVariable && parent != null) {

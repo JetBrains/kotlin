@@ -6,7 +6,7 @@ public final class Foo {
         public final fun getAPlusB() : int = a + b
         public final fun getA() : int = UastEmptyExpression
         public final fun getB() : int = UastEmptyExpression
-        public fun Bar(@null a: int, @null b: int) = UastEmptyExpression
+        public fun Bar(@org.jetbrains.annotations.NotNull a: int, @org.jetbrains.annotations.NotNull b: int) = UastEmptyExpression
         public static final class Baz {
             public final fun doNothing() : void = Unit
             public fun Baz() = UastEmptyExpression
