@@ -179,6 +179,43 @@ task slackReport(type:Reporter) {
     reportHome = rootProject.file("test.output").absoluteFile
 }
 
+task buildKonanTests(type: BuildKonanTest) {
+    compileList = [ "codegen",  "datagen", "lower", "runtime", "serialization"]
+    // TODO: move these tests into separate dirs or create this list during build
+    // These tests should not be built into the TestRunner's test executable
+    excludeList = [
+            // Driver tests
+            "runtime/basic/driver0.kt",
+            // Standalone tests
+            "runtime/basic/args0.kt",
+            "runtime/basic/exit.kt",
+            "runtime/basic/hello1.kt",
+            "runtime/basic/hello2.kt",
+            "runtime/basic/entry0.kt",
+            "runtime/basic/entry1.kt",
+            "runtime/basic/assert_failed.kt",
+            "runtime/basic/assert_passed.kt",
+            "runtime/basic/assert_failed.kt",
+            "runtime/basic/initializers2.kt",
+            "runtime/memory/basic0.kt",
+            // Link tests
+            "runtime/basic/entry2.kt",
+            "runtime/basic/libentry2.kt",
+            "codegen/enum/linkTest_main.kt",
+            "codegen/enum/linkTest_lib.kt",
+            "codegen/inline/defaultArgs_linkTest_main.kt",
+            "codegen/inline/defaultArgs_linkTest_lib.kt",
+            "serialization/serialize_members.kt",
+            "serialization/deserialize_members.kt",
+            "codegen/propertyCallableReference/linkTest_main.kt",
+            "codegen/propertyCallableReference/linkTest_lib.kt",
+            "codegen/bridges/linkTest_main.kt",
+            "codegen/bridges/linkTest_lib.kt",
+            "codegen/delegatedProperty/delegatedOverride_main.kt",
+            "codegen/delegatedProperty/delegatedOverride_lib.kt"
+    ]
+}
+
 task sum (type:RunKonanTest) {
     source = "codegen/function/sum.kt"
 }
@@ -419,7 +456,7 @@ task array_to_any(type: RunKonanTest) {
     source = "codegen/basics/array_to_any.kt"
 }
 
-task runtime_basic_exit(type: RunKonanTest) {
+task runtime_basic_exit(type: RunStandaloneKonanTest) {
     source = "runtime/basic/exit.kt"
     expectedExitStatus = 42
 }
@@ -429,13 +466,13 @@ task hello0(type: RunKonanTest) {
     source = "runtime/basic/hello0.kt"
 }
 
-task hello1(type: RunKonanTest) {
+task hello1(type: RunStandaloneKonanTest) {
     goldValue = "Hello World\n"
     testData = "Hello World\n"
     source = "runtime/basic/hello1.kt"
 }
 
-task hello2(type: RunKonanTest) {
+task hello2(type: RunStandaloneKonanTest) {
     goldValue = "you entered 'Hello World\n'"
     testData = "Hello World\n"
     source = "runtime/basic/hello2.kt"
@@ -451,13 +488,13 @@ task hello4(type: RunKonanTest) {
     source = "runtime/basic/hello4.kt"
 }
 
-task entry0(type: RunKonanTest) {
+task entry0(type: RunStandaloneKonanTest) {
     goldValue = "Hello.\n"
     source = "runtime/basic/entry0.kt"
-    flags = ["-entry", "koko.lala.main"] 
+    flags = ["-entry", "runtime.basic.entry0.main"]
 }
 
-task entry1(type: RunKonanTest) {
+task entry1(type: RunStandaloneKonanTest) {
     goldValue = "Hello.\n"
     source = "runtime/basic/entry1.kt"
     flags = ["-entry", "foo"] 
@@ -1590,7 +1627,7 @@ task range0(type: RunKonanTest) {
     source = "runtime/collections/range0.kt"
 }
 
-task args0(type: RunKonanTest) {
+task args0(type: RunStandaloneKonanTest) {
     arguments = ["AAA", "BB", "C"]
     goldValue = "AAA\nBB\nC\n"
     source = "runtime/basic/args0.kt"
@@ -1612,17 +1649,17 @@ task runtime_basic_standard(type: RunKonanTest) {
     source = "runtime/basic/standard.kt"
 }
 
-task runtime_basic_assert_failed(type: RunKonanTest) {
+task runtime_basic_assert_failed(type: RunStandaloneKonanTest) {
     expectedExitStatus = 1
     source = "runtime/basic/assert_failed.kt"
 }
 
-task runtime_basic_assert_passed(type: RunKonanTest) {
+task runtime_basic_assert_passed(type: RunStandaloneKonanTest) {
     expectedExitStatus = 0
     source = "runtime/basic/assert_passed.kt"
 }
 
-task runtime_basic_assert_disabled(type: RunKonanTest) {
+task runtime_basic_assert_disabled(type: RunStandaloneKonanTest) {
     expectedExitStatus = 0
     enableKonanAssertions = false
     source = "runtime/basic/assert_failed.kt"
@@ -1737,7 +1774,7 @@ task objectExpression3(type: RunKonanTest) {
     source = "codegen/objectExpression/3.kt"
 }
 
-task initializers2(type: RunKonanTest) {
+task initializers2(type: RunStandaloneKonanTest) {
     goldValue = "init globalValue2\n" +
                 "init globalValue3\n" +
                 "1\n" +
@@ -1791,7 +1828,7 @@ task memory_throw_cleanup(type: RunKonanTest) {
 }
 
 task memory_escape0(type: RunKonanTest) {
-    source = "runtime/memory/escape1.kt"
+    source = "runtime/memory/escape0.kt"
 }
 
 task memory_escape1(type: RunKonanTest) {
@@ -1804,8 +1841,8 @@ task memory_cycles0(type: RunKonanTest) {
     source = "runtime/memory/cycles0.kt"
 }
 
-task memory_basic0(type: RunKonanTest) {
-    source = "runtime/memory/cycles0.kt"
+task memory_basic0(type: RunStandaloneKonanTest) {
+    source = "runtime/memory/basic0.kt"
 }
 
 task memory_escape2(type: RunKonanTest) {
@@ -2058,12 +2095,12 @@ task testing_custom_main(type: RunKonanTest) {
 // Just check that the driver is able to produce runnable binaries.
 task driver0(type: RunDriverKonanTest) {
     goldValue = "Hello, world!\n"
-    source = "runtime/basic/hello0.kt"
+    source = "runtime/basic/driver0.kt"
 }
 
 task driver_opt(type: RunDriverKonanTest) {
     goldValue = "Hello, world!\n"
-    source = "runtime/basic/hello0.kt"
+    source = "runtime/basic/driver0.kt"
     flags = ["-opt"]
 }
 
@@ -2071,7 +2108,7 @@ task driver_opt(type: RunDriverKonanTest) {
 // binaries, but we verify that the compiler has been built, operational 
 // and accepts the -target flag, resulting in a successful compilation.
 task driver_cross(type: RunDriverKonanTest) {
-    source = "runtime/basic/hello0.kt"
+    source = "runtime/basic/driver0.kt"
     run = false
     if (isLinux()) {
         flags = ["-target", "raspberrypi"]
