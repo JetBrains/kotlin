@@ -10240,6 +10240,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("expectedTypeFromCastParenthesized.kt")
+            public void testExpectedTypeFromCastParenthesized() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeFromCastParenthesized.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("expectedTypeWithGenerics.kt")
             public void testExpectedTypeWithGenerics() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeWithGenerics.kt");

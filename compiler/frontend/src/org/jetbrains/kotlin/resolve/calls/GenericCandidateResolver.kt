@@ -180,12 +180,25 @@ class GenericCandidateResolver(
 
     private fun getBinaryWithTypeParent(calleeExpression: KtExpression?): KtBinaryExpressionWithTypeRHS? {
         val callExpression = calleeExpression?.parent.safeAs<KtCallExpression>() ?: return null
-        val parent = callExpression.parent
-        return when (parent) {
-            is KtBinaryExpressionWithTypeRHS -> parent
-            is KtQualifiedExpression -> parent.parent.safeAs<KtBinaryExpressionWithTypeRHS>().takeIf { parent.selectorExpression == callExpression }
-            else -> null
+        val possibleQualifiedExpression = callExpression.parent
+
+        val targetExpression = if (possibleQualifiedExpression is KtQualifiedExpression) {
+            if (possibleQualifiedExpression.selectorExpression != callExpression) return null
+            possibleQualifiedExpression
         }
+        else {
+            callExpression
+        }
+
+        return targetExpression.topParenthesizedParentOrMe().parent.safeAs<KtBinaryExpressionWithTypeRHS>()
+    }
+
+    private fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
+        var result: KtExpression = this
+        while (KtPsiUtil.deparenthesizeOnce(result.parent.safeAs()) == result) {
+            result = result.parent.safeAs() ?: break
+        }
+        return result
     }
 
     private fun addValidityConstraintsForConstituentTypes(builder: ConstraintSystem.Builder, type: KotlinType) {
