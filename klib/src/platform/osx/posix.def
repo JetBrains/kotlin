@@ -10,15 +10,13 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     netinet/icmp6.h netinet/if_ether.h netinet/in.h netinet/in_systm.h \
     netinet/ip.h netinet/ip6.h netinet/ip_icmp.h netinet/tcp.h netinet/udp.h \
     sys/ioctl.h sys/ipc.h sys/mman.h sys/poll.h sys/ptrace.h \
-    sys/queue.h sys/select.h sys/shm.h sys/stat.h \
+    sys/queue.h sys/select.h sys/shm.h sys/socket.h sys/stat.h \
     sys/syslimits.h sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
 compilerOpts = -D_XOPEN_SOURCE
 linkerOpts = -ldl -lresolv
 
 ---
-// cinterop -def klib/src/platform/osx/posix.def -o platform.posix.klib
-
 // Wrapper to access errno variable.
 static int posix_errno() {
     return errno;
