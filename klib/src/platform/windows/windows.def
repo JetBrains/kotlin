@@ -1,3 +1,6 @@
 package = platform.windows
-headers = windows.h
-compilerOpts = -DUNICODE -Wno-incompatible-pointer-types -Wno-deprecated-declarations
+headers = windows.h commctrl.h dwmapi.h shlobj.h shlwapi.h shobjidl.h \
+    urlmon.h usp10.h uxtheme.h vfw.h wininet.h
+compilerOpts = -DUNICODE -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DWINAPI_FAMILY=3 \
+    -Wno-incompatible-pointer-types -Wno-deprecated-declarations
+linkerOpts = -lcomctl32 -lcrypt32 -lshlwapi -lshell32 -limm32 -lusp10 -lwininet
