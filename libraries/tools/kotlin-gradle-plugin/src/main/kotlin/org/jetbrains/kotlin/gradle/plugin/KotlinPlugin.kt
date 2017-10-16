@@ -5,7 +5,6 @@ import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
-import org.apache.tools.ant.util.ReflectUtil.newInstance
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
@@ -456,12 +455,16 @@ internal open class KotlinAndroidPlugin(
 
         val legacyVersionThreshold = "2.5.0"
 
-        val variantProcessor = if (compareVersionNumbers(version, legacyVersionThreshold) < 0)
+        val variantProcessor = if (compareVersionNumbers(version, legacyVersionThreshold) < 0) {
             LegacyAndroidAndroidProjectHandler(kotlinTools)
-        else
-            newInstance(
-                    Class.forName("org.jetbrains.kotlin.gradle.plugin.Android25ProjectHandler"),
-                    arrayOf(kotlinTools.javaClass), arrayOf(kotlinTools)) as AbstractAndroidProjectHandler<*>
+        }
+        else {
+            val android25ProjectHandlerClass = Class.forName("org.jetbrains.kotlin.gradle.plugin.Android25ProjectHandler")
+            val ctor = android25ProjectHandlerClass.constructors.single {
+                it.parameterTypes.contentEquals(arrayOf(kotlinTools.javaClass))
+            }
+            ctor.newInstance(kotlinTools) as AbstractAndroidProjectHandler<*>
+        }
 
         variantProcessor.handleProject(project)
     }
