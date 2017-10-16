@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.ObjectInputStream
-import javax.xml.bind.DatatypeConverter
+import java.util.*
 
 object Kapt3ConfigurationKeys {
     val SOURCE_OUTPUT_DIR: CompilerConfigurationKey<String> =
@@ -175,7 +175,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
     fun decodeOptions(options: String): Map<String, String> {
         val map = LinkedHashMap<String, String>()
 
-        val decodedBytes = DatatypeConverter.parseBase64Binary(options)
+        val decodedBytes = Base64.getDecoder().decode(options)
         val bis = ByteArrayInputStream(decodedBytes)
         val ois = ObjectInputStream(bis)
 

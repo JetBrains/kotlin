@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
-import javax.xml.bind.DatatypeConverter.printBase64Binary
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import java.util.*
 
 // apply plugin: 'kotlin-kapt'
 class Kapt3GradleSubplugin : Plugin<Project> {
@@ -261,7 +261,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         oos.flush()
-        return printBase64Binary(os.toByteArray())
+        return Base64.getEncoder().encodeToString(os.toByteArray())
     }
 
     private fun Kapt3SubpluginContext.addMiscOptions(pluginOptions: MutableList<SubpluginOption>) {
