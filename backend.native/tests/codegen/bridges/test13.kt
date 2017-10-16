@@ -18,7 +18,7 @@ open class B: A<Int>() {
     }
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     val b = B()
     val a = A<Int>()
     b.bar(42)

@@ -1,10 +1,6 @@
-package serialization.deserialize_members
+import foo.bar.*
 
-import kotlin.test.*
-
-import serialization.serialize_members.*
-
-@Test fun runTest() {
+fun main(args: Array<String>) {
     val c = C()
     val d = C.D()
     val e = C.D.E()

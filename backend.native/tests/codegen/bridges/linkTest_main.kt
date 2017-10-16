@@ -1,11 +1,8 @@
-package codegen.bridges.linkTest_main
-
-import kotlin.test.*
-import codegen.bridges.linkTest.a.*
+import a.*
 
 class B: C()
 
-@Test fun runTest() {
+fun main(args: Array<String>) {
     val b = B()
     println(b.foo())
     val c: C = b

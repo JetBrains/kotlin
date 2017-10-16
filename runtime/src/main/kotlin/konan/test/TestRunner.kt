@@ -48,8 +48,8 @@ object TestRunner {
      *  --gtest_list_tests
      *  --ktest_list_tests                                  - Show all available tests.
      *
-     *  --gtest_filter=POSTIVE_PATTERNS[-NEGATIVE_PATTERNS]
-     *  --ktest_filter=POSTIVE_PATTERNS[-NEGATIVE_PATTERNS] - Run only the tests whose name matches one of the
+     *  --gtest_filter=POSITIVE_PATTERNS[-NEGATIVE_PATTERNS]
+     *  --ktest_filter=POSITIVE_PATTERNS[-NEGATIVE_PATTERNS] - Run only the tests whose name matches one of the
      *                                                        positive patterns but none of the negative patterns.
      *                                                        '?' matches any single character; '*' matches any
      *                                                        substring; ':' separates two patterns.

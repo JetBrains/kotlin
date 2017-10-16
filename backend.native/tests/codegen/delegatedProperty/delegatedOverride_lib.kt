@@ -1,4 +1,4 @@
-package codegen.delegatedProperty.delegatedOverride.a
+package a
 
 import kotlin.reflect.KProperty
 

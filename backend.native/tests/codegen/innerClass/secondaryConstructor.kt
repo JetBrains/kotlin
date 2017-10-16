@@ -19,6 +19,6 @@ class Outer(val x: Int) {
     }
 }
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     Outer(42).Inner().InnerInner("zzz")
 }

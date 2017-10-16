@@ -1,8 +1,4 @@
-package codegen.delegatedProperty.delegatedOverride_main
-
-import kotlin.test.*
-
-import codegen.delegatedProperty.delegatedOverride.a.*
+import a.*
 
 open class C: B() {
     override val x: Int = 156
@@ -15,7 +11,7 @@ open class C: B() {
     }
 }
 
-@Test fun runTest() {
+fun main(args: Array<String>) {
     val c = C()
     c.foo()
 }

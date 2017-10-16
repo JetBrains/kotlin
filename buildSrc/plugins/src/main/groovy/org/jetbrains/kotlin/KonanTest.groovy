@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin
 
 import groovy.json.JsonOutput
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
@@ -296,7 +295,117 @@ class TestFailedException extends RuntimeException {
     }
 }
 
-class RunKonanTest extends KonanTest {
+abstract class ExtKonanTest extends KonanTest {
+
+    ExtKonanTest() {
+        super()
+    }
+
+    @Override
+    String buildExePath() {
+        // a single executable for all tests
+        return "$outputDirectory/program.tr"
+    }
+
+    // The same as its super() version but doesn't create a new dir for each test
+    @Override
+    void createOutputDirectory() {
+        if (outputDirectory != null) {
+            return
+        }
+
+        def outputSourceSet = project.sourceSets.findByName(getOutputSourceSetName())
+        if (outputSourceSet != null) {
+            outputDirectory = outputSourceSet.output.getDirs().getSingleFile().absolutePath
+            project.file(outputDirectory).mkdirs()
+        } else {
+            outputDirectory = getTemporaryDir().absolutePath
+        }
+    }
+}
+
+/**
+ * Builds tests with TestRunner enabled
+ */
+class BuildKonanTest extends ExtKonanTest {
+
+    public List<String> compileList
+    public List<String> excludeList
+
+    @Override
+    List<String> buildCompileList() {
+        assert compileList != null
+
+        // convert exclude list to paths
+        def excludeFiles = new ArrayList<String>()
+        excludeList.each { excludeFiles.add(project.file(it).absolutePath) }
+
+        // create list of tests to compile
+        def compileFiles = new ArrayList<String>()
+        compileList.each {
+            project.file(it).eachFileRecurse {
+                if (it.isFile() && it.name.endsWith(".kt") && !excludeFiles.contains(it.absolutePath)) {
+                    compileFiles.add(it.absolutePath)
+                }
+            }
+        }
+        compileFiles
+    }
+
+    @Override
+    void compileTest(List<String> filesToCompile, String exe) {
+        flags = flags ?: []
+        // compile with test runner enabled
+        flags.add("-tr")
+        runCompiler(filesToCompile, exe, flags)
+    }
+
+    @TaskAction
+    @Override
+    void executeTest() {
+        // only build tests
+        createOutputDirectory()
+        def program = buildExePath()
+        compileTest(buildCompileList(), program)
+    }
+}
+
+/**
+ * Runs test built with Konan's TestRunner
+ */
+class RunKonanTest extends ExtKonanTest {
+
+    RunKonanTest() {
+        super()
+        dependsOn(project.tasks['buildKonanTests'])
+    }
+
+    @Override
+    void compileTest(List<String> filesToCompile, String exe) {
+        // tests should be already compiled
+    }
+
+    @TaskAction
+    @Override
+    void executeTest() {
+        arguments = arguments ?: []
+        // Print only test's output
+        arguments.add("--ktest_logger=SILENT")
+        arguments.add("--ktest_filter=" + convertToPattern(source))
+        super.executeTest()
+    }
+
+    private String convertToPattern(String source) {
+        return source.replace('/', '.')
+                .replace(".kt", "")
+                .concat(".*")
+    }
+}
+
+/**
+ * Compiles and executes test as a standalone binary
+ */
+class RunStandaloneKonanTest extends KonanTest {
     void compileTest(List<String> filesToCompile, String exe) {
         runCompiler(filesToCompile, exe, flags?:[])
     }
@@ -379,7 +488,7 @@ class LinkKonanTest extends KonanTest {
     }
 }
 
-class RunExternalTestGroup extends RunKonanTest {
+class RunExternalTestGroup extends RunStandaloneKonanTest {
 
     def groupDirectory = "."
     def outputSourceSetName = "testOutputExternal"

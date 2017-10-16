@@ -1,4 +1,4 @@
-package codegen.basics
+package codegen.basics.check_type
 
 import kotlin.test.*
 

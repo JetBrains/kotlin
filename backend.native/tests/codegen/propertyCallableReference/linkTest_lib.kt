@@ -1,3 +1,3 @@
-package codegen.propertyCallableReference.linkTest.a
+package a
 
 class A(val x: Int)

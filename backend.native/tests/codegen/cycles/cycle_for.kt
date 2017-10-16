@@ -10,6 +10,6 @@ fun cycle_for(arr: Array<Int>) : Int {
   return sum
 }
 
-@Test fun main() {
+@Test fun runTest() {
   if (cycle_for(Array(4, init = { it })) != 6) throw Error()
 }

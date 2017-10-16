@@ -1,7 +1,10 @@
+package codegen.kclass.kclass0
+
+import kotlin.test.*
 import kotlin.reflect.KClass
 
 @Test fun runTest() {
-    main(emptyArray())
+    main(emptyArray<String>())
 }
 
 fun main(args: Array<String>) {

@@ -45,6 +45,6 @@ class A: ABase() { // implicit label @A
 
 fun box() = A().B().bar(D())
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     println(box())
 }

@@ -1,5 +1,3 @@
-package mangling.mangling
-
 public fun mangle1(l: List<Int>) {
     println("Int direct $l")
 }

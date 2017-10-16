@@ -12,6 +12,6 @@ open class Outer(val outer: String) {
 
 fun box() = Outer("Fail").value()
 
-fun main(args : Array<String>) {
+@Test fun runTest() {
     println(box())
 }
