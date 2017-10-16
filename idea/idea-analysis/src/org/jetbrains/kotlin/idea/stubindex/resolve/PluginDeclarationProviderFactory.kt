@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService
 import org.jetbrains.kotlin.name.FqName
@@ -70,11 +72,18 @@ class PluginDeclarationProviderFactory(
     override fun diagnoseMissingPackageFragment(file: KtFile) {
         val packageFqName = file.packageFqName
         val subpackagesIndex = SubpackagesIndexService.getInstance(project)
-        throw IllegalStateException("Cannot find package fragment for file ${file.name} with package $packageFqName, " +
-                                    "vFile ${file.virtualFile}, nonIndexed ${file in nonIndexedFiles} " +
-                                    "packageExists=${PackageIndexUtil.packageExists(packageFqName, indexedFilesScope, project)} in $indexedFilesScope," +
-                                    "SPI.packageExists=${subpackagesIndex.packageExists(packageFqName)} SPI=$subpackagesIndex " +
-                                    "OOCB count ${file.manager.modificationTracker.outOfCodeBlockModificationCount}}")
+        val moduleSourceInfo = moduleInfo as? ModuleSourceInfo
+        val virtualFile = file.virtualFile
+        throw IllegalStateException("""
+Cannot find package fragment for file ${file.name} with package '$packageFqName':
+vFile: $virtualFile,
+nonIndexed files: $nonIndexedFiles, isNonIndexed: ${file in nonIndexedFiles},
+scope = $indexedFilesScope, isInScope = ${virtualFile in indexedFilesScope},
+packageExists = ${PackageIndexUtil.packageExists(packageFqName, indexedFilesScope, project)}, cachedPackageExists = ${moduleSourceInfo?.let { project.service<PerModulePackageCacheService>().packageExists(packageFqName, it) }},
+oldPackageExists = ${oldPackageExists(packageFqName) ?: "threw exception"},
+SPI.packageExists = ${subpackagesIndex.packageExists(packageFqName)}, SPI = $subpackagesIndex, OOCB count ${file.manager.modificationTracker.outOfCodeBlockModificationCount},
+ModuleModificationCount = ${moduleSourceInfo?.createModificationTracker()?.modificationCount},
+packageFqNameByTree = '${file.packageFqNameByTree}', packageDirectiveText = '${file.packageDirective?.text}'""")
     }
 
     // trying to diagnose org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException in completion
@@ -82,6 +91,20 @@ class PluginDeclarationProviderFactory(
 
     fun debugToString(): String {
         return "PluginDeclarationProviderFactory\nOn failure:\n${debugInfo()}On creation:\n$onCreationDebugInfo"
+    }
+
+    private fun oldPackageExists(packageFqName: FqName): Boolean? = try {
+        var result = false
+        StubIndex.getInstance().processElements<String, KtFile>(
+                KotlinExactPackagesIndex.getInstance().key, packageFqName.asString(), project, indexedFilesScope, KtFile::class.java
+        ) {
+            result = true
+            false
+        }
+        result
+    }
+    catch (e: Throwable) {
+        null
     }
 
     private fun debugInfo(): String {
