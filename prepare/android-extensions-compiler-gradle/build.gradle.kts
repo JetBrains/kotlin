@@ -23,9 +23,14 @@ sourceSets {
     "test" {}
 }
 
+// fixes a deadlock in projects evaluation order for :plugins:android-extensions-compiler
+evaluationDependsOn(":plugins")
+
 val jar: Jar by tasks
 jar.apply {
-    from(getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output.classesDirs)
+    from(getSourceSetsFrom(":plugins:android-extensions-compiler")["main"].output)
+    from(getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output)
+    duplicatesStrategy = DuplicatesStrategy.FAIL
 }
 
 runtimeJar(rewriteDepsToShadedCompiler(jar))
