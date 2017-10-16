@@ -16,6 +16,9 @@ compileKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
         outputFile = "${buildDir}/classes/main/kotlin-test.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        sourceMapEmbedSources = "always"
     }
 }
 

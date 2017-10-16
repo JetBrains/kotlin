@@ -111,6 +111,10 @@
         <publish-to-npm template="kotlin" version="${kotlin.deploy.version}" tag="${kotlin.deploy.tag}">
             <copy file="${js.stdlib.output.dir}/kotlin.js" todir="${package_deploy_dir}" failonerror="true" />
             <copy file="${js.stdlib.output.dir}/kotlin.meta.js" todir="${package_deploy_dir}" failonerror="true" />
+	    <copy file="${js.stdlib.output.dir}/kotlin.js.map"  todir="${package_deploy_dir}" failonerror="true" />
+            <copy todir="${package_deploy_dir}/kotlin" failonerror="true">
+                 <fileset dir="${js.stdlib.output.dir}/kotlin"/>
+            </copy>
         </publish-to-npm>
     </target>
 
@@ -127,6 +131,10 @@
         <publish-to-npm template="kotlin-test" version="${kotlin.deploy.version}" tag="${kotlin.deploy.tag}">
             <copy file="${js.stdlib.output.dir}/kotlin-test.js" todir="${package_deploy_dir}" failonerror="true" />
             <copy file="${js.stdlib.output.dir}/kotlin-test.meta.js" todir="${package_deploy_dir}" failonerror="true" />
+            <copy file="${js.stdlib.output.dir}/kotlin-test.js.map"  todir="${package_deploy_dir}" failonerror="true" />
+            <copy todir="${package_deploy_dir}/kotlin-test" failonerror="true">
+                 <fileset dir="${js.stdlib.output.dir}/kotlin-test"/>
+            </copy>
         </publish-to-npm>
     </target>
 
