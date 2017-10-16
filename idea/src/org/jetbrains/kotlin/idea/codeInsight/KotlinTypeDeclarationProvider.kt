@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinTypeDeclarationProvider : TypeDeclarationProvider {
     override fun getSymbolTypeDeclarations(symbol: PsiElement): Array<PsiElement>? {
-        if (symbol.containingFile !is KtFile) return emptyArray()
+        if (symbol.containingFile !is KtFile) return null
 
         if (symbol is PsiWhiteSpace) {
             // Navigate to type of first parameter in lambda, works with the help of KotlinTargetElementEvaluator for the 'it' case
