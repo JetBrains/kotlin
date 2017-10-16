@@ -1,0 +1,19 @@
+package
+
+public val ann: MyAnnotation
+public fun bar(/*0*/ y: MyAnnotation): kotlin.Unit
+public fun foo(/*0*/ x: MyAnnoClass): kotlin.Unit
+
+public open class MyAnnoClass : MyAnnotation {
+    public constructor MyAnnoClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class MyAnnotation : kotlin.Annotation {
+    public constructor MyAnnotation()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

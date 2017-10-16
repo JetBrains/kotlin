@@ -320,7 +320,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     }
 
     private val ClassDescriptor.isCommonFinalClass: Boolean
-        get() = isFinalClass && kind != ClassKind.ENUM_ENTRY
+        get() = isFinalClass && kind != ClassKind.ENUM_ENTRY && kind != ClassKind.ANNOTATION_CLASS
 
     /**
      * If we have several paths to some interface, we should prefer pure kotlin path.
