@@ -48,6 +48,8 @@ public interface ErrorsJs {
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory3<KtElement, String, DeclarationDescriptor, DeclarationDescriptor> JS_FAKE_NAME_CLASH =
             DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<KtElement, String> JS_BUILTIN_NAME_CLASH = DiagnosticFactory1.create(
+            ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_ACCESSOR_AND_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_IS_NOT_ON_ALL_ACCESSORS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
