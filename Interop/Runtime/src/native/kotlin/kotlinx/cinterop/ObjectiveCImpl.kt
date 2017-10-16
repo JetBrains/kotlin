@@ -86,17 +86,31 @@ inline val ObjCObject?.rawPtr: NativePtr get() = if (this != null) {
     nativeNullPtr
 }
 
+@SymbolName("Kotlin_Interop_createKotlinObjectHolder")
+external fun createKotlinObjectHolder(any: Any?): NativePtr
+
+inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: ObjCObject?): T {
+    return unwrapKotlinObjectHolderImpl(holder!!.rawPtr) as T
+}
+
+@PublishedApi
+@SymbolName("Kotlin_Interop_unwrapKotlinObjectHolder")
+external internal fun unwrapKotlinObjectHolderImpl(ptr: NativePtr): Any
+
 class ObjCObjectVar<T : ObjCObject?>(rawPtr: NativePtr) : CVariable(rawPtr) {
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
-class ObjCStringVarOf<T : String?>(rawPtr: NativePtr) : CVariable(rawPtr) {
+class ObjCNotImplementedVar<T : Any?>(rawPtr: NativePtr) : CVariable(rawPtr) {
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
-var <T : String?> ObjCStringVarOf<T>.value: T
+var <T : Any?> ObjCNotImplementedVar<T>.value: T
     get() = TODO()
     set(value) = TODO()
+
+typealias ObjCStringVarOf<T> = ObjCNotImplementedVar<T>
+typealias ObjCBlockVar<T> = ObjCNotImplementedVar<T>
 
 @konan.internal.Intrinsic external fun getReceiverOrSuper(receiver: NativePtr, superClass: NativePtr): COpaquePointer?
 

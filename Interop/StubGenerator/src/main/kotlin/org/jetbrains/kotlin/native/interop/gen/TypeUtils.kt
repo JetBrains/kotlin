@@ -51,6 +51,7 @@ fun Type.getStringRepresentation(): String = when (this) {
         is ObjCClassPointer -> "Class$protocolQualifier"
         is ObjCObjectPointer -> "${def.name}$protocolQualifier*"
         is ObjCInstanceType -> TODO(this.toString()) // Must have already been handled.
+        is ObjCBlockPointer -> "id"
     }
 
     else -> throw kotlin.NotImplementedError()
@@ -63,4 +64,19 @@ tailrec fun Type.unwrapTypedefs(): Type = if (this is Typedef) {
     this.def.aliased.unwrapTypedefs()
 } else {
     this
+}
+
+fun blockTypeStringRepresentation(type: ObjCBlockPointer): String {
+    return buildString {
+        append(type.returnType.getStringRepresentation())
+        append("(^)")
+        append("(")
+        val blockParameters = if (type.parameterTypes.isEmpty()) {
+            "void"
+        } else {
+            type.parameterTypes.joinToString { it.getStringRepresentation() }
+        }
+        append(blockParameters)
+        append(")")
+    }
 }

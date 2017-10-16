@@ -47,7 +47,7 @@ class GlobalVariableStub(global: GlobalDecl, stubGenerator: StubGenerator) : Kot
 
         if (unwrappedType is ArrayType) {
             kotlinType = (mirror as TypeMirror.ByValue).valueType
-            getter = mirror.info.argFromBridged(getAddressExpression, kotlinScope) + "!!"
+            getter = mirror.info.argFromBridged(getAddressExpression, kotlinScope, nativeBacked = this) + "!!"
             setter = null
         } else {
             val pointedTypeName = mirror.pointedType.render(kotlinScope)

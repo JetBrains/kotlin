@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.native.interop.indexer.VoidType
  */
 class MappingBridgeGeneratorImpl(
         val declarationMapper: DeclarationMapper,
-        val simpleBridgeGenerator: SimpleBridgeGenerator,
-        val kotlinScope: KotlinScope
+        val simpleBridgeGenerator: SimpleBridgeGenerator
 ) : MappingBridgeGenerator {
 
     override fun kotlinToNative(
@@ -57,7 +56,7 @@ class MappingBridgeGeneratorImpl(
             is RecordType -> {
                 val mirror = mirror(declarationMapper, returnType)
                 val tmpVarName = kniRetVal
-                builder.out("val $tmpVarName = nativeHeap.alloc<${mirror.pointedType.render(kotlinScope)}>()")
+                builder.out("val $tmpVarName = nativeHeap.alloc<${mirror.pointedType.render(builder.scope)}>()")
                 builder.pushBlock("try {", free = "finally { nativeHeap.free($tmpVarName) }")
                 bridgeArguments.add(BridgeTypedKotlinValue(BridgedType.NATIVE_PTR, "$tmpVarName.rawPtr"))
                 BridgedType.VOID
@@ -78,7 +77,11 @@ class MappingBridgeGeneratorImpl(
                 if (unwrappedType is RecordType) {
                     nativeValues.add("*(${unwrappedType.decl.spelling}*)${bridgeNativeValues[index]}")
                 } else {
-                    nativeValues.add(mirror(declarationMapper, type).info.cFromBridged(bridgeNativeValues[index]))
+                    nativeValues.add(
+                            mirror(declarationMapper, type).info.cFromBridged(
+                                    bridgeNativeValues[index], scope, nativeBacked
+                            )
+                    )
                 }
             }
 
@@ -107,7 +110,7 @@ class MappingBridgeGeneratorImpl(
             }
             else -> {
                 val mirror = mirror(declarationMapper, returnType)
-                mirror.info.argFromBridged(callExpr, kotlinScope)
+                mirror.info.argFromBridged(callExpr, builder.scope, nativeBacked)
             }
         }
 
@@ -159,12 +162,12 @@ class MappingBridgeGeneratorImpl(
             nativeValues.forEachIndexed { index, (type, _) ->
                 val mirror = mirror(declarationMapper, type)
                 if (type.unwrapTypedefs() is RecordType) {
-                    val pointedTypeName = mirror.pointedType.render(kotlinScope)
+                    val pointedTypeName = mirror.pointedType.render(this.scope)
                     kotlinValues.add(
                             "interpretPointed<$pointedTypeName>(${bridgeKotlinValues[index]}).readValue()"
                     )
                 } else {
-                    kotlinValues.add(mirror.info.argFromBridged(bridgeKotlinValues[index], kotlinScope))
+                    kotlinValues.add(mirror.info.argFromBridged(bridgeKotlinValues[index], this.scope, nativeBacked))
                 }
             }
 
@@ -189,7 +192,7 @@ class MappingBridgeGeneratorImpl(
                 kniRetVal
             }
             else -> {
-                mirror(declarationMapper, returnType).info.cFromBridged(callExpr)
+                mirror(declarationMapper, returnType).info.cFromBridged(callExpr, builder.scope, nativeBacked)
             }
         }
 

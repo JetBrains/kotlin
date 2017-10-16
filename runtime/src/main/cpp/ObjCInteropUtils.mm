@@ -103,6 +103,51 @@ id MissingInitImp(id self, SEL _cmd) {
   return nullptr;
 }
 
+// TODO: rework the interface to reduce the number of virtual calls
+// in Kotlin_Interop_createKotlinObjectHolder and Kotlin_Interop_unwrapKotlinObjectHolder
+@interface KotlinObjectHolder : NSObject
+-(id)initWithRef:(KRef)ref;
+-(KRef)ref;
+@end;
+
+@implementation KotlinObjectHolder {
+  KRef ref_;
+};
+
+-(id)initWithRef:(KRef)ref {
+  if (self = [super init]) {
+    UpdateRef(&ref_, ref);
+  }
+  return self;
+}
+
+-(KRef)ref {
+  return ref_;
+}
+
+-(void)dealloc {
+  UpdateRef(&ref_, nullptr);
+  [super dealloc];
+}
+
+@end;
+
+id Kotlin_Interop_createKotlinObjectHolder(KRef any) {
+  if (any == nullptr) {
+    return nullptr;
+  }
+
+  return [[[KotlinObjectHolder alloc] initWithRef:any] autorelease];
+}
+
+KRef Kotlin_Interop_unwrapKotlinObjectHolder(id holder) {
+  if (holder == nullptr) {
+    return nullptr;
+  }
+
+  return [((KotlinObjectHolder*)holder) ref];
+}
+
 } // extern "C"
 
 #else // KONAN_OBJC_INTEROP
@@ -132,6 +177,16 @@ KInt Kotlin_Interop_ObjCHashCode(KNativePtr ptr) {
 KBoolean Kotlin_Interop_ObjCEquals(KNativePtr ptr, KNativePtr otherPtr) {
   RuntimeAssert(false, "Objective-C interop is disabled");
   return 0;
+}
+
+void* Kotlin_Interop_createKotlinObjectHolder(KRef any) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
+}
+
+KRef Kotlin_Interop_unwrapKotlinObjectHolder(void* holder) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
 }
 
 } // extern "C"

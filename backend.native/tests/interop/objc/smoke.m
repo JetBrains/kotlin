@@ -47,3 +47,13 @@ void replacePairElements(id <MutablePair> pair, int first, int second) {
     [pair update:0 add:(first - pair.first)];
     [pair update:1 sub:(pair.second - second)];
 }
+
+int (^getSupplier(int x))(void) {
+    return ^{
+        return x;
+    };
+}
+
+Class (^ _Nonnull getClassGetter(NSObject* obj))() {
+    return ^{ return obj.class; };
+}

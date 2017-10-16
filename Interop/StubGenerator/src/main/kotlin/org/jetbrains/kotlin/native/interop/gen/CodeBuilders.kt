@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-class NativeCodeBuilder {
+interface NativeScope {
+    val mappingBridgeGenerator: MappingBridgeGenerator
+}
+
+class NativeCodeBuilder(val scope: NativeScope) {
     val lines = mutableListOf<String>()
 
     fun out(line: String): Unit {
@@ -24,13 +28,13 @@ class NativeCodeBuilder {
     }
 }
 
-inline fun buildNativeCodeLines(block: NativeCodeBuilder.() -> Unit): List<String> {
-    val builder = NativeCodeBuilder()
+inline fun buildNativeCodeLines(scope: NativeScope, block: NativeCodeBuilder.() -> Unit): List<String> {
+    val builder = NativeCodeBuilder(scope)
     builder.block()
     return builder.lines
 }
 
-class KotlinCodeBuilder {
+class KotlinCodeBuilder(val scope: KotlinScope) {
     private val lines = mutableListOf<String>()
 
     private val freeStack = mutableListOf<String>()
@@ -69,8 +73,8 @@ class KotlinCodeBuilder {
     }
 }
 
-inline fun buildKotlinCodeLines(block: KotlinCodeBuilder.() -> Unit): List<String> {
-    val builder = KotlinCodeBuilder()
+inline fun buildKotlinCodeLines(scope: KotlinScope, block: KotlinCodeBuilder.() -> Unit): List<String> {
+    val builder = KotlinCodeBuilder(scope)
     builder.block()
     return builder.build()
 }

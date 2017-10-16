@@ -34,6 +34,8 @@ interface KotlinScope {
      * or `null` if the property with given name can't be declared.
      */
     fun declareProperty(name: String): String?
+
+    val mappingBridgeGenerator: MappingBridgeGenerator
 }
 
 data class Classifier(
@@ -92,13 +94,22 @@ object StarProjection : KotlinTypeArgument {
     override fun render(scope: KotlinScope) = "*"
 }
 
-interface KotlinType : KotlinTypeArgument
+interface KotlinType : KotlinTypeArgument {
+    val classifier: Classifier
+    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
+}
 
 data class KotlinClassifierType(
-        val classifier: Classifier,
+        override val classifier: Classifier,
         val arguments: List<KotlinTypeArgument>,
         val nullable: Boolean
 ) : KotlinType {
+
+    override fun makeNullableAsSpecified(nullable: Boolean) = if (this.nullable == nullable) {
+        this
+    } else {
+        this.copy(nullable = nullable)
+    }
 
     override fun render(scope: KotlinScope): String = buildString {
         append(scope.reference(classifier))
@@ -113,24 +124,33 @@ data class KotlinClassifierType(
     }
 }
 
-fun KotlinClassifierType.makeNullableAsSpecified(nullable: Boolean) = if (this.nullable == nullable) {
-    this
-} else {
-    this.copy(nullable = nullable)
-}
-
-fun KotlinClassifierType.makeNullable() = this.makeNullableAsSpecified(true)
+fun KotlinType.makeNullable() = this.makeNullableAsSpecified(true)
 
 data class KotlinFunctionType(
         val parameterTypes: List<KotlinType>,
-        val returnType: KotlinType
+        val returnType: KotlinType,
+        val nullable: Boolean = false
 ) : KotlinType {
 
+    override fun makeNullableAsSpecified(nullable: Boolean) = if (this.nullable == nullable) {
+        this
+    } else {
+        this.copy(nullable = nullable)
+    }
+
+    override val classifier by lazy {
+        Classifier.topLevel("kotlin", "Function${parameterTypes.size}")
+    }
+
     override fun render(scope: KotlinScope) = buildString {
+        if (nullable) append("(")
+
         append('(')
         parameterTypes.joinTo(this) { it.render(scope) }
         append(") -> ")
         append(returnType.render(scope))
+
+        if (nullable) append(")?")
     }
 }
 
@@ -194,7 +214,7 @@ object KotlinTypes {
     }
 }
 
-class KotlinFile(
+abstract class KotlinFile(
         val pkg: String,
         namesToBeDeclared: List<String>
 ) : KotlinScope {

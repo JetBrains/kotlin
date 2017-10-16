@@ -26,7 +26,8 @@ class SimpleBridgeGeneratorImpl(
         private val pkgName: String,
         private val jvmFileClassName: String,
         private val libraryForCStubs: NativeLibrary,
-        private val kotlinScope: KotlinScope
+        override val topLevelNativeScope: NativeScope,
+        private val topLevelKotlinScope: KotlinScope
 ) : SimpleBridgeGenerator {
 
     private var nextUniqueId = 0
@@ -70,7 +71,7 @@ class SimpleBridgeGeneratorImpl(
 
         val kotlinFunctionName = "kniBridge${nextUniqueId++}"
         val kotlinParameters = kotlinValues.withIndex().joinToString {
-            "p${it.index}: ${it.value.type.kotlinType.render(kotlinScope)}"
+            "p${it.index}: ${it.value.type.kotlinType.render(topLevelKotlinScope)}"
         }
 
         val callExpr = "$kotlinFunctionName(${kotlinValues.joinToString { it.value }})"
@@ -113,7 +114,7 @@ class SimpleBridgeGeneratorImpl(
         }
         nativeLines.add(cFunctionHeader + " {")
 
-        buildNativeCodeLines {
+        buildNativeCodeLines(topLevelNativeScope) {
             val cExpr = block(cFunctionParameters.takeLast(kotlinValues.size).map { (name, _) -> name })
             if (returnType != BridgedType.VOID) {
                 out("return ($cReturnType)$cExpr;")
@@ -131,7 +132,7 @@ class SimpleBridgeGeneratorImpl(
         }
 
         nativeLines.add("}")
-        val kotlinReturnType = returnType.kotlinType.render(kotlinScope)
+        val kotlinReturnType = returnType.kotlinType.render(topLevelKotlinScope)
         kotlinLines.add("private external fun $kotlinFunctionName($kotlinParameters): $kotlinReturnType")
 
         val nativeBridge = NativeBridge(kotlinLines, nativeLines)
@@ -156,7 +157,9 @@ class SimpleBridgeGeneratorImpl(
         val kotlinParameters = nativeValues.withIndex().map {
             "p${it.index}" to it.value.type.kotlinType
         }
-        val joinedKotlinParameters = kotlinParameters.joinToString { "${it.first}: ${it.second.render(kotlinScope)}" }
+        val joinedKotlinParameters = kotlinParameters.joinToString {
+            "${it.first}: ${it.second.render(topLevelKotlinScope)}"
+        }
 
         val cFunctionParameters = nativeValues.withIndex().map {
             "p${it.index}" to it.value.type.nativeType
@@ -169,10 +172,10 @@ class SimpleBridgeGeneratorImpl(
         val cFunctionHeader = "$cReturnType $symbolName($joinedCParameters)"
 
         nativeLines.add("$cFunctionHeader;")
-        val kotlinReturnType = returnType.kotlinType.render(kotlinScope)
+        val kotlinReturnType = returnType.kotlinType.render(topLevelKotlinScope)
         kotlinLines.add("private fun $kotlinFunctionName($joinedKotlinParameters): $kotlinReturnType {")
 
-        buildKotlinCodeLines {
+        buildKotlinCodeLines(topLevelKotlinScope) {
             var kotlinExpr = block(kotlinParameters.map { (name, _) -> name })
             if (returnType == BridgedType.OBJC_POINTER) {
                 // The Kotlin code may lose the ownership on this pointer after returning from the bridge,
@@ -207,12 +210,18 @@ class SimpleBridgeGeneratorImpl(
         nativeBridges.map { it.second.nativeLines }
                 .mapFragmentIsCompilable(libraryForCStubs)
                 .forEachIndexed { index, isCompilable ->
-                    if (isCompilable) {
-                        includedBridges.add(nativeBridges[index].second)
-                    } else {
+                    if (!isCompilable) {
                         excludedClients.add(nativeBridges[index].first)
                     }
                 }
+
+        nativeBridges.mapNotNullTo(includedBridges) { (nativeBacked, nativeBridge) ->
+            if (nativeBacked in excludedClients) {
+                null
+            } else {
+                nativeBridge
+            }
+        }
 
         // TODO: exclude unused bridges.
 

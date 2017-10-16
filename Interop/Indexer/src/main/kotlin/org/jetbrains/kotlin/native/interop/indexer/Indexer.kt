@@ -530,7 +530,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
             CXType_ObjCSel -> PointerType(VoidType)
 
-            CXType_BlockPointer -> objCType { ObjCIdType(getNullability(type, typeAttributes), getProtocols(type)) }
+            CXType_BlockPointer -> objCType { convertBlockPointerType(type, typeAttributes) }
 
             else -> UnsupportedType
         }
@@ -570,6 +570,21 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             }
             FunctionType(paramTypes, returnType)
         }
+    }
+
+    private fun convertBlockPointerType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>?): ObjCPointer {
+        val kind = type.kind
+        assert(kind == CXType_BlockPointer)
+
+        val pointee = clang_getPointeeType(type)
+        val nullability = getNullability(type, typeAttributes)
+
+        // TODO: also use nullability attributes of parameters and return value.
+
+        val functionType = convertFunctionType(pointee) as? FunctionType
+                ?: return ObjCIdType(nullability, protocols = emptyList())
+
+        return ObjCBlockPointer(nullability, functionType.parameterTypes, functionType.returnType)
     }
 
     private val TARGET_ATTRIBUTE = "__target__"

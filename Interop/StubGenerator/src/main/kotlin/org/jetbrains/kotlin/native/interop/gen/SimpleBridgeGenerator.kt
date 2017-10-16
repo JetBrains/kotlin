@@ -44,6 +44,8 @@ interface NativeBacked
  */
 interface SimpleBridgeGenerator {
 
+    val topLevelNativeScope: NativeScope
+
     /**
      * Generates the expression to convert given Kotlin values to native counterparts, pass through the bridge,
      * use inside the native code produced by [block] and then return the result back.

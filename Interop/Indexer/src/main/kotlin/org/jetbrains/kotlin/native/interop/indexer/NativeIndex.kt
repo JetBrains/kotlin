@@ -258,5 +258,9 @@ data class ObjCIdType(
 ) : ObjCQualifiedPointer()
 
 data class ObjCInstanceType(override val nullability: Nullability) : ObjCPointer()
+data class ObjCBlockPointer(
+        override val nullability: Nullability,
+        val parameterTypes: List<Type>, val returnType: Type
+) : ObjCPointer()
 
 object UnsupportedType : Type

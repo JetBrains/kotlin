@@ -88,15 +88,15 @@ sealed class TypeMirror(val pointedType: KotlinClassifierType, val info: TypeInf
     /**
      * Mirror for C type to be represented in Kotlin as by-value type.
      */
-    class ByValue(pointedType: KotlinClassifierType, info: TypeInfo, val valueType: KotlinClassifierType) :
-            TypeMirror(pointedType, info) {
+    class ByValue(
+            pointedType: KotlinClassifierType,
+            info: TypeInfo,
+            val valueType: KotlinType,
+            val nullable: Boolean = (info is TypeInfo.Pointer)
+    ) : TypeMirror(pointedType, info) {
 
         override val argType: KotlinType
-            get() = if ((info is TypeInfo.Pointer || (info is TypeInfo.ObjCPointerInfo && info.type.isNullable))) {
-                valueType.makeNullable()
-            } else {
-                valueType
-            }
+            get() = valueType.makeNullableAsSpecified(nullable)
     }
 
     /**
@@ -119,11 +119,19 @@ sealed class TypeInfo {
     /**
      * The conversion from [bridgedType] to [TypeMirror.argType].
      */
-    abstract fun argFromBridged(expr: KotlinExpression, scope: KotlinScope): KotlinExpression
+    abstract fun argFromBridged(
+            expr: KotlinExpression,
+            scope: KotlinScope,
+            nativeBacked: NativeBacked
+    ): KotlinExpression
 
     abstract val bridgedType: BridgedType
 
-    open fun cFromBridged(expr: NativeExpression): NativeExpression = expr
+    open fun cFromBridged(
+            expr: NativeExpression,
+            scope: NativeScope,
+            nativeBacked: NativeBacked
+    ): NativeExpression = expr
 
     open fun cToBridged(expr: NativeExpression): NativeExpression = expr
 
@@ -136,7 +144,7 @@ sealed class TypeInfo {
     class Primitive(override val bridgedType: BridgedType, val varClass: Classifier) : TypeInfo() {
 
         override fun argToBridged(expr: KotlinExpression) = expr
-        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope) = expr
+        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) = expr
 
         override fun constructPointedType(valueType: KotlinType) = varClass.typeWith(valueType)
     }
@@ -144,11 +152,13 @@ sealed class TypeInfo {
     class Boolean : TypeInfo() {
         override fun argToBridged(expr: KotlinExpression) = "$expr.toByte()"
 
-        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope) = "$expr.toBoolean()"
+        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
+                "$expr.toBoolean()"
 
         override val bridgedType: BridgedType get() = BridgedType.BYTE
 
-        override fun cFromBridged(expr: NativeExpression) = "($expr) ? 1 : 0"
+        override fun cFromBridged(expr: NativeExpression, scope: NativeScope, nativeBacked: NativeBacked) =
+                "($expr) ? 1 : 0"
 
         override fun cToBridged(expr: NativeExpression) = "($expr) ? 1 : 0"
 
@@ -158,7 +168,7 @@ sealed class TypeInfo {
     class Enum(val clazz: Classifier, override val bridgedType: BridgedType) : TypeInfo() {
         override fun argToBridged(expr: KotlinExpression) = "$expr.value"
 
-        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope) =
+        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
                 scope.reference(clazz) + ".byValue($expr)"
 
         override fun constructPointedType(valueType: KotlinType) =
@@ -169,13 +179,14 @@ sealed class TypeInfo {
     class Pointer(val pointee: KotlinType) : TypeInfo() {
         override fun argToBridged(expr: String) = "$expr.rawValue"
 
-        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope) =
+        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
                 "interpretCPointer<${pointee.render(scope)}>($expr)"
 
         override val bridgedType: BridgedType
             get() = BridgedType.NATIVE_PTR
 
-        override fun cFromBridged(expr: String) = "(void*)$expr" // Note: required for JVM
+        override fun cFromBridged(expr: NativeExpression, scope: NativeScope, nativeBacked: NativeBacked) =
+                "(void*)$expr" // Note: required for JVM
 
         override fun constructPointedType(valueType: KotlinType) = KotlinTypes.cPointerVarOf.typeWith(valueType)
     }
@@ -183,7 +194,7 @@ sealed class TypeInfo {
     class ObjCPointerInfo(val kotlinType: KotlinType, val type: ObjCPointer) : TypeInfo() {
         override fun argToBridged(expr: String) = "$expr.rawPtr"
 
-        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope) =
+        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
                 "interpretObjCPointerOrNull<${kotlinType.render(scope)}>($expr)" +
                         if (type.isNullable) "" else "!!"
 
@@ -196,8 +207,8 @@ sealed class TypeInfo {
     class NSString(val type: ObjCPointer) : TypeInfo() {
         override fun argToBridged(expr: String) = "CreateNSStringFromKString($expr)"
 
-        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope) = "CreateKStringFromNSString($expr)" +
-                if (type.isNullable) "" else "!!"
+        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
+                "CreateKStringFromNSString($expr)" + if (type.isNullable) "" else "!!"
 
         override val bridgedType: BridgedType
             get() = BridgedType.OBJC_POINTER
@@ -207,11 +218,129 @@ sealed class TypeInfo {
         }
     }
 
+    class ObjCBlockPointerInfo(val kotlinType: KotlinFunctionType, val type: ObjCBlockPointer) : TypeInfo() {
+
+        override val bridgedType: BridgedType
+            get() = BridgedType.OBJC_POINTER
+
+        // When passing Kotlin function as block pointer from Kotlin to native,
+        // it first gets wrapped by a holder in [argToBridged],
+        // and then converted to block in [cFromBridged].
+
+        override fun argToBridged(expr: KotlinExpression): KotlinExpression = "createKotlinObjectHolder($expr)"
+
+        override fun cFromBridged(
+                expr: NativeExpression,
+                scope: NativeScope,
+                nativeBacked: NativeBacked
+        ): NativeExpression {
+            val mappingBridgeGenerator = scope.mappingBridgeGenerator
+
+            val blockParameters = type.parameterTypes.mapIndexed { index, it ->
+                "p$index" to it.getStringRepresentation()
+            }.joinToString { "${it.second} ${it.first}" }
+
+            val blockReturnType = type.returnType.getStringRepresentation()
+
+            val kniFunction = "kniFunction"
+
+            val codeBuilder = NativeCodeBuilder(scope)
+
+            return buildString {
+                append("({ ") // Statement expression begins.
+                append("id $kniFunction = $expr; ") // Note: it gets captured below.
+                append("($kniFunction == nil) ? nil : ")
+                append("(id)") // Cast the block to `id`.
+                append("^$blockReturnType($blockParameters) {") // Block begins.
+
+                // As block body, generate the code which simply bridges to Kotlin and calls the Kotlin function:
+                mappingBridgeGenerator.nativeToKotlin(
+                        codeBuilder,
+                        nativeBacked,
+                        type.returnType,
+                        type.parameterTypes.mapIndexed { index, it ->
+                            TypedNativeValue(it, "p$index")
+                        } + TypedNativeValue(ObjCIdType(ObjCPointer.Nullability.Nullable, emptyList()), kniFunction)
+                ) { kotlinValues ->
+                    val kotlinFunctionType = kotlinType.render(this.scope)
+                    val kotlinFunction = "unwrapKotlinObjectHolder<$kotlinFunctionType>(${kotlinValues.last()})"
+                    "$kotlinFunction(${kotlinValues.dropLast(1).joinToString()})"
+                }.let {
+                    codeBuilder.out("return $it;")
+                }
+
+                codeBuilder.lines.joinTo(this, separator = " ")
+
+                append(" };") // Block ends.
+                append(" })") // Statement expression ends.
+            }
+        }
+
+        // When passing block pointer as Kotlin function from native to Kotlin,
+        // it is converted to Kotlin function in [cFromBridged].
+
+        override fun cToBridged(expr: NativeExpression): NativeExpression = expr
+
+        override fun argFromBridged(
+                expr: KotlinExpression,
+                scope: KotlinScope,
+                nativeBacked: NativeBacked
+        ): KotlinExpression {
+            val mappingBridgeGenerator = scope.mappingBridgeGenerator
+
+            val funParameters = type.parameterTypes.mapIndexed { index, it ->
+                "p$index" to kotlinType.parameterTypes[index]
+            }.joinToString { "${it.first}: ${it.second.render(scope)}" }
+
+            val funReturnType = kotlinType.returnType.render(scope)
+
+            val codeBuilder = KotlinCodeBuilder(scope)
+            val kniBlockPtr = "kniBlockPtr"
+
+
+            // Build the anonymous function expression:
+            val anonymousFun = buildString {
+                append("fun($funParameters): $funReturnType {\n") // Anonymous function begins.
+
+                // As function body, generate the code which simply bridges to native and calls the block:
+                mappingBridgeGenerator.kotlinToNative(
+                        codeBuilder,
+                        nativeBacked,
+                        type.returnType,
+                        type.parameterTypes.mapIndexed { index, it ->
+                            TypedKotlinValue(it, "p$index")
+                        } + TypedKotlinValue(PointerType(VoidType), "interpretCPointer<COpaque>($kniBlockPtr)")
+
+                ) { nativeValues ->
+                    val type = type
+                    val blockType = blockTypeStringRepresentation(type)
+                    val objCBlock = "((__bridge $blockType)${nativeValues.last()})"
+                    "$objCBlock(${nativeValues.dropLast(1).joinToString()})"
+                }.let {
+                    codeBuilder.out("return $it")
+                }
+
+                codeBuilder.build().joinTo(this, separator = "\n")
+                append("}") // Anonymous function ends.
+            }
+
+            val nullOutput = if (type.isNullable) "null" else "throw NullPointerException()"
+
+            return "$expr.let { $kniBlockPtr -> if (kniBlockPtr == nativeNullPtr) $nullOutput else $anonymousFun }"
+        }
+
+        override fun constructPointedType(valueType: KotlinType): KotlinClassifierType {
+            return Classifier.topLevel("kotlinx.cinterop", "ObjCBlockVar").typeWith(valueType)
+        }
+    }
+
     class ByRef(val pointed: KotlinType) : TypeInfo() {
         override fun argToBridged(expr: String) = error(pointed)
-        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope) = error(pointed)
+        override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
+                error(pointed)
         override val bridgedType: BridgedType get() = error(pointed)
-        override fun cFromBridged(expr: String) = error(pointed)
+        override fun cFromBridged(expr: NativeExpression, scope: NativeScope, nativeBacked: NativeBacked) =
+                error(pointed)
         override fun cToBridged(expr: String) = error(pointed)
 
         // TODO: this method must not exist
@@ -327,7 +456,8 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
             is TypeMirror.ByValue -> TypeMirror.ByValue(
                     Classifier.topLevel(pkg, "${name}Var").type,
                     baseType.info,
-                    Classifier.topLevel(pkg, name).type
+                    Classifier.topLevel(pkg, name).type,
+                    nullable = baseType.nullable
             )
 
             is TypeMirror.ByRef -> TypeMirror.ByRef(Classifier.topLevel(pkg, name).type, baseType.info)
@@ -343,8 +473,7 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
 private fun objCPointerMirror(declarationMapper: DeclarationMapper, type: ObjCPointer): TypeMirror.ByValue {
     if (type is ObjCObjectPointer && type.def.name == "NSString") {
         val info = TypeInfo.NSString(type)
-        val valueType = KotlinTypes.string.makeNullableAsSpecified(type.isNullable)
-        return TypeMirror.ByValue(info.constructPointedType(valueType), info, valueType)
+        return objCMirror(KotlinTypes.string, info, type.isNullable)
     }
 
     val clazz = when (type) {
@@ -353,20 +482,34 @@ private fun objCPointerMirror(declarationMapper: DeclarationMapper, type: ObjCPo
         is ObjCClassPointer -> KotlinTypes.objCClass
         is ObjCObjectPointer -> declarationMapper.getKotlinClassFor(type.def)
         is ObjCInstanceType -> TODO(type.toString()) // Must have already been handled.
+        is ObjCBlockPointer -> return objCBlockPointerMirror(declarationMapper, type)
     }
 
-    return objCPointerMirror(clazz, type)
+    val valueType = clazz.type
+    return objCMirror(valueType, TypeInfo.ObjCPointerInfo(valueType, type), type.isNullable)
 }
 
-private fun objCPointerMirror(clazz: Classifier, type: ObjCPointer): TypeMirror.ByValue {
-    val kotlinType = clazz.type
-    val pointedType = KotlinTypes.objCObjectVar.typeWith(kotlinType.makeNullableAsSpecified(type.isNullable))
-    return TypeMirror.ByValue(
-            pointedType,
-            TypeInfo.ObjCPointerInfo(kotlinType, type),
-            kotlinType
+private fun objCBlockPointerMirror(declarationMapper: DeclarationMapper, type: ObjCBlockPointer): TypeMirror.ByValue {
+    val returnType = if (type.returnType.unwrapTypedefs() is VoidType) {
+        KotlinTypes.unit
+    } else {
+        mirror(declarationMapper, type.returnType).argType
+    }
+    val kotlinType = KotlinFunctionType(
+            type.parameterTypes.map { mirror(declarationMapper, it).argType },
+            returnType
     )
+
+    val info = TypeInfo.ObjCBlockPointerInfo(kotlinType, type)
+    return objCMirror(kotlinType, info, type.isNullable)
 }
+
+private fun objCMirror(valueType: KotlinType, info: TypeInfo, nullable: Boolean) = TypeMirror.ByValue(
+        info.constructPointedType(valueType.makeNullableAsSpecified(nullable)),
+        info,
+        valueType.makeNullable(), // All typedefs to Objective-C pointers would be nullable for simplicity
+        nullable
+)
 
 fun getKotlinFunctionType(declarationMapper: DeclarationMapper, type: FunctionType): KotlinFunctionType {
     val returnType = if (type.returnType.unwrapTypedefs() is VoidType) {
@@ -376,7 +519,8 @@ fun getKotlinFunctionType(declarationMapper: DeclarationMapper, type: FunctionTy
     }
     return KotlinFunctionType(
             type.parameterTypes.map { mirror(declarationMapper, it).argType },
-            returnType
+            returnType,
+            nullable = false
     )
 }
 

@@ -92,7 +92,7 @@ class ObjCMethodStub(stubGenerator: StubGenerator,
     private val bridgeHeader: String
 
     init {
-        val bodyGenerator = KotlinCodeBuilder()
+        val bodyGenerator = KotlinCodeBuilder(scope = stubGenerator.kotlinFile)
 
         val kotlinParameters = mutableListOf<Pair<String, KotlinType>>()
         val kotlinObjCBridgeParameters = mutableListOf<Pair<String, KotlinType>>()
@@ -215,7 +215,7 @@ class ObjCMethodStub(stubGenerator: StubGenerator,
 
     private fun genImplementationTemplate(stubGenerator: StubGenerator): String = when (container) {
         is ObjCClassOrProtocol -> {
-            val codeBuilder = NativeCodeBuilder()
+            val codeBuilder = NativeCodeBuilder(stubGenerator.simpleBridgeGenerator.topLevelNativeScope)
 
             val result = codeBuilder.genMethodImp(stubGenerator, this, method, container)
             stubGenerator.simpleBridgeGenerator.insertNativeBridge(this, emptyList(), codeBuilder.lines)
