@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -76,7 +75,7 @@ internal class DebugInfo internal constructor(override val context: Context):Con
  * File entry starts offsets from zero while dwarf number lines/column starting from 1.
  */
 private fun FileEntry.location(offset:Int, offsetToNumber:(Int) -> Int):Int {
-    return if (offset < 0) -1
+    return if (offset < 0) 0 // lldb uses 1-based unsigned integers, so 0 is "no-info"
     else offsetToNumber(offset) + 1
 }
 
