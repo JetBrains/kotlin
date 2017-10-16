@@ -71,10 +71,10 @@ public interface ErrorsJs {
             DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtValueArgument> WRONG_JS_QUALIFIER = DiagnosticFactory0.create(ERROR, PositioningStrategies.DEFAULT);
 
-    DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_NATIVE_INTERFACE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> UNCHECKED_CAST_TO_NATIVE_INTERFACE = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory1<PsiElement, KotlinType> NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> NATIVE_INTERFACE_AS_CLASS_LITERAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_EXTERNAL_INTERFACE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> UNCHECKED_CAST_TO_EXTERNAL_INTERFACE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory1<PsiElement, KotlinType> EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> EXTERNAL_INTERFACE_AS_CLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE = DiagnosticFactory0.create(
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
 
