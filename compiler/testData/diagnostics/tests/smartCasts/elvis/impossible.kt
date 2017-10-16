@@ -16,7 +16,7 @@ fun String.isEmpty() = this == ""
 fun foo(list: StringList, arg: Unstable) {
     list.remove(arg.first)
     if (arg.first?.isEmpty() ?: false) {
-        // Ideally should have smart cast impossible here
+        // Should be still resolved to extension, without smart cast or smart cast impossible
         list.remove(<!SMARTCAST_IMPOSSIBLE!>arg.first<!>)
     }
 }
@@ -34,7 +34,7 @@ fun BooleanList.remove(b: Boolean?) = b ?: false
 fun bar(list: BooleanList, arg: UnstableBoolean) {
     list.remove(arg.first)
     if (arg.first ?: false) {
-        // Ideally should have smart cast impossible here
+        // Should be still resolved to extension, without smart cast or smart cast impossible
         list.remove(<!SMARTCAST_IMPOSSIBLE!>arg.first<!>)
     }
 }

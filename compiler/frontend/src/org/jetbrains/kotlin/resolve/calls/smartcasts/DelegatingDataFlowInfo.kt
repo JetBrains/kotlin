@@ -97,6 +97,8 @@ internal class DelegatingDataFlowInfo private constructor(
             languageVersionSettings: LanguageVersionSettings,
             typeInfo: SetMultimap<DataFlowValue, KotlinType>? = null,
             affectReceiver: Boolean = true,
+            // TODO: remove me in version 1.3! I'm very dirty hack!
+            // In normal circumstances this should be always true
             recordUnstable: Boolean = true
     ): Boolean {
         if (value.isStable || recordUnstable) {
