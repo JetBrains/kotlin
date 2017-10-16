@@ -10,7 +10,8 @@
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "buildScan": "com.gradle.scan.plugin.internal.api.f"
+            "buildScan": "com.gradle.scan.plugin.internal.api.f",
+            "idea": "org.gradle.plugins.ide.idea.model.IdeaModel"
         }
     },
     ":allopen-ide-plugin": {
@@ -21,7 +22,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -50,46 +50,6 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":kotlin-android-extensions": {
-        "conventions": {
-            "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention",
-            "maven": "org.gradle.api.plugins.MavenPluginConvention"
-        },
-        "configurations": [
-            "apiElements",
-            "archives",
-            "buildVersion",
-            "compile",
-            "compileClasspath",
-            "compileOnly",
-            "default",
-            "implementation",
-            "kapt",
-            "kaptTest",
-            "runtime",
-            "runtimeClasspath",
-            "runtimeElements",
-            "runtimeJar",
-            "runtimeOnly",
-            "signatures",
-            "testCompile",
-            "testCompileClasspath",
-            "testCompileOnly",
-            "testImplementation",
-            "testRuntime",
-            "testRuntimeClasspath",
-            "testRuntimeOnly"
-        ],
-        "extensions": {
-            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
-            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
-            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension",
-            "signing": "org.gradle.plugins.signing.SigningExtension"
-        }
-    },
     ":android-lint": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -97,7 +57,6 @@
         },
         "configurations": [
             "archives",
-            "buildVersion",
             "default",
             "runtimeJar"
         ],
@@ -508,7 +467,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -538,6 +496,45 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
+    ":kotlin-android-extensions": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeJar",
+            "runtimeOnly",
+            "signatures",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
     ":kotlin-android-extensions-runtime": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -547,11 +544,11 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
             "default",
+            "distJar",
             "implementation",
             "kapt",
             "kaptTest",
@@ -586,7 +583,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -626,7 +622,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -658,6 +653,82 @@
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
+    ":kotlin-annotations-android": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "distJar",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeJar",
+            "runtimeOnly",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
+    ":kotlin-annotations-jvm": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "distJar",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "signatures",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
     ":kotlin-ant": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -666,7 +737,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -705,7 +775,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -787,7 +856,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -831,7 +899,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -868,7 +935,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -908,7 +974,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1106,7 +1171,6 @@
         },
         "configurations": [
             "archives",
-            "buildVersion",
             "default",
             "fatJarContents",
             "runtimeJar"
@@ -1165,7 +1229,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1203,7 +1266,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1285,7 +1347,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1402,7 +1463,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1483,7 +1543,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1523,7 +1582,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1643,6 +1701,84 @@
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
+    ":kotlin-stdlib-jdk7": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "distJar",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "signatures",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
+    ":kotlin-stdlib-jdk8": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "distJar",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "signatures",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
             "signing": "org.gradle.plugins.signing.SigningExtension"
@@ -1770,6 +1906,7 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "idea": "org.gradle.plugins.ide.idea.model.IdeaModel",
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
@@ -1792,7 +1929,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1851,7 +1987,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -1899,12 +2034,10 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
             "default",
-            "ideaCommunityPlugin",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2800,7 +2933,8 @@
     ":examples:annotation-processor-example": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
             "apiElements",
@@ -2843,6 +2977,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerClasspath",
             "default",
             "implementation",
             "kapt",
@@ -3263,7 +3398,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3678,6 +3812,42 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
+    ":kotlin-test:kotlin-test-annotations-common": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "distJar",
+            "implementation",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "signatures",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
     ":kotlin-test:kotlin-test-common": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -3728,6 +3898,7 @@
             "compileOnly",
             "default",
             "distJar",
+            "expectedBy",
             "implement",
             "implementation",
             "runtime",
@@ -3765,6 +3936,8 @@
             "compileOnly",
             "default",
             "distJar",
+            "expectedBy",
+            "implement",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3804,6 +3977,7 @@
             "compileOnly",
             "default",
             "distJar",
+            "expectedBy",
             "implement",
             "implementation",
             "kapt",
@@ -3838,7 +4012,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3876,7 +4049,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -3984,7 +4156,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -4174,7 +4345,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -4207,7 +4377,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -4239,7 +4408,6 @@
         },
         "configurations": [
             "archives",
-            "buildVersion",
             "default",
             "packedJars",
             "runtimeJar",
@@ -4259,7 +4427,6 @@
         "configurations": [
             "apiElements",
             "archives",
-            "buildVersion",
             "compile",
             "compileClasspath",
             "compileOnly",
@@ -4442,6 +4609,7 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "expectedBy",
             "implement",
             "implementation",
             "runtime",
