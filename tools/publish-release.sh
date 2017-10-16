@@ -54,6 +54,7 @@ REPO="https://github.com/JetBrains/kotlin-native.git"
 TREE_DIR=${PWD}
 BUNDLE_TAR="$TREE_DIR/kotlin-native-$OS-$VERSION.tar.gz"
 BUNDLE_DIR="$TREE_DIR/kotlin-native-$OS-$VERSION"
+WAIT_TIME=120
 
 
 # Build and test.
@@ -93,6 +94,7 @@ if [ "$UPLOAD" == "true" ]; then
     export BINTRAY_KEY
     ./gradlew :tools:kotlin-native-gradle-plugin:bintrayUpload -Poverride
 fi
+sleep 10 # Wait some time to ensure that the plugin can be downloaded on the following step.
 
 # 5. Build the bundle samples with the plugin
 stage "Building samples with gradle plugin and bundle compiler"
@@ -104,8 +106,10 @@ if [ "$UPLOAD" == "true" ]; then
     stage "Uploading the bundle to CDN: $BUNDLE_TAR -> ftp://upload.cds.intellij.net/kotlin/native/"
     curl --upload-file "$BUNDLE_TAR" "ftp://$CDN_USER:$CDN_PASS@upload.cds.intellij.net/kotlin/native/"
 fi
+echo "Wait ${WAIT_TIME} seconds to ensure that the bundle can be downloaded."
+sleep ${WAIT_TIME}
 
-# 7. Remove gradle.properties and build the bundle samples wiht gradle plugin.
+# 7. Remove gradle.properties and build the bundle samples with gradle plugin.
 stage "Building samples with gradle plugin and downloaded compiler"
 cd "$BUNDLE_DIR/samples"
 rm -rf gradle.properties

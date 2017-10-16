@@ -1,3 +1,6 @@
+## v0.3.4 (Oct 2017) ##
+  * Intermediate release
+
 ## v0.3.2 (Sep 2017) ##
   * Bug fixes
 
