@@ -22,11 +22,9 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 interface JKElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
+    fun <R: JKElement, D> transform(transformer: JKTransformer<D>, data: D): R
 
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
-
-    fun <E: JKElement, D> transform(transformer: JKTransformer<D>, data: D): E
-
     fun <D> transformChildren(transformer: JKTransformer<D>, data: D)
 }
 

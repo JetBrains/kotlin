@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 abstract class JKElementBase : JKElement {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
+    override fun <R : JKElement, D> transform(transformer: JKTransformer<D>, data: D): R = accept(transformer, data) as R
 
-    override fun <E : JKElement, D> transform(transformer: JKTransformer<D>, data: D): E = transformer.transformElement(this, data)
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {}
 }

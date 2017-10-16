@@ -30,6 +30,22 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import java.io.File
 
 
@@ -60,7 +76,7 @@ fun String.safeVarName() = when (this) {
     else -> this
 }
 
-fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceData>, visitorName: String, transformerName: String, visitorExtends: String? = null, transformerExtends: String? = null) {
+fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceData>, visitorName: String, transformerName: String) {
 
     val interfaceData = commonData + uncommonData
 
@@ -78,8 +94,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         appendln()
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
         appendln()
-        val extends = visitorExtends?.let { " : $it<out R, in D>" } ?: ""
-        appendln("interface $visitorName<out R, in D>$extends {")
+        appendln("interface $visitorName<out R, in D> {")
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
@@ -98,9 +113,8 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         appendln()
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
         appendln()
-        val extends = visitorExtends?.let { ", ${it}Void" } ?: ""
 
-        appendln("interface ${visitorName}Void : $visitorName<Unit, Nothing?>$extends {")
+        appendln("interface ${visitorName}Void : $visitorName<Unit, Nothing?> {")
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
@@ -120,18 +134,20 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         appendln()
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
         appendln()
-        val extends = transformerExtends?.let { " : $it<in D>" } ?: ""
 
-        appendln("interface $transformerName<in D>$extends {")
+        appendln("interface $transformerName<in D> : JKVisitor<JKElement, D> {")
 
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
-            val generifyCall = if (name != "JKElement") "= transform${ext!!.removePrefix("JK")}($argName, data)" else ""
 
             val leastCommonName = name.firstCommonInterfaceName()
+            val cast = "as $leastCommonName".takeIf { leastCommonName == name } ?: ""
+
+            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName, data) $cast" else ""
+
             """
-            |    fun <E: $leastCommonName> transform$nameWithoutPrefix($argName: $name, data: D): E $generifyCall
+            |    override fun visit$nameWithoutPrefix($argName: $name, data: D): $leastCommonName $generifyCall
             """.trimMargin()
         }
         appendln()
@@ -144,19 +160,21 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         appendln()
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
         appendln()
-        val extends = transformerExtends?.let { ", ${it}Void" } ?: ""
 
-        appendln("interface ${transformerName}Void : $transformerName<Nothing?>$extends {")
+
+        appendln("interface ${transformerName}Void : $transformerName<Nothing?> {")
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
             val arg = "$argName: $name"
-            val generifyCall = if (name != "JKElement") "= transform${ext!!.removePrefix("JK")}($argName, null)" else ""
 
             val leastCommonName = name.firstCommonInterfaceName()
+            val cast = "as $leastCommonName".takeIf { leastCommonName == name } ?: ""
+            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName) $cast" else ""
+
             """
-            |    fun <E: $leastCommonName> transform$nameWithoutPrefix($arg): E $generifyCall
-            |    override fun <E: $leastCommonName> transform$nameWithoutPrefix($arg, data: Nothing?): E = transform$nameWithoutPrefix($argName)
+            |    fun visit$nameWithoutPrefix($arg): $leastCommonName $generifyCall
+            |    override fun visit$nameWithoutPrefix($arg, data: Nothing?): $leastCommonName = visit$nameWithoutPrefix($argName)
             """.trimMargin()
         }
         appendln()
