@@ -20,7 +20,6 @@ import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.facet.implementingModules
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -129,6 +129,5 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
 
 fun Module.findJvmImplementationModule(): Module? {
     if (targetPlatform != TargetPlatformKind.Common) return null
-    val allDependentModules = ModuleManager.getInstance(project).getModuleDependentModules(this)
-    return allDependentModules.firstOrNull { it.targetPlatform is TargetPlatformKind.Jvm }
+    return implementingModules.firstOrNull { it.targetPlatform is TargetPlatformKind.Jvm }
 }

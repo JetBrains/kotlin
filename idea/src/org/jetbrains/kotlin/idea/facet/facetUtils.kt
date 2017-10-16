@@ -130,6 +130,14 @@ private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsPr
     }
 }
 
+val Module.implementingModules: List<Module>
+    get() = cached(CachedValueProvider {
+        CachedValueProvider.Result(
+                findImplementingModules(IdeModifiableModelsProviderImpl(project)),
+                ProjectRootModificationTracker.getInstance(project)
+        )
+    })
+
 private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): ModuleSourceInfo? =
         when (baseModuleSourceInfo) {
             is ModuleProductionSourceInfo -> productionSourceInfo()
