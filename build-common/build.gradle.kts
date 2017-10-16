@@ -12,7 +12,7 @@ dependencies {
     compileOnly(project(":js:js.frontend"))
     compileOnly(ideaSdkDeps("util"))
     testCompile(commonDep("junit:junit"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(protobufFull())
     testRuntime(projectDist(":kotlin-stdlib"))
     testRuntime(projectDist(":kotlin-reflect"))

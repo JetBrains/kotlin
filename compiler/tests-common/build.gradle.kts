@@ -1,6 +1,4 @@
 
-// Have to stay in the separate dir: attempt to move it to the source root dir lead to invalid import into IDEA
-
 apply { plugin("kotlin") }
 
 dependencies {
@@ -31,6 +29,6 @@ dependencies {
 }
 
 sourceSets {
-    "main" { java.srcDir("../compiler/tests-common") }
-    "test" {}
+    "main" { projectDefault() }
+    "test" { }
 }

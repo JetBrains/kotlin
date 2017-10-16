@@ -10,7 +10,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:plugin-api"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 }
 

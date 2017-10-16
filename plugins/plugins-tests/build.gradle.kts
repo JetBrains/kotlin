@@ -5,7 +5,7 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(project(":plugins:android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-ide"))
     testCompile(project(":kotlin-android-extensions-runtime"))
