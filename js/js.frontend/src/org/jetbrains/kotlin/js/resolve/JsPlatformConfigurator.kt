@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.resolve
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.OverloadFilter
@@ -56,11 +57,13 @@ object JsPlatformConfigurator : PlatformConfigurator(
         overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.DEFAULT
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
+        container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(JsTypeSpecificityComparator)
-        container.useInstance(JsNameClashChecker())
-        container.useInstance(JsNameCharsChecker())
+        container.useImpl<JsNameClashChecker>()
+        container.useImpl<JsNameCharsChecker>()
+        container.useImpl<JsBuiltinNameClashChecker>()
         container.useInstance(JsModuleClassLiteralChecker)
         container.useImpl<JsReflectionAPICallChecker>()
         container.useImpl<JsNativeRttiChecker>()

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class JsNameClashChecker : SimpleDeclarationChecker {
+class JsNameClashChecker(private val nameSuggestion: NameSuggestion) : SimpleDeclarationChecker {
     companion object {
         private val COMMON_DIAGNOSTICS = setOf(
                 Errors.REDECLARATION,
@@ -38,7 +38,6 @@ class JsNameClashChecker : SimpleDeclarationChecker {
                 Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION)
     }
 
-    private val nameSuggestion = NameSuggestion()
     private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
     private val clashedFakeOverrides = mutableMapOf<DeclarationDescriptor, Pair<DeclarationDescriptor, DeclarationDescriptor>>()
     private val clashedDescriptors = mutableSetOf<Pair<DeclarationDescriptor, String>>()

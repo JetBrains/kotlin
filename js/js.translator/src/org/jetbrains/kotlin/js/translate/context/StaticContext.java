@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsBuiltinNameClashChecker;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
@@ -145,6 +147,11 @@ public final class StaticContext {
     private final SourceFilePathResolver sourceFilePathResolver;
 
     private final boolean isStdlib;
+
+    private static final Set<String> BUILTIN_JS_PROPERTIES = Sets.union(
+            JsBuiltinNameClashChecker.PROHIBITED_MEMBER_NAMES,
+            JsBuiltinNameClashChecker.PROHIBITED_STATIC_NAMES
+    );
 
     public StaticContext(
             @NotNull BindingTrace bindingTrace,
@@ -615,7 +622,6 @@ public final class StaticContext {
     }
 
     private final class ScopeGenerator extends Generator<JsScope> {
-
         public ScopeGenerator() {
             Rule<JsScope> generateNewScopesForClassesWithNoAncestors = descriptor -> {
                 if (!(descriptor instanceof ClassDescriptor)) {
@@ -623,6 +629,9 @@ public final class StaticContext {
                 }
                 if (getSuperclass((ClassDescriptor) descriptor) == null) {
                     JsFunction function = new JsFunction(new JsRootScope(program), new JsBlock(), descriptor.toString());
+                    for (String builtinName : BUILTIN_JS_PROPERTIES) {
+                        function.getScope().declareName(builtinName);
+                    }
                     scopeToFunction.put(function.getScope(), function);
                     return function.getScope();
                 }

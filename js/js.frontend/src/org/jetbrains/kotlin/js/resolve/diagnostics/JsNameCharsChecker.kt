@@ -41,9 +41,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 
-class JsNameCharsChecker() : SimpleDeclarationChecker {
-    val suggestion = NameSuggestion()
-
+class JsNameCharsChecker(private val suggestion: NameSuggestion) : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration, descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
