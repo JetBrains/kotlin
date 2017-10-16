@@ -48,6 +48,8 @@ fun Properties.propertyString(key: String, suffix: String? = null): String?
  */
 fun Properties.propertyList(key: String, suffix: String? = null): List<String> {
     val value = this.getProperty(key.suffix(suffix)) ?: this.getProperty(key)
+    if (value?.isBlank() == true) return emptyList()
+
     return value?.split(' ') ?: emptyList()
 }
 
