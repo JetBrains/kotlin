@@ -1,0 +1,10 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration IOKit ImageIO Security libkern osx posix
+language = Objective-C
+package = platform.ApplicationServices
+headers = ApplicationServices/ApplicationServices.h
+
+headerFilter = ApplicationServices/** ATS/** ColorSync/** HIServices/** \
+    LangAnalysis/** PrintCore/** QD/** SpeechSynthesis/**
+
+compilerOpts = -framework ApplicationServices
+linkerOpts = -framework ApplicationServices

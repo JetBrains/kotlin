@@ -1,0 +1,9 @@
+depends = CoreFoundation libkern osx posix
+language = Objective-C
+package = platform.IOKit
+headers = IOKit/IOKitLib.h IOKit/hidsystem/IOLLEvent.h
+
+headerFilter = IOKit/**
+
+compilerOpts = -framework IOKit
+linkerOpts = -framework IOKit

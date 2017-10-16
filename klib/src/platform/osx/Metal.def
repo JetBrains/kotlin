@@ -1,0 +1,9 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit IOSurface ImageIO Security libkern osx posix
+language = Objective-C
+package = platform.Metal
+headers = Metal/Metal.h
+
+headerFilter = Metal/**
+
+compilerOpts = -framework Metal
+linkerOpts = -framework Metal

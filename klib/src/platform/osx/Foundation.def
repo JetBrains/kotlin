@@ -1,0 +1,9 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration IOKit ImageIO Security libkern osx posix
+language = Objective-C
+package = platform.Foundation
+headers = Foundation/Foundation.h
+
+headerFilter = Foundation/**
+
+compilerOpts = -framework Foundation
+linkerOpts = -framework Foundation

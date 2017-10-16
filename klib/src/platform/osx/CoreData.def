@@ -1,0 +1,9 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security libkern osx posix
+language = Objective-C
+package = platform.CoreData
+headers = CoreData/CoreData.h
+
+headerFilter = CoreData/**
+
+compilerOpts = -framework CoreData
+linkerOpts = -framework CoreData

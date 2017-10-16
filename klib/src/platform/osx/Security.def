@@ -1,0 +1,9 @@
+depends = CoreFoundation osx posix
+language = Objective-C
+package = platform.Security
+headers = Security/Security.h Security/SecurityFeatures.h Security/SecureTransport.h
+
+headerFilter = Security/**
+
+compilerOpts = -framework Security
+linkerOpts = -framework Security

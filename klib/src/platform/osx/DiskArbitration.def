@@ -1,0 +1,9 @@
+depends = CoreFoundation IOKit libkern osx posix
+language = Objective-C
+package = platform.DiskArbitration
+headers = DiskArbitration/DiskArbitration.h
+
+headerFilter = DiskArbitration/**
+
+compilerOpts = -framework DiskArbitration
+linkerOpts = -framework DiskArbitration
