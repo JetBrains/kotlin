@@ -47,11 +47,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import java.util.*
 
-class ParameterNameAndTypeCompletion(
+class VariableOrParameterNameWithTypeCompletion(
         private val collector: LookupElementsCollector,
         private val lookupElementFactory: BasicLookupElementFactory,
         private val prefixMatcher: PrefixMatcher,
-        private val resolutionFacade: ResolutionFacade
+        private val resolutionFacade: ResolutionFacade,
+        private val withType: Boolean
 ) {
     private val userPrefixes: List<String>
     private val classNamePrefixMatchers: List<PrefixMatcher>
@@ -114,7 +115,7 @@ class ParameterNameAndTypeCompletion(
                 if (descriptor != null) {
                     val parameterType = descriptor.type
                     if (parameterType.isVisible(visibilityFilter)) {
-                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), lookupElementFactory)!!
+                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), withType, lookupElementFactory)!!
                         val count = lookupElementToCount[lookupElement] ?: 0
                         lookupElementToCount[lookupElement] = count + 1
                     }
@@ -144,7 +145,7 @@ class ParameterNameAndTypeCompletion(
         for (name in nameSuggestions) {
             val parameterName = userPrefix + name
             if (prefixMatcher.isStartMatch(parameterName)) {
-                val lookupElement = MyLookupElement.create(parameterName, type, lookupElementFactory)
+                val lookupElement = MyLookupElement.create(parameterName, type, withType, lookupElementFactory)
                 if (lookupElement != null) {
                     lookupElement.putUserData(PRIORITY_KEY, userPrefix.length) // suggestions with longer user prefix get lower priority
                     collector.addElement(lookupElement, notImported)
@@ -185,13 +186,14 @@ class ParameterNameAndTypeCompletion(
     private class MyLookupElement private constructor(
             private val parameterName: String,
             private val type: Type,
-            typeLookupElement: LookupElement
+            typeLookupElement: LookupElement,
+            private val shouldInsertType: Boolean
     ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
 
         companion object {
-            fun create(parameterName: String, type: Type, factory: BasicLookupElementFactory): LookupElement? {
+            fun create(parameterName: String, type: Type, shouldInsertType: Boolean, factory: BasicLookupElementFactory): LookupElement? {
                 val typeLookupElement = type.createTypeLookupElement(factory) ?: return null
-                val lookupElement = MyLookupElement(parameterName, type, typeLookupElement)
+                val lookupElement = MyLookupElement(parameterName, type, typeLookupElement, shouldInsertType)
                 return lookupElement.suppressAutoInsertion()
             }
         }
@@ -204,7 +206,13 @@ class ParameterNameAndTypeCompletion(
 
         override fun renderElement(presentation: LookupElementPresentation) {
             super.renderElement(presentation)
-            presentation.itemText = parameterName + ": " + presentation.itemText
+            if (shouldInsertType) {
+                presentation.itemText = parameterName + ": " + presentation.itemText
+            }
+            else {
+                presentation.prependTailText(": " + presentation.itemText, true)
+                presentation.itemText = parameterName
+            }
         }
 
         override fun handleInsert(context: InsertionContext) {
@@ -227,18 +235,26 @@ class ParameterNameAndTypeCompletion(
             val settings = CodeStyleSettingsManager.getInstance(context.project).currentSettings.getCustomSettings(KotlinCodeStyleSettings::class.java)
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
-            val text = parameterName + spaceBefore + ":" + spaceAfter
+
             val startOffset = context.startOffset
-            context.document.insertString(startOffset, text)
+            if (shouldInsertType) {
+                val text = parameterName + spaceBefore + ":" + spaceAfter
+                context.document.insertString(startOffset, text)
 
-            // update start offset so that it does not include the text we inserted
-            context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, startOffset + text.length)
+                // update start offset so that it does not include the text we inserted
+                context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, startOffset + text.length)
 
-            super.handleInsert(context)
+                super.handleInsert(context)
+            }
+            else {
+                context.document.replaceString(startOffset, context.tailOffset, parameterName)
+
+                context.commitDocument()
+            }
         }
 
         override fun equals(other: Any?)
-                = other is MyLookupElement && parameterName == other.parameterName && type == other.type
+                = other is MyLookupElement && parameterName == other.parameterName && type == other.type && shouldInsertType == other.shouldInsertType
         override fun hashCode() = parameterName.hashCode()
     }
 
