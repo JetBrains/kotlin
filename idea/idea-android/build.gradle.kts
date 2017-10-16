@@ -18,7 +18,7 @@ dependencies {
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm"))

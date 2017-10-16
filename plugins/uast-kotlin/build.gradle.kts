@@ -10,7 +10,7 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compileOnly(ideaSdkDeps("openapi", "idea"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))

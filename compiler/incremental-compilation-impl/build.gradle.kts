@@ -11,7 +11,7 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(project(":kotlin-build-common"))
     testCompile(commonDep("junit:junit"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(projectDist(":kotlin-stdlib"))
     testCompile(projectTests(":kotlin-build-common"))

@@ -18,7 +18,7 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
 
     testCompile(projectTests(":idea"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework"))
     testCompileOnly(ideaSdkDeps("openapi", "idea", "gson"))
     testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))

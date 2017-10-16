@@ -41,7 +41,7 @@ dependencies {
     compile(preloadedDeps("markdown", "kotlinx-coroutines-core"))
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(project(":compiler.tests-common"))
+    testCompile(project(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
