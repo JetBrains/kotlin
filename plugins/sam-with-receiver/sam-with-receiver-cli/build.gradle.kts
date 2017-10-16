@@ -9,11 +9,19 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     runtime(projectRuntimeJar(":kotlin-compiler"))
     runtime(projectDist(":kotlin-stdlib"))
+    runtime(projectDist(":kotlin-reflect"))
+
+    testCompile(project(":compiler:backend"))
+    testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:tests-common"))
+    testCompile(projectTests(":compiler:tests-common"))
+    testCompile(commonDep("junit:junit"))
+    testRuntime(ideaSdkDeps("*.jar"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
 
 val jar = runtimeJar {
@@ -21,6 +29,7 @@ val jar = runtimeJar {
 }
 sourcesJar()
 javadocJar()
+testsJar {}
 
 publish()
 
@@ -33,3 +42,6 @@ ideaPlugin {
     rename("^kotlin-", "")
 }
 
+projectTest {
+    workingDir = rootDir
+}
