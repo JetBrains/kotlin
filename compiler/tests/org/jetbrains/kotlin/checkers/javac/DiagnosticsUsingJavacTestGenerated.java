@@ -10228,6 +10228,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("expectedTypeDoubleReceiver.kt")
+            public void testExpectedTypeDoubleReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeDoubleReceiver.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("expectedTypeFromCast.kt")
             public void testExpectedTypeFromCast() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/expectedTypeFromCast.kt");
