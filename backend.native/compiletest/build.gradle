@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile project(path: ':backend.native', configuration: 'cli_bc')
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+    testLogging { exceptionFormat = 'full' }
+
+    def dist = project.rootProject.file("dist").canonicalPath
+    systemProperties = [
+            'konan.home': dist,
+            'java.library.path': "$dist/konan/nativelib"
+    ]
+}
+test.dependsOn ':dist'
