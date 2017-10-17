@@ -56,11 +56,11 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") != null)
     }
 
-    fun testKotlincExistsNoSettingsRuntime11() {
+    fun testKotlincExistsNoSettingsLatestRuntime() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.doNotSave(false)
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_1, myProject.getLanguageVersionSettings(null).languageVersion)
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_1, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
