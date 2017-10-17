@@ -75,7 +75,14 @@ private fun KotlinType.renderSingle(typeParameterNameMap: Map<TypeParameterDescr
                     override fun getTypeConstructor() = wrappingTypeConstructor
                 }
 
-                val wrappingType = KotlinTypeFactory.simpleType(typeParameter.defaultType, constructor = wrappingTypeConstructor)
+                val defaultType = typeParameter.defaultType
+                val wrappingType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+                        defaultType.annotations,
+                        wrappingTypeConstructor,
+                        defaultType.arguments,
+                        defaultType.isMarkedNullable,
+                        defaultType.memberScope
+                )
                 TypeProjectionImpl(wrappingType)
             }
             .mapKeys { it.key.typeConstructor }
