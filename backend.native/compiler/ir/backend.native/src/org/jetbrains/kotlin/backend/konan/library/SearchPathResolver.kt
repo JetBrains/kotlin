@@ -49,7 +49,7 @@ fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
                                                  removeDuplicates: Boolean = true): List<LibraryReaderImpl> {
 
     val defaultLibraries = defaultLinks(nostdlib = noStdLib, noDefaultLibs = noDefaultLibs).map {
-        LibraryReaderImpl(it, abiVersion, target, isDefaultLink = true)
+        LibraryReaderImpl(it, abiVersion, target)
     }
 
     val userProvidedLibraries = libraryNames
@@ -65,33 +65,40 @@ fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
 
 fun SearchPathResolver.resolveLibrariesRecursive(immediateLibraries: List<LibraryReaderImpl>,
                                                  target: KonanTarget,
-                                                 abiVersion: Int): List<LibraryReaderImpl> {
-    val result = mutableMapOf<File, LibraryReaderImpl>()
-    result.putAll(immediateLibraries.map { it.libraryFile.absoluteFile to it })
-    var newDependencies: Map<File, LibraryReaderImpl> = result
+                                                 abiVersion: Int) {
+    val cache = mutableMapOf<File, LibraryReaderImpl>()
+    cache.putAll(immediateLibraries.map { it.libraryFile.absoluteFile to it })
+    var newDependencies = cache.values.toList()
     do {
-        val defaultOverrides = mutableSetOf<File>()
-        newDependencies = newDependencies.values.asSequence()
-                .flatMap { it.dependencies.asSequence() }
-                .map { resolve(it).absoluteFile }
-                .onEach {
-                    if (result[it]?.isDefaultLink == true) {
-                        defaultOverrides.add(it)
-                    }
-                }
-                .filter { it !in result }
-                .map { it to LibraryReaderImpl(it, abiVersion, target) }.toMap()
-
-        result.putAll(newDependencies)
-
-        // If there is a default link in immediateLibraries,
-        // and we get the same library as a dependency,
-        // the resultant surviving library should not be a defaultLink anymore.
-        defaultOverrides.forEach {
-            result[it] = LibraryReaderImpl(it, abiVersion, target)
-        }
+        newDependencies = newDependencies.map { library: LibraryReaderImpl ->
+            library.unresolvedDependencies
+                    .map { resolve(it).absoluteFile }
+                    .map { 
+                        if (it in cache) {
+                            library.resolvedDependencies.add(cache[it]!!)
+                            null
+                        } else {
+                            val reader = LibraryReaderImpl(it, abiVersion, target)
+                            cache.put(it,reader)
+                            library.resolvedDependencies.add(reader) 
+                            reader
+                        }
+            }.filterNotNull()
+        } .flatten()
     } while (newDependencies.isNotEmpty())
-    return result.values.toList()
+}
+
+fun List<LibraryReaderImpl>.withResolvedDependencies(): List<LibraryReaderImpl> {
+    val result = mutableSetOf<LibraryReaderImpl>()
+    result.addAll(this)
+    var newDependencies = result.toList()
+    do {
+        newDependencies = newDependencies
+            .map { it -> it.resolvedDependencies } .flatten()
+            .filter { it !in result }
+        result.addAll(newDependencies)
+    } while (newDependencies.isNotEmpty())
+    return result.toList()
 }
 
 fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
@@ -99,17 +106,16 @@ fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
                                                  abiVersion: Int = 1,
                                                  noStdLib: Boolean = false,
                                                  noDefaultLibs: Boolean = false): List<LibraryReaderImpl> {
-    return resolveLibrariesRecursive(
-            resolveImmediateLibraries(
+    val immediateLibraries = resolveImmediateLibraries(
                     libraryNames = libraryNames,
                     target = target,
                     abiVersion = abiVersion,
                     noStdLib = noStdLib,
                     noDefaultLibs = noDefaultLibs,
                     removeDuplicates = true
-            ),
-            target, abiVersion
-    )
+            )
+    resolveLibrariesRecursive(immediateLibraries, target, abiVersion)
+    return immediateLibraries.withResolvedDependencies()
 }
 
 class KonanLibrarySearchPathResolver(

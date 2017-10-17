@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.konan
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
 import org.jetbrains.kotlin.backend.konan.library.*
-import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
+import org.jetbrains.kotlin.backend.konan.library.impl.*
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
@@ -92,8 +92,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
-    val libraries: List<LibraryReaderImpl> by lazy {
+    // Accessing this field before resolve is a bad idea.
+    // purgeUnneeded() only works correctly after we have
+    // completed resolve and successfully marked package files
+    // as needed or not needed.
+    val librariesWithDependencies: List<KonanLibraryReader> by lazy {
         resolver.resolveLibrariesRecursive(immediateLibraries, targetManager.target, currentAbiVersion)
+        immediateLibraries.purgeUnneeded().withResolvedDependencies()
     }
 
     private val loadedDescriptors = loadLibMetadata()
@@ -109,6 +114,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         val allMetadata = mutableListOf<ModuleDescriptorImpl>()
         val specifics = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
 
+        val libraries = immediateLibraries.withResolvedDependencies()
         for (klib in libraries) {
             profile("Loading ${klib.libraryName}") {
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.

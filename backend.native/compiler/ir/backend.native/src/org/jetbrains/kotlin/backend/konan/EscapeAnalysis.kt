@@ -1297,7 +1297,7 @@ internal object EscapeAnalysis {
         val isStdlib = context.config.configuration[KonanConfigKeys.NOSTDLIB] == true
 
         val externalFunctionEAResults = mutableMapOf<String, FunctionEscapeAnalysisResult>()
-        context.config.libraries.forEach { library ->
+        context.config.librariesWithDependencies.forEach { library ->
             val libraryEscapeAnalysis = library.escapeAnalysis
             if (libraryEscapeAnalysis != null) {
                 DEBUG_OUTPUT(0) {

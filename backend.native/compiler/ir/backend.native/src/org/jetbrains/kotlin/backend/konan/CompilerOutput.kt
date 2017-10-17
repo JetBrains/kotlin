@@ -49,7 +49,7 @@ internal fun produceOutput(context: Context) {
             val output = context.config.outputName
             val libraryName = context.config.moduleId
             val neededLibraries 
-                = context.config.immediateLibraries.purgeUnneeded()
+                = context.config.librariesWithDependencies
             val abiVersion = context.config.currentAbiVersion
             val target = context.config.targetManager.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
@@ -80,8 +80,4 @@ internal fun produceOutput(context: Context) {
     }
 }
 
-internal fun List<KonanLibraryReader>.purgeUnneeded(): List<KonanLibraryReader> {
-        return this.map { 
-            if (!it.isNeededForLink && it.isDefaultLink) null else it
-        }.filterNotNull()
-}
+
