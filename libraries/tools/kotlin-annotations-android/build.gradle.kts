@@ -22,3 +22,5 @@ sourceSets {
 
 runtimeJar()
 dist()
+
+publish()
