@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.kapt3.AptMode.*
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -271,7 +272,7 @@ abstract class AbstractKapt3Extension(
         for (stub in stubs) {
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
-            val packageName = stub.packageName?.toString() ?: ""
+            val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
             val packageDir = if (packageName.isEmpty()) stubsOutputDir else File(stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
             File(packageDir, className + ".java").writeText(stub.toString())

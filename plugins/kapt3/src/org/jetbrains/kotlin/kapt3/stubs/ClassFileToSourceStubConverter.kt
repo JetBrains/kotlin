@@ -120,8 +120,9 @@ class ClassFileToSourceStubConverter(
                 JavacList.nil(),
                 JavacList.nil())
 
-        val topLevel = treeMaker.TopLevel(JavacList.nil(), treeMaker.SimpleName("error"), JavacList.of(nonExistentClass))
-        topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass, fileManager)
+        val topLevel = treeMaker.TopLevelJava9Aware(treeMaker.SimpleName("error"), JavacList.of(nonExistentClass))
+
+        topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass)
 
         // We basically don't need to add binding for NonExistentClass
         return topLevel
@@ -135,7 +136,6 @@ class ClassFileToSourceStubConverter(
         // Nested classes will be processed during the outer classes conversion
         if ((descriptor as? ClassDescriptor)?.isNested ?: false) return null
 
-        val packageAnnotations = JavacList.nil<JCAnnotation>()
         val packageName = ktFile.packageFqName.asString()
         val packageClause = if (packageName.isEmpty()) null else treeMaker.FqName(packageName)
 
@@ -144,9 +144,9 @@ class ClassFileToSourceStubConverter(
         val imports = if (correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
         val classes = JavacList.of<JCTree>(classDeclaration)
 
-        val topLevel = treeMaker.TopLevel(packageAnnotations, packageClause, imports + classes)
+        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
 
-        KaptJavaFileObject(topLevel, classDeclaration, fileManager).apply {
+        KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
             _bindings[clazz.name] = this
         }
