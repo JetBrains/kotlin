@@ -46,6 +46,7 @@ class KotlinProjectDescriptorWithFacet(
 
     companion object {
         val KOTLIN_10 = KotlinProjectDescriptorWithFacet(LanguageVersion.KOTLIN_1_0)
+        val KOTLIN_11 = KotlinProjectDescriptorWithFacet(LanguageVersion.KOTLIN_1_1)
         val KOTLIN_STABLE_WITH_MULTIPLATFORM = KotlinProjectDescriptorWithFacet(LanguageVersion.LATEST_STABLE, multiPlatform = true)
     }
 }
