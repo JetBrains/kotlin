@@ -40,8 +40,8 @@ apply plugin: 'application'
 apply plugin: 'konan'
 
 konanArtifacts {
-    Ring {
-        enableOptimization()
+    program('Ring') {
+        enableOptimizations true
     }
 }
 
