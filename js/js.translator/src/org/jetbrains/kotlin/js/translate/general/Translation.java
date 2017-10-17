@@ -102,7 +102,9 @@ public final class Translation {
         if (compileTimeValue != null) {
             KotlinType type = context.bindingContext().getType(expression);
             if (type != null) {
-                if (KotlinBuiltIns.isLong(type) || (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression)) {
+                if ((KotlinBuiltIns.isLong(type) && !compileTimeValue.getUsesNonConstValAsConstant()) ||
+                    (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression))
+                {
                     JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
                     if (constantResult != null) return constantResult.source(expression);
                 }
