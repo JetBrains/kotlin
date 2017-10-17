@@ -7411,6 +7411,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("compareTwoDifferentEnums.kt")
+            public void testCompareTwoDifferentEnums() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/compareTwoDifferentEnums.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ConstructorCallFromOutside.kt")
             public void testConstructorCallFromOutside() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/ConstructorCallFromOutside.kt");
