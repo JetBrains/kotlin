@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
-class JKJavaFieldImpl(override var type: JKTypeIdentifier,
+class JKJavaFieldImpl(override var modifierList: JKModifierList,
+                      override var type: JKTypeIdentifier,
                       override var name: JKNameIdentifier,
                       override var initializer: JKExpression?) : JKJavaField, JKElementBase() {
 

@@ -25,3 +25,11 @@ interface JKKtPrimaryConstructor : JKKtConstructor
 interface JKKtAssignmentStatement : JKStatement
 
 interface JKKtCall : JKCall
+
+interface JKKtProperty : JKDeclaration, JKModifierListOwner {
+    var type: JKTypeIdentifier
+    var name: JKNameIdentifier
+    var initializer: JKExpression?
+    var getter: JKBlock?
+    var setter: JKBlock?
+}

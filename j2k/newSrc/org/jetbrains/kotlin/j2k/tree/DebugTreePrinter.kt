@@ -30,6 +30,10 @@ private class DebugTreePrinter : JKVisitorVoid {
         }
         printer.println("]")
     }
+
+    override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier) {
+        printer.println(javaAccessModifier.classNameWithoutJK(), "(", javaAccessModifier.type, ")")
+    }
 }
 
 private fun Any.classNameWithoutJK(): String = this.javaClass.simpleName.removePrefix("JK")

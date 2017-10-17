@@ -32,13 +32,20 @@ abstract class JKElementBase : JKElement {
 
 
 class JKClassImpl(override var modifierList: JKModifierList, override var name: JKNameIdentifier) : JKClass, JKElementBase() {
+    override var declarations: List<JKDeclaration> = mutableListOf()
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         (listOf(modifierList, name) + declarations).forEach { it.accept(visitor, data) }
     }
 
-    override val declarations = mutableListOf<JKDeclaration>()
+    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
+        modifierList = modifierList.transform(transformer, data)
+        name = name.transform(transformer, data)
+        declarations = declarations.map { it.transform<JKDeclaration, D>(transformer, data) }
+    }
+
 }
 
 

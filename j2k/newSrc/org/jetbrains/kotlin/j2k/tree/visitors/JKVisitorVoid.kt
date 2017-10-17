@@ -59,4 +59,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: Nothing?) = visitKtAssignmentStatement(ktAssignmentStatement)
     fun visitKtCall(ktCall: JKKtCall) = visitCall(ktCall, null)
     override fun visitKtCall(ktCall: JKKtCall, data: Nothing?) = visitKtCall(ktCall)
+    fun visitKtProperty(ktProperty: JKKtProperty) = visitDeclaration(ktProperty, null)
+    override fun visitKtProperty(ktProperty: JKKtProperty, data: Nothing?) = visitKtProperty(ktProperty)
 }
