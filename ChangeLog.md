@@ -38,7 +38,6 @@
 - [`KT-20163`](https://youtrack.jetbrains.com/issue/KT-20163) multiplatform: it should be possible to create an implementation for overloaded method if for one method implementation is present already
 - [`KT-20243`](https://youtrack.jetbrains.com/issue/KT-20243) multiplatform: quick fix Create header interface implementation should add impl keyword at interface members
 - [`KT-20325`](https://youtrack.jetbrains.com/issue/KT-20325) multiplatform: Quick fix Create actual ... should specify correct classifier name for object, enum class and annotation class
-- [`KT-20217`](https://youtrack.jetbrains.com/issue/KT-20217) gradle + kotlin projects: don't create java source roots
 - [`KT-20618`](https://youtrack.jetbrains.com/issue/KT-20618) Rename “implement” to “expectedBy” in gradle module dependency
 - [`KT-20634`](https://youtrack.jetbrains.com/issue/KT-20634) Platform project project ‘:js’ implements non-common project project ‘:shared’
 
@@ -71,6 +70,7 @@
 
 #### Fixes
 
+- [`KT-16926`](https://youtrack.jetbrains.com/issue/KT-16926) 'implement' dependency is not transitive when importing gradle project to IDEA
 - [`KT-17369`](https://youtrack.jetbrains.com/issue/KT-17369) Remove allImplementingModules from module descriptor
 - [`KT-19207`](https://youtrack.jetbrains.com/issue/KT-19207) "Configure Kotlin in project" should add "requires kotlin.stdlib" to module-info for Java 9 modules
 - [`KT-19213`](https://youtrack.jetbrains.com/issue/KT-19213) Formatter/Code Style: space between type parameters and `where` is not inserted
@@ -141,6 +141,7 @@
 ### Tools. Gradle
 
 - [`KT-20553`](https://youtrack.jetbrains.com/issue/KT-20553) Rename warningsAsErrors compiler option in gradle
+- [`KT-20217`](https://youtrack.jetbrains.com/issue/KT-20217) gradle + kotlin projects: don't create java source roots
 
 ### Tools. Incremental Compile
 
