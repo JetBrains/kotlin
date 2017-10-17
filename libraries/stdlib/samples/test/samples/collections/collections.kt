@@ -23,13 +23,236 @@ import kotlin.test.*
 @RunWith(Enclosed::class)
 class Collections {
 
+    class Collections {
+
+        @Sample
+        fun indicesOfCollection() {
+            val empty = emptyList<Any>()
+            assertTrue(empty.indices.isEmpty())
+            val collection = listOf('a', 'b', 'c')
+            assertPrints(collection.indices, "0..2")
+        }
+
+        @Sample
+        fun collectionIsNotEmpty() {
+            val empty = emptyList<Any>()
+            assertFalse(empty.isNotEmpty())
+
+            val collection = listOf('a', 'b', 'c')
+            assertTrue(collection.isNotEmpty())
+        }
+
+        @Sample
+        fun collectionOrEmpty() {
+            val nullCollection: Collection<Any>? = null
+            assertPrints(nullCollection.orEmpty(), "[]")
+
+            val collection: Collection<Char>? = listOf('a', 'b', 'c')
+            assertPrints(collection.orEmpty(), "[a, b, c]")
+        }
+
+        @Sample
+        fun collectionContainsAll() {
+            val collection = mutableListOf('a', 'b')
+            val test = listOf('a', 'b', 'c')
+            assertFalse(collection.containsAll(test))
+
+            collection.add('c')
+            assertTrue(collection.containsAll(test))
+        }
+
+        @Sample
+        fun collectionToTypedArray() {
+            val collection = listOf(1, 2, 3)
+            val array = collection.toTypedArray()
+            assertPrints(array.contentToString(), "[1, 2, 3]")
+        }
+    }
+
     class Lists {
+
+        @Sample
+        fun emptyReadOnlyList() {
+            val list = emptyList<Int>()
+            assertTrue(list.isEmpty())
+
+            val other = listOf<String>()
+            assertTrue(list == other, "Empty lists are equal")
+
+            assertPrints(list, "[]")
+            assertFails { list[0] }
+        }
+
+        @Sample
+        fun readOnlyList() {
+            val list = listOf('a', 'b', 'c')
+            assertPrints(list.count(), "3")
+            assertTrue(list.contains('a'))
+            assertPrints(list.indexOf('b'), "1")
+            assertPrints(list[2], "c")
+        }
+
+        @Sample
+        fun singletonReadOnlyList() {
+            val list = listOf('a')
+            assertPrints(list, "[a]")
+            assertPrints(list.count(), "1")
+        }
+
+        @Sample
+        fun emptyMutableList() {
+            val list = mutableListOf<Int>()
+            assertTrue(list.isEmpty())
+
+            list.addAll(listOf(1, 2, 3))
+            assertPrints(list, "[1, 2, 3]")
+        }
+
+        @Sample
+        fun emptyArrayList() {
+            val list = arrayListOf<Int>()
+            assertTrue(list.isEmpty())
+
+            list.addAll(listOf(1, 2, 3))
+            assertPrints(list, "[1, 2, 3]")
+        }
+
+        @Sample
+        fun mutableList() {
+            val list = mutableListOf(1, 2, 3)
+            assertPrints(list, "[1, 2, 3]")
+
+            list.addAll(listOf(4, 5))
+            assertPrints(list, "[1, 2, 3, 4, 5]")
+        }
+
+        @Sample
+        fun arrayList() {
+            val list = arrayListOf(1, 2, 3)
+            assertPrints(list, "[1, 2, 3]")
+
+            list.addAll(listOf(4, 5))
+            assertPrints(list, "[1, 2, 3, 4, 5]")
+        }
+
+        @Sample
+        fun singletonListOfNotNull() {
+            val empty = listOfNotNull<Any>(null)
+            assertPrints(empty, "[]")
+
+            val singleton = listOfNotNull(42)
+            assertPrints(singleton, "[42]")
+        }
+
+        @Sample
+        fun listOfNotNull() {
+            val empty = listOfNotNull<Any>(null)
+            assertPrints(empty, "[]")
+
+            val list = listOfNotNull(1, null, 2, null, 3)
+            assertPrints(list, "[1, 2, 3]")
+        }
+
+        @Sample
+        fun readOnlyListFromInitializer() {
+            val empty = List(0) {}
+            assertPrints(empty, "[]")
+
+            val squares = List(5) { (it + 1) * (it + 1) }
+            assertPrints(squares, "[1, 4, 9, 16, 25]")
+        }
+
+        @Sample
+        fun mutableListFromInitializer() {
+            val chars = listOf('a', 'b', 'c', 'd')
+
+            val list = MutableList(3) { chars[it] }
+            assertPrints(list, "[a, b, c]")
+
+            list.add(chars[3])
+            assertTrue(list == chars)
+        }
+
         @Sample
         fun lastIndexOfList() {
             assertPrints(emptyList<Any>().lastIndex, "-1")
             val list = listOf("a", "x", "y")
             assertPrints(list.lastIndex, "2")
             assertPrints(list[list.lastIndex], "y")
+        }
+
+        @Sample
+        fun listOrEmpty() {
+            val nullList: List<Any>? = null
+            assertPrints(nullList.orEmpty(), "[]")
+
+            val list: List<Char>? = listOf('a', 'b', 'c')
+            assertPrints(list.orEmpty(), "[a, b, c]")
+        }
+
+        @Sample
+        fun enumerationToList() {
+            val numbers = java.util.Hashtable<String, Int>()
+            numbers.put("one", 1)
+            numbers.put("two", 2)
+            numbers.put("three", 3)
+
+            val enumeration = numbers.elements()
+            val list = enumeration.toList().sorted()
+            assertPrints(list, "[1, 2, 3]")
+        }
+
+        @Sample
+        fun binarySearchOnComparable() {
+            val list = mutableListOf('a', 'b', 'c', 'd', 'e')
+            assertPrints(list.binarySearch('d'), "3")
+
+            list.remove('d')
+
+            val invertedInsertionPoint = list.binarySearch('d')
+            val actualInsertionPoint = -(invertedInsertionPoint + 1)
+            assertPrints(actualInsertionPoint, "3")
+
+            list.add(actualInsertionPoint, 'd')
+            assertPrints(list, "[a, b, c, d, e]")
+        }
+
+        @Sample
+        fun binarySearchWithBoundaries() {
+            val list = listOf('a', 'b', 'c', 'd', 'e')
+            assertPrints(list.binarySearch('d'), "3")
+
+            // element is out of range from the left
+            assertTrue(list.binarySearch('b', fromIndex = 2) < 0)
+
+            // element is out of range from the right
+            assertTrue(list.binarySearch('d', toIndex = 2) < 0)
+        }
+
+        @Sample
+        fun binarySearchWithComparator() {
+            val colors = listOf("Blue", "green", "ORANGE", "Red", "yellow")
+            assertPrints(colors.binarySearch("RED", String.CASE_INSENSITIVE_ORDER), "3")
+        }
+
+        @Sample
+        fun binarySearchByKey() {
+            data class Box(val value: Int)
+
+            val numbers = listOf(1, 3, 7, 10, 12)
+            val boxes = numbers.map { Box(it) }
+            assertPrints(boxes.binarySearchBy(10) { it.value }, "3")
+        }
+
+        @Sample
+        fun binarySearchWithComparisonFunction() {
+            data class Box(val value: Int)
+
+            val numbers = listOf(12, 10, 7, 3, 1)
+            val boxes = numbers.map { Box(it) }
+
+            // `boxes` is sorted according to the comparison function
+            assertPrints(boxes.binarySearch { 10 - it.value }, "1")
         }
     }
 

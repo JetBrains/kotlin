@@ -24,6 +24,7 @@ package kotlin.collections
 
 /**
  * Returns a single list of all elements from all arrays in the given array.
+ * @sample samples.collections.Arrays.Transformations.flattenArray
  */
 public fun <T> Array<out Array<out T>>.flatten(): List<T> {
     val result = ArrayList<T>(sumBy { it.size })
@@ -37,6 +38,7 @@ public fun <T> Array<out Array<out T>>.flatten(): List<T> {
  * Returns a pair of lists, where
  * *first* list is built from the first values of each pair from this array,
  * *second* list is built from the second values of each pair from this array.
+ * @sample samples.collections.Arrays.Transformations.unzipArray
  */
 public fun <T, R> Array<out Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     val listT = ArrayList<T>(size)
