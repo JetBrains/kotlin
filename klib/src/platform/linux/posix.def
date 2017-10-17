@@ -13,7 +13,27 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
 compilerOpts = -D_ANSI_SOURCE -D_POSIX_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700 -D__need_error_t
-
+linkerOpts = -lresolv -lm -lpthread -lutil -lcrypt -lrt
+excludedFunctions = bindresvport6 __p_section __res_nisourserver __res_npquery \
+                    ns_sign ns_sign2 ns_sign_tcp ns_sign_tcp2 ns_sign_tcp_init \
+		    ns_find_tsig ns_verify ns_verify_tcp ns_verify_tcp_init \
+		    __acos __asin __atan __atan2 __cos __sin __tan __cosh __sinh \
+		    __tanh __acosh __asinh __atanh __exp __frexp __ldexp __log __log10 \
+		    __modf __expm1 __log1p __logb __exp2 __log2 __pow __sqrt __hypot \
+		    __cbrt __ceil __fabs __floor __fmod __drem __significand __copysign \
+		    __nan __j0 __j1 __jn __y0 __y1 __yn __erf __erfc __lgamma __tgamma \
+		    __gamma __lgamma_r __rint __nextafter __remainder __scalbn __ilogb \
+		    __scalbln __nearbyint __round __trunc __remquo __lrint __llrint \
+		    __lround __llround __fdim __fmax __fmin __fma __scalb __acosf __asinf \
+		    __atanf __atan2f __cosf __sinf __tanf __coshf __sinhf __tanhf __acoshf \
+		    __asinhf __atanhf __expf __frexpf __ldexpf __logf __log10f __modff \
+		    __expm1f __log1pf __logbf __exp2f __log2f __powf __sqrtf __hypotf \
+		    __cbrtf __ceilf __fabsf __floorf __fmodf __dremf __significandf \
+		    __copysignf __nanf __j0f __j1f __jnf __y0f __y1f __ynf __erff \
+		    __erfcf __lgammaf __tgammaf __gammaf __lgammaf_r __rintf __nextafterf \
+		    __remainderf __scalbnf __ilogbf __scalblnf __nearbyintf __roundf __truncf \
+		    __remquof __lrintf __llrintf __lroundf __llroundf __fdimf __fmaxf __fminf \
+		    __fmaf __scalbf _ns_flagdata
 ---
 // cinterop -target linux -def klib/src/platform/linux/posix.def -o platform.posix.klib
 
