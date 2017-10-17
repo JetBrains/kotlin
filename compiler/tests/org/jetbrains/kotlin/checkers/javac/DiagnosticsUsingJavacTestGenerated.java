@@ -3058,6 +3058,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("nothingAs.kt")
+            public void testNothingAs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/nothingAs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NullableToNullable.kt")
             public void testNullableToNullable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/NullableToNullable.kt");

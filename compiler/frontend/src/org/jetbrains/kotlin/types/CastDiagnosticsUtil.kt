@@ -44,6 +44,7 @@ object CastDiagnosticsUtil {
     ): Boolean {
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
+        if (KotlinBuiltIns.isNothing(lhsType)) return true
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !rhsNullable) return false
         if (KotlinBuiltIns.isNothing(rhsType)) return false
         if (KotlinBuiltIns.isNullableNothing(rhsType)) return lhsNullable
