@@ -49,7 +49,7 @@ internal fun produceOutput(context: Context) {
             val output = context.config.outputName
             val libraryName = context.config.moduleId
             val neededLibraries 
-                = context.config.librariesWithDependencies
+                = context.librariesWithDependencies
             val abiVersion = context.config.currentAbiVersion
             val target = context.config.targetManager.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
@@ -78,7 +79,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
     private val resolver = defaultResolver(repositories, distribution)
 
-    val immediateLibraries: List<LibraryReaderImpl> by lazy {
+    private val immediateLibraries: List<LibraryReaderImpl> by lazy {
         resolver.resolveImmediateLibraries(
                 libraryNames,
                 targetManager.target,
@@ -92,13 +93,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
-    // Accessing this field before resolve is a bad idea.
-    // purgeUnneeded() only works correctly after we have
-    // completed resolve and successfully marked package files
-    // as needed or not needed.
-    val librariesWithDependencies: List<KonanLibraryReader> by lazy {
+    fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibraryReader> {
+        if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
+
         resolver.resolveLibrariesRecursive(immediateLibraries, targetManager.target, currentAbiVersion)
-        immediateLibraries.purgeUnneeded().withResolvedDependencies()
+        return immediateLibraries.purgeUnneeded().withResolvedDependencies()
     }
 
     private val loadedDescriptors = loadLibMetadata()

@@ -235,7 +235,7 @@ internal class LinkStage(val context: Context) {
     private val debug = config.get(KonanConfigKeys.DEBUG) ?: false
     private val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     private val emitted = context.bitcodeFileName
-    private val libraries = context.config.librariesWithDependencies
+    private val libraries = context.librariesWithDependencies
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { !it.isEmpty() })
     }

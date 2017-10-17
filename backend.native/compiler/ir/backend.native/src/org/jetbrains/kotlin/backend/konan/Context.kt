@@ -178,6 +178,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     @Deprecated("")
     lateinit var psi2IrGeneratorContext: GeneratorContext
 
+    val librariesWithDependencies by lazy {
+        config.librariesWithDependencies(moduleDescriptor)
+    }
+
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null
         set(module: IrModuleFragment?) {
