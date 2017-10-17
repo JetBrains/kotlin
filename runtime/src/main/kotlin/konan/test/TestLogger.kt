@@ -33,6 +33,7 @@ open class TestLoggerWithStatistics: BaseTestLogger() {
 class SilentTestLogger: BaseTestLogger() {
     override fun logTestList(runner: TestRunner, suites: Collection<TestSuite>) {}
     override fun log(message: String) {}
+    override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) = e.printStackTrace()
 }
 
 class SimpleTestLogger: BaseTestLogger() {
@@ -56,5 +57,3 @@ class SimpleTestLogger: BaseTestLogger() {
     }
     override fun ignore(testCase: TestCase) = println("Ignore: $testCase")
 }
-
-
