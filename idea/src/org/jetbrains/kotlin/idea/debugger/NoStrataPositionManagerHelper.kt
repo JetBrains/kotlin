@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.compiler.CompilerPaths
+import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
@@ -147,23 +148,27 @@ private fun readClassFileImpl(project: Project,
         if (!ProjectRootsUtil.isProjectSourceFile(project, file)) return null
 
         val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file) ?: return null
-        val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ isForTestClasses) ?: return null
 
+        val outputPaths = CompilerPathsEx.getOutputPaths(arrayOf(module)).toList()
         val className = fqNameWithInners.asString().replace('.', '$')
-        var classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir)
+        var classFile = findClassFileByPaths(jvmName.packageFqName.asString(), className, outputPaths)
 
-        if (classByDirectory == null) {
+        if (classFile == null) {
             if (!isForTestClasses) {
                 return null
             }
 
+            val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ isForTestClasses) ?: return null
+
             val outputModeDirName = outputDir.name
+            // FIXME: It looks like this doesn't work anymore after Kotlin gradle plugin have stopped generating Kotlin classes in java output dir
+            // Originally this code did mapping like 'path/classes/test/debug' -> 'path/classes/androidTest/debug'
             val androidTestOutputDir = outputDir.parent?.parent?.findChild("androidTest")?.findChild(outputModeDirName) ?: return null
 
-            classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, androidTestOutputDir) ?: return null
+            classFile = findClassFileByPath(jvmName.packageFqName.asString(), className, androidTestOutputDir.path) ?: return null
         }
 
-        return classByDirectory.readBytes()
+        return classFile.readBytes()
     }
 
     fun readFromSourceOutput(): ByteArray? = readFromOutput(false)
@@ -175,8 +180,11 @@ private fun readClassFileImpl(project: Project,
            readFromTestOutput()
 }
 
-private fun findClassFileByPath(packageName: String, className: String, outputDir: VirtualFile): File? {
-    val outDirFile = File(outputDir.path).takeIf(File::exists) ?: return null
+private fun findClassFileByPaths(packageName: String, className: String, paths: List<String>): File? =
+        paths.mapNotNull { path -> findClassFileByPath(packageName, className, path) }.maxBy { it.lastModified() }
+
+private fun findClassFileByPath(packageName: String, className: String, outputDirPath: String): File? {
+    val outDirFile = File(outputDirPath).takeIf(File::exists) ?: return null
 
     val parentDirectory = File(outDirFile, packageName.replace(".", File.separator))
     if (!parentDirectory.exists()) return null
