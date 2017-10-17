@@ -911,4 +911,9 @@ public class TranslationContext {
     public SourceFilePathResolver getSourceFilePathResolver() {
         return staticContext.getSourceFilePathResolver();
     }
+
+    @NotNull
+    public JsName getVariableForPropertyMetadata(@NotNull VariableDescriptorWithAccessors property) {
+        return staticContext.getVariableForPropertyMetadata(property);
+    }
 }

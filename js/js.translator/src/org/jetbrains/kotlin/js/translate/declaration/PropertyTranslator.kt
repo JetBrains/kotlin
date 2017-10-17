@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getReceiverParameterName
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.expression.translateFunction
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
@@ -187,15 +189,15 @@ fun TranslationContext.contextWithPropertyMetadataCreationIntrinsified(
         property: VariableDescriptorWithAccessors,
         host: JsExpression
 ): TranslationContext {
-    val propertyNameLiteral = JsStringLiteral(property.name.asString())
     // 0th argument is instance, 1st is KProperty, 2nd (for setter) is value
     val hostExpression =
             (delegatedCall.valueArgumentsByIndex!![0] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
     val fakeArgumentExpression =
             (delegatedCall.valueArgumentsByIndex!![1] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
+    val metadataRef = pureFqn(getVariableForPropertyMetadata(property), null).apply { synthetic = true }
     return innerContextWithAliasesForExpressions(mapOf(
             hostExpression to host,
-            fakeArgumentExpression to JsNew(getReferenceToIntrinsic("PropertyMetadata"), listOf(propertyNameLiteral))
+            fakeArgumentExpression to metadataRef
     ))
 }
 
