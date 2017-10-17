@@ -146,6 +146,8 @@ public final class StaticContext {
     @NotNull
     private final SourceFilePathResolver sourceFilePathResolver;
 
+    private final Map<VariableDescriptorWithAccessors, JsName> propertyMetadataVariables = new HashMap<>();
+
     private final boolean isStdlib;
 
     private static final Set<String> BUILTIN_JS_PROPERTIES = Sets.union(
@@ -889,5 +891,24 @@ public final class StaticContext {
         if (cls != null) return cls;
 
         return null;
+    }
+
+    @NotNull
+    public JsName getVariableForPropertyMetadata(@NotNull VariableDescriptorWithAccessors property) {
+        return propertyMetadataVariables.computeIfAbsent(property, p -> {
+            String id = getSuggestedName(property) + "_metadata";
+            JsName name = JsScope.declareTemporaryName(NameSuggestion.sanitizeName(id));
+
+            // Unexpectedly! However, the only thing, for which 'imported' property is relevant, is a import clener.
+            // We want similar cleanup to be performed for unused MetadataProperty instances.
+            // TODO: consider a different name for 'imported' property
+            MetadataProperties.setImported(name, true);
+
+            JsStringLiteral propertyNameLiteral = new JsStringLiteral(property.getName().asString());
+            JsExpression construction = new JsNew(getReferenceToIntrinsic("PropertyMetadata"),
+                                                  Collections.singletonList(propertyNameLiteral));
+            fragment.getDeclarationBlock().getStatements().add(JsAstUtils.newVar(name, construction));
+            return name;
+        });
     }
 }

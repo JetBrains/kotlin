@@ -1352,6 +1352,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("metadataReferentialEquality.kt")
+        public void testMetadataReferentialEquality() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/metadataReferentialEquality.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("peculiarName.kt")
         public void testPeculiarName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/peculiarName.kt");
@@ -1385,6 +1391,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("topLevelVar.kt")
         public void testTopLevelVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/topLevelVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedPropertyMetadata.kt")
+        public void testUnusedPropertyMetadata() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/unusedPropertyMetadata.kt");
             doTest(fileName);
         }
 
