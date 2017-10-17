@@ -1,5 +1,5 @@
 apply plugin: 'konan'
 
 konanArtifacts {
-    EchoServer
+    program('EchoServer')
 }

@@ -1,13 +1,13 @@
 apply plugin: 'konan'
 
-konanInterop {
-    libcurl {
+konanArtifacts {
+    interop('libcurl') {
         includeDirs '/usr/include', '/opt/local/include', '/usr/local/opt/curl/include', '.'
     }
-}
 
-konanArtifacts {
-    Curl {
-        useInterop 'libcurl'
+    program('Curl') {
+        libraries {
+            artifact 'libcurl'
+        }
     }
 }

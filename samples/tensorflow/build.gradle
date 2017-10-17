@@ -2,15 +2,16 @@ apply plugin: 'konan'
 
 def tensorflowHome = "${System.getProperty("user.home")}/.konan/third-party/tensorflow"
 
-konanInterop {
-    tensorflow {
+konanArtifacts {
+    interop('TensorflowInterop') {
+        defFile "src/main/c_interop/tensorflow.def"
         includeDirs "${tensorflowHome}/include"
     }
-}
 
-konanArtifacts {
-    Tensorflow {
-        useInterop "tensorflow"
+    program('Tensorflow') {
+        libraries {
+            artifact 'TensorflowInterop'
+        }
         linkerOpts "-L${tensorflowHome}/lib -ltensorflow"
     }
 }
@@ -29,6 +30,6 @@ task downloadTensorflow(type: Exec) {
     commandLine './downloadTensorflow.sh'
 }
 
-processTensorflowInterop {
+compileKonanTensorflowInterop {
     dependsOn 'downloadTensorflow'
 }

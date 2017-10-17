@@ -25,21 +25,17 @@ allprojects {
 
 apply plugin: "konan"
 
+konanTargets = ["android_arm32", "android_arm64"]
+
 konanArtifacts {
-    PolyhedronArm32 {
-        target "android_arm32"
-        outputDir 'PolyhedronArm32'
-        outputName 'libpoly'
-    }
-    PolyhedronArm64 {
-        target "android_arm64"
-        outputDir 'PolyhedronArm64'
+    Polyhedron {
+        baseDir 'Polyhedron'
         outputName 'libpoly'
     }
 }
 
 def platforms = ["armeabi-v7a", "arm64-v8a"]
-def artifacts = ["PolyhedronArm32", "PolyhedronArm64"]
+def artifacts = ["Polyhedron/armeabi-v7a", "Polyhedron/arm64-v8a"]
 
 apply plugin: "com.android.model.application"
 
@@ -91,12 +87,10 @@ model {
 }
 
 tasks.matching { it.name == 'preBuild' }.all {
-    it.dependsOn 'compileKonanPolyhedronArm32'
-    it.dependsOn 'compileKonanPolyhedronArm64'
+    it.dependsOn 'compileKonan'
 }
 
 task buildApk(type: DefaultTask) {
-    dependsOn "compileKonanPolyhedronArm32"
-    dependsOn "compileKonanPolyhedronArm64"
+    dependsOn "compileKonan"
     dependsOn "assembleDebug"
 }

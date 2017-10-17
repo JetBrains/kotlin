@@ -1,79 +1,68 @@
 apply plugin: 'konan'
 
-konanInterop {
-    sdlMacbook {
-        defFile 'src/main/c_interop/sdl.def'
-        pkg 'sdl'
-        includeDirs '/Library/Frameworks/SDL2.framework/Headers',
-                "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
-                '/opt/local/include/SDL2',
-                '/usr/local/include/SDL2'
-
-        target 'macbook'
-    }
-
-    sdlLinux {
-        defFile 'src/main/c_interop/sdl.def'
-        pkg 'sdl'
-        includeDirs '/usr/include/SDL2'
-        target 'linux'
-    }
-
-    sdlIphone {
-        defFile 'src/main/c_interop/sdl.def'
-        pkg 'sdl'
-        includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
-        target 'iphone'
-    }
-
-    sdlRaspberry {
-        defFile 'src/main/c_interop/sdl.def'
-        pkg 'sdl'
-        includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
-        target 'raspberrypi'
-    }
-}
+konanTargets.clear()
+konanTargets.addAll(['macbook', 'linux', 'iphone', 'raspberrypi'])
 
 konanArtifacts {
-    TetrisMacbook {
-        useInterop 'sdlMacbook'
-        linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2"
-        // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
-        //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
-        target 'macbook'
+
+    interop ('sdl') {
+        defFile 'src/main/c_interop/sdl.def'
+        pkg 'sdl'
+
+        target 'macbook', {
+            includeDirs '/Library/Frameworks/SDL2.framework/Headers',
+                    "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
+                    '/opt/local/include/SDL2',
+                    '/usr/local/include/SDL2'
+        }
+
+        target 'linux', {
+            includeDirs '/usr/include/SDL2'
+        }
+
+        target 'iphone', {
+            includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
+        }
+
+        target 'raspberrypi', {
+            includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
+        }
     }
 
-    TetrisLinux {
-        useInterop 'sdlLinux'
-        linkerOpts '-L/usr/lib/x86_64-linux-gnu -lSDL2'
-        target 'linux'
-    }
+    program ('tetris') {
+        libraries {
+            artifact 'sdl'
+        }
 
-    TetrisIphone {
-        useInterop 'sdlIphone'
-        linkerOpts '-framework SDL2 -framework AVFoundation -framework CoreGraphics -framework CoreMotion ' +
-                   '-framework Foundation -framework GameController -framework AudioToolbox -framework OpenGLES ' +
-                   '-framework QuartzCore -framework UIKit'
-        noMain()
-        target 'iphone'
-    }
+        target 'macbook', {
+            linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2"
+            // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
+            //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
+        }
 
-    TetrisRaspberry {
-        useInterop 'sdlRaspberry'
-        linkerOpts '-lSDL2'
-        target 'raspberrypi'
+        target 'linux', {
+            linkerOpts '-L/usr/lib/x86_64-linux-gnu -lSDL2'
+        }
+
+        target 'iphone', {
+            linkerOpts '-framework SDL2 -framework AVFoundation -framework CoreGraphics -framework CoreMotion ' +
+                    '-framework Foundation -framework GameController -framework AudioToolbox -framework OpenGLES ' +
+                    '-framework QuartzCore -framework UIKit'
+            noMain true
+        }
+
+        target 'raspberrypi', {
+            linkerOpts '-lSDL2'
+        }
     }
 }
 
 compileKonan {
-    project.ext {
-        buildTasks = getTaskDependencies().getDependencies().findAll { task -> task.name.startsWith("compileKonan") }
-    }
     doLast {
-        buildTasks.forEach() { task ->
+        konanArtifacts.tetris.forEach() { task ->
             copy {
                 from 'src/main/resources'
-                into file(task.artifactPath).parentFile
+                into task.artifact.parentFile
             }
         }
     }

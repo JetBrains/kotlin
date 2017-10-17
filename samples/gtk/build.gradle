@@ -1,17 +1,18 @@
 apply plugin: 'konan'
 
-konanInterop {
-    def includePrefixes = [ '/opt/local/include', '/usr/include', '/usr/local/include' ]
-    gtk3 {
+def includePrefixes = [ '/opt/local/include', '/usr/include', '/usr/local/include' ]
+
+konanArtifacts {
+    interop('gtk3') {
         includePrefixes.each {
             includeDirs "$it/atk-1.0", "$it/gdk-pixbuf-2.0", "$it/cairo", "$it/pango-1.0", "$it/gtk-3.0", "$it/glib-2.0"
         }
         includeDirs '/opt/local/lib/glib-2.0/include', '/usr/lib/x86_64-linux-gnu/glib-2.0/include', '/usr/local/lib/glib-2.0/include'
     }
-}
 
-konanArtifacts {
-    Gtk3Demo {
-        useInterop 'gtk3'
+    program('Gtk3Demo') {
+        libraries {
+            artifact 'gtk3'
+        }
     }
 }

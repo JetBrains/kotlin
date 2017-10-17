@@ -1,3 +1,4 @@
+// TODO: Uncomment
 include ':csvparser'
 include ':gitchurn'
 include ':gtk'
@@ -7,11 +8,10 @@ include ':opengl'
 include ':socket'
 include ':tetris'
 include ':tensorflow'
-include ':concurrent'
 // Android native activity build requires Android SDK. 
 // So temporary switching off for now, as it breaks the build 
 // of other samples if SDK is not present.
-//include ':androidNativeActivity'
+// include ':androidNativeActivity'
 include ':objc'
 include ':uikit'
 includeBuild '../'

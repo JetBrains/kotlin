@@ -1,13 +1,13 @@
 apply plugin: 'konan'
 
-konanInterop {
-    libgit2 {
+konanArtifacts {
+    interop('libgit2') {
         includeDirs '/opt/local/include', '/usr/include', '/usr/local/include'
     }
-}
 
-konanArtifacts {
-    GitChurn {
-        useInterop 'libgit2'
+    program('GitChurn') {
+        libraries {
+            artifact 'libgit2'
+        }
     }
 }

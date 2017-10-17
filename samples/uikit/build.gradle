@@ -1,7 +1,7 @@
 apply plugin: 'konan'
 
+konanTargets = ['iphone']
+
 konanArtifacts {
-    app {
-        target "iphone"
-    }
+    program('app')
 }

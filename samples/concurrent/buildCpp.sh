@@ -23,4 +23,4 @@ CLANG=${!var}
 
 mkdir -p $DIR/build/clang/
 
-$CLANG -std=c++11 -c $DIR/src/main/cpp/MessageChannel.cpp -o $DIR/build/clang/MessageChannel.bc -emit-llvm || exit 1
+$CLANG -H -std=c++11 -c $DIR/src/main/cpp/MessageChannel.cpp -o $DIR/build/clang/MessageChannel.bc -emit-llvm || exit 1
