@@ -28,10 +28,9 @@ interface JKElement {
     fun <D> transformChildren(transformer: JKTransformer<D>, data: D)
 }
 
-interface JKClass : JKDeclaration {
-    var modifierList: JKModifierList
+interface JKClass : JKDeclaration, JKModifierListOwner {
     var name: JKNameIdentifier
-    val declarations: MutableList<JKDeclaration>
+    var declarations: List<JKDeclaration>
 }
 
 interface JKStatement : JKElement
@@ -42,7 +41,9 @@ interface JKLoop : JKStatement
 
 interface JKDeclaration : JKElement
 
-interface JKBlock : JKElement
+interface JKBlock : JKElement {
+    var statements: List<JKStatement>
+}
 
 interface JKCall : JKExpression
 

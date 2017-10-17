@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.j2k.tree.impl
+package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.JKElement
 
-class JKKtPropertyImpl(override var modifierList: JKModifierList,
-                       override var type: JKTypeIdentifier,
-                       override var name: JKNameIdentifier,
-                       override var initializer: JKExpression? = null,
-                       override var getter: JKBlock? = null,
-                       override var setter: JKBlock? = null) : JKElementBase(), JKKtProperty {
-
+abstract class BaseConversion {
+    /**
+     * @return true if something changed
+     */
+    abstract fun runConversion(treeRoot: JKElement): Boolean
 
 }

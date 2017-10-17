@@ -31,4 +31,5 @@ interface JKVisitor<out R, in D> {
     fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): R = visitKtConstructor(ktPrimaryConstructor, data)
     fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: D): R = visitStatement(ktAssignmentStatement, data)
     fun visitKtCall(ktCall: JKKtCall, data: D): R = visitCall(ktCall, data)
+    fun visitKtProperty(ktProperty: JKKtProperty, data: D): R = visitDeclaration(ktProperty, data)
 }

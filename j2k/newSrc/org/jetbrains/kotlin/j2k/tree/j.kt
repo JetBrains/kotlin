@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKJavaField : JKDeclaration {
+interface JKJavaField : JKDeclaration, JKModifierListOwner {
     var type: JKTypeIdentifier
     var name: JKNameIdentifier
     var initializer: JKExpression?

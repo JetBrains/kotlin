@@ -59,4 +59,6 @@ interface JKTransformerVoid : JKTransformer<Nothing?> {
     override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: Nothing?): JKStatement = visitKtAssignmentStatement(ktAssignmentStatement)
     fun visitKtCall(ktCall: JKKtCall): JKCall = visitCall(ktCall) 
     override fun visitKtCall(ktCall: JKKtCall, data: Nothing?): JKCall = visitKtCall(ktCall)
+    fun visitKtProperty(ktProperty: JKKtProperty): JKDeclaration = visitDeclaration(ktProperty) 
+    override fun visitKtProperty(ktProperty: JKKtProperty, data: Nothing?): JKDeclaration = visitKtProperty(ktProperty)
 }

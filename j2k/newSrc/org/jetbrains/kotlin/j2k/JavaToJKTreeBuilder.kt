@@ -87,7 +87,11 @@ class JavaToJKTreeBuilder {
             val type = JKJavaTypeIdentifierImpl(field.type.canonicalText)
             val name = JKNameIdentifierImpl(field.name!!)
 
-            currentClass!!.declarations += JKJavaFieldImpl(type, name, initializer)
+            val modifierList = with(ModifierMapper) {
+                field.modifierList.toJK()
+            }
+
+            currentClass!!.declarations += JKJavaFieldImpl(modifierList, type, name, initializer)
             super.visitField(field)
         }
 

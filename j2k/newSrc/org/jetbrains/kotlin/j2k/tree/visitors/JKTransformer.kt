@@ -31,4 +31,5 @@ interface JKTransformer<in D> : JKVisitor<JKElement, D> {
     override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): JKDeclaration = visitKtConstructor(ktPrimaryConstructor, data) 
     override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: D): JKStatement = visitStatement(ktAssignmentStatement, data) 
     override fun visitKtCall(ktCall: JKKtCall, data: D): JKCall = visitCall(ktCall, data) 
+    override fun visitKtProperty(ktProperty: JKKtProperty, data: D): JKDeclaration = visitDeclaration(ktProperty, data) 
 }

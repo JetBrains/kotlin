@@ -20,29 +20,33 @@ import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
 
 class NewJavaToKotlinConverter(
         private val project: Project,
         private val settings: ConverterSettings
 ) {
 
+    private fun List<JKElement>.prettyPrintTrees() = buildString {
+        for (tree in this@prettyPrintTrees) {
+            appendln()
+            appendln(tree.prettyDebugPrintTree())
+            appendln()
+        }
+    }
+
     fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): String {
         val treeBuilder = JavaToJKTreeBuilder()
-        val fileTrees = files.map(treeBuilder::buildTree)
+        val fileTrees = files.mapNotNull(treeBuilder::buildTree)
 
-        val result = buildString {
+        println(fileTrees.prettyPrintTrees())
 
-            for (tree in fileTrees.filterNotNull()) {
-                appendln()
-                appendln(tree.prettyDebugPrintTree())
-                appendln()
-            }
-        }
+        ConversionsRunner.doApply(fileTrees)
+
+        val result = fileTrees.prettyPrintTrees()
 
         println(result)
-
         return result
     }
 }
