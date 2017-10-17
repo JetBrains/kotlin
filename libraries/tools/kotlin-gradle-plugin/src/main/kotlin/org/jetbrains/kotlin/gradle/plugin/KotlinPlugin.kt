@@ -876,7 +876,7 @@ internal fun loadAndroidPluginVersion(): String? {
 }
 
 //Copied from StringUtil.compareVersionNumbers
-private fun compareVersionNumbers(v1: String?, v2: String?): Int {
+internal fun compareVersionNumbers(v1: String?, v2: String?): Int {
     if (v1 == null && v2 == null) {
         return 0
     }
