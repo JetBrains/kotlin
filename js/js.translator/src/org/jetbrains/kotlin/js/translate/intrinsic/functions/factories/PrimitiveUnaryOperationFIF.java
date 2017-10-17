@@ -61,6 +61,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     private static final DescriptorPredicate DEC_OPERATION_FOR_BYTE = pattern("Byte.dec");
     private static final DescriptorPredicate INC_OPERATION_FOR_SHORT = pattern("Short.inc");
     private static final DescriptorPredicate DEC_OPERATION_FOR_SHORT = pattern("Short.dec");
+    private static final DescriptorPredicate NEG_OPERATION_FOR_INT = pattern("Int.unaryMinus");
 
     @NotNull
     private static final DescriptorPredicate INC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern("Float|Double.inc()");
@@ -149,6 +150,20 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             assert receiver != null;
             assert arguments.size() == 0;
             return new JsBinaryOperation(JsBinaryOperator.SUB, receiver, new JsIntLiteral(1));
+        }
+    };
+
+    private static final FunctionIntrinsicWithReceiverComputed NUMBER_NEG_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.size() == 0;
+            return new JsPrefixOperation(JsUnaryOperator.NEG, receiver);
         }
     };
 
@@ -265,6 +280,9 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             return NUMBER_DEC_INTRINSIC;
         }
 
+        if (NEG_OPERATION_FOR_INT.test(descriptor)) {
+            return new IntOverflowIntrinsic(NUMBER_NEG_INTRINSIC);
+        }
 
         Name name = descriptor.getName();
 
