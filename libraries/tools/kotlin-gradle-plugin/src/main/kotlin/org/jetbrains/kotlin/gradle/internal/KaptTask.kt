@@ -11,6 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
 import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 
@@ -64,7 +65,7 @@ open class KaptTask : ConventionTask() {
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val environment = GradleCompilerEnvironment(kotlinCompileTask.computedCompilerClasspath, messageCollector, outputItemCollector, args)
-        if (environment.toolsJar == null) {
+        if (environment.toolsJar == null && !isAtLeastJava9) {
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }
 
@@ -81,5 +82,13 @@ open class KaptTask : ConventionTask() {
     private fun File.clearDirectory() {
         deleteRecursively()
         mkdirs()
+    }
+
+    private val isAtLeastJava9: Boolean
+        get() = compareVersionNumbers(getJavaRuntimeVersion(), "9") >= 0
+
+    private fun getJavaRuntimeVersion(): String {
+        val rtVersion = System.getProperty("java.runtime.version")
+        return if (Character.isDigit(rtVersion[0])) rtVersion else System.getProperty("java.version")
     }
 }
