@@ -42,6 +42,46 @@ interface JKStatement : JKElement
 
 interface JKExpression : JKStatement
 
+interface JKBinaryExpression : JKExpression {
+    val left: JKExpression
+    val right: JKExpression?
+    val operator: JKOperatorIdentifier
+}
+
+interface JKUnaryExpression : JKExpression {
+    val expression: JKExpression?
+    val operator: JKOperatorIdentifier
+}
+
+interface JKPrefixExpression : JKUnaryExpression
+
+interface JKPostfixExpression : JKUnaryExpression {
+    override val expression: JKExpression
+}
+
+interface JKQualifiedExpression : JKExpression {
+    val reciever: JKExpression
+    val operator: JKQualificationIdentifier
+    val selector: JKStatement
+}
+
+interface JKCallExpression : JKExpression {
+    val arguments: JKExpressionList
+    val method: JKMethodReference
+}
+
+interface JKExpressionList : JKElement {
+    val expressions: Array<JKExpression>
+}
+
+interface JKMethodReference : JKElement {
+
+}
+
+interface JKOperatorIdentifier : JKIdentifier
+
+interface JKQualificationIdentifier : JKIdentifier
+
 interface JKLoop : JKStatement
 
 interface JKDeclaration : JKElement
