@@ -24,21 +24,68 @@ import org.jetbrains.kotlin.j2k.tree.impl.*
 
 class JavaToJKTreeBuilder {
 
-    private class ExpressionTreeVisitor : JavaElementVisitor() {
-
-        private var resultExpression: JKExpression? = null
-
-        override fun visitLiteralExpression(expression: PsiLiteralExpression?) {
-            if (expression is PsiLiteralExpressionImpl) {
-
-                when (expression.literalElementType) {
-                    JavaTokenType.STRING_LITERAL ->
-                        resultExpression = JKJavaStringLiteralExpressionImpl(expression.innerText!!)
+    private object ExpressionTreeMapper {
+        fun PsiExpression.toJK(): JKExpression {
+            when (this) {
+                is PsiBinaryExpression -> {
+                    return toJK()
                 }
+                is PsiPrefixExpression -> {
+                    return toJK()
+                }
+                is PsiPostfixExpression -> {
+                    return toJK()
+                }
+                is PsiLiteralExpression -> {
+                    return toJK()
+                }
+                is PsiCallExpression -> {
+                    return toJK()
+                }
+            }
+            throw RuntimeException("Not supported")
+        }
+
+        fun PsiBinaryExpression.toJK(): JKExpression {
+            return JKBinaryExpressionImpl(lOperand.toJK(), rOperand?.toJK(), operationSign.toJK())
+        }
+
+        fun PsiLiteralExpression.toJK(): JKExpression {
+            if (this !is PsiLiteralExpressionImpl) {
+                throw RuntimeException("Not supported")
+            }
+            return when (this.literalElementType) {
+                JavaTokenType.STRING_LITERAL -> JKJavaStringLiteralExpressionImpl(innerText!!)
+                else -> throw RuntimeException("Not supported")
             }
         }
 
-        fun result(): JKExpression = resultExpression!!
+        fun PsiJavaToken.toJK(): JKOperatorIdentifier = when (tokenType) {
+            JavaTokenType.PLUS -> JKJavaOperatorIdentifierImpl.PLUS
+            JavaTokenType.MINUS -> JKJavaOperatorIdentifierImpl.MINUS
+            else -> throw RuntimeException("Not supported")
+        }
+
+        fun PsiPrefixExpression.toJK(): JKExpression {
+            return JKPrefixExpressionImpl(operand?.toJK(), operationSign.toJK())
+        }
+
+        fun PsiPostfixExpression.toJK(): JKExpression {
+            return JKPostfixExpressionImpl(operand.toJK(), operationSign.toJK())
+        }
+
+        fun PsiCallExpression.toJK(): JKExpression {
+            return JKJavaCallExpressionImpl(resolveMethod().toJK(), argumentList.toJK())
+        }
+
+        fun PsiExpressionList?.toJK(): JKExpressionList {
+            this ?: return JKExpressionListImpl(emptyArray())
+            return JKExpressionListImpl(expressions.map { it.toJK() }.toTypedArray())
+        }
+
+        fun PsiMethod?.toJK(): JKJavaMethodReference {
+            return JKJavaMethodReferenceImpl()
+        }
     }
 
     private object DeclarationMapper {
@@ -150,11 +197,5 @@ class JavaToJKTreeBuilder {
         psi.accept(elementVisitor)
         return elementVisitor.resultElement
     }
-
-
-    companion object {
-        private fun PsiExpression.buildTreeForExpression(): JKExpression =
-                JavaToJKTreeBuilder.ExpressionTreeVisitor().apply { accept(this) }.result()
-    }
-
 }
+

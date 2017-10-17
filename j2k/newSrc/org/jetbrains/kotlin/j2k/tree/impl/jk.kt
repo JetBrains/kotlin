@@ -76,3 +76,39 @@ class JKBlockImpl(override var statements: List<JKStatement>) : JKBlock, JKEleme
 class JKStringLiteralExpressionImpl(override val text: String) : JKStringLiteralExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitStringLiteralExpression(this, data)
 }
+
+class JKBinaryExpressionImpl(override val left: JKExpression, override val right: JKExpression?,
+                             override val operator: JKOperatorIdentifier) : JKBinaryExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBinaryExpression(this, data)
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        left.accept(visitor, data)
+        operator.accept(visitor, data)
+        right?.accept(visitor, data)
+    }
+}
+
+class JKPrefixExpressionImpl(override val expression: JKExpression?,
+                             override val operator: JKOperatorIdentifier) : JKPrefixExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPrefixExpression(this, data)
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expression?.accept(visitor, data)
+        operator.accept(visitor, data)
+    }
+}
+
+class JKPostfixExpressionImpl(override val expression: JKExpression,
+                              override val operator: JKOperatorIdentifier) : JKPostfixExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPostfixExpression(this, data)
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expression.accept(visitor, data)
+        operator.accept(visitor, data)
+    }
+}
+
+class JKExpressionListImpl(override val expressions: Array<JKExpression>) : JKExpressionList, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionList(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expressions.forEach { it.accept(visitor, data) }
+    }
+}

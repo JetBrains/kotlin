@@ -63,3 +63,34 @@ class JKJavaMethodImpl(override var modifierList: JKModifierList,
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
 }
+
+sealed class JKJavaOperatorIdentifierImpl : JKJavaOperatorIdentifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaOperatorIdentifier(this, data)
+
+    object PLUS : JKJavaOperatorIdentifierImpl()
+    object MINUS : JKJavaOperatorIdentifierImpl()
+}
+
+sealed class JKJavaQualificationIdentifierImpl : JKJavaQualificationIdentifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaQualificationIdentifier(this, data)
+
+    object DOT : JKJavaQualificationIdentifierImpl()
+}
+
+class JKJavaCallExpressionImpl(override val method: JKJavaMethodReference,
+                               override val arguments: JKExpressionList) : JKJavaCallExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaCallExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        method.accept(visitor, data)
+        arguments.accept(visitor, data)
+    }
+}
+
+class JKJavaMethodReferenceImpl() : JKJavaMethodReference, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodReference(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}

@@ -43,6 +43,16 @@ interface JKJavaStringLiteralExpression : JKLiteralExpression {
     val text: String
 }
 
+interface JKJavaOperatorIdentifier : JKOperatorIdentifier
+
+interface JKJavaQualificationIdentifier : JKQualificationIdentifier
+
+interface JKJavaCallExpression : JKCallExpression {
+    override val method: JKJavaMethodReference
+}
+
+interface JKJavaMethodReference : JKMethodReference
+
 interface JKJavaAccessModifier : JKAccessModifier {
     val type: AccessModifierType
 
