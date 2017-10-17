@@ -236,11 +236,19 @@ allprojects {
     }
     configureJvmProject(javaHome!!, jvmTarget!!)
 
+    val commonCompilerArgs = listOf("-Xallow-kotlin-package")
+    
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
             languageVersion = kotlinLanguageVersion
             apiVersion = kotlinLanguageVersion
-            freeCompilerArgs = listOf("-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable")
+            freeCompilerArgs = commonCompilerArgs
+        }
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+        kotlinOptions {
+            freeCompilerArgs = commonCompilerArgs + listOf("-Xnormalize-constructor-calls=enable")
         }
     }
 
