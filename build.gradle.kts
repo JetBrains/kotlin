@@ -480,6 +480,7 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     tasks.withType<JavaCompile> {
         options.isFork = true
         options.forkOptions.javaHome = file(javaHome)
+        options.compilerArgs.add("-proc:none")
     }
 
     tasks.withType<KotlinCompile> {
