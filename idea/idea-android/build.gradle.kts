@@ -18,16 +18,17 @@ dependencies {
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-gradle"))
     testCompile(ideaPluginDeps("properties", plugin = "properties"))
     testCompile(ideaSdkDeps("gson"))
     testCompile(commonDep("junit:junit"))
 
+    testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))

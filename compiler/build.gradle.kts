@@ -29,7 +29,6 @@ val testDistProjects = listOf(
         ":kotlin-test:kotlin-test-jvm",
         ":kotlin-test:kotlin-test-junit",
         ":kotlin-test:kotlin-test-js",
-        ":kotlin-daemon-client",
         ":kotlin-preloader",
         ":plugins:android-extensions-compiler",
         ":kotlin-ant",
@@ -43,13 +42,18 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-junit"))
-    testCompile(project(":compiler:tests-common"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":compiler:tests-common-jvm6"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testCompileOnly(project(":kotlin-daemon-client"))
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
+
+    testRuntime(projectDist(":kotlin-compiler"))
+    testRuntime(projectDist(":kotlin-daemon-client"))
+    testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
     testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
