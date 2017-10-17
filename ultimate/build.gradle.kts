@@ -54,11 +54,11 @@ dependencies {
     compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptDebugger"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":compiler:tests-common")) { isTransitive = false }
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":generators")) { isTransitive = false }
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea"))
     testCompile(commonDep("junit:junit"))
     testCompile(ideaUltimateSdkDeps("gson"))

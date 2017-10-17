@@ -20,7 +20,7 @@ dependencies {
     testCompile(project(":idea:idea-test-framework"))
     testCompile(ideaPluginDeps("gradle-wrapper", "gradle-base-services", "gradle-tooling-extension-impl", "gradle-tooling-api", "gradle", plugin = "gradle"))
     testCompile(ideaPluginDeps("Groovy", plugin = "Groovy"))
-    testCompile(ideaSdkDeps("groovy-all"))
+    testCompileOnly(ideaSdkDeps("groovy-all", "idea_rt"))
 
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))

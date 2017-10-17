@@ -6,7 +6,6 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(project(":core"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
@@ -20,7 +19,9 @@ dependencies {
     testCompile(projectDist(":kotlin-script-runtime"))
     testCompile(projectDist(":kotlin-reflect"))
     testCompile(projectTests(":compiler"))
+    testCompile(projectTests(":compiler:tests-common"))
     testRuntime(projectRuntimeJar(":kotlin-preloader"))
+    testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
 }

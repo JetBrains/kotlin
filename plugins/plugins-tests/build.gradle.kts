@@ -5,7 +5,6 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(project(":plugins:android-extensions-compiler"))
     testCompile(project(":plugins:android-extensions-ide"))
     testCompile(project(":kotlin-android-extensions-runtime"))
@@ -20,16 +19,19 @@ dependencies {
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":plugins:uast-kotlin"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
     testCompileOnly(ideaSdkDeps("jps-builders"))
     testCompile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(ideaPluginDeps("*.jar", plugin = "android", subdir = "lib/jps"))
     testRuntime(project(":jps-plugin"))
+    testRuntime(projectTests(":compiler:tests-common-jvm6"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
 }
 
 sourceSets {
@@ -46,4 +48,3 @@ projectTest {
     dependsOnTaskIfExistsRec("dist", project = rootProject)
     workingDir = rootDir
 }
-

@@ -41,7 +41,7 @@ dependencies {
     compile(preloadedDeps("markdown", "kotlinx-coroutines-core"))
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(project(":compiler:tests-common"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
@@ -52,7 +52,7 @@ dependencies {
     testCompileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
     testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
-    testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson", "jsr305"))
+    testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson", "jsr305", "idea_rt"))
 
     testRuntime(ideaSdkDeps("*.jar"))
 
@@ -66,6 +66,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
 
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
+    testRuntime(projectDist(":kotlin-preloader"))
 
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
     testCompile(project(":plugins:android-extensions-compiler"))
