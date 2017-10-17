@@ -1,18 +1,7 @@
 apply plugin: 'konan'
 
-konanInterop {
-    opengl { }
-}
-
-
 konanArtifacts {
-    OpenGlTeapotMacbook {
-        useInterop 'opengl'
+    OpenGlTeapot {
         target "macbook"
-    }
-
-    OpenGlTeapotLinux {
-        useInterop 'opengl'
-        target "linux"
     }
 }

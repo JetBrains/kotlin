@@ -1,7 +1,0 @@
-headers.osx = OpenGL/gl.h OpenGL/glu.h GLUT/glut.h
-headers.linux = GL/glut.h
-compilerOpts.osx = -framework OpenGL -framework GLUT
-compilerOpts.linux = -I/usr/include
-excludeDependentModules.osx = true
-linkerOpts.osx = -framework OpenGL -framework GLUT
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU
