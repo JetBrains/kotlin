@@ -367,6 +367,7 @@ public inline fun String.toUpperCase(locale: java.util.Locale): String = (this a
 
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
+ * @sample samples.text.Strings.stringToByteArray
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)

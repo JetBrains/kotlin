@@ -23,6 +23,38 @@ import kotlin.test.*
 @RunWith(Enclosed::class)
 class Arrays {
 
+    class Usage {
+
+        @Sample
+        fun arrayOrEmpty() {
+            val nullArray: Array<Any>? = null
+            assertPrints(nullArray.orEmpty().contentToString(), "[]")
+
+            val array: Array<Char>? = arrayOf('a', 'b', 'c')
+            assertPrints(array.orEmpty().contentToString(), "[a, b, c]")
+        }
+    }
+
+    class Transformations {
+
+        @Sample
+        fun flattenArray() {
+            val deepArray = arrayOf(
+                    arrayOf(1),
+                    arrayOf(2, 3),
+                    arrayOf(4, 5, 6)
+            )
+
+            assertPrints(deepArray.flatten(), "[1, 2, 3, 4, 5, 6]")
+        }
+
+        @Sample
+        fun unzipArray() {
+            val array = arrayOf(1 to 'a', 2 to 'b', 3 to 'c')
+            assertPrints(array.unzip(), "([1, 2, 3], [a, b, c])")
+        }
+    }
+
     class ContentOperations {
 
         @Sample
@@ -42,7 +74,6 @@ class Arrays {
 
             assertPrints(matrix.contentDeepToString(), "[[3, 7, 9], [0, 1, 0], [2, 4, 8]]")
         }
-
     }
 
 }
