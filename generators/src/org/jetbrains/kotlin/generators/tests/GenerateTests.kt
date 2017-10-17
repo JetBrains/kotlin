@@ -130,6 +130,7 @@ import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractMultiModuleSafeD
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
+import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationCompletionTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTest
@@ -714,6 +715,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractScriptConfigurationNavigationTest> {
             model("script/definition/navigation", extension = null, recursive = false)
+        }
+
+        testClass<AbstractScriptConfigurationCompletionTest> {
+            model("script/definition/completion", extension = null, recursive = false)
         }
 
         testClass<AbstractNameSuggestionProviderTest> {
