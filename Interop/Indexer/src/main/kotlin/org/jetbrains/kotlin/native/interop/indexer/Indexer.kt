@@ -520,7 +520,17 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                     CXCursorKind.CXCursor_ObjCInterfaceDecl ->
                         ObjCObjectPointer(getObjCClassAt(declaration), nullability, getProtocols(type))
 
-                    else -> TODO(declarationKind.toString())
+                    CXCursorKind.CXCursor_TypedefDecl ->
+                        // typedef to Objective-C class itself, e.g. `typedef NSObject Object;`,
+                        //   (as opposed to `typedef NSObject* Object;`).
+                        // Note: it is not yet represented as Kotlin `typealias`.
+                        ObjCObjectPointer(
+                                getObjCClassAt(getTypedefUnderlyingObjCClass(declaration)),
+                                nullability,
+                                getProtocols(type)
+                        )
+
+                    else -> TODO("${declarationKind.toString()} ${clang_getTypeSpelling(type).convertAndDispose()}")
                 }
             }
 
@@ -533,6 +543,22 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             CXType_BlockPointer -> objCType { convertBlockPointerType(type, typeAttributes) }
 
             else -> UnsupportedType
+        }
+    }
+
+    private tailrec fun getTypedefUnderlyingObjCClass(typedefDecl: CValue<CXCursor>): CValue<CXCursor> {
+        assert(typedefDecl.kind == CXCursorKind.CXCursor_TypedefDecl)
+        val underlyingType = clang_getTypedefDeclUnderlyingType(typedefDecl)
+        val underlyingTypeDecl = clang_getTypeDeclaration(underlyingType)
+
+        return when (underlyingTypeDecl.kind) {
+            CXCursorKind.CXCursor_TypedefDecl -> getTypedefUnderlyingObjCClass(underlyingTypeDecl)
+            CXCursorKind.CXCursor_ObjCInterfaceDecl -> underlyingTypeDecl
+            else -> TODO(
+                    """typedef = ${getCursorSpelling(typedefDecl)}
+                        |underlying decl kind = ${underlyingTypeDecl.kind}
+                        |underlying = ${clang_getTypeSpelling(underlyingType).convertAndDispose()}""".trimMargin()
+            )
         }
     }
 

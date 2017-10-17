@@ -5,8 +5,10 @@
 -(void)print:(const char*)string;
 @end;
 
+typedef NSString NSStringTypedef;
+
 @interface Foo : NSObject
-@property NSString* name;
+@property NSStringTypedef* name;
 -(void)helloWithPrinter:(id <Printer>)printer;
 @end;
 
