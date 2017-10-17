@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
+import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
@@ -74,12 +74,12 @@ private const val useDefaultTemplate = "// DEPENDENCIES:"
 private const val configureConflictingModule = "// CONFLICTING_MODULE"
 
 private fun String.splitOrEmpty(delimeters: String) = split(delimeters).takeIf { it.size > 1 } ?: emptyList()
-private val switches = listOf(
+internal val switches = listOf(
         useDefaultTemplate,
         configureConflictingModule
 )
 
-abstract class AbstractScriptConfigurationTest : KotlinDaemonAnalyzerTestCase() {
+abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     protected fun configureScriptFile(path: String) {
         val environment = createScriptEnvironment(path)
