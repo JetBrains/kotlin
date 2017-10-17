@@ -1,0 +1,6 @@
+fun test(i: Int) {
+    val x = when {
+        i == 1 -> 1
+        else -> 3
+    }
+}
