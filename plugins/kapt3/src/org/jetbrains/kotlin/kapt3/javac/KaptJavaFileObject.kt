@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.kapt3.javac
 
-import com.sun.tools.javac.file.BaseFileObject
-import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.tree.JCTree
-import java.io.*
+import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
 import java.net.URI
 import java.net.URL
 import javax.lang.model.element.Modifier
@@ -29,12 +27,9 @@ import javax.tools.JavaFileObject
 class KaptJavaFileObject(
         val compilationUnit: JCTree.JCCompilationUnit,
         val clazz: JCTree.JCClassDecl,
-        fileManager: JavacFileManager,
         val timestamp: Long = System.currentTimeMillis()
-) : BaseFileObject(fileManager) {
-    override fun getShortName() = clazz.simpleName.toString()
-
-    override fun inferBinaryName(path: MutableIterable<File>?) = throw UnsupportedOperationException()
+) : JavaFileObject {
+    override fun toString() = "${javaClass.simpleName}[$name]"
 
     override fun isNameCompatible(simpleName: String?, kind: JavaFileObject.Kind?): Boolean {
         if (simpleName == null || kind == null) return false
@@ -44,7 +39,7 @@ class KaptJavaFileObject(
     override fun getKind() = JavaFileObject.Kind.SOURCE
 
     override fun getName(): String {
-        val packageName = compilationUnit.packageName
+        val packageName = compilationUnit.getPackageNameJava9Aware()
         if (packageName == null || packageName.toString() == "") {
             return clazz.name.toString() + ".java"
         }
