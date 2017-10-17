@@ -2776,6 +2776,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("AsInExpressionBody.kt")
+            public void testAsInExpressionBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsInExpressionBody.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AsInPropertyAndPropertyAccessor.kt")
             public void testAsInPropertyAndPropertyAccessor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsInPropertyAndPropertyAccessor.kt");

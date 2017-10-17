@@ -272,8 +272,9 @@ object CastDiagnosticsUtil {
             // in unary expression, left argument can be a receiver
             is KtBinaryExpression, is KtUnaryExpression -> true
 
-            // Previously we've checked that there is no expected type, therefore cast in property has an effect on inference
-            is KtProperty, is KtPropertyAccessor -> true
+            // Previously we've checked that there is no expected type, therefore cast in property or
+            // in function has an effect on inference and thus isn't useless
+            is KtProperty, is KtPropertyAccessor, is KtNamedFunction, is KtFunctionLiteral -> true
 
             else -> false
         }

@@ -23,9 +23,9 @@ fun test() {
     val f = TODO() as Interface
 }
 
-fun a() = TODO() <!USELESS_CAST!>as Any<!>
-fun b() = TODO() <!USELESS_CAST!>as Any?<!>
-fun c() = TODO() <!USELESS_CAST!>as OpenClass<!>
-fun d() = TODO() <!USELESS_CAST!>as FinalClass<!>
-fun e() = TODO() <!USELESS_CAST!>as AbstractClass<!>
-fun f() = TODO() <!USELESS_CAST!>as Interface<!>
+fun a() = TODO() as Any
+fun b() = TODO() as Any?
+fun c() = TODO() as OpenClass
+fun d() = TODO() as FinalClass
+fun e() = TODO() as AbstractClass
+fun f() = TODO() as Interface
