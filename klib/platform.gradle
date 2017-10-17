@@ -10,15 +10,18 @@ buildscript {
 
 def taskName = "${gradle.startParameter.projectProperties['name']}"
 String konanHome = gradle.startParameter.projectProperties['konan.home']
-List<String> libraries = gradle.startParameter.projectProperties.libraries.split(" ").findAll { !it.isEmpty() }
+List<String> libs = gradle.startParameter.projectProperties.libraries.split(" ").findAll { !it.isEmpty() }
 String targetName = gradle.startParameter.projectProperties.target
 
-konanInterop {
-    "$taskName" {
+konanTargets = [targetName]
+
+konanArtifacts {
+    interop("$taskName") {
         defFile gradle.startParameter.projectProperties.defFile
-        target targetName
         noDefaultLibs true
-        extraOpts libraries.collectMany { ["-library",  "$konanHome/klib/$targetName/$it"] }
+        libraries {
+            files libs.collect { "$konanHome/klib/$targetName/$it" }
+        }
     }
 }
 
@@ -31,10 +34,10 @@ task klibInstall(type:Exec) {
         new File(repo).mkdirs()
     }
 
-    dependsOn konanInterop["$taskName"].interopProcessingTask
+    dependsOn konanArtifacts."$taskName"."$targetName"
     commandLine klibProgram,
             'install',
-            konanInterop["$taskName"].interopProcessingTask.klib,
+            konanArtifacts."$taskName"."$targetName".artifact,
             '-target', gradle.startParameter.projectProperties.target,
             '-repository',
             repo
