@@ -28,15 +28,14 @@ import com.intellij.openapi.roots.FileIndex
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.idea.KotlinModuleFileType
-import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
+import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 abstract class KotlinBinaryExtension(val fileType: FileType) {
@@ -53,6 +52,7 @@ abstract class KotlinBinaryExtension(val fileType: FileType) {
 class JavaClassBinary: KotlinBinaryExtension(JavaClassFileType.INSTANCE)
 class KotlinBuiltInBinary: KotlinBinaryExtension(KotlinBuiltInFileType)
 class KotlinModuleBinary: KotlinBinaryExtension(KotlinModuleFileType.INSTANCE)
+class KotlinJsMetaBinary: KotlinBinaryExtension(KotlinJavaScriptMetaFileType)
 
 fun FileType.isKotlinBinary(): Boolean = this in KotlinBinaryExtension.kotlinBinaries
 
@@ -69,8 +69,7 @@ object ProjectRootsUtil {
     @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
                                includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
                                includeScriptDependencies: Boolean,
-                               fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
-                               isJsProjectRef: Ref<Boolean?>? = null): Boolean {
+                               fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
 
         if (includeProjectSource && fileIndex.isInSourceContentWithoutInjected(file)) return true
 
@@ -90,15 +89,6 @@ object ProjectRootsUtil {
         if (includeLibrarySource && !isBinary) {
             if (fileIndex.isInLibrarySource(file)) return true
             if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true) return true
-        }
-
-        if ((includeLibraryClasses && fileIndex.isInLibraryClasses(file)) ||
-            (includeLibrarySource && fileIndex.isInLibrarySource(file))) {
-
-            //NOTE: avoid computing isJsProject if redundant
-            val isJsProject = isJsProjectRef?.get() ?: JsProjectDetector.isJsProject(project)
-            isJsProjectRef?.set(isJsProject)
-            return isJsProject
         }
 
         return false

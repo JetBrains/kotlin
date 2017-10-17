@@ -2726,6 +2726,7 @@
     <binaryExtension implementation="org.jetbrains.kotlin.idea.util.JavaClassBinary"/>
     <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinBuiltInBinary"/>
     <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinModuleBinary"/>
+    <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinJsMetaBinary"/>
   </extensions>
 
 </idea-plugin>
