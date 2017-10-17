@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.junit.Assert
 import java.io.File
 
@@ -1715,8 +1716,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         with (facetSettings("myModule3")) {
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
-            Assert.assertEquals("1.1", languageLevel!!.description)
-            Assert.assertEquals("1.1", apiLevel!!.description)
+            Assert.assertEquals(LanguageVersion.LATEST_STABLE, languageLevel)
+            Assert.assertEquals(LanguageVersion.LATEST_STABLE, apiLevel)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
                     listOf("-kotlin-home", "temp2"),
