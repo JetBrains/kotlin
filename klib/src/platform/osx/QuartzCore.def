@@ -1,4 +1,4 @@
-depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGL Security libkern osx posix
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security libkern osx posix
 language = Objective-C
 package = platform.QuartzCore
 headers = QuartzCore/QuartzCore.h QuartzCore/CIImage.h QuartzCore/CIColor.h

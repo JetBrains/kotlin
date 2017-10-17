@@ -1,0 +1,9 @@
+depends = OpenGL OpenGLCommon posix
+language = Objective-C
+package = platform.GLUT
+headers = GLUT/glut.h
+
+headerFilter = GLUT/**
+
+compilerOpts = -framework GLUT
+linkerOpts = -framework GLUT

@@ -1,9 +1,9 @@
 depends = OpenGLCommon posix
 language = Objective-C
-package = platform.OpenGL
-headers = OpenGL/glu.h
+package = platform.OpenGL3
+headers = OpenGL/gl3.h OpenGL/gl3ext.h
 
-headerFilter = OpenGL/gl.h OpenGL/glext.h OpenGL/glu.h
+headerFilter = OpenGL/gl3.h OpenGL/gl3ext.h
 
 compilerOpts = -framework OpenGL
 linkerOpts = -framework OpenGL
