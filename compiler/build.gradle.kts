@@ -43,20 +43,21 @@ dependencies {
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":compiler:tests-common-jvm6"))
+    testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testCompileOnly(project(":kotlin-daemon-client"))
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
+    testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
 
     testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(projectDist(":kotlin-daemon-client"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
-    testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
+    testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
 
 sourceSets {
