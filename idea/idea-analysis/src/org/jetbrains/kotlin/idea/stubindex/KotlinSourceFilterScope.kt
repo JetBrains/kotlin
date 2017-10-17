@@ -35,16 +35,13 @@ class KotlinSourceFilterScope private constructor(
 
     private val index = ProjectRootManager.getInstance(project).fileIndex
 
-    //NOTE: avoid recomputing in potentially bottleneck 'contains' method
-    private val isJsProjectRef = Ref<Boolean?>(null)
-
     override fun getProject() = project
 
     override fun contains(file: VirtualFile): Boolean {
         if (!super.contains(file)) return false
 
         return ProjectRootsUtil.isInContent(
-                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, index, isJsProjectRef
+                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, index
         )
     }
 
