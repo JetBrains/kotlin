@@ -6831,6 +6831,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("constantPropagation.kt")
+        public void testConstantPropagation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/constantPropagation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("conversionsWithTruncation.kt")
         public void testConversionsWithTruncation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/conversionsWithTruncation.kt");

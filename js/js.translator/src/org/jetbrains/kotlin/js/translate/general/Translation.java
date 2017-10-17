@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException;
 import org.jetbrains.kotlin.js.facade.exceptions.UnsupportedFeatureException;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -41,15 +42,9 @@ import org.jetbrains.kotlin.js.translate.declaration.FileDeclarationVisitor;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtUnaryExpression;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -99,12 +94,30 @@ public final class Translation {
         }
 
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
-        if (compileTimeValue != null) {
+        if (compileTimeValue != null && !compileTimeValue.getUsesNonConstValAsConstant()) {
             KotlinType type = context.bindingContext().getType(expression);
-            if (type != null) {
-                if (KotlinBuiltIns.isLong(type) || (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression)) {
-                    JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
-                    if (constantResult != null) return constantResult.source(expression);
+            if (type != null && (KotlinBuiltIns.isLong(type) || KotlinBuiltIns.isInt(type))) {
+                JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
+                if (constantResult != null) {
+                    constantResult.setSource(expression);
+
+                    if (KotlinBuiltIns.isLong(type)) {
+                        KtReferenceExpression referenceExpression = PsiUtils.getSimpleName(expression);
+                        if (referenceExpression != null) {
+                            DeclarationDescriptor descriptor =
+                                    BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression);
+                            if (descriptor != null) {
+                                return context.declareConstantValue(descriptor, constantResult);
+                            }
+                        }
+
+                        String name = NameSuggestion.sanitizeName("L" + compileTimeValue.getValue(type).toString());
+                        return context.declareConstantValue(name, "constant:" + name, constantResult);
+                    }
+
+                    if (KotlinBuiltIns.isInt(type)) {
+                        return constantResult;
+                    }
                 }
             }
         }
