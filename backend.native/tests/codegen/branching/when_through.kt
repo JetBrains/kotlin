@@ -1,4 +1,4 @@
-package codegen.boxing.when_through
+package codegen.branching.when_through
 
 import kotlin.test.*
 

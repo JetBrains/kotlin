@@ -1,4 +1,4 @@
-package codegen.boxing.when9
+package codegen.branching.when9
 
 import kotlin.test.*
 

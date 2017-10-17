@@ -1,4 +1,4 @@
-package codegen.boxing.advanced_when5
+package codegen.branching.advanced_when5
 
 import kotlin.test.*
 

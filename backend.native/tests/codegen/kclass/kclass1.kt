@@ -40,9 +40,9 @@ class App(testQualified: Boolean) {
     }
 
     init {
-        assert(type.simpleName == "Test")
+        assert(type.simpleName == "TestClass")
         if (testQualified)
-            assert(type.qualifiedName == "com.github.salomonbrys.kmffkn.Test") // This is not really necessary, but always better :).
+            assert(type.qualifiedName == "codegen.kclass.kclass1.TestClass") // This is not really necessary, but always better :).
 
         assert(String::class == String::class)
         assert(String::class != Int::class)

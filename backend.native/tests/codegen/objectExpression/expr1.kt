@@ -1,4 +1,4 @@
-package codegen.objectExpression_1
+package codegen.objectExpression.expr1
 
 import kotlin.test.*
 

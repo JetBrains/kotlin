@@ -1265,7 +1265,7 @@ task link(type: LinkKonanTest) {
     goldValue = "0\n"
     source = "link/src/bar.kt"
     lib = "link/lib"
-}
+}(
 */
 
 task link_omit_unused(type: LinkKonanTest) {
@@ -1274,7 +1274,7 @@ task link_omit_unused(type: LinkKonanTest) {
     lib = "link/omit/lib.kt"
 }
 
-task link_default_libs(type: RunKonanTest) {
+task link_default_libs(type: RunStandaloneKonanTest) {
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
     goldValue = "sizet = 0\n"
     source = "link/default/default.kt"
@@ -1761,17 +1761,17 @@ task lambda13(type: RunKonanTest) {
 
 task objectExpression1(type: RunKonanTest) {
     goldValue = "aabb\n"
-    source = "codegen/objectExpression/1.kt"
+    source = "codegen/objectExpression/expr1.kt"
 }
 
 task objectExpression2(type: RunKonanTest) {
     goldValue = "a\n"
-    source = "codegen/objectExpression/2.kt"
+    source = "codegen/objectExpression/expr2.kt"
 }
 
 task objectExpression3(type: RunKonanTest) {
     goldValue = "\n1\n2\n"
-    source = "codegen/objectExpression/3.kt"
+    source = "codegen/objectExpression/expr3.kt"
 }
 
 task initializers2(type: RunStandaloneKonanTest) {
@@ -1841,7 +1841,7 @@ task memory_cycles0(type: RunKonanTest) {
     source = "runtime/memory/cycles0.kt"
 }
 
-task memory_basic0(type: RunStandaloneKonanTest) {
+task memory_basic0(type: RunKonanTest) {
     source = "runtime/memory/basic0.kt"
 }
 
@@ -2036,7 +2036,7 @@ task deserialized_members(type: LinkKonanTest) {
     source = "serialization/deserialize_members.kt"
 }
 
-task testing_annotations(type: RunKonanTest) {
+task testing_annotations(type: RunStandaloneKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
     arguments = ['--ktest_logger=SIMPLE']
@@ -2062,14 +2062,14 @@ task testing_annotations(type: RunKonanTest) {
             'Test suite finished: kotlin.test.tests.AnnotationsKt\nIteration finished: 1\nTesting finished\n'
 }
 
-task testing_assertions(type: RunKonanTest) {
+task testing_assertions(type: RunStandaloneKonanTest) {
     source = "testing/assertions.kt"
     flags = ['-tr']
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     expectedExitStatus = 0
 }
 
-task testing_custom_main(type: RunKonanTest) {
+task testing_custom_main(type: RunStandaloneKonanTest) {
     source = "testing/custom_main.kt"
     flags = ['-tr', '-e', 'kotlin.test.tests.main']
     arguments = ['--ktest_logger=SIMPLE', '--ktest_repeat=2']

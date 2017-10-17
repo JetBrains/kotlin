@@ -11,8 +11,8 @@ fun main(args: Array<String>) {
     checkClass(Any::class, "kotlin.Any", "Any", Any(), null)
     checkClass(Int::class, "kotlin.Int", "Int", 42, "17")
     checkClass(String::class, "kotlin.String", "String", "17", 42)
-    checkClass(RootClass::class, "RootClass", "RootClass", RootClass(), Any())
-    checkClass(RootClass.Nested::class, "RootClass.Nested", "Nested", RootClass.Nested(), Any())
+    checkClass(RootClass::class, "codegen.kclass.kclass0.RootClass", "RootClass", RootClass(), Any())
+    checkClass(RootClass.Nested::class, "codegen.kclass.kclass0.RootClass.Nested", "Nested", RootClass.Nested(), Any())
 
     class Local {
         val captured = args
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
 
     // Interfaces:
     checkClass(Comparable::class, "kotlin.Comparable", "Comparable", 42, Any())
-    checkClass(Interface::class, "Interface", "Interface", object : Interface {}, Any())
+    checkClass(Interface::class, "codegen.kclass.kclass0.Interface", "Interface", object : Interface {}, Any())
 
     checkInstanceClass(Any(), Any::class)
     checkInstanceClass(42, Int::class)

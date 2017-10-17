@@ -1,4 +1,4 @@
-package codegen.boxing.if_else
+package codegen.branching.if_else
 
 import kotlin.test.*
 
