@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.GradleRunner
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.TargetManager
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -9,6 +11,9 @@ import java.nio.file.Paths
 class KonanProject {
 
     static String DEFAULT_ARTIFACT_NAME = 'main'
+    static String DEFAULT_INTEROP_NAME = "stdio"
+
+    static String HOST = TargetManager.host.userName
 
     File projectDir
     Path projectPath
@@ -21,15 +26,40 @@ class KonanProject {
     File         settingsFile
 
     Set<File>    srcFiles = []
+    Set<File>    defFiles = []
 
-    List<String> compilationTasks = []
-    String       downloadTask = ":downloadKonanCompiler"
+    List<String>  interopTasks = []
+    List<String>  compilationTasks = []
+    String       downloadTask = ":checkKonanCompiler"
 
-    List<String> getBuildingTasks() { return compilationTasks }
+    List<String> targets
+
+    List<String> getBuildingTasks() { return compilationTasks + interopTasks }
     List<String> getKonanTasks()    { return getBuildingTasks() + downloadTask }
 
-    protected KonanProject(File projectDir) {
+    // TODO: Must be an enum.
+    static String PROGRAM = "program"
+    static String LIBRARY = "library"
+    static String BITCODE = "bitcode"
+    static String INTEROP = "interop"
+
+    static String DEFAULT_SRC_CONTENT = """           
+            fun main(args: Array<String>) {
+                println(42)
+            }
+            """
+
+    static String DEFAULT_DEF_CONTENT = """
+            headers = stdio.h
+            """.stripIndent()
+
+    protected KonanProject(File projectDir){
+        this(projectDir, [HOST])
+    }
+
+    protected KonanProject(File projectDir, List<String> targets) {
         this.projectDir = projectDir
+        this.targets = targets
         projectPath = projectDir.toPath()
         konanBuildDir = projectPath.resolve('build/konan').toFile()
         def konanHome = System.getProperty("konan.home")
@@ -76,6 +106,7 @@ class KonanProject {
     /** Creates a folder for project source files (src/main/kotlin). */
     void generateFolders() {
         createSubDir("src", "main", "kotlin")
+        createSubDir("src", "main", "c_interop")
     }
 
     /** Generates a build.gradle file in the root project directory with the given content. */
@@ -94,22 +125,20 @@ class KonanProject {
      * Generates a build.gradle file in root project directory with the default content (see below)
      * and fills the compilationTasks array.
      *
-     *  plugins { id 'konan' }
+     * plugins { id 'konan' }
      *
-     *  konanArtifacts {
-     *      $DEFAULT_ARTIFACT_NAME { }
-     *  }
+     * konanArtifacts {
+     *    program('$DEFAULT_ARTIFACT_NAME')
+     * }
      */
     File generateBuildFile() {
         def result = generateBuildFile("""
             plugins { id 'konan' }
             
-            konanArtifacts {
-                $DEFAULT_ARTIFACT_NAME { }
-            }
+            konanTargets = [${targets.collect { "'$it'" }.join(", ")}]
             """.stripIndent()
         )
-        compilationTasks = [defaultCompilationTask(), ":compileKonan", ":build"]
+        compilationTasks = [":compileKonan", ":build"]
         return result
     }
 
@@ -139,151 +168,7 @@ class KonanProject {
      *  }
      */
     File generateSrcFile(String fileName) {
-        return generateSrcFile(fileName, """           
-            fun main(args: Array<String>) {
-                println(42)
-            }
-            """.stripIndent()
-        )
-    }
-
-    /** Generates gradle.properties file with the konan.home property set. */
-    File generatePropertiesFile(String konanHome) {
-        propertiesFile = createFile(projectPath, "gradle.properties", "konan.home=$konanHome\n")
-        return propertiesFile
-    }
-
-    /**
-     * Sets the given setting of the given project extension.
-     * In other words adds the following string in the build file:
-     *
-     *  $container['$section'].$parameter $value
-     */
-    protected void addSetting(String container, String section, String parameter, String value) {
-        buildFile.append("$container['$section'].$parameter $value\n")
-    }
-
-    /**
-     * Sets the given setting of the given project extension using the path of the file as a value.
-     * In other words adds the following string in the build file:
-     *
-     *  $container['$section'].$parameter ${value.canonicalPath.replace(\, \\)}
-     */
-    protected void addSetting(String container, String section, String parameter, File value) {
-        addSetting(container, section, parameter, "'${value.canonicalPath.replace('\\', '\\\\')}'")
-    }
-
-    /** Sets the given setting of the given konanArtifact */
-    void addCompilationSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, String value) {
-        addSetting("konanArtifacts", artifactName, parameter, value)
-    }
-
-    /** Sets the given setting of the given konanArtifact using the path of the file as a value. */
-    void addCompilationSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, File value) {
-        addSetting("konanArtifacts", artifactName, parameter, value)
-    }
-
-    /** Returns the path of compileKonan... task for the default artifact. */
-    String defaultCompilationTask() {
-        return compilationTask(DEFAULT_ARTIFACT_NAME)
-    }
-
-    /** Returns the path of compileKonan... task for the artifact specified. */
-    String compilationTask(String artifactName) {
-        return ":compileKonan${artifactName.capitalize()}"
-    }
-
-    String defaultArtifactConfig() {
-        return artifactConfig(DEFAULT_ARTIFACT_NAME)
-    }
-
-    String artifactConfig(String artifactName) {
-        return "konanArtifacts['$artifactName']"
-    }
-
-    /** Creates a project with default build and source files. */
-    static KonanProject create(File projectDir) {
-        return createEmpty(projectDir) {
-            it.generateSrcFile("main.kt")
-        }
-    }
-
-    /** Creates a project with default build and source files. */
-    static KonanProject create(File projectDir, Closure config) {
-        def result = create(projectDir)
-        config(result)
-        return result
-    }
-
-    /** Creates a project with the default build file and without any source files. */
-    static KonanProject createEmpty(File projectDir) {
-        def result = new KonanProject(projectDir)
-        result.with {
-            generateFolders()
-            generateBuildFile()
-            generatePropertiesFile(konanHome)
-            generateSettingsFile("")
-        }
-        return result
-    }
-
-    /** Creates a project with the default build file and without any source files. */
-    static KonanProject createEmpty(File projectDir, Closure config) {
-        def result = createEmpty(projectDir)
-        config(result)
-        return result
-    }
-
-}
-
-class KonanInteropProject extends KonanProject {
-
-    static String DEFAULT_INTEROP_NAME = "stdio"
-
-    Set<File> defFiles = []
-
-    List<String> interopTasks = []
-
-    protected KonanInteropProject(File projectDir) { super(projectDir) }
-
-    List<String> getBuildingTasks() { return interopTasks + compilationTasks }
-
-    /** Creates a folder for project source files (src/main/kotlin) and a folder for def-files (src/main/c_interop). */
-    void generateFolders() {
-        super.generateFolders()
-        createSubDir("src", "main", "c_interop")
-    }
-
-    /**
-     * Generates a build.gradle file in root project directory with the default content (see below)
-     * and fills compilationTasks and interopTasks arrays.
-     *
-     *  plugins { id 'konan' }
-     *
-     *  konanInterop {
-     *      $DEFAULT_INTEROP_NAME { }
-     *  }
-     *
-     *  konanArtifacts {
-     *      $DEFAULT_ARTIFACT_NAME { useInterop '$DEFAULT_INTEROP_NAME' }
-        }
-     */
-    File generateBuildFile() {
-        def result = generateBuildFile("""
-            plugins { id 'konan' }
-            
-            konanInterop {
-                $DEFAULT_INTEROP_NAME { }
-            }
-            
-            konanArtifacts {
-                $DEFAULT_ARTIFACT_NAME { useInterop '$DEFAULT_INTEROP_NAME' }
-            }
-            """.stripIndent()
-        )
-        interopTasks = [defaultInteropProcessingTask()]
-        compilationTasks = [defaultCompilationTask(), ":compileKonan", ":build"]
-        return result
+        return generateSrcFile(fileName, DEFAULT_SRC_CONTENT)
     }
 
     /** Creates a def-file with the given name and content in src/main/c_interop directory and adds it to defFiles. */
@@ -300,69 +185,137 @@ class KonanInteropProject extends KonanProject {
      *  headers = stdio.h stdlib.h string.h
      */
     File generateDefFile(String fileName = "${DEFAULT_INTEROP_NAME}.def") {
-        return generateDefFile(fileName, """
-            headers = stdio.h stdlib.h string.h
-            """.stripIndent()
-        )
+        return generateDefFile(fileName, DEFAULT_DEF_CONTENT)
     }
 
-    /** Sets the given setting of the given konanInterop */
-    void addInteropSetting(String interopName = DEFAULT_INTEROP_NAME, String parameter, String value) {
-        addSetting("konanInterop", interopName, parameter, value)
+    /** Generates gradle.properties file with the konan.home property set. */
+    File generatePropertiesFile(String konanHome) {
+        propertiesFile = createFile(projectPath, "gradle.properties", "konan.home=$konanHome\n")
+        return propertiesFile
     }
 
-    /** Sets the given setting of the given konanInterop using the path of the file as a value. */
-    void addInteropSetting(String interopName = DEFAULT_INTEROP_NAME, String parameter, File value) {
-        addSetting("konanInterop", interopName, parameter, value)
+    /**
+     * Sets the given setting of the given project extension.
+     * In other words adds the following string in the build file:
+     *
+     *  $container.$section.$parameter $value
+     */
+    protected void addSetting(String container, String section, String parameter, String value) {
+        buildFile.append("$container.$section.$parameter $value\n")
     }
 
-    String defaultInteropProcessingTask() {
-        return interopProcessingTask(DEFAULT_INTEROP_NAME)
+    /**
+     * Sets the given setting of the given project extension using the path of the file as a value.
+     * In other words adds the following string in the build file:
+     *
+     *  $container.$section.$parameter ${value.canonicalPath.replace(\, \\)}
+     */
+    protected void addSetting(String container, String section, String parameter, File value) {
+        addSetting(container, section, parameter, "'${value.canonicalPath.replace('\\', '\\\\')}'")
     }
 
-    String interopProcessingTask(String interopName) {
-        return ":process${interopName.capitalize()}Interop"
+    /** Sets the given setting of the given konanArtifact */
+    void addSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, String value) {
+        addSetting("konanArtifacts", artifactName, parameter, value)
+    }
+
+    /** Sets the given setting of the given konanArtifact using the path of the file as a value. */
+    void addSetting(String artifactName = DEFAULT_ARTIFACT_NAME, String parameter, File value) {
+        addSetting("konanArtifacts", artifactName, parameter, value)
+    }
+
+    void addLibraryToArtifact(String artifactName = DEFAULT_ARTIFACT_NAME, String library = DEFAULT_INTEROP_NAME) {
+        addLibraryToArtifactCustom(artifactName, "artifact '$library'")
+    }
+
+    void addLibraryToArtifactCustom(String artifactName = DEFAULT_ARTIFACT_NAME, String closureContent) {
+        buildFile.append("konanArtifacts.${artifactName}.libraries { $closureContent }\n")
+    }
+
+    /** Returns the path of compileKonan... task for the default artifact. */
+    String defaultCompilationTask(String target = HOST) {
+        return compilationTask(DEFAULT_ARTIFACT_NAME, target)
+    }
+
+    String defaultInteropTask(String target = HOST) {
+        return compilationTask(DEFAULT_INTEROP_NAME, target)
+    }
+
+    /** Returns the path of compileKonan... task for the artifact specified. */
+    String compilationTask(String artifactName, String target = HOST) {
+        return ":compileKonan${artifactName.capitalize()}${target.capitalize()}"
+    }
+
+    String defaultCompilationConfig() {
+        return artifactConfig(DEFAULT_ARTIFACT_NAME)
     }
 
     String defaultInteropConfig() {
-        return interopConfig(DEFAULT_INTEROP_NAME)
+        return artifactConfig(DEFAULT_INTEROP_NAME)
     }
 
-    String interopConfig(String interopName) {
-        return "konanInterop[$interopName]"
+    String artifactConfig(String artifactName) {
+        return "konanArtifacts.$artifactName"
     }
 
-    /** Creates a project with default build, source and def files. */
-    static KonanInteropProject create(File projectDir) {
-        return createEmpty(projectDir) {
-            it.generateSrcFile("main.kt")
-            it.generateDefFile("${DEFAULT_INTEROP_NAME}.def")
+    void addCompilerArtifact(String name, String content = "", String type = PROGRAM) {
+        def newTasks = targets.collect { compilationTask(name, it) } + ":compileKonan${name.capitalize()}".toString()
+        if (type == INTEROP) {
+            defFiles += generateDefFile("${name}.def", content)
+            interopTasks += newTasks
+        } else {
+            srcFiles += generateSrcFile(projectPath.resolve("src/$name/kotlin"), "source.kt", content)
+            compilationTasks += newTasks
+        }
+        buildFile.append("konanArtifacts { $type('$name') }\n")
+    }
+
+    /** Creates a project with default build and source files. */
+    static KonanProject create(File projectDir, List<String> targets = [HOST]) {
+        return createEmpty(projectDir, targets) { KonanProject p ->
+            p.addCompilerArtifact(DEFAULT_ARTIFACT_NAME, DEFAULT_SRC_CONTENT)
         }
     }
 
-    /** Creates a project with default build, source and def files. */
-    static KonanInteropProject create(File projectDir, Closure config) {
-        def result = create(projectDir)
+    // TODO: Add 'type parameter'
+
+    /** Creates a project with default build and source files. */
+    static KonanProject create(File projectDir, List<String> targets = [HOST], Closure config) {
+        def result = create(projectDir, targets)
         config(result)
         return result
     }
 
-    /** Creates a project with the default build file, without any source and with an empty def file. */
-    static KonanInteropProject createEmpty(File projectDir) {
-        def result = new KonanInteropProject(projectDir)
+    static KonanProject createWithInterop(File projectDir, List<String> targets = [HOST]) {
+        return create(projectDir, targets) { KonanProject p ->
+            p.addCompilerArtifact(DEFAULT_INTEROP_NAME, DEFAULT_DEF_CONTENT, INTEROP)
+            p.addLibraryToArtifact()
+        }
+    }
+
+    static KonanProject createWithInterop(File projectDir, List<String> targets = [HOST], Closure config) {
+        def result = createWithInterop(projectDir, targets)
+        config(result)
+        return result
+    }
+
+    /** Creates a project with the default build file and without any source files. */
+    static KonanProject createEmpty(File projectDir, List<String> targets = [HOST]) {
+        def result = new KonanProject(projectDir, targets)
         result.with {
             generateFolders()
             generateBuildFile()
             generatePropertiesFile(konanHome)
-            generateDefFile("${DEFAULT_INTEROP_NAME}.def", "")
+            generateSettingsFile("")
         }
         return result
     }
 
-    /** Creates a project with the default build file, without any source and with an empty def file. */
-    static KonanInteropProject createEmpty(File projectDir, Closure config) {
-        def result = createEmpty(projectDir)
+    /** Creates a project with the default build file and without any source files. */
+    static KonanProject createEmpty(File projectDir, List<String> targets = [HOST], Closure config) {
+        def result = createEmpty(projectDir, targets)
         config(result)
         return result
     }
+
 }

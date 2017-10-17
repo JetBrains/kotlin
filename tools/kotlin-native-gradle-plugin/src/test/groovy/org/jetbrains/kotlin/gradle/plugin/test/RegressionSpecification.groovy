@@ -40,13 +40,13 @@ class RegressionSpecification extends BaseKonanSpecification {
     def 'KT-20192'() {
         when:
         def project = KonanProject.createEmpty(getProjectDirectory()) { KonanProject prj ->
-            prj.generateSrcFile("main.kt", """
+            prj.addCompilerArtifact(KonanProject.DEFAULT_ARTIFACT_NAME,"""
                 external fun foo()
 
                 fun main(args: Array<String>) {
                     foo()
                 }
-            """)
+            """, KonanProject.PROGRAM)
         }
         def result = project.createRunner().withArguments('build').buildAndFail()
 

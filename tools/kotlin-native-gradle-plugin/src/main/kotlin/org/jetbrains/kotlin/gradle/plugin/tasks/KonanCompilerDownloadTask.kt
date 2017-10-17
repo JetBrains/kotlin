@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleScriptException
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.io.File
 import java.io.IOException
@@ -54,7 +56,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
         } else {
             try {
                 val konanCompiler = project.konanCompilerName()
-                logger.info("Downloading Kotlin/Native compiler from $DOWNLOAD_URL/$konanCompiler into $KONAN_PARENT_DIR")
+                logger.info("Downloading Kotlin/Native compiler from ${DOWNLOAD_URL}/$konanCompiler into ${KONAN_PARENT_DIR}")
                 DependencyProcessor(File(KONAN_PARENT_DIR), DOWNLOAD_URL, listOf(konanCompiler)).run()
             } catch (e: IOException) {
                 throw GradleScriptException("Cannot download Kotlin/Native compiler", e)

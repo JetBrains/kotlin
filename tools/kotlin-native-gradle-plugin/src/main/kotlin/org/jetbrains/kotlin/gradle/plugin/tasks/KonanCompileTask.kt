@@ -14,48 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.tasks
 
-import groovy.lang.Closure
-import org.gradle.api.Action
-import org.gradle.api.Named
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
-import org.gradle.util.ConfigureUtil
-import java.io.File
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+
+enum class Produce(val cliOption: String, val kind: CompilerOutputKind) {
+    PROGRAM("program", CompilerOutputKind.PROGRAM),
+    LIBRARY("library", CompilerOutputKind.LIBRARY),
+    BITCODE("bitcode", CompilerOutputKind.BITCODE)
+}
 
 /**
  * A task compiling the target executable/library using Kotlin/Native compiler
  */
-open class KonanCompileTask: KonanBuildingTask() {
+abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
+
+    // TODO: Support custom runner options (java options)
+    @Internal override val toolRunner = KonanCompilerRunner(project)
+
+    abstract val produce: Produce
+        @Internal get
 
     // Output artifact --------------------------------------------------------
 
-    internal lateinit var artifactName: String
-        @Internal get
-
-    @Internal override lateinit var outputDir: File
-        internal set
-
-    internal fun init(artifactName: String) {
-        dependsOn(project.konanCompilerDownloadTask)
-        this.artifactName = artifactName
-        outputDir = project.file(project.konanCompilerOutputDir)
-    }
-
-    protected val artifactNamePath: String
-        @Internal get() = "${outputDir.absolutePath}/$artifactName"
-
-    protected val artifactSuffix: String
-        @Internal get() = produceSuffix(produce)
-
-    override val artifactPath: String
-        @Internal get() = "$artifactNamePath$artifactSuffix"
-
-    override val artifact: File
-        @OutputFile get() = project.file(artifactPath)
+    override val artifactSuffix: String
+        @Internal get() = produce.kind.suffix(target)
 
     // Other compilation parameters -------------------------------------------
 
@@ -65,228 +51,130 @@ open class KonanCompileTask: KonanBuildingTask() {
 
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
 
-    @Input var produce              = "program"
-        internal set
+    @Input val linkerOpts = mutableListOf<String>()
 
-    // TODO: Replace produce string with an enum.
-    override val isLibrary: Boolean
-        @Internal get() = produce == "library"
+    @Input var enableDebug =
+            project.properties.containsKey("enableDebug") &&
+            project.properties["enableDebug"].toString().toBoolean()
 
-    @Input val extraOpts = mutableListOf<String>()
-
-    internal var _linkerOpts = mutableListOf<String>()
-    val linkerOpts: List<String>
-        @Input get() = _linkerOpts // TODO: use the original linkerOpts prop.
-
-    @Input var enableDebug        = project.properties.containsKey("enableDebug") && project.properties["enableDebug"].toString().toBoolean()
-        internal set
-    @Input var noStdLib           = false
-        internal set
-    @Input var noMain             = false
-        internal set
-    @Input var enableOptimization = false
-        internal set
-    @Input var enableAssertions   = false
-        internal set
-    @Input var noDefaultLibs      = false
-        internal set
-    @Console var measureTime      = false
-        internal set
+    @Input var noStdLib            = false
+    @Input var noMain              = false
+    @Input var enableOptimizations = false
+    @Input var enableAssertions    = false
+    @Console var measureTime       = false
 
     @Optional @Input var languageVersion : String? = null
         internal set
     @Optional @Input var apiVersion      : String? = null
         internal set
 
-    // Task action ------------------------------------------------------------
+    // Command line  ------------------------------------------------------------
 
-    protected fun buildArgs() = mutableListOf<String>().apply {
-        addArg("-output", artifactNamePath)
+    override fun buildArgs() = mutableListOf<String>().apply {
+        addArg("-output", artifact.canonicalPath)
 
-        // TODO: remove this repo
-        addArg("-repo", outputDir.canonicalPath)
+        addArgs("-repo", libraries.repos.map { it.canonicalPath })
 
         addFileArgs("-library", libraries.files)
         addArgs("-library", libraries.namedKlibs)
-        addArgs("-library", libraries.artifacts.map { it.task.artifact.canonicalPath })
-        addArgs("-repo", libraries.repos.map { it.canonicalPath })
+        addArgs("-library", libraries.artifacts.map { it.artifact.canonicalPath })
 
         addFileArgs("-nativelibrary", nativeLibraries)
-        addArg("-produce", produce)
+        addArg("-produce", produce.cliOption)
 
         addListArg("-linkerOpts", linkerOpts)
 
-        addArgIfNotNull("-target", target)
+        addArgIfNotNull("-target", target.userName)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
 
         addKey("-g", enableDebug)
         addKey("-nostdlib", noStdLib)
         addKey("-nomain", noMain)
-        addKey("-opt", enableOptimization)
+        addKey("-opt", enableOptimizations)
         addKey("-ea", enableAssertions)
-        addKey("-nodefaultlibs", noDefaultLibs)
         addKey("--time", measureTime)
+        addKey("-nodefaultlibs", noDefaultLibs)
 
         addAll(extraOpts)
 
         inputFiles.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
     }
 
-    @TaskAction
-    fun compile() {
-        outputDir.mkdirs()
-
-        if (dumpParameters) dumpProperties(this@KonanCompileTask)
-
-        // TODO: Use compiler service.
-        KonanCompilerRunner(project).run(buildArgs())
-    }
-}
-
-// TODO: Use +=/-= syntax for libraries and inputFiles
-open class KonanCompileConfig(
-        configName: String,
-        project: Project,
-        taskNamePrefix: String = "compileKonan"): KonanBuildingConfig(configName, project) {
-
-    override fun getName() = configName
-
-    val compilationTask: KonanCompileTask = project.tasks.create(
-            "$taskNamePrefix${configName.capitalize()}",
-            KonanCompileTask::class.java) {
-        it.init(this@KonanCompileConfig.name)
-        it.group = BasePlugin.BUILD_GROUP
-        it.description = "Compiles the Kotlin/Native artifact '${this@KonanCompileConfig.name}'"
-    }
-
-    override val task: KonanCompileTask
-        get() = compilationTask
-
-    private fun evaluationDependsOn(anotherProject: Project) {
-        if (anotherProject != project) {
-            project.evaluationDependsOn(anotherProject.path)
-        }
-    }
-
-    // DSL methods. --------------------------------------------------
-
-    @Deprecated("Use `libraries` block instead")
-    fun useInterop(interop: KonanInteropConfig) = libraries { interop(interop) }
-
-    @Deprecated("Use `libraries` block instead")
-    fun useInterop(interop: String) = libraries { interop(interop) }
-
-    @Deprecated("Use `libraries` block instead")
-    fun useInterops(interops: Collection<Any>) {
-        interops.forEach {
-            when(it) {
-                is String -> useInterop(it)
-                is KonanInteropConfig -> useInterop(it)
-                else -> throw IllegalArgumentException("Cannot convert the object to an interop description: $it")
-            }
-        }
-    }
+    // region DSL.
 
     // DSL. Input/output files.
 
-    fun inputDir(dir: Any) = with(compilationTask) {
+    override fun inputDir(dir: Any) {
         _inputFiles.add(project.fileTree(dir).apply {
             include("**/*.kt")
             exclude { it.file.startsWith(project.buildDir) }
         })
     }
-    fun inputFiles(vararg files: Any) = with(compilationTask) {
+    override fun inputFiles(vararg files: Any) {
         _inputFiles.add(project.files(files))
     }
-    fun inputFiles(files: FileCollection) = compilationTask._inputFiles.add(files)
-    fun inputFiles(files: Collection<FileCollection>) = compilationTask._inputFiles.addAll(files)
-
-    // TODO: Remove this functional.
-    fun outputDir(dir: Any) = with(compilationTask) {
-        outputDir = project.file(dir)
-    }
-
-    fun outputName(name: String) = with(compilationTask) {
-        artifactName = name
-    }
-
-    // DSL. Libraries.
-
-    @Deprecated("Use `libraries` block instead")
-    fun library(project: Project) = libraries { allArtifactsFrom(project) }
-
-    @Deprecated("Use `libraries` block instead")
-    fun library(project: Project, artifactName: String) = libraries { this.artifact(project, artifactName) }
-
-    @Deprecated("Use `libraries` block instead")
-    fun library(lib: Any) = libraries { file(lib) }
-
-    @Deprecated("Use `libraries` block instead")
-    fun libraries(vararg libs: Any) = libraries { files(*libs) }
-
-    @Deprecated("Use `libraries` block instead")
-    fun libraries(libs: FileCollection) = libraries { files(libs) }
+    override fun inputFiles(files: Collection<Any>) = inputFiles(*files.toTypedArray())
 
     // DSL. Native libraries.
 
-    fun nativeLibrary(lib: Any) = nativeLibraries(lib)
-    fun nativeLibraries(vararg libs: Any) = with(compilationTask) {
+    override fun nativeLibrary(lib: Any) = nativeLibraries(lib)
+    override fun nativeLibraries(vararg libs: Any) {
         nativeLibraries.add(project.files(*libs))
     }
-    fun nativeLibraries(libs: FileCollection) = with(compilationTask) {
+    override fun nativeLibraries(libs: FileCollection) {
         nativeLibraries.add(libs)
     }
 
     // DSL. Other parameters.
 
-    fun linkerOpts(args: List<String>) = linkerOpts(*args.toTypedArray())
-    fun linkerOpts(vararg args: String) = with(compilationTask) {
-        _linkerOpts.addAll(args)
+    override fun linkerOpts(args: List<String>) = linkerOpts(*args.toTypedArray())
+    override fun linkerOpts(vararg args: String) {
+        linkerOpts.addAll(args)
     }
 
-    fun languageVersion(version: String) = with(compilationTask) {
+    override fun languageVersion(version: String) {
         languageVersion = version
     }
 
-    fun apiVersion(version: String) = with(compilationTask) {
+    override fun apiVersion(version: String) {
         apiVersion = version
     }
 
-    fun enableDebug(flag: Boolean) = with(compilationTask) {
+    override fun enableDebug(flag: Boolean) {
         enableDebug = flag
     }
 
-    fun noStdLib() = with(compilationTask) {
-        noStdLib = true
+    override fun noStdLib(flag: Boolean) {
+        noStdLib = flag
     }
 
-    fun produce(prod: String) = with(compilationTask) {
-        produce = prod
+    override fun noMain(flag: Boolean) {
+        noMain = flag
     }
 
-    fun noMain() = with(compilationTask) {
-        noMain = true
+    override fun enableOptimizations(flag: Boolean) {
+        enableOptimizations = true
     }
 
-    fun enableOptimization() = with(compilationTask) {
-        enableOptimization = true
+    override fun enableAssertions(flag: Boolean) {
+        enableAssertions = flag
     }
 
-    fun enableAssertions() = with(compilationTask) {
-        enableAssertions = true
+    override fun measureTime(flag: Boolean) {
+        measureTime = flag
     }
+    // endregion
+}
 
-    fun noDefaultLibs(flag: Boolean) = with(compilationTask) {
-        noDefaultLibs = flag
-    }
+open class KonanCompileProgramTask: KonanCompileTask() {
+    override val produce: Produce  get() = Produce.PROGRAM
+}
 
-    fun measureTime(value: Boolean) = with(compilationTask) {
-        measureTime = value
-    }
+open class KonanCompileLibraryTask: KonanCompileTask() {
+    override val produce: Produce  get() = Produce.LIBRARY
+}
 
-    fun extraOpts(vararg values: Any) = extraOpts(values.asList())
-    fun extraOpts(values: List<Any>) {
-        values.mapTo(compilationTask.extraOpts) { it.toString() }
-    }
+open class KonanCompileBitcodeTask: KonanCompileTask() {
+    override val produce: Produce  get() = Produce.BITCODE
 }

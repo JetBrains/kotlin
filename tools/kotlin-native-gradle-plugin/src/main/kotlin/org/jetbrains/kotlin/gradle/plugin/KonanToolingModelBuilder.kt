@@ -25,9 +25,9 @@ object KonanToolingModelBuilder : ToolingModelBuilder {
     override fun canBuild(modelName: String): Boolean = KonanModel::class.java.name == modelName
 
     override fun buildAll(modelName: String, project: Project): KonanModel {
-        val artifacts = project.supportedCompileTasks
+        val artifacts = project.konanArtifactsContainer.flatten()
                 .toList()
-                .map { KonanArtifactImpl(it.artifactName, it.artifactPath) }
+                .map { KonanArtifactImpl("${it.artifact.name}-${it.target.userName}", it.artifact.canonicalPath) }
         return KonanModelImpl(project.konanVersion, artifacts)
     }
 }

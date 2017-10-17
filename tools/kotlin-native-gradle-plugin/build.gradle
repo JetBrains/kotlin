@@ -92,7 +92,7 @@ dependencies {
 }
 
 test {
-    dependsOn ':cross_dist'
+    dependsOn ':dist'
     //testLogging.showStandardStreams = true
     systemProperty("konan.home", rootProject.file('dist').canonicalPath)
 }

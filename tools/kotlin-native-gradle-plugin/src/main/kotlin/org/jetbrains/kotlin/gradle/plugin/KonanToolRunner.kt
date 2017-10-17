@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.plugin.tasks.host
 
 internal interface KonanToolRunner: Named {
     val mainClass: String
