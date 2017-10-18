@@ -144,8 +144,8 @@ private fun Properties.storeProperties(file: File) {
 
 private fun Properties.putAndRunOnReplace(key: Any, newValue: Any, beforeReplace: (Any, Any, Any) -> Unit) {
     val oldValue = this[key]
-    if (oldValue != null && oldValue!! != newValue) {
-        beforeReplace(key, oldValue!!, newValue)
+    if (oldValue != null && oldValue != newValue) {
+        beforeReplace(key, oldValue, newValue)
     }
     this[key] = newValue
 }
