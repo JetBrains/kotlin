@@ -2784,7 +2784,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
-    private StackValue generateCallableReferenceReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+    public StackValue generateCallableReferenceReceiver(@NotNull ResolvedCall<?> resolvedCall) {
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
         if (descriptor.getExtensionReceiverParameter() == null && descriptor.getDispatchReceiverParameter() == null) return null;
 
