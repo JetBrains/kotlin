@@ -377,7 +377,7 @@ class RunKonanTest extends ExtKonanTest {
 
     RunKonanTest() {
         super()
-        dependsOn(project.tasks['buildKonanTests'])
+        dependsOn('buildKonanTests')
     }
 
     @Override

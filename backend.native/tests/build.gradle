@@ -1410,7 +1410,6 @@ task hash_set0(type: RunKonanTest) {
 
 task listof0(type: RunKonanTest) {
     goldValue = "abc\n[a, b, c, d]\n[n, s, a]\n"
-    arguments = ["a"]
     source = "runtime/collections/listof0.kt"
 }
 
