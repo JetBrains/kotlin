@@ -58,35 +58,40 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler("PROPERTY_NOT_USED") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkPropertyNotUsed(ast, arguments.getFirst(), false, false);
+            checkPropertyNotUsed(findScope(ast, arguments.findNamedArgument("scope")),
+                                 arguments.getFirst(), false, false);
         }
     };
 
     private static final DirectiveHandler PROPERTY_NOT_READ_FROM = new DirectiveHandler("PROPERTY_NOT_READ_FROM") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkPropertyNotUsed(ast, arguments.getFirst(), false, true);
+            checkPropertyNotUsed(findScope(ast, arguments.findNamedArgument("scope")),
+                                 arguments.getFirst(), false, true);
         }
     };
 
     private static final DirectiveHandler PROPERTY_NOT_WRITTEN_TO = new DirectiveHandler("PROPERTY_NOT_WRITTEN_TO") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkPropertyNotUsed(ast, arguments.getFirst(), true, false);
+            checkPropertyNotUsed(findScope(ast, arguments.findNamedArgument("scope")),
+                                 arguments.getFirst(), true, false);
         }
     };
 
     private static final DirectiveHandler PROPERTY_WRITE_COUNT = new DirectiveHandler("PROPERTY_WRITE_COUNT") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkPropertyWriteCount(ast, arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
+            checkPropertyWriteCount(findScope(ast, arguments.findNamedArgument("scope")),
+                                    arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
         }
     };
 
     private static final DirectiveHandler PROPERTY_READ_COUNT = new DirectiveHandler("PROPERTY_READ_COUNT") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkPropertyReadCount(ast, arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
+            checkPropertyReadCount(findScope(ast, arguments.findNamedArgument("scope")),
+                                   arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
         }
     };
 
@@ -358,6 +363,14 @@ public class DirectiveTestUtils {
 
         String errorMessage = functionName + " contains calls";
         assertEquals(errorMessage, 0, callsCount);
+    }
+
+    @NotNull
+    public static JsNode findScope(@NotNull JsNode node, @Nullable String scopeFunctionName) {
+        if (scopeFunctionName != null) {
+            return AstSearchUtil.getFunction(node, scopeFunctionName);
+        }
+        return node;
     }
 
     public static void checkPropertyNotUsed(JsNode node, String propertyName, boolean isGetAllowed, boolean isSetAllowed) throws Exception {
