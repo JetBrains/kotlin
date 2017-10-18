@@ -105,7 +105,7 @@ object KDocRenderer {
                                     if (target == null)
                                         to.append("// Unresolved")
                                     else {
-                                        to.append(trimCommonIndent(target.extractExampleText()))
+                                        to.append(trimCommonIndent(target.extractExampleText()).htmlEscape())
                                     }
                                 }
                             }

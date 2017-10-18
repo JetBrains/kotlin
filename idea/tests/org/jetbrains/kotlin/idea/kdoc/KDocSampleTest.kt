@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 class KDocSampleTest : AbstractMultiModuleTest() {
@@ -66,6 +64,17 @@ class KDocSampleTest : AbstractMultiModuleTest() {
         doResolveTest("fqName/code/usage.kt", "samplez.a.b")
         doResolveTest("fqName/code/usage.kt", "samplez.a.b.c")
         doResolveTest("fqName/code/usage.kt", "samplez.a.b.c.Samplez")
+    }
+
+    fun testTypeParameters() {
+
+        val code = module("code")
+        val samples = module("samples", hasTestRoot = true)
+
+        samples.addDependency(code)
+
+        doInfoTest("typeParameters/code/usageSingleTypeParameter.kt")
+        doInfoTest("typeParameters/code/usageNestedTypeParameters.kt")
     }
 
     fun doResolveTest(path: String, link: String) {
