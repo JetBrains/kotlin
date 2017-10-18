@@ -363,10 +363,10 @@ public class DirectiveTestUtils {
     public static void checkPropertyNotUsed(JsNode node, String propertyName, boolean isGetAllowed, boolean isSetAllowed) throws Exception {
         PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
         if (!isGetAllowed) {
-            assertFalse("inline property getter for `" + propertyName + "` is called", counter.hasUnqualifiedReads(propertyName));
+            assertFalse("property getter for `" + propertyName + "` is called", counter.hasUnqualifiedReads(propertyName));
         }
         if (!isSetAllowed) {
-            assertFalse("inline property setter for `" + propertyName + "` is called", counter.hasUnqualifiedWrites(propertyName));
+            assertFalse("property setter for `" + propertyName + "` is called", counter.hasUnqualifiedWrites(propertyName));
         }
     }
 

@@ -40,7 +40,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotation extends AbstractBoxJsTest {
-        public void testAllFilesPresentInAnnotation() throws Exception {
+        public void testAllFilesPresentInAnnotation(
+
+        ) throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/annotation"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
@@ -6692,6 +6694,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("byteAndShortConversions.kt")
         public void testByteAndShortConversions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/byteAndShortConversions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constantPropagation.kt")
+        public void testConstantPropagation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/constantPropagation.kt");
             doTest(fileName);
         }
 
