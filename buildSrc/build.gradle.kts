@@ -1,12 +1,12 @@
 
 buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
-    extra["buildSrcKotlinRepo"] = findProperty("buildSrc.kotlin.repo")
+    val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
     extra["versions.shadow"] = "2.0.1"
 
     repositories {
-        extra["buildSrcKotlinRepo"]?.let {
-            maven { setUrl(it) }
+        buildSrcKotlinRepo?.let {
+            maven(url = it)
         }
     }
 
@@ -31,7 +31,7 @@ plugins {
 
 repositories {
     extra["buildSrcKotlinRepo"]?.let {
-        maven { setUrl(it) }
+        maven(url = it)
     }
     maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
 //    maven { setUrl("https://repo.gradle.org/gradle/libs-releases-local") }

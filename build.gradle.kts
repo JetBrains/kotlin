@@ -23,7 +23,7 @@ buildscript {
 
     repositories {
         for (repo in repos) {
-            maven { setUrl(repo) }
+            maven(url = repo)
         }
     }
 
@@ -69,7 +69,7 @@ val scriptRuntimeCfg = configurations.create("scriptRuntime").extendsFrom(script
 
 repositories {
     for (repo in (rootProject.extra["repos"] as List<String>)) {
-        maven { setUrl(repo) }
+        maven(url = repo)
     }
 }
 
