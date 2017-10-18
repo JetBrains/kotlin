@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
+import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
@@ -39,7 +41,10 @@ class JavaToJKTreeBuilder {
                 is PsiLiteralExpression -> {
                     return toJK()
                 }
-                is PsiCallExpression -> {
+                is PsiMethodCallExpression -> {
+                    return toJK()
+                }
+                is PsiReferenceExpression -> {
                     return toJK()
                 }
             }
@@ -74,16 +79,23 @@ class JavaToJKTreeBuilder {
             return JKPostfixExpressionImpl(operand.toJK(), operationSign.toJK())
         }
 
-        fun PsiCallExpression.toJK(): JKExpression {
-            return JKJavaCallExpressionImpl(resolveMethod().toJK(), argumentList.toJK())
+        fun PsiMethodCallExpression.toJK(): JKExpression {
+            val method = methodExpression as PsiReferenceExpressionImpl
+            val identifier = (method.referenceNameElement as PsiIdentifier).convertMethodReference()
+            val call = JKJavaCallExpressionImpl(argumentList.toJK(), identifier)
+            return if (method.findChildByRole(ChildRole.DOT) != null) {
+                JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualificationIdentifierImpl.DOT, call)
+            }
+            else {
+                call
+            }
         }
 
-        fun PsiExpressionList?.toJK(): JKExpressionList {
-            this ?: return JKExpressionListImpl(emptyArray())
+        fun PsiExpressionList.toJK(): JKExpressionList {
             return JKExpressionListImpl(expressions.map { it.toJK() }.toTypedArray())
         }
 
-        fun PsiMethod?.toJK(): JKJavaMethodReference {
+        fun PsiIdentifier.convertMethodReference(): JKJavaMethodReference {
             return JKJavaMethodReferenceImpl()
         }
     }

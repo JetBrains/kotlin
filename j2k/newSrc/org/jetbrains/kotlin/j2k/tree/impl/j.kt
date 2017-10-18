@@ -77,12 +77,12 @@ sealed class JKJavaQualificationIdentifierImpl : JKJavaQualificationIdentifier, 
     object DOT : JKJavaQualificationIdentifierImpl()
 }
 
-class JKJavaCallExpressionImpl(override val method: JKJavaMethodReference,
-                               override val arguments: JKExpressionList) : JKJavaCallExpression, JKElementBase() {
+class JKJavaCallExpressionImpl(override val arguments: JKExpressionList,
+                               override val identifier: JKJavaMethodReference) : JKJavaCallExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaCallExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        method.accept(visitor, data)
+        identifier.accept(visitor, data)
         arguments.accept(visitor, data)
     }
 }

@@ -60,14 +60,14 @@ interface JKPostfixExpression : JKUnaryExpression {
 }
 
 interface JKQualifiedExpression : JKExpression {
-    val reciever: JKExpression
+    val receiver: JKExpression
     val operator: JKQualificationIdentifier
     val selector: JKStatement
 }
 
 interface JKCallExpression : JKExpression {
+    val identifier: JKMethodReference
     val arguments: JKExpressionList
-    val method: JKMethodReference
 }
 
 interface JKExpressionList : JKElement {
@@ -89,8 +89,6 @@ interface JKDeclaration : JKElement
 interface JKBlock : JKElement {
     var statements: List<JKStatement>
 }
-
-interface JKCall : JKExpression
 
 interface JKIdentifier : JKElement
 
