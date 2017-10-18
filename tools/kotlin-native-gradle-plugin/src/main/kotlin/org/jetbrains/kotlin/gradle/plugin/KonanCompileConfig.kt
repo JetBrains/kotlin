@@ -58,7 +58,7 @@ open class KonanProgram(name: String, project: ProjectInternal, instantiator: In
         get() = "executable"
 
     override val defaultOutputDir: File
-        get() = project.konanBinOutputDir
+        get() = project.konanBinBaseDir
 }
 
 open class KonanLibrary(name: String, project: ProjectInternal, instantiator: Instantiator)
@@ -68,7 +68,7 @@ open class KonanLibrary(name: String, project: ProjectInternal, instantiator: In
         get() = "library"
 
     override val defaultOutputDir: File
-        get() = project.konanLibsOutputDir
+        get() = project.konanLibsBaseDir
 }
 
 open class KonanBitcode(name: String, project: ProjectInternal, instantiator: Instantiator)
@@ -86,5 +86,5 @@ open class KonanBitcode(name: String, project: ProjectInternal, instantiator: In
             "Generates bitcode for the artifact '${task.name}' for current host"
 
     override val defaultOutputDir: File
-        get() = project.konanBitcodeOutputDir
+        get() = project.konanBitcodeBaseDir
 }

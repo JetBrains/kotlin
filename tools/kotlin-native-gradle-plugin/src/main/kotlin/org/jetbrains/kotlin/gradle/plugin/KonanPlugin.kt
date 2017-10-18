@@ -55,9 +55,9 @@ internal val Project.konanHome: String
     }
 
 internal val Project.konanBuildRoot          get() = buildDir.resolve("konan")
-internal val Project.konanBinOutputDir       get() = konanBuildRoot.resolve("bin")
-internal val Project.konanLibsOutputDir      get() = konanBuildRoot.resolve("libs")
-internal val Project.konanBitcodeOutputDir   get() = konanBuildRoot.resolve("bitcode")
+internal val Project.konanBinBaseDir         get() = konanBuildRoot.resolve("bin")
+internal val Project.konanLibsBaseDir        get() = konanBuildRoot.resolve("libs")
+internal val Project.konanBitcodeBaseDir     get() = konanBuildRoot.resolve("bitcode")
 
 internal val Project.konanDefaultSrcFiles         get() = fileTree("${projectDir.canonicalPath}/src/main/kotlin")
 internal fun Project.konanDefaultDefFile(libName: String)
