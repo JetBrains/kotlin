@@ -155,7 +155,7 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
 
             process.waitFor(3, TimeUnit.MINUTES)
             if (process.exitValue() != 0) {
-                throw AssertionError(classFileFactory.createText())
+                throw AssertionError("Process exited with exit code ${process.exitValue()} \n" + classFileFactory.createText())
             }
         } finally {
             if (!dirForTestClasses.deleteRecursively()) {
