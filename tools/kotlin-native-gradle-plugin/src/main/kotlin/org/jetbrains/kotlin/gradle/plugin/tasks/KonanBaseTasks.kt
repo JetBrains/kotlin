@@ -59,37 +59,34 @@ abstract class KonanTargetableTask: DefaultTask() {
 abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
 
     val artifact: File
-        @OutputFile get() = outputDir.resolve(artifactNameWithSuffix)
+        @OutputFile get() = destinationDir.resolve(artifactNameWithSuffix)
 
-    @Internal lateinit var baseDir: File
-    @Internal lateinit var outputName: String
-
-    val outputDir
-        @Internal get() = baseDir.resolve(target.userName)
+    @Internal lateinit var destinationDir: File
+    @Internal lateinit var artifactName: String
 
     protected val artifactNameWithSuffix: String
-        @Internal get() = "$outputName$artifactSuffix"
+        @Internal get() = "$artifactName$artifactSuffix"
 
-    protected val artifactPath: String
+    val artifactPath: String
         @Internal get() = artifact.canonicalPath
 
     protected abstract val artifactSuffix: String
         @Internal get
 
-    internal open fun init(baseDir: File, outputName: String, target: KonanTarget) {
+    internal open fun init(destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(target)
-        this.baseDir = baseDir
-        this.outputName = outputName
+        this.destinationDir = destinationDir
+        this.artifactName = artifactName
     }
 
     // DSL.
 
-    override fun outputName(name: String) {
-        outputName = name
+    override fun artifactName(name: String) {
+        artifactName = name
     }
 
-    override fun baseDir(dir: Any) {
-        baseDir = project.file(dir)
+    fun destinationDir(dir: Any) {
+        destinationDir = project.file(dir)
     }
 }
 

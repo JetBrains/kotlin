@@ -20,7 +20,7 @@ open class KonanInteropLibrary(name: String, project: ProjectInternal, instantia
     override fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget) =
             "Build the Kotlin/Native interop library '${task.name}' for current host"
 
-    override val defaultOutputDir: File
+    override val defaultBaseDir: File
         get() = project.konanLibsBaseDir
 
     // DSL

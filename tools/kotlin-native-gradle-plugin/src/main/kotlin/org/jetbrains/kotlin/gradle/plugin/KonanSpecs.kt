@@ -5,8 +5,7 @@ import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 
 interface KonanArtifactSpec {
-    fun outputName(name: String)
-    fun baseDir(dir: Any)
+    fun artifactName(name: String)
 }
 
 interface KonanArtifactWithLibrariesSpec: KonanArtifactSpec {

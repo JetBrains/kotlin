@@ -55,7 +55,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected abstract fun generateAggregateTaskDescription(task: Task): String
     protected abstract fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget): String
 
-    protected abstract val defaultOutputDir: File
+    protected abstract val defaultBaseDir: File
 
     override fun didAdd(toAdd: T) {
         super.didAdd(toAdd)
@@ -66,7 +66,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
 
     protected fun createTask(target: KonanTarget): T =
             project.tasks.create(generateTaskName(target), type) {
-                it.init(defaultOutputDir, name, target)
+                it.init(defaultBaseDir.targetSubdir(target), name, target)
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = generateTaskDescription(it)
             } ?: throw Exception("Cannot create task for target: ${target.userName}")
@@ -96,8 +96,9 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
 
     // Common building DSL.
 
-    override fun outputName(name: String)  = forEach { it.outputName(name) }
-    override fun baseDir(dir: Any) = forEach { it.baseDir(dir) }
+    override fun artifactName(name: String)  = forEach { it.artifactName(name) }
+
+    fun baseDir(dir: Any) = forEach { it.destinationDir(project.file(dir).targetSubdir(it.target)) }
 
     override fun libraries(closure: Closure<Unit>) = forEach { it.libraries(closure) }
     override fun libraries(action: Action<KonanLibrariesSpec>) = forEach { it.libraries(action) }

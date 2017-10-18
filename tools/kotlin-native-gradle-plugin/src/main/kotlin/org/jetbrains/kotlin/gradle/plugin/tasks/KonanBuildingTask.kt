@@ -11,9 +11,9 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
 
     internal abstract val toolRunner: KonanToolRunner
 
-    override fun init(baseDir: File, outputName: String, target: KonanTarget) {
+    override fun init(destinationDir: File, artifactName: String, target: KonanTarget) {
         dependsOn(project.konanCompilerDownloadTask)
-        super.init(baseDir, outputName, target)
+        super.init(destinationDir, artifactName, target)
     }
 
     @Input
@@ -31,7 +31,7 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
 
     @TaskAction
     fun run() {
-        outputDir.mkdirs()
+        destinationDir.mkdirs()
         if (dumpParameters) { dumpProperties(this) }
         toolRunner.run(buildArgs())
     }

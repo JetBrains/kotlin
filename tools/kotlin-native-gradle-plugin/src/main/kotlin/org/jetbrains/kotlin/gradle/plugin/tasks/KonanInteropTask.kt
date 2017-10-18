@@ -29,9 +29,9 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
 
     @Internal override val toolRunner: KonanToolRunner = KonanInteropRunner(project)
 
-    override fun init(baseDir: File, outputName: String, target: KonanTarget) {
-        super.init(baseDir, outputName, target)
-        this.defFile = project.konanDefaultDefFile(outputName)
+    override fun init(destinationDir: File, artifactName: String, target: KonanTarget) {
+        super.init(destinationDir, artifactName, target)
+        this.defFile = project.konanDefaultDefFile(artifactName)
     }
 
     // Output directories -----------------------------------------------------

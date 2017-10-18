@@ -27,8 +27,8 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
     val repos: Set<File>
         @Input get() = mutableSetOf<File>().apply {
             addAll(explicitRepos)
-            add(task.outputDir) // TODO: Check if task is a library - create a Library interface
-            add(task.project.konanLibsBaseDir.resolve(target.userName))
+            add(task.destinationDir) // TODO: Check if task is a library - create a Library interface
+            add(task.project.konanLibsBaseDir.targetSubdir(target))
             addAll(artifacts.flatMap { it.libraries.repos })
         }
 
