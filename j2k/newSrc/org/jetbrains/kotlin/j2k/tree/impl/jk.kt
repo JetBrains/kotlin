@@ -112,3 +112,13 @@ class JKExpressionListImpl(override val expressions: Array<JKExpression>) : JKEx
         expressions.forEach { it.accept(visitor, data) }
     }
 }
+
+class JKQualifiedExpressionImpl(override val receiver: JKExpression, override val operator: JKQualificationIdentifier,
+                                override val selector: JKStatement) : JKQualifiedExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitQualifiedExpression(this, data)
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        receiver.accept(visitor, data)
+        operator.accept(visitor, data)
+        selector.accept(visitor, data)
+    }
+}

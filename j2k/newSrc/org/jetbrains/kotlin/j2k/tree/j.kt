@@ -33,8 +33,6 @@ interface JKJavaForLoop : JKLoop
 
 interface JKJavaAssignmentExpression : JKExpression
 
-interface JKJavaCall : JKCall
-
 interface JKJavaTypeIdentifier : JKTypeIdentifier {
     val typeName: String
 }
@@ -48,7 +46,7 @@ interface JKJavaOperatorIdentifier : JKOperatorIdentifier
 interface JKJavaQualificationIdentifier : JKQualificationIdentifier
 
 interface JKJavaCallExpression : JKCallExpression {
-    override val method: JKJavaMethodReference
+    override val identifier: JKJavaMethodReference
 }
 
 interface JKJavaMethodReference : JKMethodReference
