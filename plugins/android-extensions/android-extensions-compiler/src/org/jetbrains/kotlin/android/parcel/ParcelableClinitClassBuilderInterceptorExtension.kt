@@ -45,7 +45,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
     ) : ClassBuilderFactory {
 
         override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
-            return AndroidOnDestroyCollectorClassBuilder(delegateFactory.newClassBuilder(origin), bindingContext)
+            return AndroidOnDestroyCollectorClassBuilder(origin, delegateFactory.newClassBuilder(origin), bindingContext)
         }
 
         override fun getClassBuilderMode() = delegateFactory.classBuilderMode
@@ -64,6 +64,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
     }
 
     private inner class AndroidOnDestroyCollectorClassBuilder(
+            val declarationOrigin: JvmDeclarationOrigin,
             internal val delegateClassBuilder: ClassBuilder,
             val bindingContext: BindingContext
     ) : DelegatingClassBuilder() {
@@ -97,7 +98,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         override fun done() {
             if (!isClinitGenerated && currentClass != null && currentClassName != null) {
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
-                if (descriptor != null && descriptor.isParcelize) {
+                if (descriptor != null && declarationOrigin.descriptor == descriptor && descriptor.isParcelize) {
                     val baseVisitor = super.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null)
                     val visitor = ClinitAwareMethodVisitor(currentClassName!!, baseVisitor)
 
@@ -122,7 +123,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 isClinitGenerated = true
 
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
-                if (descriptor != null && descriptor.isParcelize) {
+                if (descriptor != null && declarationOrigin.descriptor == descriptor && descriptor.isParcelize) {
                     return ClinitAwareMethodVisitor(
                             currentClassName!!,
                             super.newMethod(origin, access, name, desc, signature, exceptions))
