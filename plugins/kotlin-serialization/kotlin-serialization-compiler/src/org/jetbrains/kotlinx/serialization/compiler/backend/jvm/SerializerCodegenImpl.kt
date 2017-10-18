@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
-import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
@@ -238,10 +236,16 @@ class SerializerCodegenImpl(
 
                     val sti = getSerialTypeInfo(property, propertyType)
                     val useSerializer = stackValueSerializerInstance(codegen, sti)
+                    val unknownSer = (!useSerializer && sti.elementMethodPrefix.isEmpty())
+                    if (unknownSer) {
+                        aconst(codegen.typeMapper.mapType(property.type))
+                        AsmUtil.wrapJavaClassIntoKClass(this)
+                    }
                     invokevirtual(kInputType.internalName,
                                   "read" + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
                                   "(" + descType.descriptor + "I" +
                                   (if (useSerializer) kSerialLoaderType.descriptor else "")
+                                  + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
                                   + ")" + (if (sti.unit) "V" else sti.type.descriptor), false)
                     if (sti.unit) {
                         StackValue.putUnitInstance(this)
