@@ -296,7 +296,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val parcelableAsmType = codegen.typeMapper.mapType(parcelableClass)
 
         createMethod(creatorClass, NEW_ARRAY,
-                builtIns.getArrayType(Variance.INVARIANT, parcelableClass.defaultType),
+                builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType),
                 "size" to builtIns.intType
         ).write(codegen) {
             if (parcelerObject != null) {
@@ -315,8 +315,8 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
                     v.getstatic(containerAsmType.internalName, companionFieldName, companionAsmType.descriptor)
                     v.load(1, Type.INT_TYPE)
-                    v.invokevirtual(companionAsmType.internalName, "newArray", "(I)[${containerAsmType.descriptor}", false)
-                    v.areturn(Type.getType("[L$parcelableAsmType;"))
+                    v.invokevirtual(companionAsmType.internalName, "newArray", "(I)[Ljava/lang/Object;", false)
+                    v.areturn(Type.getType("[Ljava/lang/Object;"))
 
                     return@write
                 }

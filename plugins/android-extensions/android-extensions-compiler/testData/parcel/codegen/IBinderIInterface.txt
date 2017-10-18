@@ -47,7 +47,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L4)
     }
 
-    public final User[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {

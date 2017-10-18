@@ -25,7 +25,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
             in: Landroid/os/Parcel;
     }
 
-    public final User[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {

@@ -36,11 +36,11 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0)
 
-    public final User[] newArray(int p0) {
+    public final java.lang.Object[] newArray(int p0) {
         LABEL (L0)
           GETSTATIC (Companion, LUser$Companion;)
           ILOAD (1)
-          INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
+          INVOKEVIRTUAL (User$Companion, newArray, (I)[Ljava/lang/Object;)
           ARETURN
         LABEL (L1)
     }
