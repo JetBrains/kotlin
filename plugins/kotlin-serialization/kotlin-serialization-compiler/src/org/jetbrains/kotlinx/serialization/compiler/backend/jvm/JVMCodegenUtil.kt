@@ -31,10 +31,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInf
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findEnumTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findPolymorphicSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.requiresPolymorphism
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperty
-import org.jetbrains.kotlinx.serialization.compiler.resolve.internalPackageFqName
-import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
-import org.jetbrains.kotlinx.serialization.compiler.resolve.typeSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -115,6 +112,7 @@ internal fun ImplementationBodyCodegen.generateMethod(function: FunctionDescript
 internal val enumSerializerId = ClassId(internalPackageFqName, Name.identifier("EnumSerializer"))
 internal val polymorphicSerializerId = ClassId(internalPackageFqName, Name.identifier("PolymorphicSerializer"))
 internal val referenceArraySerializerId = ClassId(internalPackageFqName, Name.identifier("ReferenceArraySerializer"))
+internal val contextSerializerId = ClassId(packageFqName, Name.identifier("ContextSerializer"))
 
 // returns false is property should not use serializer
 internal fun InstructionAdapter.stackValueSerializerInstance(codegen: ClassBodyCodegen, sti: JVMSerialTypeInfo): Boolean {
@@ -150,7 +148,7 @@ internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: Mod
         // instantiate all arg serializers on stack
         val signature = StringBuilder("(")
         when (serializer.classId) {
-            enumSerializerId -> {
+            enumSerializerId, contextSerializerId -> {
                 // a special way to instantiate enum -- need a enum KClass reference
                 aconst(codegen.typeMapper.mapType(kType))
                 AsmUtil.wrapJavaClassIntoKClass(this)
@@ -224,7 +222,8 @@ fun getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialType
                 return JVMSerialTypeInfo(property, Type.getType("Lkotlin/Unit;"), "Unit", unit = true)
             // todo: more efficient enum support here, but only for enums that don't define custom serializer
             // otherwise, it is a serializer for some other type
-            val serializer = property.serializer?.toClassDescriptor ?: findTypeSerializer(property.module, property.type, type)
+            val serializer = property.serializer?.toClassDescriptor
+                             ?: findTypeSerializer(property.module, property.type, type)
             return JVMSerialTypeInfo(property, Type.getType("Ljava/lang/Object;"),
                                      if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
@@ -237,6 +236,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType, asmType: Typ
     else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
          ?: findStandardAsmTypeSerializer(module, asmType) // otherwise see if there is a standard serializer
          ?: findEnumTypeSerializer(module, kType)
+         ?: module.findClassAcrossModuleDependencies(contextSerializerId)
 }
 
 fun findStandardAsmTypeSerializer(module: ModuleDescriptor, asmType: Type): ClassDescriptor? {

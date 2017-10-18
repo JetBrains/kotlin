@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
@@ -73,6 +74,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
          ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
          ?: findEnumTypeSerializer(module, kType)
+         ?: module.findClassAcrossModuleDependencies(contextSerializerId)
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
