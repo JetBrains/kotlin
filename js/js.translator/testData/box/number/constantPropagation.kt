@@ -2,7 +2,7 @@
 // PROPERTY_NOT_READ_FROM: longConst
 // PROPERTY_READ_COUNT: name=longValue count=4
 // PROPERTY_READ_COUNT: name=intConst count=2
-// PROPERTY_READ_COUNT: name=longValue count=4
+// PROPERTY_READ_COUNT: name=intValue count=2
 // PROPERTY_READ_COUNT: name=MAX_VALUE count=2
 // PROPERTY_READ_COUNT: name=MIN_VALUE count=3
 
@@ -27,7 +27,7 @@ fun box(): String {
     val longMinValue = Long.MIN_VALUE
     val minusLongMinValue = -Long.MIN_VALUE
 
-    val intValue = 23L
+    val intValue = 23
 
     val intValueCopy = intValue
     val minusIntValue = -intValue
