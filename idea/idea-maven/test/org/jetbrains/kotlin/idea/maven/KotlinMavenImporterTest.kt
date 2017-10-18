@@ -1726,6 +1726,193 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         }
     }
 
+    fun testMultiModuleImport() {
+        createProjectSubDirs("src/main/kotlin", "my-common-module/src/main/kotlin", "my-jvm-module/src/main/kotlin", "my-js-module/src/main/kotlin")
+
+        val mainPom = createProjectPom("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+        <packaging>pom</packaging>
+
+        <modules>
+            <module>my-common-module</module>
+            <module>my-jvm-module</module>
+            <module>my-js-module</module>
+        </modules>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>$kotlinVersion</version>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        val commonModule = createModulePom(
+                "my-common-module",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>my-common-module</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib-common</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>meta</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>metadata</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        val jvmModule = createModulePom(
+                "my-jvm-module",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>my-jvm-module</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>test</groupId>
+                        <artifactId>my-common-module</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>compile</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>compile</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        val jsModule = createModulePom(
+                "my-js-module",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>my-js-module</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib-js</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>test</groupId>
+                        <artifactId>my-common-module</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>js</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>js</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        importProjects(mainPom, commonModule, jvmModule, jsModule)
+
+        assertModules("project", "my-common-module", "my-jvm-module", "my-js-module")
+        assertImporterStatePresent()
+
+        with (facetSettings("my-common-module")) {
+            Assert.assertEquals(TargetPlatformKind.Common.description, targetPlatformKind!!.description)
+        }
+
+        with (facetSettings("my-jvm-module")) {
+            Assert.assertEquals(TargetPlatformKind.Jvm(JvmTarget.JVM_1_6).description, targetPlatformKind!!.description)
+            Assert.assertEquals("my-common-module", implementedModuleName)
+        }
+
+        with (facetSettings("my-js-module")) {
+            Assert.assertEquals(TargetPlatformKind.JavaScript.description, targetPlatformKind!!.description)
+            Assert.assertEquals("my-common-module", implementedModuleName)
+        }
+    }
+
     fun testJDKImport() {
         object : WriteAction<Unit>() {
             override fun run(result: Result<Unit>) {
