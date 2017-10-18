@@ -25,17 +25,15 @@ allprojects {
 
 apply plugin: "konan"
 
+def platforms = ["armeabi-v7a", "arm64-v8a"]
 konanTargets = ["android_arm32", "android_arm64"]
 
 konanArtifacts {
-    Polyhedron {
+    program('Polyhedron') {
         baseDir 'Polyhedron'
         outputName 'libpoly'
     }
 }
-
-def platforms = ["armeabi-v7a", "arm64-v8a"]
-def artifacts = ["Polyhedron/armeabi-v7a", "Polyhedron/arm64-v8a"]
 
 apply plugin: "com.android.model.application"
 
@@ -70,7 +68,7 @@ model {
                         def name = targetPlatform.getName()
                         def index = platforms.indexOf(name)
                         if (index >= 0)
-                            sharedLibraryFile = file("${artifacts[index]}/libpoly.so")
+                            sharedLibraryFile = konanArtifacts.Polyhedron."${konanTargets[index]}".artifact
                     }
             }
         }
