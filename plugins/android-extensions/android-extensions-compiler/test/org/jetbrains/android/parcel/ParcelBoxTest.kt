@@ -16,6 +16,13 @@
 
 package org.jetbrains.kotlin.android.parcel
 
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
+
 class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testSimple() = doTest("simple")
     fun testPrimitiveTypes() = doTest("primitiveTypes")
@@ -46,4 +53,24 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testCustomSerializerSimple() = doTest("customSerializerSimple")
     fun testCustomSerializerWriteWith() = doTest("customSerializerWriteWith")
     fun testCustomSerializerBoxing() = doTest("customSerializerBoxing")
+}
+
+class ParcelBoxTestWithSerializableLikeExtension : AbstractParcelBoxTest() {
+    fun testSimple() = doTest("simple")
+
+    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
+        super.setupEnvironment(environment)
+        SyntheticResolveExtension.registerExtension(environment.project, SerializableLike())
+    }
+
+    private class SerializableLike : SyntheticResolveExtension {
+        override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? {
+            fun ClassDescriptor.isSerializableLike() = annotations.hasAnnotation(FqName("test.SerializableLike"))
+
+            return when {
+                thisDescriptor.kind == ClassKind.CLASS && thisDescriptor.isSerializableLike() -> Name.identifier("Companion")
+                else -> return null
+            }
+        }
+    }
 }
