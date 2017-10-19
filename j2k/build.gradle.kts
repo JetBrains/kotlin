@@ -24,6 +24,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))

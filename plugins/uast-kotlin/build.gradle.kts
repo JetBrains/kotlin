@@ -16,6 +16,7 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":idea:idea-test-framework"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))

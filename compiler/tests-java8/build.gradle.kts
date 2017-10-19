@@ -22,6 +22,7 @@ dependencies {
     testCompile(projectTests(":compiler"))
     testRuntime(projectRuntimeJar(":kotlin-preloader"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
 }
 

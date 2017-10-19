@@ -28,6 +28,7 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":plugins:lint"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))

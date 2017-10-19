@@ -26,6 +26,7 @@ dependencies {
     //testCompile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(ideaPluginDeps("*.jar", plugin = "android", subdir = "lib/jps"))
     testRuntime(project(":jps-plugin"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
