@@ -21,7 +21,7 @@ import java.nio.file.Paths
 /**
  * @author Vitaliy.Bibaev
  */
-abstract class KotlinEvaluationTestCase : TraceExecutionTestCase() {
+abstract class KotlinTraceEvaluationTestCase : TraceExecutionTestCase() {
   private companion object {
     val STDLIB_JAR_NAME = "kotlin-stdlib.jar"
   }
@@ -49,7 +49,7 @@ abstract class KotlinEvaluationTestCase : TraceExecutionTestCase() {
     return KotlinOutputChecker(testAppPath, appOutputPath)
   }
 
-  override fun createLocalProcess(className: String?) {
+  override fun createLocalProcess(className: String) {
     super.createLocalProcess(className + "Kt")
   }
 
