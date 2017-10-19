@@ -24,10 +24,10 @@ interface KonanBuildingSpec: KonanArtifactWithLibrariesSpec {
 }
 
 interface KonanCompileSpec: KonanBuildingSpec {
-    fun inputDir(dir: Any)
+    fun srcDir(dir: Any)
 
-    fun inputFiles(vararg files: Any)
-    fun inputFiles(files: Collection<Any>)
+    fun srcFiles(vararg files: Any)
+    fun srcFiles(files: Collection<Any>)
 
     // DSL. Native libraries.
 
@@ -37,8 +37,8 @@ interface KonanCompileSpec: KonanBuildingSpec {
 
     // DSL. Other parameters.
 
-    fun linkerOpts(args: List<String>)
-    fun linkerOpts(vararg args: String)
+    fun linkerOpts(vararg values: String)
+    fun linkerOpts(values: List<String>)
 
     fun languageVersion(version: String)
     fun apiVersion(version: String)
@@ -56,7 +56,7 @@ interface KonanInteropSpec: KonanBuildingSpec {
 
     fun defFile(file: Any)
 
-    fun pkg(value: String)
+    fun packageName(value: String)
 
     fun compilerOpts(vararg values: String)
 
@@ -66,7 +66,7 @@ interface KonanInteropSpec: KonanBuildingSpec {
 
     fun includeDirs(vararg values: Any)
 
-    fun linkerOpts(vararg values: String) = linkerOpts(values.toList())
+    fun linkerOpts(vararg values: String)
     fun linkerOpts(values: List<String>)
 
     fun link(vararg files: Any)

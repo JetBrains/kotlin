@@ -28,16 +28,16 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun generateHostTaskDescription(task: Task, hostTarget: KonanTarget) =
             "Build the Kotlin/Native $typeForDescription '${task.name}' for current host"
 
-    override fun inputDir(dir: Any) = forEach { it.inputDir(dir) }
-    override fun inputFiles(vararg files: Any) = forEach { it.inputFiles(*files) }
-    override fun inputFiles(files: Collection<Any>) = forEach { it.inputFiles(files) }
+    override fun srcDir(dir: Any) = forEach { it.srcDir(dir) }
+    override fun srcFiles(vararg files: Any) = forEach { it.srcFiles(*files) }
+    override fun srcFiles(files: Collection<Any>) = forEach { it.srcFiles(files) }
 
     override fun nativeLibrary(lib: Any) = forEach { it.nativeLibrary(lib) }
     override fun nativeLibraries(vararg libs: Any) = forEach { it.nativeLibraries(*libs) }
     override fun nativeLibraries(libs: FileCollection) = forEach { it.nativeLibraries(libs) }
 
-    override fun linkerOpts(args: List<String>) = forEach { it.linkerOpts(args) }
-    override fun linkerOpts(vararg args: String) = forEach { it.linkerOpts(*args) }
+    override fun linkerOpts(values: List<String>) = forEach { it.linkerOpts(values) }
+    override fun linkerOpts(vararg values: String) = forEach { it.linkerOpts(*values) }
 
     override fun languageVersion(version: String) = forEach { it.languageVersion(version) }
     override fun apiVersion(version: String) = forEach { it.apiVersion(version) }

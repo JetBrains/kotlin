@@ -7,7 +7,7 @@ konanArtifacts {
 
     interop ('sdl') {
         defFile 'src/main/c_interop/sdl.def'
-        pkg 'sdl'
+        packageName 'sdl'
 
         target 'macbook', {
             includeDirs '/Library/Frameworks/SDL2.framework/Headers',

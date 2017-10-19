@@ -43,7 +43,7 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
 
     @InputFile lateinit var defFile: File
 
-    @Optional @Input var pkg: String? = null
+    @Optional @Input var packageName: String? = null
 
     @Input val compilerOpts   = mutableListOf<String>()
     @Input val linkerOpts     = mutableListOf<String>()
@@ -58,7 +58,7 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
 
         addArgIfNotNull("-target", target.userName)
         addArgIfNotNull("-def", defFile.canonicalPath)
-        addArgIfNotNull("-pkg", pkg)
+        addArgIfNotNull("-pkg", packageName)
 
         addFileArgs("-h", headers)
 
@@ -91,8 +91,8 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
         defFile = project.file(file)
     }
 
-    override fun pkg(value: String) {
-        pkg = value
+    override fun packageName(value: String) {
+        packageName = value
     }
 
     override fun compilerOpts(vararg values: String) {

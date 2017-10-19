@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
+import org.gradle.api.tasks.Console
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -16,7 +17,7 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
         super.init(destinationDir, artifactName, target)
     }
 
-    @Input
+    @Console
     var dumpParameters: Boolean = false
 
     @Input

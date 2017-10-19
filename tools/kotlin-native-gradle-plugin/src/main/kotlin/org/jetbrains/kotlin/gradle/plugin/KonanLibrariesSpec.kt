@@ -96,15 +96,11 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
     fun allLibrariesFrom(vararg libraryProjects: Project) = allArtifactsFromInternal(libraryProjects) {
         it is KonanLibrary || it is KonanInteropLibrary
     }
-    /** All libraries (both interop and non-interop ones) from the projects by paths */
-    fun allLibrariesFrom(vararg paths: String) = allLibrariesFrom(*paths.map { project.project(it) }.toTypedArray())
 
     /** All interop libraries from the projects by direct references */
-    fun allInteropsFrom(vararg libraryProjects: Project) = allArtifactsFromInternal(libraryProjects) {
+    fun allInteropLibrariesFrom(vararg libraryProjects: Project) = allArtifactsFromInternal(libraryProjects) {
         it is KonanInteropLibrary
     }
-    /** All interop libraries from the projects by paths */
-    fun allInteropsFrom(vararg paths: String) = allInteropsFrom(*paths.map { project.project(it) }.toTypedArray())
 
     /** Add repo for library search */
     fun useRepo(directory: Any) = explicitRepos.add(project.file(directory))
@@ -113,7 +109,7 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
     /** Add repos for library search */
     fun useRepos(directories: Iterable<Any>) = directories.forEach { useRepo(it) }
 
-    fun Project.evaluationDependsOn(another: Project) {
+    private fun Project.evaluationDependsOn(another: Project) {
         if (this != another) { evaluationDependsOn(another.path) }
     }
 }

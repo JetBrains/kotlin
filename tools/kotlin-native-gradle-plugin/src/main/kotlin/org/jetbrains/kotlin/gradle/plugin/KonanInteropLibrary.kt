@@ -27,7 +27,7 @@ open class KonanInteropLibrary(name: String, project: ProjectInternal, instantia
 
     override fun defFile(file: Any) = forEach { it.defFile(file) }
 
-    override fun pkg(value: String) = forEach { it.pkg(value) }
+    override fun packageName(value: String) = forEach { it.packageName(value) }
 
     override fun compilerOpts(vararg values: String) = forEach { it.compilerOpts(*values) }
 
@@ -38,6 +38,7 @@ open class KonanInteropLibrary(name: String, project: ProjectInternal, instantia
     override fun includeDirs(vararg values: Any) = forEach { it.includeDirs(*values) }
 
     override fun linkerOpts(values: List<String>) = forEach { it.linkerOpts(values) }
+    override fun linkerOpts(vararg values: String) = linkerOpts(values.toList())
 
     override fun link(vararg files: Any) = forEach { it.link(*files) }
     override fun link(files: FileCollection) = forEach { it.link(files) }

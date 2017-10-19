@@ -20,7 +20,6 @@ import org.gradle.api.*
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.TaskCollection
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
@@ -82,7 +81,9 @@ internal val Project.konanVersion
     get() = getProperty(KonanPlugin.ProjectProperty.KONAN_VERSION, KonanPlugin.DEFAULT_KONAN_VERSION) as String
 
 internal val Project.requestedTargets
-    get() = findProperty(KonanPlugin.ProjectProperty.KONAN_BUILD_TARGETS)?.toString()?.trim()?.split(' ') ?: emptyList()
+    get() = findProperty(KonanPlugin.ProjectProperty.KONAN_BUILD_TARGETS)?.let {
+        it.toString().trim().split("\\s+".toRegex())
+    }.orEmpty()
 
 internal val Project.compileAllTask
     get() = getOrCreateTask(COMPILE_ALL_TASK_NAME)
@@ -163,7 +164,7 @@ internal fun dumpProperties(task: Task) {
             println("Compilation task: ${name}")
             println("destinationDir     : ${destinationDir}")
             println("artifact           : ${artifact.canonicalPath}")
-            println("inputFiles         : ${inputFiles.dump()}")
+            println("srcFiles         : ${srcFiles.dump()}")
             println("produce            : ${produce}")
             println("libraries          : ${libraries.files.dump()}")
             println("                   : ${libraries.artifacts.map {
@@ -197,7 +198,7 @@ internal fun dumpProperties(task: Task) {
             println("                   : ${libraries.namedKlibs.dump()}")
             println("defFile            : ${defFile}")
             println("target             : ${target}")
-            println("pkg                : ${pkg}")
+            println("packageName                : ${packageName}")
             println("compilerOpts       : ${compilerOpts}")
             println("linkerOpts         : ${linkerOpts}")
             println("headers            : ${headers.dump()}")

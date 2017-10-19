@@ -45,9 +45,9 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     // Other compilation parameters -------------------------------------------
 
-    internal val _inputFiles = mutableSetOf<FileCollection>()
-    val inputFiles: Collection<FileCollection>
-        @InputFiles get() = _inputFiles.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
+    protected val srcFiles_ = mutableSetOf<FileCollection>()
+    val srcFiles: Collection<FileCollection>
+        @InputFiles get() = srcFiles_.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
 
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
 
@@ -98,23 +98,23 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         addAll(extraOpts)
 
-        inputFiles.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
+        srcFiles.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
     }
 
     // region DSL.
 
     // DSL. Input/output files.
 
-    override fun inputDir(dir: Any) {
-        _inputFiles.add(project.fileTree(dir).apply {
+    override fun srcDir(dir: Any) {
+        srcFiles_.add(project.fileTree(dir).apply {
             include("**/*.kt")
             exclude { it.file.startsWith(project.buildDir) }
         })
     }
-    override fun inputFiles(vararg files: Any) {
-        _inputFiles.add(project.files(files))
+    override fun srcFiles(vararg files: Any) {
+        srcFiles_.add(project.files(files))
     }
-    override fun inputFiles(files: Collection<Any>) = inputFiles(*files.toTypedArray())
+    override fun srcFiles(files: Collection<Any>) = srcFiles(*files.toTypedArray())
 
     // DSL. Native libraries.
 
@@ -128,9 +128,9 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     // DSL. Other parameters.
 
-    override fun linkerOpts(args: List<String>) = linkerOpts(*args.toTypedArray())
-    override fun linkerOpts(vararg args: String) {
-        linkerOpts.addAll(args)
+    override fun linkerOpts(values: List<String>) = linkerOpts(*values.toTypedArray())
+    override fun linkerOpts(vararg values: String) {
+        linkerOpts.addAll(values)
     }
 
     override fun languageVersion(version: String) {

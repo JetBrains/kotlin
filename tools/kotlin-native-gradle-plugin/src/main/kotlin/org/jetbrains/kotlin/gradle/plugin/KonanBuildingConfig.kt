@@ -117,7 +117,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
         val target = TargetManager(targetString).target
 
         if (!target.enabled) {
-            project.logger.info("Target '$targetString' of artifact '$name' is not supported on the current host")
+            project.logger.warn("Target '$targetString' of artifact '$name' is not supported on the current host")
             return
         }
 
