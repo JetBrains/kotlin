@@ -124,7 +124,7 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
     }
 
     private fun DataNode<ModuleData>.findAndroidModuleModel(): DataNode<*>? {
-        val modelClassName = "com.android.tools.idea.gradle.project.model.AndroidModuleModel"
+        val modelClassName = "com.android.tools.idea.gradle.AndroidGradleModel"
         val node = children.firstOrNull { it.key.dataType == modelClassName } ?: return null
         return if (!hasClassInClasspath(modelClassName)) null else node
     }
