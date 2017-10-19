@@ -25,6 +25,7 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))

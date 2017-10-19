@@ -61,6 +61,7 @@ dependencies {
     testRuntime(projectDist(":kotlin-daemon-client"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
