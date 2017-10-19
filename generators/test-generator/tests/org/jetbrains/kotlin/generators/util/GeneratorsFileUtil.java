@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.generators.util;
 
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.io.FilesKt;
+import kotlin.text.Charsets;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -56,7 +57,7 @@ public class GeneratorsFileUtil {
 
         File tempFile = useTempFile ? new File(KotlinTestUtils.tmpDir(file.getName()), file.getName() + ".tmp") : file;
 
-        FileUtil.writeToFile(tempFile, newText);
+        FilesKt.writeText(tempFile, newText, Charsets.UTF_8);
         System.out.println("File written: " + tempFile.getAbsolutePath());
         if (useTempFile) {
             Files.move(tempFile.toPath(), file.toPath(), REPLACE_EXISTING);
@@ -68,7 +69,7 @@ public class GeneratorsFileUtil {
     private static boolean checkFileIgnoringLineSeparators(File file, String content) {
         String currentContent;
         try {
-            currentContent = FileUtil.loadFile(file, true);
+            currentContent = FilesKt.readText(file, Charsets.UTF_8);
         }
         catch (Throwable ignored) {
             return false;

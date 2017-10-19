@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.generators.tests.generator;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -126,12 +126,12 @@ public class SimpleTestMethodModel implements TestMethodModel {
         }
         else {
             String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
-            unescapedName = relativePath + "-" + StringUtil.capitalize(extractedName);
+            unescapedName = relativePath + "-" + StringsKt.capitalize(extractedName);
         }
 
         boolean ignored = isIgnoredTargetWithoutCheck(targetBackend, file) ||
                           skipIgnored && isIgnoredTarget(targetBackend, file);
-        return (ignored ? "ignore" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
+        return (ignored ? "ignore" : "test") + StringsKt.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 
     @Override

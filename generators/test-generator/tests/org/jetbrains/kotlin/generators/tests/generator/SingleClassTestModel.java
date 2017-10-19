@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.generators.tests.generator;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +78,7 @@ public class SingleClassTestModel implements TestClassModel {
     @Override
     public Collection<MethodModel> getMethods() {
         if (methods == null) {
-            List<TestMethodModel> result = Lists.newArrayList();
+            List<TestMethodModel> result = new ArrayList<>();
 
             result.add(new TestAllFilesPresentMethodModel());
 
@@ -90,9 +90,7 @@ public class SingleClassTestModel implements TestClassModel {
                 return true;
             });
 
-            ContainerUtil.sort(result, (o1, o2) -> StringUtil.compare(o1.getName(), o2.getName(), true));
-
-            methods = Lists.newArrayList(result);
+            methods = CollectionsKt.sortedWith(result, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         }
 
         return methods;

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.generators.tests.generator;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +86,7 @@ public class SimpleTestClassModel implements TestClassModel {
         }
 
         if (innerTestClasses == null) {
-            List<TestClassModel> children = Lists.newArrayList();
+            List<TestClassModel> children = new ArrayList<>();
             File[] files = rootFile.listFiles();
             if (files != null) {
                 for (File file : files) {
@@ -149,7 +148,7 @@ public class SimpleTestClassModel implements TestClassModel {
                 ));
             }
             else {
-                List<MethodModel> result = Lists.newArrayList();
+                List<MethodModel> result = new ArrayList<>();
 
                 result.add(new TestAllFilesPresentMethodModel());
 
