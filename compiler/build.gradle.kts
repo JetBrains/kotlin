@@ -52,6 +52,7 @@ dependencies {
     }
     testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
 }
 
