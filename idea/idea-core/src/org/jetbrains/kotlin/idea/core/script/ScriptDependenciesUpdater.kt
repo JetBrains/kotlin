@@ -84,7 +84,7 @@ internal class ScriptDependenciesUpdater(
             tryUsingDefault(file)
         }
 
-        updateCache(listOf(file))
+        performUpdate(file)
 
         return cache[file] ?: ScriptDependencies.Empty
     }
@@ -108,17 +108,20 @@ internal class ScriptDependenciesUpdater(
         }
     }
 
-    private fun updateCache(files: Iterable<VirtualFile>) =
+    private fun requestUpdate(files: Iterable<VirtualFile>) =
             files.map { file ->
                 if (!file.isValid) {
                     return cache.delete(file)
                 }
+                else if (cache[file] != null) { // only update dependencies for scripts that were touched recently
+                    performUpdate(file)
+                }
                 else {
-                    updateForFile(file)
+                    false
                 }
             }.contains(true)
 
-    private fun updateForFile(file: VirtualFile): Boolean {
+    private fun performUpdate(file: VirtualFile): Boolean {
         val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return false
 
         return when (scriptDef.dependencyResolver) {
@@ -263,7 +266,7 @@ internal class ScriptDependenciesUpdater(
                     return
                 }
 
-                if (updateCache(events.mapNotNull {
+                if (requestUpdate(events.mapNotNull {
                     // The check is partly taken from the BuildManager.java
                     it.file?.takeIf {
                         // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims

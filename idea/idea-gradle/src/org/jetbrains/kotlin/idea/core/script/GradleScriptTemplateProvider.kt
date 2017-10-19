@@ -181,23 +181,6 @@ class GradleScriptDefaultDependenciesProvider(
         return previouslyAnalyzedScriptsCombinedDependencies().takeUnless { it.classpath.isEmpty() }
     }
 
-    private fun previouslyAnalyzedScriptsCombinedDependencies(): ScriptDependencies {
-        val sources = mutableListOf<File>()
-        val binaries = mutableListOf<File>()
-        val imports = mutableListOf<String>()
-
-        scriptDependenciesCache.inspectCache { cache ->
-            cache.entries.filter { it.key.endsWith(KOTLIN_BUILD_FILE_NAME) }
-                    .map { it.value }.forEach {
-                sources += it.sources
-                binaries += it.classpath
-                imports += it.imports
-            }
-        }
-        return ScriptDependencies(
-                classpath = binaries.distinct(),
-                sources = sources.distinct(),
-                imports = imports.distinct()
-        )
-    }
+    private fun previouslyAnalyzedScriptsCombinedDependencies() =
+            scriptDependenciesCache.combineDependencies { it.name == KOTLIN_BUILD_FILE_NAME }
 }
