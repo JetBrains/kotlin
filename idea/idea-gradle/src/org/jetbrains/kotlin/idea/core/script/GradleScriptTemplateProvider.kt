@@ -22,7 +22,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.gradle.tooling.ProjectConnection
-import org.jetbrains.kotlin.gradle.kdsl.DEFAULT_SCRIPT_NAME
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
@@ -170,17 +169,17 @@ fun topLevelSectionCodeTextTokens(script: CharSequence, sectionIdentifier: Strin
                 .map { it.tokenSequence }
 
 
-private const val KOTLIN_BUILD_FILE_NAME = DEFAULT_SCRIPT_NAME
+private const val KOTLIN_BUILD_FILE_SUFFIX = ".gradle.kts"
 
 class GradleScriptDefaultDependenciesProvider(
         private val scriptDependenciesCache: ScriptDependenciesCache
 ) : DefaultScriptDependenciesProvider {
     override fun defaultDependenciesFor(scriptFile: VirtualFile): ScriptDependencies? {
-        if (scriptFile.name != KOTLIN_BUILD_FILE_NAME) return null
+        if (scriptFile.name != KOTLIN_BUILD_FILE_SUFFIX) return null
 
         return previouslyAnalyzedScriptsCombinedDependencies().takeUnless { it.classpath.isEmpty() }
     }
 
     private fun previouslyAnalyzedScriptsCombinedDependencies() =
-            scriptDependenciesCache.combineDependencies { it.name == KOTLIN_BUILD_FILE_NAME }
+            scriptDependenciesCache.combineDependencies { it.name.endsWith(KOTLIN_BUILD_FILE_SUFFIX) }
 }
