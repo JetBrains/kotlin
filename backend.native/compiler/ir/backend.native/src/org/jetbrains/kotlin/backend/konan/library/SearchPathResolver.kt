@@ -46,20 +46,33 @@ fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
                                                  abiVersion: Int = 1,
                                                  noStdLib: Boolean = false,
                                                  noDefaultLibs: Boolean = false,
-                                                 removeDuplicates: Boolean = true): List<LibraryReaderImpl> {
+                                                 logger: ((String) -> Unit)?): List<LibraryReaderImpl> {
+    val userProvidedLibraries = libraryNames
+            .map { resolve(it) }
+            .map{ LibraryReaderImpl(it, abiVersion, target) }
 
     val defaultLibraries = defaultLinks(nostdlib = noStdLib, noDefaultLibs = noDefaultLibs).map {
         LibraryReaderImpl(it, abiVersion, target, isDefaultLink = true)
     }
 
-    val userProvidedLibraries = libraryNames
-            .map { resolve(it) }
-            .map{ LibraryReaderImpl(it, abiVersion, target) }
+    // Make sure the user provided ones appear first, so that 
+    // they have precedence over defaults when duplicates are eliminated.
+    val resolvedLibraries = userProvidedLibraries + defaultLibraries
 
-    val resolvedLibraries = defaultLibraries + userProvidedLibraries
+    warnOnLibraryDuplicates(resolvedLibraries.map { it.libraryFile }, logger)
 
-    return resolvedLibraries.let {
-        if (removeDuplicates) it.distinctBy { it.libraryFile.absolutePath } else it
+    return resolvedLibraries.distinctBy { it.libraryFile.absolutePath }
+}
+
+private fun warnOnLibraryDuplicates(resolvedLibraries: List<File>, 
+    logger: ((String) -> Unit)? ) {
+
+    if (logger == null) return
+
+    val duplicates = resolvedLibraries.groupBy { it.absolutePath } .values.filter { it.size > 1 }
+
+    duplicates.forEach {
+        logger("library included more than once: ${it.first().absolutePath}")
     }
 }
 
@@ -112,7 +125,7 @@ fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
                     abiVersion = abiVersion,
                     noStdLib = noStdLib,
                     noDefaultLibs = noDefaultLibs,
-                    removeDuplicates = true
+                    logger = null
             )
     resolveLibrariesRecursive(immediateLibraries, target, abiVersion)
     return immediateLibraries.withResolvedDependencies()

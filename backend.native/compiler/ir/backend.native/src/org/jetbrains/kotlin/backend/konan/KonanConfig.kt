@@ -80,19 +80,16 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val resolver = defaultResolver(repositories, distribution)
 
     private val immediateLibraries: List<LibraryReaderImpl> by lazy {
-        resolver.resolveImmediateLibraries(
+        val result = resolver.resolveImmediateLibraries(
                 libraryNames,
                 targetManager.target,
                 currentAbiVersion,
                 configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
                 configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
-                false
-        ).let {
-            warnOnLibraryDuplicates(it.map { it.libraryFile })
-            val result = it.distinctBy { it.libraryFile.absolutePath }
-            resolver.resolveLibrariesRecursive(result, targetManager.target, currentAbiVersion)
-            result
-        }
+                { msg -> configuration.report(STRONG_WARNING, msg) } 
+        )
+        resolver.resolveLibrariesRecursive(result, targetManager.target, currentAbiVersion)
+        result
     }
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibraryReader> {
@@ -147,13 +144,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
 
         loadedDescriptors
-    }
-
-    private fun warnOnLibraryDuplicates(resolvedLibraries: List<File>) {
-        val duplicates = resolvedLibraries.groupBy { it.absolutePath } .values.filter { it.size > 1 }
-        duplicates.forEach {
-            configuration.report(STRONG_WARNING, "library included more than once: ${it.first().absolutePath}")
-        }
     }
 }
 
