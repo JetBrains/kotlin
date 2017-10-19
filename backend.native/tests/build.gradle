@@ -1243,6 +1243,15 @@ task link_default_libs(type: RunStandaloneKonanTest) {
     source = "link/default/default.kt"
 }
 
+task link_testLib_explicitly(type: RunKonanTest) {
+    dependsOn ':klib:installTestLibrary'
+    goldValue = "Hello\n"
+    source = "link/omit/hello.kt"
+    // We force library inclusion, so need to see the warning banner.
+    flags = ['-l', 'testLibrary'] 
+
+}
+
 task no_purge_for_dependencies(type: LinkKonanTest) {
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
     goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"

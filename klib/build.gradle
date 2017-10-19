@@ -24,3 +24,31 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile project(path: ':backend.native', configuration: 'cli_bc')
 }
+
+def dist = rootProject.file('dist').absolutePath
+
+// TODO: Ideally we want to write just konanArtifacts{} clouse here,
+// but we need to make Kotlin Native Gradle Plugin a dependence
+// of our buildScripts first.
+task compileKonanTestLibrary(type: Exec) {
+    dependsOn ':dist'
+
+    def compiler = "$dist/bin/konanc"
+    def source = 'src/testLibrary'
+    def artifact = 'build/konan/bin/testLibrary'
+
+    executable compiler
+    args source, '-o', artifact, '-p', 'library'
+}
+
+task installTestLibrary(type: Exec) {
+    dependsOn 'compileKonanTestLibrary'
+
+    def repo = "$dist/klib/common"
+    def tool = "$dist/bin/klib"
+    def library = 'build/konan/bin/testLibrary.klib'
+
+    executable tool
+    args 'install', library, '-repository', repo
+}
+

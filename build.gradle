@@ -353,6 +353,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     from("$project.rootDir/dist") {
         include '**'
         exclude 'dependencies'
+        exclude 'klib/testLibrary'
         into baseName
     }
     from(project.rootDir) {
