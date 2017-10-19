@@ -231,13 +231,15 @@ task distRuntime(type: Copy) {
     dependsOn('commonDistRuntime')
 }
 
+def stdlib = 'klib/common/stdlib'
+
 task commonDistRuntime(type: Copy) {
     destinationDir file('dist')
 
     // Target independant common part.
     from(project(':runtime').file("build/${hostName}Stdlib")) {
         include('**')
-        into('klib/stdlib')
+        into(stdlib)
     }
 }
 
@@ -260,19 +262,19 @@ targetList.each { target ->
 
         from(project(':runtime').file("build/$target")) {
             include("*.bc")
-            into("klib/stdlib/targets/$target/native")
+            into("$stdlib/targets/$target/native")
         }
         from(project(':runtime').file("build/${target}Stdlib")) {
             include('**')
-            into('klib/stdlib')
+            into(stdlib)
         }
         from(project(':runtime').file("build/${target}Start.bc")) {
             rename("${target}Start.bc", 'start.bc')
-            into("klib/stdlib/targets/$target/native")
+            into("$stdlib/targets/$target/native")
         }
         if (target == 'wasm32') {
             from(project(':runtime').file('src/launcher/js')) {
-                into('klib/stdlib/targets/wasm32/included')
+                into('$stdlib/targets/wasm32/included')
             }
         }
     }

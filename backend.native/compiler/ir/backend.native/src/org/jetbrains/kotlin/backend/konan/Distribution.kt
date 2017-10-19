@@ -44,7 +44,7 @@ class Distribution(val targetManager: TargetManager,
     val properties = File(propertyFileName).loadProperties()
 
     val klib = "$konanHome/klib"
-    val stdlib = "$klib/stdlib"
+    val stdlib = "$klib/common/stdlib"
     val runtime = runtimeFileOverride ?: "$stdlib/targets/${targetName}/native/runtime.bc"
 
     val dependenciesDir = "$konanHome/dependencies"

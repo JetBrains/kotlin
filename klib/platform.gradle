@@ -20,7 +20,7 @@ konanArtifacts {
         defFile gradle.startParameter.projectProperties.defFile
         noDefaultLibs true
         libraries {
-            files libs.collect { "$konanHome/klib/$targetName/$it" }
+            files libs.collect { "$konanHome/klib/platform/$targetName/$it" }
         }
     }
 }
@@ -29,7 +29,7 @@ def suffix = gradle.startParameter.projectProperties['suffix']
 def klibProgram = suffix?"$konanHome/bin/klib.$suffix" : "$konanHome/bin/klib"
 
 task klibInstall(type:Exec) {
-    String repo = "$konanHome/klib/$targetName"
+    String repo = "$konanHome/klib/platform/$targetName"
     doFirst {
         new File(repo).mkdirs()
     }

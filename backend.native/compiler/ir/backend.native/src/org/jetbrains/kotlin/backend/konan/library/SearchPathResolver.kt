@@ -130,10 +130,10 @@ class KonanLibrarySearchPathResolver(
         get() = localKonanDir?.File()?.klib
 
     val distHead: File?
-        get() = distributionKlib?.File()
+        get() = distributionKlib?.File()?.child("common")
 
     val distPlatformHead: File?
-        get() = targetManager?.let { distHead?.child(targetManager.targetName) }
+        get() = targetManager?.let { distributionKlib?.File()?.child("platform")?.child(targetManager.targetName) }
 
     val currentDirHead: File?
         get() = if (!skipCurrentDir) File.userDir else null
@@ -176,11 +176,13 @@ class KonanLibrarySearchPathResolver(
         get() = File(this, "klib")
 
     // The libraries from the default root are linked automatically.
-    val defaultRoot: File?
-        get() = if (distPlatformHead?.exists ?: false) distPlatformHead else null
+    val defaultRoots: List<File>
+        get() = listOf(distHead, distPlatformHead)
+                .filterNotNull()
+                .filter{ it.exists }
 
     override fun defaultLinks(nostdlib: Boolean, noDefaultLibs: Boolean): List<File> {
-        val defaultLibs = defaultRoot?.listFiles.orEmpty()
+        val defaultLibs = defaultRoots.flatMap{ it.listFiles }
             .filterNot { it.name.removeSuffixIfPresent(".klib") == "stdlib" }
             .map { File(it.absolutePath) }
         val result = mutableListOf<File>()
