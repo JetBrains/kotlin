@@ -32,6 +32,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("jcommander", "resources_en", plugin = "testng"))
