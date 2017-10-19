@@ -17,7 +17,8 @@ dependencies {
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
-//    testRuntime(ideaSdkDeps("*.jar"))
+//    testRuntime(ideaSdkDeps("resources"))
+    testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 }
 

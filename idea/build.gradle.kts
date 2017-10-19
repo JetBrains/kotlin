@@ -56,6 +56,7 @@ dependencies {
 
     testCompileOnly(ideaPluginDeps("jsr305", plugin = "android"))
 
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
 
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
