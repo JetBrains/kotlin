@@ -142,7 +142,7 @@ object KotlinBuilderModuleScriptGenerator {
         val result = SmartList<JpsModule>(from.module)
         result.addIfNotNull(getRelatedProductionModule(from.module))
 
-        return result
+        return result.filter { it.hasProductionSourceRoot }
     }
 
     fun getAdditionalOutputDirsWhereInternalsAreVisible(target: ModuleBuildTarget): List<File> {
