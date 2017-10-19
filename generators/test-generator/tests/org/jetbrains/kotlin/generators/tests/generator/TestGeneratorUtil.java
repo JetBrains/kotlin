@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.generators.tests.generator;
 
-import com.intellij.openapi.util.text.StringUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -41,6 +41,6 @@ public class TestGeneratorUtil {
 
     @NotNull
     public static String fileNameToJavaIdentifier(@NotNull File file) {
-        return StringUtil.capitalize(escapeForJavaIdentifier(file.getName()));
+        return StringsKt.capitalize(escapeForJavaIdentifier(file.getName()));
     }
 }
