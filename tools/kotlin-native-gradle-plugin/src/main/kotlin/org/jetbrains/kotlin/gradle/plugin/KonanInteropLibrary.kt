@@ -12,7 +12,7 @@ open class KonanInteropLibrary(name: String, project: ProjectInternal, instantia
     : KonanBuildingConfig<KonanInteropTask>(name, KonanInteropTask::class.java, project, instantiator), KonanInteropSpec {
 
     override fun generateTaskDescription(task: KonanInteropTask) =
-            "Build the Kotlin/Native interop library '${task.name}' for target '${task.target}'"
+            "Build the Kotlin/Native interop library '${task.name}' for target '${task.konanTarget}'"
 
     override fun generateAggregateTaskDescription(task: Task) =
             "Build the Kotlin/Native interop library '${task.name}' for all supported and declared targets'"

@@ -41,18 +41,20 @@ internal val Project.simpleOsName
 /** A task with a KonanTarget specified. */
 abstract class KonanTargetableTask: DefaultTask() {
 
-    @Input lateinit var target: KonanTarget
-        internal set
+    @Input internal lateinit var konanTarget: KonanTarget
 
     internal open fun init(target: KonanTarget) {
-        this.target = target
+        this.konanTarget = target
     }
 
     val targetIsSupported: Boolean
-        @Internal get() = target.enabled
+        @Internal get() = konanTarget.enabled
 
     val isCrossCompile: Boolean
-        @Internal get() = (target != TargetManager.host)
+        @Internal get() = (konanTarget != TargetManager.host)
+
+    val target: String
+        @Internal get() = konanTarget.userName
 }
 
 /** A task building an artifact. */

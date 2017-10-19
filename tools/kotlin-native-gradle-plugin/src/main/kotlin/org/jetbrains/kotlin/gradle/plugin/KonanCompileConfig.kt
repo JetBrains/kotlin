@@ -20,7 +20,7 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     protected abstract val typeForDescription: String
 
     override fun generateTaskDescription(task: T) =
-            "Build the Kotlin/Native $typeForDescription '${task.name}' for target '${task.target}'"
+            "Build the Kotlin/Native $typeForDescription '${task.name}' for target '${task.konanTarget}'"
 
     override fun generateAggregateTaskDescription(task: Task) =
             "Build the Kotlin/Native $typeForDescription '${task.name}' for all supported and declared targets"
@@ -74,7 +74,7 @@ open class KonanBitcode(name: String, project: ProjectInternal, instantiator: In
         get() = "bitcode"
 
     override fun generateTaskDescription(task: KonanCompileBitcodeTask) =
-            "Generates bitcode for the artifact '${task.name}' and target '${task.target}'"
+            "Generates bitcode for the artifact '${task.name}' and target '${task.konanTarget}'"
 
     override fun generateAggregateTaskDescription(task: Task) =
             "Generates bitcode for the artifact '${task.name}' for all supported and declared targets'"

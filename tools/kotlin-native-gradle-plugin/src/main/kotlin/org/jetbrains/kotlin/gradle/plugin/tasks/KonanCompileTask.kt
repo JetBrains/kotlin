@@ -41,7 +41,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     // Output artifact --------------------------------------------------------
 
     override val artifactSuffix: String
-        @Internal get() = produce.kind.suffix(target)
+        @Internal get() = produce.kind.suffix(konanTarget)
 
     // Other compilation parameters -------------------------------------------
 
@@ -84,7 +84,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         addListArg("-linkerOpts", linkerOpts)
 
-        addArgIfNotNull("-target", target.userName)
+        addArgIfNotNull("-target", konanTarget.userName)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
 

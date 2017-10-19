@@ -56,7 +56,7 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
 
         addArg("-o", artifact.canonicalPath)
 
-        addArgIfNotNull("-target", target.userName)
+        addArgIfNotNull("-target", konanTarget.userName)
         addArgIfNotNull("-def", defFile.canonicalPath)
         addArgIfNotNull("-pkg", packageName)
 

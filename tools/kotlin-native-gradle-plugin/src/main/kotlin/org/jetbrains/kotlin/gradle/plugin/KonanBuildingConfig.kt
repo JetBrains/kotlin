@@ -20,7 +20,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                                                          type: Class<T>,
                                                          val project: ProjectInternal,
                                                          instantiator: Instantiator)
-    : KonanBuildingSpec, Named, DefaultNamedDomainObjectSet<T>(type, instantiator, { it.target.userName }) {
+    : KonanBuildingSpec, Named, DefaultNamedDomainObjectSet<T>(type, instantiator, { it.konanTarget.userName }) {
 
     override fun getName() = name_
 
@@ -60,8 +60,8 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     override fun didAdd(toAdd: T) {
         super.didAdd(toAdd)
 
-        assert(toAdd.target !in targetToTask)
-        targetToTask[toAdd.target] = toAdd
+        assert(toAdd.konanTarget !in targetToTask)
+        targetToTask[toAdd.konanTarget] = toAdd
     }
 
     protected fun createTask(target: KonanTarget): T =
@@ -76,7 +76,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                 task.group = BasePlugin.BUILD_GROUP
                 task.description = generateAggregateTaskDescription(task)
                 this.filter {
-                    project.targetIsRequested(it.target)
+                    project.targetIsRequested(it.konanTarget)
                 }.forEach {
                     task.dependsOn(it)
                 }
@@ -87,18 +87,24 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
             this[TargetManager.host]?.let { hostBuild ->
                 project.tasks.create(generateHostTaskName()) {
                     it.group = BasePlugin.BUILD_GROUP
-                    it.description = generateHostTaskDescription(it, hostBuild.target)
+                    it.description = generateHostTaskDescription(it, hostBuild.konanTarget)
                     it.dependsOn(hostBuild)
                 }
             }
 
-    operator fun get(target: KonanTarget) = targetToTask[target]
+    internal operator fun get(target: KonanTarget) = targetToTask[target]
+
+    fun getByTarget(target: String) = findByTarget(target) ?: throw NoSuchElementException("No such target for artifact $name: ${target}")
+    fun findByTarget(target: String) = this[TargetManager(target).target]
+
+    fun getArtifactByTarget(target: String) = getByTarget(target).artifact
+    fun findArtifactByTarget(target: String) = findByTarget(target)?.artifact
 
     // Common building DSL.
 
     override fun artifactName(name: String)  = forEach { it.artifactName(name) }
 
-    fun baseDir(dir: Any) = forEach { it.destinationDir(project.file(dir).targetSubdir(it.target)) }
+    fun baseDir(dir: Any) = forEach { it.destinationDir(project.file(dir).targetSubdir(it.konanTarget)) }
 
     override fun libraries(closure: Closure<Unit>) = forEach { it.libraries(closure) }
     override fun libraries(action: Action<KonanLibrariesSpec>) = forEach { it.libraries(action) }

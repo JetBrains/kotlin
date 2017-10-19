@@ -33,7 +33,7 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
         }
 
     val target: KonanTarget
-        @Internal get() = task.target
+        @Internal get() = task.konanTarget
 
     // DSL Methods
 
