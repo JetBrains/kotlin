@@ -43,6 +43,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(ideaSdkDeps("openapi", "idea"))
     testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
