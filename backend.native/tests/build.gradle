@@ -2097,12 +2097,6 @@ kotlinNativeInterop {
     }
 
     if (isMac()) {
-        opengl {
-            defFile '../../samples/opengl/src/main/c_interop/opengl.def'
-            linkerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
-            flavor 'native'
-        }
-
         objcSmoke {
             defFile 'interop/objc/objcSmoke.def'
             headers "$projectDir/interop/objc/smoke.h"
@@ -2190,11 +2184,10 @@ task interop_echo_server(type: RunInteropKonanTest) {
 }
 
 if (isMac()) {
-    task interop_opengl_teapot(type: RunInteropKonanTest) {
+    task interop_opengl_teapot(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
         run = false
         source = "interop/basics/opengl_teapot.kt"
-        interop = 'opengl'
     }
 
     task interop_objc_smoke(type: RunInteropKonanTest) {

@@ -1,5 +1,7 @@
 import kotlinx.cinterop.*
-import opengl.*
+import platform.GLUT.*
+import platform.OpenGL.*
+import platform.OpenGLCommon.*
 
 // Ported from http://openglsamples.sourceforge.net/projects/index.php/blog/index/
 
