@@ -812,6 +812,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("TypeAliasSpacing.after.kt")
+        public void testTypeAliasSpacing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/TypeAliasSpacing.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnnecessarySpacesInParametersLists.after.kt")
         public void testUnnecessarySpacesInParametersLists() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/UnnecessarySpacesInParametersLists.after.kt");
