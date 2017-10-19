@@ -8,10 +8,6 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 /**
  * @author Vitaliy.Bibaev
  */
-class PositiveJavaStreamTest : KotlinPsiChainBuilderTestCase.Positive("streams/positive") {
+abstract class PositiveJavaStreamTest(subDirectory: String) : KotlinPsiChainBuilderTestCase.Positive("streams/positive/$subDirectory") {
   override val kotlinChainBuilder: StreamChainBuilder = JavaStandardLibrarySupportProvider().chainBuilder
-
-  fun testSimple() {
-    doTest()
-  }
 }
