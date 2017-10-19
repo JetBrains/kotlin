@@ -63,10 +63,10 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     @Input var enableAssertions    = false
     @Console var measureTime       = false
 
-    @Optional @Input var languageVersion : String? = null
-        internal set
-    @Optional @Input var apiVersion      : String? = null
-        internal set
+    val languageVersion : String?
+        @Optional @Input get() = project.konanExtension.languageVersion
+    val apiVersion      : String?
+        @Optional @Input get() = project.konanExtension.apiVersion
 
     // Command line  ------------------------------------------------------------
 
@@ -131,14 +131,6 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     override fun linkerOpts(values: List<String>) = linkerOpts(*values.toTypedArray())
     override fun linkerOpts(vararg values: String) {
         linkerOpts.addAll(values)
-    }
-
-    override fun languageVersion(version: String) {
-        languageVersion = version
-    }
-
-    override fun apiVersion(version: String) {
-        apiVersion = version
     }
 
     override fun enableDebug(flag: Boolean) {

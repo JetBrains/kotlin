@@ -28,7 +28,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
 
     internal val aggregateBuildTask: Task
 
-    val declaredTargets: Iterable<KonanTarget> = project.konanTargets.map { TargetManager(it).target }
+    val declaredTargets: Iterable<KonanTarget> = project.konanTargets
 
     init {
         declaredTargets.forEach {

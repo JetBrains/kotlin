@@ -1,6 +1,6 @@
 apply plugin: 'konan'
 
-konanTargets = ['macbook']
+konan.targets = ['macbook']
 
 konanArtifacts {
     program('Window')

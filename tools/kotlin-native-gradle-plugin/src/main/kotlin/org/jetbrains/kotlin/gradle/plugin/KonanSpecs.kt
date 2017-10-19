@@ -40,9 +40,6 @@ interface KonanCompileSpec: KonanBuildingSpec {
     fun linkerOpts(vararg values: String)
     fun linkerOpts(values: List<String>)
 
-    fun languageVersion(version: String)
-    fun apiVersion(version: String)
-
     fun enableDebug(flag: Boolean)
     fun noStdLib(flag: Boolean)
     fun noMain(flag: Boolean)

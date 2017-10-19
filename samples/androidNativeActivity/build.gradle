@@ -26,7 +26,7 @@ allprojects {
 apply plugin: "konan"
 
 def platforms = ["armeabi-v7a", "arm64-v8a"]
-konanTargets = ["android_arm32", "android_arm64"]
+konan.targets = ["android_arm32", "android_arm64"]
 
 konanArtifacts {
     program('Polyhedron') {
@@ -68,7 +68,7 @@ model {
                         def name = targetPlatform.getName()
                         def index = platforms.indexOf(name)
                         if (index >= 0)
-                            sharedLibraryFile = konanArtifacts.Polyhedron."${konanTargets[index]}".artifact
+                            sharedLibraryFile = konanArtifacts.Polyhedron."${konan.targets[index]}".artifact
                     }
             }
         }

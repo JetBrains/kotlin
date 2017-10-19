@@ -13,7 +13,7 @@ String konanHome = gradle.startParameter.projectProperties['konan.home']
 List<String> libs = gradle.startParameter.projectProperties.libraries.split(" ").findAll { !it.isEmpty() }
 String targetName = gradle.startParameter.projectProperties.target
 
-konanTargets = [targetName]
+konan.targets = [targetName]
 
 konanArtifacts {
     interop("$taskName") {

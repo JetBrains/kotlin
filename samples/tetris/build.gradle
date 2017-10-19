@@ -1,7 +1,6 @@
 apply plugin: 'konan'
 
-konanTargets.clear()
-konanTargets.addAll(['macbook', 'linux', 'iphone', 'raspberrypi'])
+konan.targets = ['macbook', 'linux', 'iphone', 'raspberrypi']
 
 konanArtifacts {
 

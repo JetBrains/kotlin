@@ -39,9 +39,6 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun linkerOpts(values: List<String>) = forEach { it.linkerOpts(values) }
     override fun linkerOpts(vararg values: String) = forEach { it.linkerOpts(*values) }
 
-    override fun languageVersion(version: String) = forEach { it.languageVersion(version) }
-    override fun apiVersion(version: String) = forEach { it.apiVersion(version) }
-
     override fun enableDebug(flag: Boolean) = forEach { it.enableDebug(flag) }
     override fun noStdLib(flag: Boolean) = forEach { it.noStdLib(flag) }
     override fun noMain(flag: Boolean) = forEach { it.noMain(flag) }

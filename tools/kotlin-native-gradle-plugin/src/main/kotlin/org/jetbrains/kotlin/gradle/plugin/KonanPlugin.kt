@@ -24,14 +24,16 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetManager
 import java.io.File
 import java.util.*
 import javax.inject.Inject
 
 /**
  * We use the following properties:
- *      konan.home       - directory where compiler is located (aka dist in konan project output).
- *      konan.version    - a konan compiler version for downloading.
+ *      konan.home          - directory where compiler is located (aka dist in konan project output).
+ *      konan.version       - a konan compiler version for downloading.
+ *      konan.build.targets - list of targets to build (by default all the declared targets are built).
  */
 
 internal fun Project.hasProperty(property: KonanPlugin.ProjectProperty) = hasProperty(property.propertyName)
@@ -70,9 +72,12 @@ internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBu
     get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME)
             as NamedDomainObjectContainer<KonanBuildingConfig<*>>
 
+internal val Project.konanTargets: List<KonanTarget>
+    get() = konanExtension.konanTargets
+
 @Suppress("UNCHECKED_CAST")
-internal val Project.konanTargets: MutableList<String>
-    get() = extensions.extraProperties[KonanPlugin.TARGETS_EXTENSION_NAME] as MutableList<String>
+internal val Project.konanExtension: KonanExtension
+    get() = extensions.getByName(KonanPlugin.KONAN_EXTENSION_NAME) as KonanExtension
 
 internal val Project.konanCompilerDownloadTask
     get() = tasks.getByName(KonanPlugin.KONAN_DOWNLOAD_TASK_NAME)
@@ -198,7 +203,7 @@ internal fun dumpProperties(task: Task) {
             println("                   : ${libraries.namedKlibs.dump()}")
             println("defFile            : ${defFile}")
             println("target             : ${target}")
-            println("packageName                : ${packageName}")
+            println("packageName        : ${packageName}")
             println("compilerOpts       : ${compilerOpts}")
             println("linkerOpts         : ${linkerOpts}")
             println("headers            : ${headers.dump()}")
@@ -211,6 +216,15 @@ internal fun dumpProperties(task: Task) {
             println("Unsupported task.")
         }
     }
+}
+
+open class KonanExtension {
+    var targets = mutableListOf("host")
+    var languageVersion: String? = null
+    var apiVersion: String? = null
+
+    internal val konanTargets: List<KonanTarget>
+        get() = targets.map { TargetManager(it).target }.distinct()
 }
 
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
@@ -228,7 +242,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_DOWNLOAD_TASK_NAME = "checkKonanCompiler"
         internal const val COMPILE_ALL_TASK_NAME = "compileKonan"
 
-        internal const val TARGETS_EXTENSION_NAME = "konanTargets"
+        internal const val KONAN_EXTENSION_NAME = "konan"
 
         internal val DEFAULT_KONAN_VERSION = Properties().apply {
             load(KonanPlugin::class.java.getResourceAsStream("/META-INF/gradle-plugins/konan.properties") ?:
@@ -246,7 +260,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.plugins.apply("base")
         // Create necessary tasks and extensions.
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
-        project.extensions.extraProperties.set(TARGETS_EXTENSION_NAME, mutableListOf("host"))
+        project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
         project.extensions.create(ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
 
         // Set additional project properties like konan.home, konan.build.targets etc.
