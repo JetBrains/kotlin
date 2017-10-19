@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -31,11 +32,9 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 class AnnotationDeserializer(private val module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
     private val builtIns: KotlinBuiltIns
@@ -85,8 +84,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
                 factory.createStringValue(nameResolver.getString(value.stringValue))
             }
             Type.CLASS -> {
-                // TODO: support class literals
-                error("Class literal annotation arguments are not supported yet (${nameResolver.getClassId(value.classId)})")
+                resolveClassLiteralValue(nameResolver.getClassId(value.classId))
             }
             Type.ENUM -> {
                 resolveEnumValue(nameResolver.getClassId(value.classId), nameResolver.getName(value.enumValueId))
@@ -130,6 +128,15 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             // This means that an annotation class has been changed incompatibly without recompiling clients
             factory.createErrorValue("Unexpected argument value")
         }
+    }
+
+    private fun resolveClassLiteralValue(classId: ClassId): ConstantValue<*> {
+        // If value refers to a class named test.Foo.Bar where both Foo and Bar have generic type parameters,
+        // we're constructing a type `KClass<test.Foo<*>.Bar<*>>` below
+        val starProjectedType = resolveClass(classId).defaultType.replaceArgumentsWithStarProjections()
+        val kClass = resolveClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.kClass.toSafe()))
+        val type = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(TypeProjectionImpl(starProjectedType)))
+        return factory.createKClassValue(type)
     }
 
     // NOTE: see analogous code in BinaryClassAnnotationAndConstantLoaderImpl

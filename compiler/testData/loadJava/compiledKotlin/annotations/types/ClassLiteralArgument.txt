@@ -1,0 +1,30 @@
+package test
+
+public final class A {
+    /*primary*/ public constructor A()
+    public final fun generic(/*0*/ s: @test.Ann(klass = test.Generic<*>::class) kotlin.String): kotlin.Unit
+    public final fun innerGeneric(/*0*/ s: @test.Ann(klass = test.InnerGeneric<*, *>.Inner<*, *>::class) kotlin.String): kotlin.Unit
+    public final fun simple(/*0*/ s: @test.Ann(klass = test.Simple::class) kotlin.String): kotlin.Unit
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
+    /*primary*/ public constructor Ann(/*0*/ klass: kotlin.reflect.KClass<*>)
+    public final val klass: kotlin.reflect.KClass<*>
+        public final fun <get-klass>(): kotlin.reflect.KClass<*>
+}
+
+public final class Generic</*0*/ T> {
+    /*primary*/ public constructor Generic</*0*/ T>()
+}
+
+public final class InnerGeneric</*0*/ A, /*1*/ B> {
+    /*primary*/ public constructor InnerGeneric</*0*/ A, /*1*/ B>()
+
+    public final inner class Inner</*0*/ in C, /*1*/ D : A> /*captured type parameters: /*2*/ A, /*3*/ B*/ {
+        /*primary*/ public constructor Inner</*0*/ in C, /*1*/ D : A>()
+    }
+}
+
+public final class Simple {
+    /*primary*/ public constructor Simple()
+}
