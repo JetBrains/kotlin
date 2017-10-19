@@ -53,9 +53,15 @@ interface JKJavaFieldAccessExpression : JKFieldAccessExpression {
 
 }
 
+interface JKJavaNewExpression : JKNewExpression {
+
+}
+
 interface JKJavaMethodReference : JKMethodReference
 
 interface JKJavaFieldReference : JKFieldReference
+
+interface JKJavaClassReference : JKClassReference
 
 interface JKJavaAccessModifier : JKAccessModifier {
     val type: AccessModifierType

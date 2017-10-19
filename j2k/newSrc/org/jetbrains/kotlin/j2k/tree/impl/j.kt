@@ -77,8 +77,8 @@ sealed class JKJavaQualificationIdentifierImpl : JKJavaQualificationIdentifier, 
     object DOT : JKJavaQualificationIdentifierImpl()
 }
 
-class JKJavaMethodCallExpressionImpl(override val arguments: JKExpressionList,
-                                     override val identifier: JKMethodReference) : JKJavaMethodCallExpression, JKElementBase() {
+class JKJavaMethodCallExpressionImpl(override val identifier: JKMethodReference,
+                                     override val arguments: JKExpressionList) : JKJavaMethodCallExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -95,6 +95,15 @@ class JKJavaFieldAccessExpressionImpl(override val identifier: JKFieldReference)
     }
 }
 
+class JKJavaNewExpressionImpl(override val identifier: JKClassReference,
+                              override val arguments: JKExpressionList) : JKJavaNewExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        identifier.accept(visitor, data)
+    }
+}
+
 class JKJavaMethodReferenceImpl() : JKJavaMethodReference, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodReference(this, data)
 
@@ -105,6 +114,14 @@ class JKJavaMethodReferenceImpl() : JKJavaMethodReference, JKElementBase() {
 
 class JKJavaFieldReferenceImpl() : JKJavaFieldReference, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldReference(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}
+
+class JKJavaClassReferenceImpl() : JKJavaClassReference, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaClassReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 
