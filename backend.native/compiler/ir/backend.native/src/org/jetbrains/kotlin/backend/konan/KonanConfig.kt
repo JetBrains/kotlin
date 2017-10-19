@@ -89,14 +89,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 false
         ).let {
             warnOnLibraryDuplicates(it.map { it.libraryFile })
-            it.distinctBy { it.libraryFile.absolutePath }
+            val result = it.distinctBy { it.libraryFile.absolutePath }
+            resolver.resolveLibrariesRecursive(result, targetManager.target, currentAbiVersion)
+            result
         }
     }
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibraryReader> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
 
-        resolver.resolveLibrariesRecursive(immediateLibraries, targetManager.target, currentAbiVersion)
         return immediateLibraries.purgeUnneeded().withResolvedDependencies()
     }
 
