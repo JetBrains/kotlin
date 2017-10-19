@@ -363,6 +363,7 @@ val MAVEN_STDLIB_ID = "kotlin-stdlib"
 val MAVEN_STDLIB_ID_JRE7 = "kotlin-stdlib-jre7"
 val MAVEN_STDLIB_ID_JRE8 = "kotlin-stdlib-jre8"
 val MAVEN_JS_STDLIB_ID = "kotlin-stdlib-js"
+val MAVEN_JS_TEST_ID = "kotlin-test-js"
 val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
 val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator
 val MAVEN_TEST_ID = "kotlin-test"
