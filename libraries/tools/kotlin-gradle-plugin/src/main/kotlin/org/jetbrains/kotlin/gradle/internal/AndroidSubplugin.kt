@@ -136,7 +136,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         fun isLayoutDirectory(file: File) = file.name == "layout" || file.name.startsWith("layout-")
 
         return resDirectories.flatMap { resDir ->
-            (resDir.listFiles(::isLayoutDirectory)).asList()
+            (resDir.listFiles(::isLayoutDirectory)).orEmpty().asList()
         }
     }
 
