@@ -70,13 +70,13 @@ object CastDiagnosticsUtil {
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
     private fun isRelated(a: KotlinType, b: KotlinType, platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
-        val aClasses = mapToPlatformClasses(a, platformToKotlinClassMap)
-        val bClasses = mapToPlatformClasses(b, platformToKotlinClassMap)
+        val aClasses = mapToPlatformIndependentClasses(a, platformToKotlinClassMap)
+        val bClasses = mapToPlatformIndependentClasses(b, platformToKotlinClassMap)
 
         return aClasses.any { DescriptorUtils.isSubtypeOfClass(b, it) } || bClasses.any { DescriptorUtils.isSubtypeOfClass(a, it) }
     }
 
-    private fun mapToPlatformClasses(
+    private fun mapToPlatformIndependentClasses(
             type: KotlinType,
             platformToKotlinClassMap: PlatformToKotlinClassMap
     ): List<ClassDescriptor> {
