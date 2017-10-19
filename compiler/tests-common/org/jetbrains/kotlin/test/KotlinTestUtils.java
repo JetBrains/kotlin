@@ -397,7 +397,7 @@ public class KotlinTestUtils {
     @NotNull
     public static File tmpDir(String name) throws IOException {
         // we should use this form. otherwise directory will be deleted on each test
-        File answer = FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "");
+        File answer = FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "").getCanonicalFile();
         deleteOnShutdown(answer);
         return answer;
     }
