@@ -15,7 +15,10 @@
  */
 package com.intellij.debugger.streams.kotlin.trace.dsl
 
-import com.intellij.debugger.streams.trace.dsl.*
+import com.intellij.debugger.streams.trace.dsl.Convertable
+import com.intellij.debugger.streams.trace.dsl.Expression
+import com.intellij.debugger.streams.trace.dsl.ForLoopBody
+import com.intellij.debugger.streams.trace.dsl.Variable
 
 /**
  * @author Vitaliy.Bibaev

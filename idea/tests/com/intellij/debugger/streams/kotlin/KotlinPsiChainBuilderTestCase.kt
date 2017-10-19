@@ -4,7 +4,6 @@ import com.intellij.debugger.streams.test.StreamChainBuilderTestCase
 import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.pom.java.LanguageLevel
 import junit.framework.TestCase
 import java.io.File
 import java.nio.file.Paths
