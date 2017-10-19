@@ -28,8 +28,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase;
 
@@ -41,7 +42,7 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        getProject().registerService(KotlinScriptDefinitionProvider.class);
+        getProject().registerService(ScriptDefinitionProvider.class, CliScriptDefinitionProvider.class);
     }
 
     @Override

@@ -25,13 +25,16 @@
         <!-- diagnosticSuppressor decelerated in common.xml -->
         <diagnosticSuppressor implementation="org.jetbrains.kotlin.idea.debugger.DiagnosticSuppressorForDebugger"/>
 
-        <scriptTemplatesProvider
+        <scriptDefinitionContributor
             id="ScriptTemplatesFromCompilerSettingsProvider"
             implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromCompilerSettingsProvider"/>
 
-        <scriptTemplatesProvider id="StandardKotlinScriptTemplateProvider"
+        <scriptDefinitionContributor id="StandardScriptDefinitionContributor"
                                  order="last"
-                                 implementation="org.jetbrains.kotlin.idea.script.StandardKotlinScriptTemplateProvider"/>
+                                 implementation="org.jetbrains.kotlin.idea.core.script.StandardScriptDefinitionContributor"/>
+
+        <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
+                                 implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
 
         <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformSupport"/>
         <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformSupport"/>

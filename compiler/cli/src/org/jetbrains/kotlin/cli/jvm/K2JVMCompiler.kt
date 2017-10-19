@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -166,7 +166,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
-                val scriptDefinitionProvider = KotlinScriptDefinitionProvider.getInstance(environment.project)!!
+                val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)!!
                 val scriptFile = File(sourcePath)
                 if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
                     val extensionHint =
@@ -460,7 +460,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 for (template in scriptTemplates) {
                     try {
                         val cls = classloader.loadClass(template)
-                        val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, scriptResolverEnv)
+                        val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
                         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
                         messageCollector.report(
                                 INFO,

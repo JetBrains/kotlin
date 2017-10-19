@@ -35,21 +35,17 @@ import kotlin.script.templates.AcceptedAnnotations
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
         template: KClass<out Any>,
-        providedResolver: DependenciesResolver? = null,
-        providedScriptFilePattern: String? = null,
         val environment: Map<String, Any?>? = null,
         val templateClasspath: List<File> = emptyList()
 ) : KotlinScriptDefinition(template) {
 
     val scriptFilePattern by lazy {
-        providedScriptFilePattern
-        ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern }
+        takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern }
         ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>()?.scriptFilePattern }
         ?: DEFAULT_SCRIPT_FILE_PATTERN
     }
 
     override val dependencyResolver: DependenciesResolver by lazy {
-        providedResolver ?:
         resolverFromAnnotation(template) ?:
         resolverFromLegacyAnnotation(template) ?:
         DependenciesResolver.NoDependencies

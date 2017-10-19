@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import java.io.File
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -26,16 +25,18 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.scripts.ScriptWithIntParam
+import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.org.objectweb.asm.Opcodes
+import java.io.File
+import kotlin.script.templates.ScriptTemplateDefinition
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
-        private val FIB_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class, providedScriptFilePattern = ".*\\.lang\\.kt")
-        private val NO_PARAM_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(Any::class, providedScriptFilePattern = ".*\\.kts")
+        private val FIB_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+        private val NO_PARAM_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
     }
 
     override fun setUp() {
@@ -124,3 +125,8 @@ class ScriptGenTest : CodegenTestCase() {
         loadFiles(*sourcePaths.toTypedArray())
     }
 }
+
+@ScriptTemplateDefinition(
+        scriptFilePattern =".*\\.lang\\.kt",
+        resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptWithIntParam(val num: Int)
