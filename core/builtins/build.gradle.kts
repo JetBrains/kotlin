@@ -13,7 +13,7 @@ val builtins by configurations.creating
 val serialize = task("serialize") {
     val outDir = builtinsSerialized
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
-    outputs.file(outDir)
+    outputs.dir(outDir)
     inputs.files(*inDirs)
     doLast {
         System.setProperty("kotlin.colors.enabled", "false")
