@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.serialization.DebugProtoBuf
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -64,6 +66,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.*
 import java.nio.charset.Charset
@@ -343,18 +346,30 @@ abstract class BasicBoxTest(
 
         val originalOutput = FileUtil.loadFile(outputFile)
         val recompiledOutput = removeRecompiledSuffix(FileUtil.loadFile(recompiledOutputFile))
-        TestCase.assertEquals("Output file changed after recompilation", originalOutput, recompiledOutput)
+        assertEquals("Output file changed after recompilation", originalOutput, recompiledOutput)
 
         val originalSourceMap = FileUtil.loadFile(File(outputFile.parentFile, outputFile.name + ".map"))
         val recompiledSourceMap = removeRecompiledSuffix(
                 FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
-        TestCase.assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
+        assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
 
         if (multiModule) {
             val originalMetadata = FileUtil.loadFile(File(outputFile.parentFile, outputFile.nameWithoutExtension + ".meta.js"))
             val recompiledMetadata = removeRecompiledSuffix(
                     FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + ".meta.js")))
-            TestCase.assertEquals("Metadata file changed after recompilation", originalMetadata, recompiledMetadata)
+            assertEquals("Metadata file changed after recompilation",
+                                  metadataAsString(originalMetadata, module.name),
+                                  metadataAsString(recompiledMetadata, module.name))
+        }
+    }
+
+    private fun metadataAsString(metadata: String, moduleName: String): String {
+        val containers = mutableListOf<KotlinJavascriptMetadata>()
+        KotlinJavascriptMetadataUtils.parseMetadata(metadata, containers)
+        val metadataParts = KotlinJavascriptSerializationUtil.readModuleAsProto(containers.single().body, moduleName).data.body
+        return metadataParts.joinToString("-----\n") {
+            val binary = it.toByteArray()
+            DebugProtoBuf.PackageFragment.parseFrom(binary, JsSerializerProtocol.extensionRegistry).toString()
         }
     }
 

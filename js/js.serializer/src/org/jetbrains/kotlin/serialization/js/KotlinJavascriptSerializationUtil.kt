@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
-import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
@@ -109,7 +108,7 @@ object KotlinJavascriptSerializationUtil {
 
         for (fqName in getPackagesFqNames(module)) {
             val fragment = serializePackageFragment(bindingContext, module, fqName)
-            if (fragment.hasPackage() || fragment.class_Count > 0) {
+            if (!fragment.isEmpty()) {
                 builder.addPackageFragment(fragment)
             }
         }
@@ -212,13 +211,11 @@ object KotlinJavascriptSerializationUtil {
             module: ModuleDescriptor,
             languageVersionSettings: LanguageVersionSettings
     ): Map<String, ByteArray> {
-        val contentMap = hashMapOf<String, ByteArray>()
+        val contentMap = mutableMapOf<String, ByteArray>()
 
         for (fqName in getPackagesFqNames(module)) {
             val part = serializePackageFragment(bindingContext, module, fqName)
-            if (part.class_Count == 0 && part.`package`.let { packageProto ->
-                packageProto.functionCount == 0 && packageProto.propertyCount == 0 && packageProto.typeAliasCount == 0
-            }) continue
+            if (part.isEmpty()) continue
 
             val stream = ByteArrayOutputStream()
             with(DataOutputStream(stream)) {
@@ -235,6 +232,9 @@ object KotlinJavascriptSerializationUtil {
 
         return contentMap
     }
+
+    private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
+            class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }
 
     fun serializeHeader(packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings): JsProtoBuf.Header {
         val header = JsProtoBuf.Header.newBuilder()
@@ -253,7 +253,7 @@ object KotlinJavascriptSerializationUtil {
     }
 
     private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-        return HashSet<FqName>().apply {
+        return mutableSetOf<FqName>().apply {
             getSubPackagesFqNames(module.getPackage(FqName.ROOT), this)
             add(FqName.ROOT)
         }

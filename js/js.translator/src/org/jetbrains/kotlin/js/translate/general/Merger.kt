@@ -109,7 +109,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
                 val exportedTag = statement.exportedTag
                 if (exportedTag != null && !exportedTags.add(exportedTag)) continue
             }
-            exportBlock.statements += nameMap.rename(statement)
+            exportBlock.statements += nameMap.rename(statement.deepCopy())
         }
     }
 
