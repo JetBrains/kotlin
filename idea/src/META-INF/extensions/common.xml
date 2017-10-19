@@ -1,5 +1,6 @@
 <idea-plugin>
     <id>org.jetbrains.kotlin</id>
+    <version>1.2</version>
 
     <extensionPoints>
         <extensionPoint name="suppressStringProvider"

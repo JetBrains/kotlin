@@ -1,5 +1,6 @@
 <idea-plugin>
     <id>org.jetbrains.kotlin</id>
+    <version>1.2</version>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <suppressStringProvider implementation="org.jetbrains.kotlin.js.analyze.SuppressUnusedParameterForJsNative"/>
