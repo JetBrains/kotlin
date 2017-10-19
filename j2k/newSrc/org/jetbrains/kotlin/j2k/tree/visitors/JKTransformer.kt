@@ -2,38 +2,48 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 
 import org.jetbrains.kotlin.j2k.tree.*
 
-interface JKTransformer<in D> : JKVisitor<JKElement, D> {
-    override fun visitElement(element: JKElement, data: D): JKElement
-    override fun visitClass(klass: JKClass, data: D): JKClass = visitDeclaration(klass, data) as JKClass
-    override fun visitStatement(statement: JKStatement, data: D): JKStatement = visitElement(statement, data) as JKStatement
-    override fun visitExpression(expression: JKExpression, data: D): JKExpression = visitStatement(expression, data) as JKExpression
-    override fun visitLoop(loop: JKLoop, data: D): JKLoop = visitStatement(loop, data) as JKLoop
-    override fun visitDeclaration(declaration: JKDeclaration, data: D): JKDeclaration = visitElement(declaration, data) as JKDeclaration
-    override fun visitBlock(block: JKBlock, data: D): JKBlock = visitElement(block, data) as JKBlock
-    override fun visitCall(call: JKCall, data: D): JKCall = visitExpression(call, data) as JKCall
-    override fun visitIdentifier(identifier: JKIdentifier, data: D): JKIdentifier = visitElement(identifier, data) as JKIdentifier
-    override fun visitTypeIdentifier(typeIdentifier: JKTypeIdentifier, data: D): JKTypeIdentifier = visitIdentifier(typeIdentifier, data) as JKTypeIdentifier
-    override fun visitNameIdentifier(nameIdentifier: JKNameIdentifier, data: D): JKNameIdentifier = visitIdentifier(nameIdentifier, data) as JKNameIdentifier
-    override fun visitLiteralExpression(literalExpression: JKLiteralExpression, data: D): JKLiteralExpression = visitExpression(literalExpression, data) as JKLiteralExpression
-    override fun visitModifierList(modifierList: JKModifierList, data: D): JKModifierList = visitElement(modifierList, data) as JKModifierList
-    override fun visitModifier(modifier: JKModifier, data: D): JKModifier = visitElement(modifier, data) as JKModifier
-    override fun visitAccessModifier(accessModifier: JKAccessModifier, data: D): JKAccessModifier = visitModifier(accessModifier, data) as JKAccessModifier
-    override fun visitValueArgument(valueArgument: JKValueArgument, data: D): JKValueArgument = visitElement(valueArgument, data) as JKValueArgument
-    override fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): JKStringLiteralExpression = visitLiteralExpression(stringLiteralExpression, data) as JKStringLiteralExpression
-    override fun visitModalityModifier(modalityModifier: JKModalityModifier, data: D): JKModalityModifier = visitModifier(modalityModifier, data) as JKModalityModifier
-    override fun visitJavaField(javaField: JKJavaField, data: D): JKDeclaration = visitDeclaration(javaField, data)
-    override fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): JKDeclaration = visitDeclaration(javaMethod, data)
-    override fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): JKLoop = visitLoop(javaForLoop, data)
-    override fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): JKExpression = visitExpression(javaAssignmentExpression, data)
-    override fun visitJavaCall(javaCall: JKJavaCall, data: D): JKCall = visitCall(javaCall, data)
-    override fun visitJavaTypeIdentifier(javaTypeIdentifier: JKJavaTypeIdentifier, data: D): JKTypeIdentifier = visitTypeIdentifier(javaTypeIdentifier, data)
-    override fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression, data: D): JKLiteralExpression = visitLiteralExpression(javaStringLiteralExpression, data)
-    override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: D): JKAccessModifier = visitAccessModifier(javaAccessModifier, data)
-    override fun visitJavaModifier(javaModifier: JKJavaModifier, data: D): JKModifier = visitModifier(javaModifier, data)
-    override fun visitKtFun(ktFun: JKKtFun, data: D): JKDeclaration = visitDeclaration(ktFun, data)
-    override fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): JKDeclaration = visitDeclaration(ktConstructor, data)
-    override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): JKDeclaration = visitKtConstructor(ktPrimaryConstructor, data)
-    override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: D): JKStatement = visitStatement(ktAssignmentStatement, data)
-    override fun visitKtCall(ktCall: JKKtCall, data: D): JKCall = visitCall(ktCall, data)
-    override fun visitKtProperty(ktProperty: JKKtProperty, data: D): JKDeclaration = visitDeclaration(ktProperty, data)
+interface JKTransformer<in D> {
+    fun <E: JKElement> transformElement(element: JKElement, data: D): E 
+    fun <E: JKClass> transformClass(klass: JKClass, data: D): E = transformDeclaration(klass, data)
+    fun <E: JKStatement> transformStatement(statement: JKStatement, data: D): E = transformElement(statement, data)
+    fun <E: JKExpression> transformExpression(expression: JKExpression, data: D): E = transformStatement(expression, data)
+    fun <E: JKBinaryExpression> transformBinaryExpression(binaryExpression: JKBinaryExpression, data: D): E = transformExpression(binaryExpression, data)
+    fun <E: JKUnaryExpression> transformUnaryExpression(unaryExpression: JKUnaryExpression, data: D): E = transformExpression(unaryExpression, data)
+    fun <E: JKPrefixExpression> transformPrefixExpression(prefixExpression: JKPrefixExpression, data: D): E = transformUnaryExpression(prefixExpression, data)
+    fun <E: JKPostfixExpression> transformPostfixExpression(postfixExpression: JKPostfixExpression, data: D): E = transformUnaryExpression(postfixExpression, data)
+    fun <E: JKQualifiedExpression> transformQualifiedExpression(qualifiedExpression: JKQualifiedExpression, data: D): E = transformExpression(qualifiedExpression, data)
+    fun <E: JKMethodCallExpression> transformMethodCallExpression(methodCallExpression: JKMethodCallExpression, data: D): E = transformExpression(methodCallExpression, data)
+    fun <E: JKFieldAccessExpression> transformFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression, data: D): E = transformExpression(fieldAccessExpression, data)
+    fun <E: JKExpressionList> transformExpressionList(expressionList: JKExpressionList, data: D): E = transformElement(expressionList, data)
+    fun <E: JKMethodReference> transformMethodReference(methodReference: JKMethodReference, data: D): E = transformElement(methodReference, data)
+    fun <E: JKFieldReference> transformFieldReference(fieldReference: JKFieldReference, data: D): E = transformElement(fieldReference, data)
+    fun <E: JKOperatorIdentifier> transformOperatorIdentifier(operatorIdentifier: JKOperatorIdentifier, data: D): E = transformIdentifier(operatorIdentifier, data)
+    fun <E: JKQualificationIdentifier> transformQualificationIdentifier(qualificationIdentifier: JKQualificationIdentifier, data: D): E = transformIdentifier(qualificationIdentifier, data)
+    fun <E: JKLoop> transformLoop(loop: JKLoop, data: D): E = transformStatement(loop, data)
+    fun <E: JKDeclaration> transformDeclaration(declaration: JKDeclaration, data: D): E = transformElement(declaration, data)
+    fun <E: JKBlock> transformBlock(block: JKBlock, data: D): E = transformElement(block, data)
+    fun <E: JKIdentifier> transformIdentifier(identifier: JKIdentifier, data: D): E = transformElement(identifier, data)
+    fun <E: JKTypeIdentifier> transformTypeIdentifier(typeIdentifier: JKTypeIdentifier, data: D): E = transformIdentifier(typeIdentifier, data)
+    fun <E: JKNameIdentifier> transformNameIdentifier(nameIdentifier: JKNameIdentifier, data: D): E = transformIdentifier(nameIdentifier, data)
+    fun <E: JKLiteralExpression> transformLiteralExpression(literalExpression: JKLiteralExpression, data: D): E = transformExpression(literalExpression, data)
+    fun <E: JKModifierList> transformModifierList(modifierList: JKModifierList, data: D): E = transformElement(modifierList, data)
+    fun <E: JKModifier> transformModifier(modifier: JKModifier, data: D): E = transformElement(modifier, data)
+    fun <E: JKAccessModifier> transformAccessModifier(accessModifier: JKAccessModifier, data: D): E = transformModifier(accessModifier, data)
+    fun <E: JKDeclaration> transformJavaField(javaField: JKJavaField, data: D): E = transformDeclaration(javaField, data)
+    fun <E: JKDeclaration> transformJavaMethod(javaMethod: JKJavaMethod, data: D): E = transformDeclaration(javaMethod, data)
+    fun <E: JKLoop> transformJavaForLoop(javaForLoop: JKJavaForLoop, data: D): E = transformLoop(javaForLoop, data)
+    fun <E: JKExpression> transformJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): E = transformExpression(javaAssignmentExpression, data)
+    fun <E: JKTypeIdentifier> transformJavaTypeIdentifier(javaTypeIdentifier: JKJavaTypeIdentifier, data: D): E = transformTypeIdentifier(javaTypeIdentifier, data)
+    fun <E: JKLiteralExpression> transformJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression, data: D): E = transformLiteralExpression(javaStringLiteralExpression, data)
+    fun <E: JKOperatorIdentifier> transformJavaOperatorIdentifier(javaOperatorIdentifier: JKJavaOperatorIdentifier, data: D): E = transformOperatorIdentifier(javaOperatorIdentifier, data)
+    fun <E: JKQualificationIdentifier> transformJavaQualificationIdentifier(javaQualificationIdentifier: JKJavaQualificationIdentifier, data: D): E = transformQualificationIdentifier(javaQualificationIdentifier, data)
+    fun <E: JKMethodCallExpression> transformJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: D): E = transformMethodCallExpression(javaMethodCallExpression, data)
+    fun <E: JKFieldAccessExpression> transformJavaFieldAccessExpression(javaFieldAccessExpression: JKJavaFieldAccessExpression, data: D): E = transformFieldAccessExpression(javaFieldAccessExpression, data)
+    fun <E: JKMethodReference> transformJavaMethodReference(javaMethodReference: JKJavaMethodReference, data: D): E = transformMethodReference(javaMethodReference, data)
+    fun <E: JKFieldReference> transformJavaFieldReference(javaFieldReference: JKJavaFieldReference, data: D): E = transformFieldReference(javaFieldReference, data)
+    fun <E: JKAccessModifier> transformJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: D): E = transformAccessModifier(javaAccessModifier, data)
+    fun <E: JKDeclaration> transformKtFun(ktFun: JKKtFun, data: D): E = transformDeclaration(ktFun, data)
+    fun <E: JKDeclaration> transformKtConstructor(ktConstructor: JKKtConstructor, data: D): E = transformDeclaration(ktConstructor, data)
+    fun <E: JKDeclaration> transformKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): E = transformKtConstructor(ktPrimaryConstructor, data)
+    fun <E: JKStatement> transformKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: D): E = transformStatement(ktAssignmentStatement, data)
 }
