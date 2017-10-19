@@ -1,5 +1,5 @@
 import java.util.stream.Stream
 
 fun main(args: Array<String>) {
-  Stream.of(1, 2, 3).toAr<caret>ray()
+<caret>  val c = Stream.of(1, 2).count() + Stream.of(1).count()
 }
