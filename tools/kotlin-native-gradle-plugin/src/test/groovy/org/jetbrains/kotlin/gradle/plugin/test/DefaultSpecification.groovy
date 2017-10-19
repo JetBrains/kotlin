@@ -11,7 +11,7 @@ class DefaultSpecification extends BaseKonanSpecification {
             plugins { id 'konan' }
             konanArtifacts {
                 interop('stdio')
-                program('main')
+                library('main')
             }
             """.stripIndent())
             it.generateDefFile("stdio.def", "")

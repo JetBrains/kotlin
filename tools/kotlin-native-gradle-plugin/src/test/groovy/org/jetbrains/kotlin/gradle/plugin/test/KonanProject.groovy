@@ -8,6 +8,17 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+enum ArtifactType {
+    PROGRAM("program"),
+    LIBRARY("library"),
+    BITCODE("bitcode"),
+    INTEROP("interop")
+
+    String type
+    ArtifactType(String type) { this.type = type }
+    String toString() { return type }
+}
+
 class KonanProject {
 
     static String DEFAULT_ARTIFACT_NAME = 'main'
@@ -36,12 +47,6 @@ class KonanProject {
 
     List<String> getBuildingTasks() { return compilationTasks + interopTasks }
     List<String> getKonanTasks()    { return getBuildingTasks() + downloadTask }
-
-    // TODO: Must be an enum.
-    static String PROGRAM = "program"
-    static String LIBRARY = "library"
-    static String BITCODE = "bitcode"
-    static String INTEROP = "interop"
 
     static String DEFAULT_SRC_CONTENT = """           
             fun main(args: Array<String>) {
@@ -133,10 +138,10 @@ class KonanProject {
      */
     File generateBuildFile() {
         def result = generateBuildFile("""
-            plugins { id 'konan' }
-            
-            konanTargets = [${targets.collect { "'$it'" }.join(", ")}]
-            """.stripIndent()
+            |plugins { id 'konan' }
+            |
+            |konan.targets = [${targets.collect { "'$it'" }.join(", ")}]
+            """.stripMargin()
         )
         compilationTasks = [":compileKonan", ":build"]
         return result
@@ -233,68 +238,83 @@ class KonanProject {
     }
 
     /** Returns the path of compileKonan... task for the default artifact. */
-    String defaultCompilationTask(String target = HOST) {
+    static String defaultCompilationTask(String target = HOST) {
         return compilationTask(DEFAULT_ARTIFACT_NAME, target)
     }
 
-    String defaultInteropTask(String target = HOST) {
+    static String defaultInteropTask(String target = HOST) {
         return compilationTask(DEFAULT_INTEROP_NAME, target)
     }
 
     /** Returns the path of compileKonan... task for the artifact specified. */
-    String compilationTask(String artifactName, String target = HOST) {
+    static String compilationTask(String artifactName, String target = HOST) {
         return ":compileKonan${artifactName.capitalize()}${target.capitalize()}"
     }
 
-    String defaultCompilationConfig() {
+    static String defaultCompilationConfig() {
         return artifactConfig(DEFAULT_ARTIFACT_NAME)
     }
 
-    String defaultInteropConfig() {
+    static String defaultInteropConfig() {
         return artifactConfig(DEFAULT_INTEROP_NAME)
     }
 
-    String artifactConfig(String artifactName) {
+    static String artifactConfig(String artifactName) {
         return "konanArtifacts.$artifactName"
     }
 
-    void addCompilerArtifact(String name, String content = "", String type = PROGRAM) {
+    static String outputAccessCode(String artifact, String target = HOST) {
+        return "${artifactConfig(artifact)}.${target}.artifact"
+    }
+
+    void addCompilerArtifact(String name, String content = "", ArtifactType type = ArtifactType.PROGRAM) {
         def newTasks = targets.collect { compilationTask(name, it) } + ":compileKonan${name.capitalize()}".toString()
-        if (type == INTEROP) {
+        buildFile.append("konanArtifacts { $type('$name') }\n")
+        if (type == ArtifactType.INTEROP) {
             defFiles += generateDefFile("${name}.def", content)
             interopTasks += newTasks
         } else {
-            srcFiles += generateSrcFile(projectPath.resolve("src/$name/kotlin"), "source.kt", content)
+            def src = generateSrcFile(projectPath.resolve("src/$name/kotlin"), "source.kt", content)
+            addSetting(name, "srcFiles", src)
+            srcFiles += src
             compilationTasks += newTasks
         }
-        buildFile.append("konanArtifacts { $type('$name') }\n")
+
     }
 
     /** Creates a project with default build and source files. */
-    static KonanProject create(File projectDir, List<String> targets = [HOST]) {
+    static KonanProject create(File projectDir,
+                               ArtifactType artifactType = ArtifactType.PROGRAM,
+                               List<String> targets = [HOST]) {
         return createEmpty(projectDir, targets) { KonanProject p ->
-            p.addCompilerArtifact(DEFAULT_ARTIFACT_NAME, DEFAULT_SRC_CONTENT)
+            p.addCompilerArtifact(DEFAULT_ARTIFACT_NAME, DEFAULT_SRC_CONTENT, artifactType)
         }
     }
 
-    // TODO: Add 'type parameter'
-
     /** Creates a project with default build and source files. */
-    static KonanProject create(File projectDir, List<String> targets = [HOST], Closure config) {
-        def result = create(projectDir, targets)
+    static KonanProject create(File projectDir,
+                               ArtifactType artifactType = ArtifactType.PROGRAM,
+                               List<String> targets = [HOST],
+                               Closure config) {
+        def result = create(projectDir, artifactType, targets)
         config(result)
         return result
     }
 
-    static KonanProject createWithInterop(File projectDir, List<String> targets = [HOST]) {
-        return create(projectDir, targets) { KonanProject p ->
-            p.addCompilerArtifact(DEFAULT_INTEROP_NAME, DEFAULT_DEF_CONTENT, INTEROP)
+    static KonanProject createWithInterop(File projectDir,
+                                          ArtifactType mainArtifactType = ArtifactType.PROGRAM,
+                                          List<String> targets = [HOST]) {
+        return create(projectDir, mainArtifactType, targets) { KonanProject p ->
+            p.addCompilerArtifact(DEFAULT_INTEROP_NAME, DEFAULT_DEF_CONTENT, ArtifactType.INTEROP)
             p.addLibraryToArtifact()
         }
     }
 
-    static KonanProject createWithInterop(File projectDir, List<String> targets = [HOST], Closure config) {
-        def result = createWithInterop(projectDir, targets)
+    static KonanProject createWithInterop(File projectDir,
+                                          ArtifactType mainArtifactType = ArtifactType.PROGRAM,
+                                          List<String> targets = [HOST],
+                                          Closure config) {
+        def result = createWithInterop(projectDir, mainArtifactType, targets)
         config(result)
         return result
     }

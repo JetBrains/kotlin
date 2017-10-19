@@ -15,8 +15,8 @@ class IncrementalSpecification extends BaseKonanSpecification {
         return new Tuple(project, firstResult, secondResult)
     }
 
-    Tuple buildTwice(Closure change) {
-        return buildTwice(KonanProject.createWithInterop(projectDirectory), change)
+    Tuple buildTwice(ArtifactType mainArtifactType = ArtifactType.LIBRARY, Closure change) {
+        return buildTwice(KonanProject.createWithInterop(projectDirectory, mainArtifactType), change)
     }
 
     Boolean noRecompilationHappened(KonanProject project, BuildResult firstResult, BuildResult secondResult) {
@@ -74,14 +74,6 @@ class IncrementalSpecification extends BaseKonanSpecification {
         recompilationAndInteropProcessingHappened(*results)
     }
 
-    def 'Compilation is up-to-date if there is no changes in empty project'() {
-        when:
-        def results = buildTwice {}
-
-        then:
-        noRecompilationHappened(*results)
-    }
-
     @Unroll("#parameter change for a compilation task should cause only recompilation")
     def 'Parameter changes should cause only recompilaton'() {
         when:
@@ -98,24 +90,22 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "baseDir"             | "'build/new/outputDir'"
         "enableOptimizations" | "true"
         "linkerOpts"          | "'--help'"
-        "languageVersion"     | "'1.2'"
-        "apiVersion"          | "'1.0'"
         "enableAssertions"    | "true"
         "enableDebug"         | "true"
-        "outputName"          | "'foo'"
+        "artifactName"        | "'foo'"
         "extraOpts"           | "'--time'"
         "noDefaultLibs"       | "true"
     }
 
-    def 'inputFiles change for a compilation task should cause only recompilation'() {
+    def 'srcFiles change for a compilation task should cause only recompilation'() {
         when:
-        def project = KonanProject.createWithInterop(projectDirectory) { KonanProject it ->
+        def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
             it.generateSrcFile(["src", "foo", "kotlin"], 'bar.kt', """
                 fun main(args: Array<String>) { println("Hello!") }
             """.stripIndent())
         }
         def results = buildTwice(project) { KonanProject it ->
-            it.addSetting("main", "inputFiles", "project.fileTree('src/foo/kotlin')")
+            it.addSetting("main", "srcFiles", "project.fileTree('src/foo/kotlin')")
         }
 
         then:
@@ -124,12 +114,12 @@ class IncrementalSpecification extends BaseKonanSpecification {
 
     def 'Library change for a compilation task should cause only recompilation'() {
         when:
-        def project = KonanProject.create(projectDirectory) { KonanProject it ->
+        def project = KonanProject.create(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
             it.generateSrcFile(["src", "lib", "kotlin"], "lib.kt", "fun bar() { println(\"Hello!\") }")
             it.buildFile.append("""
                 konanArtifacts {
                     library('lib') {
-                        inputFiles fileTree('src/lib/kotlin')
+                        srcFiles fileTree('src/lib/kotlin')
                     }
                 }
             """.stripIndent())
@@ -142,14 +132,14 @@ class IncrementalSpecification extends BaseKonanSpecification {
         onlyRecompilationHappened(*results)
     }
 
-    def 'Library changes should cause only recompilaton'() {
+    def 'Native library change for a compilation task should cause only recompilaton'() {
         when:
-        def project = KonanProject.createWithInterop(projectDirectory) { KonanProject it ->
+        def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
             it.generateSrcFile(["src", "lib", "kotlin"], "lib.kt", "fun bar() { println(\"Hello!\") }")
             it.buildFile.append("""
                 konanArtifacts {
                     bitcode('lib') {
-                        inputFiles fileTree('src/lib/kotlin')
+                        srcFiles fileTree('src/lib/kotlin')
                     }
                 }
             """.stripIndent())
@@ -176,7 +166,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
 
         where:
         parameter            | value
-        "pkg"                | "'org.sample'"
+        "packageName"        | "'org.sample'"
         "compilerOpts"       | "'-g'"
         "linkerOpts"         | "'--help'"
         "includeDirs"        | "'src'"
@@ -186,7 +176,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
 
     def 'defFile change for an interop task should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanProject.createWithInterop(projectDirectory)
+        def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY)
         def defFile = project.generateDefFile("foo.def", "#some content")
         def results = buildTwice(project) { KonanProject it ->
             it.addSetting("stdio", "defFile", defFile)
@@ -198,7 +188,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
 
     def 'header change for an interop task should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanProject.createWithInterop(projectDirectory)
+        def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY)
         def header = project.generateSrcFile('header.h', "#define CONST 1")
         def results = buildTwice(project) { KonanProject it ->
             it.addSetting("stdio", "headers", header)
@@ -210,12 +200,12 @@ class IncrementalSpecification extends BaseKonanSpecification {
 
     def 'link change for an interop task should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanProject.createWithInterop(projectDirectory) { KonanProject it ->
+        def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
             it.generateSrcFile(["src", "lib", "kotlin"], 'lib.kt', 'fun foo() { println(42) }')
             it.buildFile.append("""
                 konanArtifacts {
                     bitcode('lib') {
-                        inputFiles fileTree('src/lib/kotlin')
+                        srcFiles fileTree('src/lib/kotlin')
                     }
                 }
             """.stripIndent())
@@ -231,7 +221,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
 
     def 'konan version change should cause recompilation and interop reprocessing'() {
         when:
-        def project = KonanProject.createWithInterop(projectDirectory) { KonanProject it ->
+        def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
             it.propertiesFile.append("konan.version=0.3\n")
         }
         def results = buildTwice(project) { KonanProject it ->
@@ -242,6 +232,8 @@ class IncrementalSpecification extends BaseKonanSpecification {
         then:
         recompilationAndInteropProcessingHappened(*results)
     }
+
+    // TODO: Add incremental tests for the 'libraries' block.
 
     //endregion
 }

@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.TaskOutcome
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.TargetManager
 
 class PathSpecification extends BaseKonanSpecification {
 
@@ -13,10 +11,9 @@ class PathSpecification extends BaseKonanSpecification {
     def 'Plugin should create all necessary directories'() {
         when:
         def project = KonanProject.createWithInterop(projectDirectory)
-        project.addCompilerArtifact("lib", "fun foo() {}", KonanProject.LIBRARY)
-        project.addCompilerArtifact("bit", "fun bar() {}", KonanProject.BITCODE)
-        println(project.buildFile.text)
-        def result = project.createRunner().withArguments('build').build()
+        project.addCompilerArtifact("lib", "fun foo() {}", ArtifactType.LIBRARY)
+        project.addCompilerArtifact("bit", "fun bar() {}", ArtifactType.BITCODE)
+        project.createRunner().withArguments('build').build()
 
         then:
         project.konanBuildDir.toPath().resolve("bin/$KonanProject.HOST").toFile().listFiles().findAll {
@@ -31,7 +28,7 @@ class PathSpecification extends BaseKonanSpecification {
     def 'Plugin should stop building if the compiler classpath is empty'() {
         when:
         def project = KonanProject.create(projectDirectory)
-        project.propertiesFile.write("konan.home=${projectDirectory.canonicalPath}}")
+        project.propertiesFile.write("konan.home=fakepath")
         def result = project.createRunner().withArguments('build').buildAndFail()
 
         then:
@@ -41,7 +38,7 @@ class PathSpecification extends BaseKonanSpecification {
     def 'Plugin should stop building if the stub generator classpath is empty'() {
         when:
         def project = KonanProject.createWithInterop(projectDirectory)
-        project.propertiesFile.write("konan.home=${projectDirectory.canonicalPath}}")
+        project.propertiesFile.write("konan.home=fakepath")
         def result = project.createRunner().withArguments('build').buildAndFail()
 
         then:
@@ -51,26 +48,24 @@ class PathSpecification extends BaseKonanSpecification {
     def 'Plugin should remove custom output directories'() {
         when:
         def customOutputDir = projectDirectory.toPath().resolve("foo").toFile()
-        def project = KonanProject.create(projectDirectory) { KonanProject it ->
+        def project = KonanProject.create(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
             it.addSetting("baseDir", customOutputDir)
         }
 
         def res1 = project.createRunner().withArguments("build").build()
         def artifactExistsAfterBuild = customOutputDir.toPath()
-                .resolve("${KonanProject.HOST}").toFile()
-                .listFiles()
-                .findAll { it.name.matches("^${KonanProject.DEFAULT_ARTIFACT_NAME}\\.[^.]+") }.size() > 0
+                .resolve("${KonanProject.HOST}/${KonanProject.DEFAULT_ARTIFACT_NAME}.klib").toFile()
+                .exists()
 
         def res2 = project.createRunner().withArguments("clean").build()
-        def artifactDoesntNotExistAfterClean = customOutputDir.toPath()
-                .resolve("${KonanProject.HOST}").toFile()
-                .listFiles()
-                .findAll { it.name.matches("^${KonanProject.DEFAULT_ARTIFACT_NAME}\\.[^.]+") }.isEmpty()
+        def artifactExistsAfterClean = customOutputDir.toPath()
+                .resolve("${KonanProject.HOST}/${KonanProject.DEFAULT_ARTIFACT_NAME}.klib").toFile()
+                .exists()
 
         then:
         res1.taskPaths(TaskOutcome.SUCCESS).containsAll(project.buildingTasks)
         res2.taskPaths(TaskOutcome.SUCCESS).contains(":clean")
         artifactExistsAfterBuild
-        artifactDoesntNotExistAfterClean
+        !artifactExistsAfterClean
     }
 }

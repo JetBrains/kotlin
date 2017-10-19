@@ -46,7 +46,7 @@ class RegressionSpecification extends BaseKonanSpecification {
                 fun main(args: Array<String>) {
                     foo()
                 }
-            """, KonanProject.PROGRAM)
+            """, ArtifactType.PROGRAM)
         }
         def result = project.createRunner().withArguments('build').buildAndFail()
 
