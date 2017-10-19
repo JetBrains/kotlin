@@ -1993,6 +1993,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * : patternHashParameter
      * : patternHashExpression
      * : simpleProperty
+     * : patternTypeReference
      * ;
      * <p>
      * patternTypedTuple
@@ -2010,6 +2011,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * <p>
      * simpleProperty
      * : identifier (":" typeRef)?
+     * ;
+     * <p>
+     * patternTypeReference
+     * : ":" typeRef
      * ;
      * <p>
      * tuple
@@ -2036,7 +2041,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (at(AT)) {
                 advance(); // AT
             }
-            parsePatternEntry();
+            parsePatternConstraint();
             counter++;
         }
         while (at(AT));
@@ -2044,28 +2049,36 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return isSimple && counter == 1;
     }
 
-    private void parsePatternEntry() {
+    private void parsePatternConstraint() {
+        PsiBuilder.Marker patternEntryMarker = mark();
         if (at(LPAR)) {
             parseEscapedTypedTuple();
         }
-        else if (myExpressionParsing.parseLiteralConstant()) {
-            // nothing
-        }
         else if (at(OPEN_QUOTE)) {
+            PsiBuilder.Marker patternStringMarker = mark();
             myExpressionParsing.parseStringTemplate();
+            patternStringMarker.done(PATTERN_CONSTANT_EXPRESSION);
         }
         else if (at(HASH)) {
             parseHashExpression();
         }
         else if (at(COLON)) {
-            parseTypeConstraintWithoutIdentifier();
+            parsePatternTypeReference();
         }
         else {
+            PsiBuilder.Marker patternConstantMarker = mark();
+            if (myExpressionParsing.parseLiteralConstant()) {
+                patternConstantMarker.done(PATTERN_STRING_EXPRESSION);
+            }
+            else {
+                patternConstantMarker.rollbackTo();
+            }
             parseTypeConstraintOrTypedTuple();
         }
         if (at(IF_KEYWORD)) {
             parseGuard();
         }
+        patternEntryMarker.done(PATTERN_CONSTRAINT);
     }
 
     /**
@@ -2121,13 +2134,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * ':List&lt;Float&gt;'
      * ':(Int) -> Int'
      */
-    private void parseTypeConstraintWithoutIdentifier() {
+    private void parsePatternTypeReference() {
         assert at(COLON);
 
         PsiBuilder.Marker typeConstraintMarker = mark();
         advance(); // COLON
         parseTypeRef();
-        typeConstraintMarker.done(PATTERN_TYPE_CONSTRAINT);
+        typeConstraintMarker.done(PATTERN_TYPE_REFERENCE);
     }
 
     /**
@@ -2157,7 +2170,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 advance(); // COLON
                 parseTypeRef();
             }
-            marker.done(PATTERN_TYPE_CONSTRAINT);
+            marker.done(PATTERN_VARIABLE_DECLARATION);
         }
     }
 

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.pattern.KtWhenConditionMatchPattern
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -142,6 +143,10 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
                 mark(condition)
                 createNonSyntheticValue(condition, MagicKind.IS, getSubjectExpression(condition))
+            }
+
+            override fun visitWhenConditionMatchPattern(condition: KtWhenConditionMatchPattern) {
+                println(condition.text)
             }
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {

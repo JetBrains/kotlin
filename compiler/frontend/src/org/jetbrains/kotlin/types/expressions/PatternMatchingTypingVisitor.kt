@@ -385,8 +385,15 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition))
                 }
-
-                println(condition.text)
+                condition.pattern?.let {
+                    val builtIns = components.builtIns
+                    val typeResolver = components.typeResolver
+                    val localVariableResolver = components.localVariableResolver
+                    val fakeCallResolver = components.fakeCallResolver
+                    val resolver = PatternResolver(builtIns, fakeCallResolver, typeResolver, localVariableResolver, facade, context)
+                    val dataFlowInfo = resolver.resolve(it, subjectType, true).dataFlowInfo
+                    newDataFlowInfo = ConditionalDataFlowInfo(dataFlowInfo)
+                }
             }
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
@@ -509,24 +516,26 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
     private fun noChange(context: ExpressionTypingContext) = ConditionalDataFlowInfo(context.dataFlowInfo)
 
-    /*
-     * (a: SubjectType) is Type
-     */
-    private fun checkTypeCompatibility(
-        context: ExpressionTypingContext,
-        type: KotlinType,
-        subjectType: KotlinType,
-        reportErrorOn: KtElement
-    ) {
-        // TODO : Take smart casts into account?
-        if (TypeIntersector.isIntersectionEmpty(type, subjectType)) {
-            context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType))
-            return
-        }
+    companion object {
+        /**
+         * (a: SubjectType) is Type
+         */
+        fun checkTypeCompatibility(
+                context: ExpressionTypingContext,
+                type: KotlinType,
+                subjectType: KotlinType,
+                reportErrorOn: KtElement
+        ) {
+            // TODO : Take smart casts into account?
+            if (TypeIntersector.isIntersectionEmpty(type, subjectType)) {
+                context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType))
+                return
+            }
 
-        // check if the pattern is essentially a 'null' expression
-        if (KotlinBuiltIns.isNullableNothing(type) && !TypeUtils.isNullableType(subjectType)) {
-            context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn))
+            // check if the pattern is essentially a 'null' expression
+            if (KotlinBuiltIns.isNullableNothing(type) && !TypeUtils.isNullableType(subjectType)) {
+                context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn))
+            }
         }
     }
 }

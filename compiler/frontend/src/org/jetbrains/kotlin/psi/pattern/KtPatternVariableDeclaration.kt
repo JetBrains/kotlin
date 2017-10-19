@@ -1,0 +1,203 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.psi.pattern
+
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.addRemoveModifier.addAnnotationEntry
+import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
+import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier
+import org.jetbrains.kotlin.psi.findDocComment.findDocComment
+import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.PatternResolveState
+import org.jetbrains.kotlin.types.expressions.PatternResolver
+
+class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVariableDeclaration {
+    override fun getName(): String? {
+        val identifier = nameIdentifier
+        if (identifier != null) {
+            val text = identifier.text
+            return if (text != null) KtPsiUtil.unquoteIdentifier(text) else null
+        }
+        else {
+            return null
+        }
+    }
+
+    override fun getNameAsName(): Name? {
+        val name = name
+        return if (name != null) Name.identifier(name) else null
+    }
+
+    override fun getNameAsSafeName(): Name {
+        return KtPsiUtil.safeName(name)
+    }
+
+    override fun getNameIdentifier(): PsiElement? {
+        return findChildByType(KtTokens.IDENTIFIER)
+    }
+
+    override fun setName(name: String): PsiElement {
+        return nameIdentifier!!.replace(KtPsiFactory(this).createNameIdentifier(name))
+    }
+
+    override fun getTextOffset(): Int {
+        return nameIdentifier?.textRange?.startOffset ?: textRange.startOffset
+    }
+
+    override fun getModifierList(): KtModifierList? {
+        return findChildByType<PsiElement>(KtNodeTypes.MODIFIER_LIST) as KtModifierList?
+    }
+
+    override fun hasModifier(modifier: KtModifierKeywordToken): Boolean {
+        return modifierList?.hasModifier(modifier) != null
+    }
+
+    override fun addModifier(modifier: KtModifierKeywordToken) {
+        addModifier(this, modifier)
+    }
+
+    override fun removeModifier(modifier: KtModifierKeywordToken) {
+        removeModifier(this, modifier)
+    }
+
+    override fun addAnnotationEntry(annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
+        return addAnnotationEntry(this, annotationEntry)
+    }
+
+    override fun getAnnotationEntries(): List<KtAnnotationEntry> {
+        val modifierList = modifierList ?: return emptyList()
+        return modifierList.annotationEntries
+    }
+
+    override fun getAnnotations(): List<KtAnnotation> {
+        val modifierList = modifierList ?: return emptyList()
+        return modifierList.annotations
+    }
+
+    override fun getDocComment(): KDoc? {
+        return findDocComment(this)
+    }
+
+    override fun getTypeReference(): KtTypeReference? {
+        return typeReference?.typeReference
+    }
+
+    override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+        return setTypeReference(this, nameIdentifier, typeRef)
+    }
+
+    override fun getColon(): PsiElement? {
+        return findChildByType(KtTokens.COLON)
+    }
+
+    override fun getValueParameterList(): KtParameterList? {
+        return null
+    }
+
+    override fun getValueParameters(): List<KtParameter> {
+        return emptyList()
+    }
+
+    override fun getReceiverTypeReference(): KtTypeReference? {
+        return null
+    }
+
+    override fun getTypeParameterList(): KtTypeParameterList? {
+        return null
+    }
+
+    override fun getTypeConstraintList(): KtTypeConstraintList? {
+        return null
+    }
+
+    override fun getTypeConstraints(): List<KtTypeConstraint> {
+        return emptyList()
+    }
+
+    override fun getTypeParameters(): List<KtTypeParameter> {
+        return emptyList()
+    }
+
+    override fun isVar(): Boolean {
+        return getParentOfPatternParentNode()?.findChildByType(KtTokens.VAR_KEYWORD) != null
+    }
+
+    override fun getInitializer(): KtExpression? {
+        return null
+    }
+
+    override fun hasInitializer(): Boolean {
+        return false
+    }
+
+    private fun getParentOfPatternParentNode(): ASTNode? {
+        var pattern: PsiElement? = this
+        while (pattern != null && pattern !is KtPattern) {
+            pattern = pattern.parent
+        }
+        return pattern?.parent?.node
+    }
+
+    override fun getValOrVarKeyword(): PsiElement? {
+        return getParentOfPatternParentNode()?.findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD))?.psi
+    }
+
+    override fun getFqName(): FqName? {
+        return null
+    }
+
+    override fun getUseScope(): SearchScope {
+        var enclosingBlock = KtPsiUtil.getEnclosingElementForLocalDeclaration(this, false)
+        if (enclosingBlock is KtParameter) {
+            enclosingBlock = KtPsiUtil.getEnclosingElementForLocalDeclaration((enclosingBlock as KtParameter?)!!, false)
+        }
+        return if (enclosingBlock != null) LocalSearchScope(enclosingBlock) else super.getUseScope()
+    }
+
+    val typeReference: KtPatternTypeReference?
+        get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
+
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitPatternVariableDeclaration(this, data)
+    }
+
+    override fun getTypeInfo(resolver: PatternResolver, expectedType: KotlinType?) = resolver.restoreOrCreate(this) {
+        typeReference?.getTypeInfo(resolver, expectedType) ?: KotlinTypeInfo(expectedType ?: resolver.builtIns.anyType, DataFlowInfo.EMPTY)
+    }
+
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+        val info = resolver.resolveType(this, state.expectedType)
+        resolver.defineVariable(this, state)
+        return info
+    }
+}

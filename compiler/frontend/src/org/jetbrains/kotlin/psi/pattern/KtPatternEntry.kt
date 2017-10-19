@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi.pattern;
+package org.jetbrains.kotlin.psi.pattern
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtElementImpl;
-import org.jetbrains.kotlin.psi.KtVisitor;
-import org.jetbrains.kotlin.psi.KtWhenCondition;
+import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.psi.KtVisitor
 
-public class KtPattern extends KtElementImpl {
-    public KtPattern(@NotNull ASTNode node) {
-        super(node);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitPattern(this, data);
+abstract class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitPatternEntry(this, data)
     }
 }

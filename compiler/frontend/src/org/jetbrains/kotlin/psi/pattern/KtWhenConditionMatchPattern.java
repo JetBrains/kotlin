@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi.pattern;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.KtVisitor;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 
@@ -29,5 +30,9 @@ public class KtWhenConditionMatchPattern extends KtWhenCondition {
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitWhenConditionMatchPattern(this, data);
+    }
+
+    public KtPattern getPattern() {
+        return findChildByType(KtNodeTypes.PATTERN);
     }
 }

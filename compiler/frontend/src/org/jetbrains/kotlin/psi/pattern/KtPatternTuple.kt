@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi.pattern;
+package org.jetbrains.kotlin.psi.pattern
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtElementImpl;
+import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtExpressionImpl
+import org.jetbrains.kotlin.psi.KtVisitor
 
-public class KtPatternEntry extends KtElementImpl {
-    public KtPatternEntry(@NotNull ASTNode node) {
-        super(node);
+class KtPatternTuple(node: ASTNode) : KtExpressionImpl(node) {
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitPatternTuple(this, data)
     }
+
+    val expressions: List<KtPatternExpression>
+        get() = findChildrenByType(KtNodeTypes.PATTERN_EXPRESSION)
 }

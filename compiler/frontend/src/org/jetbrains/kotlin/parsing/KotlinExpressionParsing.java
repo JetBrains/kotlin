@@ -925,8 +925,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      * : whenCondition{","} "->" element SEMI
      */
     private void parseWhenEntryNotElse() {
+        boolean matchFound = false;
         while (true) {
             while (at(COMMA)) errorAndAdvance("Expecting a when-condition");
+            if (at(MATCH_KEYWORD)) {
+                if (matchFound) error("Unexpected second match operator in one when entry. Use @ for concat match patterns");
+                matchFound = true;
+            }
             parseWhenCondition();
             if (!at(COMMA)) break;
             advance(); // COMMA

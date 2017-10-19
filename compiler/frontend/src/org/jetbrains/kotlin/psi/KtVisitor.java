@@ -127,12 +127,28 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(parameter, data);
     }
 
+    public R visitPatternElement(@NotNull KtPatternElement node, D data) {
+        return visitExpression(node, data);
+    }
+
     public R visitPattern(@NotNull KtPattern node, D data) {
-        return visitKtElement(node, data);
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternConstraint(@NotNull KtPatternConstraint node, D data) {
+        return visitPatternElement(node, data);
     }
 
     public R visitPatternEntry(@NotNull KtPatternEntry node, D data) {
-        return visitKtElement(node, data);
+        return visitPatternElement(node, data);
+    }
+
+    public R visitPatternConstantExpression(@NotNull KtPatternConstantExpression node, D data) {
+        return visitPatternEntry(node, data);
+    }
+
+    public R visitPatternStringExpression(@NotNull KtPatternStringExpression node, D data) {
+        return visitPatternEntry(node, data);
     }
 
     public R visitPatternExpression(@NotNull KtPatternExpression node, D data) {
@@ -140,7 +156,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitPatternGuard(@NotNull KtPatternGuard node, D data) {
-        return visitPatternEntry(node, data);
+        return visitExpression(node, data);
     }
 
     public R visitPatternHashExpression(@NotNull KtPatternHashExpression node, D data) {
@@ -148,10 +164,14 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitPatternTuple(@NotNull KtPatternTuple node, D data) {
+        return visitExpression(node, data);
+    }
+
+    public R visitPatternTypeReference(@NotNull KtPatternTypeReference node, D data) {
         return visitPatternEntry(node, data);
     }
 
-    public R visitPatternTypeConstraint(@NotNull KtPatternTypeConstraint node, D data) {
+    public R visitPatternVariableDeclaration(@NotNull KtPatternVariableDeclaration node, D data) {
         return visitPatternEntry(node, data);
     }
 

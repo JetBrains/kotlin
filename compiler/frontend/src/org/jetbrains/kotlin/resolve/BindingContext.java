@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.pattern.KtPatternElement;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -102,6 +103,7 @@ public interface BindingContext {
 
     WritableSlice<KtTypeReference, KotlinType> TYPE = Slices.createSimpleSlice();
     WritableSlice<KtTypeReference, KotlinType> ABBREVIATED_TYPE = Slices.createSimpleSlice();
+    WritableSlice<KtPatternElement, KotlinTypeInfo> PATTERN_ELEMENT_TYPE_INFO = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<>(DO_NOTHING);
