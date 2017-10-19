@@ -15,7 +15,6 @@
  */
 package com.intellij.debugger.streams.kotlin.trace.dsl
 
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinCodeBlock
 import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.LambdaBody
 import com.intellij.debugger.streams.trace.dsl.StatementFactory

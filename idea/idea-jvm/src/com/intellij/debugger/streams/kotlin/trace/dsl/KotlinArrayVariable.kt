@@ -15,7 +15,6 @@
  */
 package com.intellij.debugger.streams.kotlin.trace.dsl
 
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinVariableDeclaration
 import com.intellij.debugger.streams.trace.dsl.ArrayVariable
 import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.VariableDeclaration

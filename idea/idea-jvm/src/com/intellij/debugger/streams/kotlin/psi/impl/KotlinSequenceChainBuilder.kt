@@ -15,8 +15,6 @@
  */
 package com.intellij.debugger.streams.kotlin.psi.impl
 
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainBuilderBase
-
 /**
  * @author Vitaliy.Bibaev
  */

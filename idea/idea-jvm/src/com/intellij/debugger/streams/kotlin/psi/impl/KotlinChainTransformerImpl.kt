@@ -16,11 +16,9 @@
 package com.intellij.debugger.streams.kotlin.psi.impl
 
 import com.intellij.debugger.streams.kotlin.psi.callName
-import com.intellij.debugger.streams.kotlin.psi.getPackage
-import com.intellij.debugger.streams.kotlin.psi.receiverType
 import com.intellij.debugger.streams.kotlin.psi.resolveType
-import com.intellij.debugger.streams.psi.*
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
+import com.intellij.debugger.streams.psi.ChainTransformer
 import com.intellij.debugger.streams.wrapper.CallArgument
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.StreamChain
