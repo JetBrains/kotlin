@@ -3,6 +3,199 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1.60
+
+### Android
+
+#### New Features
+
+- [`KT-20051`](https://youtrack.jetbrains.com/issue/KT-20051) Quickfixes to support @Parcelize
+#### Fixes
+
+- [`KT-19747`](https://youtrack.jetbrains.com/issue/KT-19747) Android extensions + Parcelable: VerifyError in case of RawValue annotation on a type when it's unknown how to parcel it
+- [`KT-19899`](https://youtrack.jetbrains.com/issue/KT-19899) Parcelize: Building with ProGuard enabled
+- [`KT-19988`](https://youtrack.jetbrains.com/issue/KT-19988) [Android Extensions] inner class LayoutContainer causes NoSuchMethodError
+- [`KT-20002`](https://youtrack.jetbrains.com/issue/KT-20002) Parcelize explodes on LongArray
+- [`KT-20019`](https://youtrack.jetbrains.com/issue/KT-20019) Parcelize does not propogate flags argument when writing nested Parcelable
+- [`KT-20020`](https://youtrack.jetbrains.com/issue/KT-20020) Parcelize does not use primitive array read/write methods on Parcel
+- [`KT-20021`](https://youtrack.jetbrains.com/issue/KT-20021) Parcelize does not serialize Parcelable enum as Parcelable
+- [`KT-20022`](https://youtrack.jetbrains.com/issue/KT-20022) Parcelize should dispatch directly to java.lang.Enum when writing an enum.
+- [`KT-20034`](https://youtrack.jetbrains.com/issue/KT-20034) Application installation failed (INSTALL_FAILED_DEXOPT) in Android 4.3 devices if I use Parcelize
+- [`KT-20057`](https://youtrack.jetbrains.com/issue/KT-20057) Parcelize should use specialized write/create methods where available.
+- [`KT-20062`](https://youtrack.jetbrains.com/issue/KT-20062) Parceler should allow otherwise un-parcelable property types in enclosing class.
+
+### Compiler
+
+#### Performance Improvements
+
+- [`KT-20462`](https://youtrack.jetbrains.com/issue/KT-20462) Don't create an array copy for '*<array-constructor-fun>(...)'
+#### Fixes
+
+- [`KT-14697`](https://youtrack.jetbrains.com/issue/KT-14697) Use-site targeted annotation is not correctly loaded from class file
+- [`KT-17680`](https://youtrack.jetbrains.com/issue/KT-17680) Android Studio and multiple tests in single file
+- [`KT-19251`](https://youtrack.jetbrains.com/issue/KT-19251) Stack spilling in constructor arguments breaks Quasar
+- [`KT-19592`](https://youtrack.jetbrains.com/issue/KT-19592) Apply JSR 305 default nullability qualifiers with to generic type arguments if they're applicable for TYPE_USE
+- [`KT-20016`](https://youtrack.jetbrains.com/issue/KT-20016) JSR 305: default nullability qualifiers are ignored in TYPE_USE and PARAMETER positions
+- [`KT-20131`](https://youtrack.jetbrains.com/issue/KT-20131) Support @NonNull(when = NEVER) nullability annotation
+- [`KT-20158`](https://youtrack.jetbrains.com/issue/KT-20158) Preserve flexibility for Java types annotated with @NonNull(when = UNKNOWN)
+- [`KT-20337`](https://youtrack.jetbrains.com/issue/KT-20337) No multifile class facade is generated for files with type aliases only
+- [`KT-20387`](https://youtrack.jetbrains.com/issue/KT-20387) Wrong argument generated for accessor call of a protected generic 'operator fun get/set' from base class with primitive type as type parameter
+- [`KT-20418`](https://youtrack.jetbrains.com/issue/KT-20418) Wrong code generated for literal long range with mixed integer literal ends
+- [`KT-20491`](https://youtrack.jetbrains.com/issue/KT-20491) Incorrect synthetic accessor generated for a generic base class function specialized with primitive type
+- [`KT-20707`](https://youtrack.jetbrains.com/issue/KT-20707) Support when by enum in kotlin scripts
+
+### IDE
+
+#### New Features
+
+- [`KT-14175`](https://youtrack.jetbrains.com/issue/KT-14175) Surround with try ... catch (... finally) doesn't work for expressions
+- [`KT-15769`](https://youtrack.jetbrains.com/issue/KT-15769) Join lines could "convert to expression body"
+- [`KT-19134`](https://youtrack.jetbrains.com/issue/KT-19134) IntelliJ Color Scheme editor - allow changing color of colons and double colons
+- [`KT-20308`](https://youtrack.jetbrains.com/issue/KT-20308) New Gradle with Kotlin DSL project wizard
+#### Fixes
+
+- [`KT-15932`](https://youtrack.jetbrains.com/issue/KT-15932) Attempt to rename private property finds unrelated usages
+- [`KT-18996`](https://youtrack.jetbrains.com/issue/KT-18996) After Kotlin compiler settings change: 'Apply' button doesn't work
+- [`KT-19458`](https://youtrack.jetbrains.com/issue/KT-19458) Resolver for 'completion/highlighting in ScriptModuleInfo for build.gradle.kts / JVM' does not know how to resolve LibraryInfo
+- [`KT-19474`](https://youtrack.jetbrains.com/issue/KT-19474) Kotlin Gradle Script: highlighting fails on unresolved references
+- [`KT-19823`](https://youtrack.jetbrains.com/issue/KT-19823) Kotlin Gradle project import into IntelliJ: import kapt generated classes into classpath
+- [`KT-19958`](https://youtrack.jetbrains.com/issue/KT-19958) Android: kotlinOptions from build.gradle are not imported into facet
+- [`KT-19972`](https://youtrack.jetbrains.com/issue/KT-19972) AssertionError “Resolver for 'completion/highlighting in ModuleProductionSourceInfo(module=Module: 'kotlin-pure_main') for files dummy.kt for platform JVM' does not know how to resolve SdkInfo“ on copying Kotlin file with kotlin.* imports from other project
+- [`KT-20112`](https://youtrack.jetbrains.com/issue/KT-20112) maven dependency type test-jar with scope compile not 
+- [`KT-20185`](https://youtrack.jetbrains.com/issue/KT-20185) Stub and PSI element type mismatch for "var nullableSuspend: (suspend (P) -> Unit)? = null"
+- [`KT-20199`](https://youtrack.jetbrains.com/issue/KT-20199) Cut action is not available during indexing
+- [`KT-20331`](https://youtrack.jetbrains.com/issue/KT-20331) Wrong EAP repository
+- [`KT-20419`](https://youtrack.jetbrains.com/issue/KT-20419) Android Studio plugin 1.1.50 show multiple gutter icon for the same item
+- [`KT-20519`](https://youtrack.jetbrains.com/issue/KT-20519) Error “Parameter specified as non-null is null: method ModuleGrouperKt.isQualifiedModuleNamesEnabled” on creating Gradle (Kotlin DSL) project from scratch
+- [`KT-20621`](https://youtrack.jetbrains.com/issue/KT-20621) Provide automatic migration from JetRunConfigurationType to KotlinRunConfigurationType
+- [`KT-20648`](https://youtrack.jetbrains.com/issue/KT-20648) Do we need a separate ProjectImportProvider for gradle kotlin dsl projects?
+
+### IDE. Completion
+
+- [`KT-16383`](https://youtrack.jetbrains.com/issue/KT-16383) IllegalStateException: Failed to create expression from text: '<init>' on choosing ByteArray from completion list
+
+### IDE. Inspections and Intentions
+
+#### New Features
+
+- [`KT-14695`](https://youtrack.jetbrains.com/issue/KT-14695) Simplify comparison intention produces meaningless statement for assert()
+- [`KT-17204`](https://youtrack.jetbrains.com/issue/KT-17204) Add `Assign to property quickfix`
+- [`KT-18220`](https://youtrack.jetbrains.com/issue/KT-18220) Add data modifier to a class quickfix
+- [`KT-18742`](https://youtrack.jetbrains.com/issue/KT-18742) Add quick-fix for CANNOT_CHECK_FOR_ERASED
+- [`KT-19735`](https://youtrack.jetbrains.com/issue/KT-19735) Add quickfix for type mismatch that converts Sequence/Array/List
+- [`KT-20259`](https://youtrack.jetbrains.com/issue/KT-20259) Show warning if arrays are compared by '!='
+#### Fixes
+
+- [`KT-10546`](https://youtrack.jetbrains.com/issue/KT-10546) Wrong "Unused property" warning on using inline object syntax
+- [`KT-16394`](https://youtrack.jetbrains.com/issue/KT-16394) "Convert reference to lambda" generates wrong code
+- [`KT-16808`](https://youtrack.jetbrains.com/issue/KT-16808) Intention "Remove unnecessary parantheses" is erroneously proposed for elvis operator on LHS of `in` operator if RHS of elvis is return with value
+- [`KT-17437`](https://youtrack.jetbrains.com/issue/KT-17437) Class highlighted as unused even if Companion methods/fields really used
+- [`KT-19377`](https://youtrack.jetbrains.com/issue/KT-19377) Inspections are run for Kotlin Gradle DSL sources
+- [`KT-19420`](https://youtrack.jetbrains.com/issue/KT-19420) Kotlin Gradle script editor: suggestion to import required class from stdlib fails with AE: ResolverForProjectImpl.descriptorForModule()
+- [`KT-19626`](https://youtrack.jetbrains.com/issue/KT-19626) (Specify type explicitly) Descriptor was not found for VALUE_PARAMETER
+- [`KT-19674`](https://youtrack.jetbrains.com/issue/KT-19674) 'Convert property initializer to getter' intention fails on incompilable initializer with AssertionError at SpecifyTypeExplicitlyIntention$Companion.addTypeAnnotationWithTemplate() 
+- [`KT-19782`](https://youtrack.jetbrains.com/issue/KT-19782) Surround with if else doesn't work for expressions
+- [`KT-20010`](https://youtrack.jetbrains.com/issue/KT-20010) 'Replace safe access expression with 'if' expression' IDEA Kotlin plugin intention may failed
+- [`KT-20104`](https://youtrack.jetbrains.com/issue/KT-20104) "Recursive property accessor" reports false positive when property reference is used in the assignment
+- [`KT-20218`](https://youtrack.jetbrains.com/issue/KT-20218) AE on calling intention “Convert to secondary constructor” for already referred argument 
+- [`KT-20231`](https://youtrack.jetbrains.com/issue/KT-20231) False positive 'Redundant override' when delegated member hides super type override
+- [`KT-20261`](https://youtrack.jetbrains.com/issue/KT-20261) Incorrect "Redundant Unit return type" inspection for Nothing-typed expression
+- [`KT-20333`](https://youtrack.jetbrains.com/issue/KT-20333) Assignment can be lifted out of try is applied too broadly
+- [`KT-20366`](https://youtrack.jetbrains.com/issue/KT-20366) Code cleanup: some inspections are broken 
+- [`KT-20369`](https://youtrack.jetbrains.com/issue/KT-20369) Inspection messages with INFORMATION highlight type are shown in Code Inspect
+- [`KT-20409`](https://youtrack.jetbrains.com/issue/KT-20409) useless warning "Remove curly braces" for Chinese character
+- [`KT-20417`](https://youtrack.jetbrains.com/issue/KT-20417) Converting property getter to block body doesn't insert explicit return type
+
+### IDE. Refactorings
+
+#### Performance Improvements
+
+- [`KT-18823`](https://youtrack.jetbrains.com/issue/KT-18823) Move class to a separate file is very slow in 'kotlin' project
+- [`KT-20205`](https://youtrack.jetbrains.com/issue/KT-20205) Invoke MoveKotlinDeclarationsProcessor.findUsages() under progress
+#### Fixes
+
+- [`KT-15840`](https://youtrack.jetbrains.com/issue/KT-15840) Introduce type alias: don't change not-nullable type with nullable typealias
+- [`KT-17949`](https://youtrack.jetbrains.com/issue/KT-17949) Rename private fun should not search it out of scope
+- [`KT-18196`](https://youtrack.jetbrains.com/issue/KT-18196) Refactor / Copy: the copy is formatted
+- [`KT-18594`](https://youtrack.jetbrains.com/issue/KT-18594) Refactor / Extract (Functional) Parameter are available for annotation arguments, but fail with AE: "Body element is not found"
+- [`KT-19439`](https://youtrack.jetbrains.com/issue/KT-19439) Kotlin introduce parameter causes exception
+- [`KT-19909`](https://youtrack.jetbrains.com/issue/KT-19909) copy a kotlin class removes imports and other modifications
+- [`KT-19949`](https://youtrack.jetbrains.com/issue/KT-19949) AssertionError „Resolver for 'project source roots and libraries for platform JVM' does not know how to resolve ModuleProductionSourceInfo“ through MoveConflictChecker.getModuleDescriptor() on copying Kotlin file from other project
+- [`KT-20092`](https://youtrack.jetbrains.com/issue/KT-20092) Refactor / Copy: copy of .kt file removes all the blank lines and 'hanging' comments
+- [`KT-20335`](https://youtrack.jetbrains.com/issue/KT-20335) Refactor → Extract Type Parameter: “AWT events are not allowed inside write action” after processing duplicates
+- [`KT-20402`](https://youtrack.jetbrains.com/issue/KT-20402) Throwable “PsiElement(IDENTIFIER) by KotlinInplaceParameterIntroducer” on calling Refactor → Extract Parameter for default values
+- [`KT-20403`](https://youtrack.jetbrains.com/issue/KT-20403) AE “Body element is not found” on calling Refactor → Extract Parameter for default values in constructor of class without body
+
+### JavaScript
+
+#### Fixes
+
+- [`KT-8285`](https://youtrack.jetbrains.com/issue/KT-8285) JS: don't generate tmp when only need one component
+- [`KT-14549`](https://youtrack.jetbrains.com/issue/KT-14549) JS: Non-local returns from secondary constructors don't work
+- [`KT-15294`](https://youtrack.jetbrains.com/issue/KT-15294) JS: parse error in `js()` function
+- [`KT-17450`](https://youtrack.jetbrains.com/issue/KT-17450) PlatformDependent members of collections are compiled in JS
+- [`KT-18010`](https://youtrack.jetbrains.com/issue/KT-18010) JS: JsName annotation in interfaces can cause runtime exception
+- [`KT-18063`](https://youtrack.jetbrains.com/issue/KT-18063) Inlining does not work properly in JS for suspend functions from another module
+- [`KT-18548`](https://youtrack.jetbrains.com/issue/KT-18548) JS: wrong string interpolation with generic or Any parameters
+- [`KT-19794`](https://youtrack.jetbrains.com/issue/KT-19794) runtime crash with empty object (Javascript) 
+- [`KT-19818`](https://youtrack.jetbrains.com/issue/KT-19818) JS: generate paths relative to .map file by default (unless "-source-map-prefix" is used)
+- [`KT-19906`](https://youtrack.jetbrains.com/issue/KT-19906) JS: rename compiler option "-source-map-source-roots" to avoid misleading since sourcemaps have field called "sourceRoot"
+- [`KT-20287`](https://youtrack.jetbrains.com/issue/KT-20287) Functions don't actually return Unit in Kotlin-JS -> unexpected null problems vs JDK version
+- [`KT-20451`](https://youtrack.jetbrains.com/issue/KT-20451) KotlinJs - interface function with default parameter, overridden by implementor, can't be found at runtime
+- [`KT-20650`](https://youtrack.jetbrains.com/issue/KT-20650) JS: compiler crashes in Java 9 with NoClassDefFoundError
+- [`KT-20653`](https://youtrack.jetbrains.com/issue/KT-20653) JS: compiler crashes in Java 9 with TranslationRuntimeException
+
+### Libraries
+
+- [`KT-20596`](https://youtrack.jetbrains.com/issue/KT-20596) 'synchronized' does not allow non-local return in Kotlin JS
+- [`KT-20600`](https://youtrack.jetbrains.com/issue/KT-20600) Typo in POMs for kotlin-runtime
+
+### Tools
+
+- [`KT-19692`](https://youtrack.jetbrains.com/issue/KT-19692) kotlin-jpa plugin doesn't support @MappedSuperclass annotation
+- [`KT-20030`](https://youtrack.jetbrains.com/issue/KT-20030) Parcelize can directly reference writeToParcel and CREATOR for final, non-Parcelize Parcelable types in same compilation unit.
+- [`KT-19742`](https://youtrack.jetbrains.com/issue/KT-19742) [Android extensions] Calling clearFindViewByIdCache causes NPE
+- [`KT-19749`](https://youtrack.jetbrains.com/issue/KT-19749) Android extensions + Parcelable: NoSuchMethodError on attempt to pack into parcel a serializable object
+- [`KT-20026`](https://youtrack.jetbrains.com/issue/KT-20026) Parcelize overrides describeContents despite being already implemented.
+- [`KT-20027`](https://youtrack.jetbrains.com/issue/KT-20027) Parcelize uses wrong classloader when reading parcelable type.
+- [`KT-20029`](https://youtrack.jetbrains.com/issue/KT-20029) Parcelize should not directly reference parcel methods on types outside compilation unit
+- [`KT-20032`](https://youtrack.jetbrains.com/issue/KT-20032) Parcelize does not respect type nullability in case of Parcelize parcelables
+
+### Tools. Gradle
+
+- [`KT-3463`](https://youtrack.jetbrains.com/issue/KT-3463) Gradle plugin ignores kotlin compile options changes
+- [`KT-16299`](https://youtrack.jetbrains.com/issue/KT-16299) Gradle build does not recompile annotated classes on changing compiler's plugins configuration
+- [`KT-16764`](https://youtrack.jetbrains.com/issue/KT-16764) Kotlin Gradle plugin should replicate task dependencies of Java source directories
+- [`KT-17564`](https://youtrack.jetbrains.com/issue/KT-17564) Applying Kotlin's Gradle plugin results in src/main/java being listed twice in sourceSets.main.allSource
+- [`KT-17674`](https://youtrack.jetbrains.com/issue/KT-17674) Test code is not compiled incrementally when main is changed
+- [`KT-18765`](https://youtrack.jetbrains.com/issue/KT-18765) Move incremental compilation message from Gradle's warning to info logging level
+- [`KT-20036`](https://youtrack.jetbrains.com/issue/KT-20036) Gradle tasks up-to-date-ness
+
+### Tools. J2K
+
+- [`KT-19565`](https://youtrack.jetbrains.com/issue/KT-19565) Java code using Iterator#remove converted to red code
+- [`KT-19651`](https://youtrack.jetbrains.com/issue/KT-19651) Java class with static-only methods can contain 'protected' members
+
+### Tools. JPS
+
+- [`KT-20082`](https://youtrack.jetbrains.com/issue/KT-20082) Java 9: incremental build reports bogus error for reference to Kotlin source
+- [`KT-20671`](https://youtrack.jetbrains.com/issue/KT-20671) Kotlin plugin compiler exception when compiling under JDK9
+
+### Tools. Maven
+
+- [`KT-20064`](https://youtrack.jetbrains.com/issue/KT-20064) Maven + Java 9: compile task warns about module-info in the output path
+- [`KT-20400`](https://youtrack.jetbrains.com/issue/KT-20400) Do not output module name, version and related information by default in Maven builds
+
+### Tools. REPL
+
+- [`KT-20167`](https://youtrack.jetbrains.com/issue/KT-20167) JDK 9 `unresolved supertypes: Object` when working with Kotlin Scripting API
+
+### Tools. kapt
+
+- [`KT-17923`](https://youtrack.jetbrains.com/issue/KT-17923) Reference to Dagger generated class is highlighted red
+- [`KT-18923`](https://youtrack.jetbrains.com/issue/KT-18923) Kapt: Do not use the Kotlin error message collector to issue errors from kapt
+- [`KT-19097`](https://youtrack.jetbrains.com/issue/KT-19097) Request: Decent support of `kapt.kotlin.generated` on Intellij/Android Studio
+
 ## 1.1.50
 
 ### Android
