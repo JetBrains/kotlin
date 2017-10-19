@@ -1,6 +1,8 @@
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     testCompile(project(":core:util.runtime"))
     testCompile(projectTests(":compiler:tests-common"))

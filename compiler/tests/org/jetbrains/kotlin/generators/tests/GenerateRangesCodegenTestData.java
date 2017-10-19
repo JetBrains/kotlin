@@ -44,26 +44,26 @@ public class GenerateRangesCodegenTestData {
     private static final Pattern SUBTEST_INVOCATION_PATTERN = Pattern.compile("doTest\\(([^,]+), [^,]+, [^,]+, [^,]+,\\s+listOf[\\w<>]*\\(([^\\n]*)\\)\\)", Pattern.DOTALL);
 
     // $LIST.size() check is needed in order for tests not to run forever
-    public static final String LITERAL_TEMPLATE =    "    val $LIST = ArrayList<$TYPE>()\n" +
-                                                     "    for (i in $RANGE_EXPR) {\n" +
-                                                     "        $LIST.add(i)\n" +
-                                                     "        if ($LIST.size > 23) break\n" +
-                                                     "    }\n" +
-                                                     "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
-                                                     "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
-                                                     "    }\n" +
-                                                     "\n";
+    private static final String LITERAL_TEMPLATE = "    val $LIST = ArrayList<$TYPE>()\n" +
+                                                   "    for (i in $RANGE_EXPR) {\n" +
+                                                   "        $LIST.add(i)\n" +
+                                                   "        if ($LIST.size > 23) break\n" +
+                                                   "    }\n" +
+                                                   "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
+                                                   "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
+                                                   "    }\n" +
+                                                   "\n";
 
-    public static final String EXPRESSION_TEMPLATE = "    val $LIST = ArrayList<$TYPE>()\n" +
-                                                     "    val $RANGE = $RANGE_EXPR\n" +
-                                                     "    for (i in $RANGE) {\n" +
-                                                     "        $LIST.add(i)\n" +
-                                                     "        if ($LIST.size > 23) break\n" +
-                                                     "    }\n" +
-                                                     "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
-                                                     "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
-                                                     "    }\n" +
-                                                     "\n";
+    private static final String EXPRESSION_TEMPLATE = "    val $LIST = ArrayList<$TYPE>()\n" +
+                                                      "    val $RANGE = $RANGE_EXPR\n" +
+                                                      "    for (i in $RANGE) {\n" +
+                                                      "        $LIST.add(i)\n" +
+                                                      "        if ($LIST.size > 23) break\n" +
+                                                      "    }\n" +
+                                                      "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
+                                                      "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
+                                                      "    }\n" +
+                                                      "\n";
 
     private static final Map<String, String> ELEMENT_TYPE_KNOWN_SUBSTRINGS = new ContainerUtil.ImmutableMapBuilder<String, String>()
             .put("'", "Char")
