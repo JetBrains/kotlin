@@ -2,12 +2,16 @@ plugins {
     id "com.jfrog.bintray" version "1.7.3"
 }
 
-group = 'org.jetbrains.kotlinx'
-version = '0.1.2'
-
 apply plugin: 'kotlin'
 
 configureJvmProject(project)
+configurePublishing(project)
+
+group = 'org.jetbrains.kotlinx'
+version = '0.2'
+if (!project.hasProperty("deploy")) {
+    version = "$version-SNAPSHOT"
+}
 
 compileJava {
     sourceCompatibility = 1.8
@@ -31,55 +35,28 @@ dependencies {
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
 
-def originalSrc = "$kotlin_root/plugins/kotlin-serialization/kotlin-serialization-compiler/src"
-def targetSrc = file("$buildDir/kotlin-serialization-target-src")
-
-task preprocessSources(type: Copy) {
-    from originalSrc
-    into targetSrc
-    filter { it.replaceAll('(?<!\\.)com\\.intellij', 'org.jetbrains.kotlin.com.intellij') }
-}
-
-//sourceSets.main.java.srcDirs += targetSrc
-
-//compileKotlin.dependsOn preprocessSources
-
 evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
 
 jar {
-//    from(targetSrc) { include("META-INF/**") }
     from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
     from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
 
-apply plugin: 'maven-publish'
-
-task sourceJar(type: Jar, dependsOn: classes) {
-    classifier 'sources'
-    from sourceSets.main.allSource
-}
-
-publishing {
-    publications {
-        mavenProject(MavenPublication) {
-            from components.java
-            groupId project.group
-            artifactId project.name
-            version project.version
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-    }
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['mavenProject']
+    configurations = ['archives']
+    if (!project.hasProperty("deploy")) {
+        dryRun = true
+    }
     pkg {
         repo = 'kotlinx'
         name = 'kotlinx.serialization.plugin'

@@ -266,7 +266,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         if (KotlinBuiltIns.isCharOrNullableChar(property.type)) {
                             +JsAstUtils.assignment(
                                     localProps[i],
-                                    TranslationUtils.coerce(context, localProps[i], TranslationUtils.getReturnTypeForCoercion(property.descriptor.getter!!))
+                                    TranslationUtils.coerce(context, localProps[i], context.currentModule.builtIns.charType)
                             ).makeStmt()
                         }
 
