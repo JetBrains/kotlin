@@ -65,9 +65,13 @@ interface JKQualifiedExpression : JKExpression {
     val selector: JKStatement
 }
 
-interface JKCallExpression : JKExpression {
+interface JKMethodCallExpression : JKExpression {
     val identifier: JKMethodReference
     val arguments: JKExpressionList
+}
+
+interface JKFieldAccessExpression : JKExpression {
+    val identifier: JKFieldReference
 }
 
 interface JKExpressionList : JKElement {
@@ -75,6 +79,10 @@ interface JKExpressionList : JKElement {
 }
 
 interface JKMethodReference : JKElement {
+
+}
+
+interface JKFieldReference : JKElement {
 
 }
 
