@@ -45,11 +45,17 @@ interface JKJavaOperatorIdentifier : JKOperatorIdentifier
 
 interface JKJavaQualificationIdentifier : JKQualificationIdentifier
 
-interface JKJavaCallExpression : JKCallExpression {
-    override val identifier: JKJavaMethodReference
+interface JKJavaMethodCallExpression : JKMethodCallExpression {
+
+}
+
+interface JKJavaFieldAccessExpression : JKFieldAccessExpression {
+
 }
 
 interface JKJavaMethodReference : JKMethodReference
+
+interface JKJavaFieldReference : JKFieldReference
 
 interface JKJavaAccessModifier : JKAccessModifier {
     val type: AccessModifierType

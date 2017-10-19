@@ -82,12 +82,24 @@ class JavaToJKTreeBuilder {
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val method = methodExpression as PsiReferenceExpressionImpl
             val identifier = (method.referenceNameElement as PsiIdentifier).convertMethodReference()
-            val call = JKJavaCallExpressionImpl(argumentList.toJK(), identifier)
+            val call = JKJavaMethodCallExpressionImpl(argumentList.toJK(), identifier)
             return if (method.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualificationIdentifierImpl.DOT, call)
             }
             else {
                 call
+            }
+        }
+
+        fun PsiReferenceExpression.toJK(): JKExpression {
+            val impl = this as PsiReferenceExpressionImpl
+            val identifier = (impl.referenceNameElement as PsiIdentifier).convertFieldReference()
+            val access = JKJavaFieldAccessExpressionImpl(identifier)
+            return if (impl.findChildByRole(ChildRole.DOT) != null) {
+                JKQualifiedExpressionImpl((impl.qualifier as PsiExpression).toJK(), JKJavaQualificationIdentifierImpl.DOT, access)
+            }
+            else {
+                access
             }
         }
 
@@ -97,6 +109,10 @@ class JavaToJKTreeBuilder {
 
         fun PsiIdentifier.convertMethodReference(): JKJavaMethodReference {
             return JKJavaMethodReferenceImpl()
+        }
+
+        fun PsiIdentifier.convertFieldReference(): JKJavaFieldReference {
+            return JKJavaFieldReferenceImpl()
         }
     }
 

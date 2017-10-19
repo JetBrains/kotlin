@@ -77,9 +77,9 @@ sealed class JKJavaQualificationIdentifierImpl : JKJavaQualificationIdentifier, 
     object DOT : JKJavaQualificationIdentifierImpl()
 }
 
-class JKJavaCallExpressionImpl(override val arguments: JKExpressionList,
-                               override val identifier: JKJavaMethodReference) : JKJavaCallExpression, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaCallExpression(this, data)
+class JKJavaMethodCallExpressionImpl(override val arguments: JKExpressionList,
+                                     override val identifier: JKMethodReference) : JKJavaMethodCallExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         identifier.accept(visitor, data)
@@ -87,8 +87,24 @@ class JKJavaCallExpressionImpl(override val arguments: JKExpressionList,
     }
 }
 
+class JKJavaFieldAccessExpressionImpl(override val identifier: JKFieldReference) : JKJavaFieldAccessExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldAccessExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        identifier.accept(visitor, data)
+    }
+}
+
 class JKJavaMethodReferenceImpl() : JKJavaMethodReference, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodReference(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}
+
+class JKJavaFieldReferenceImpl() : JKJavaFieldReference, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 
