@@ -25,8 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
-import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.IOException;
@@ -132,10 +130,6 @@ public class CodegenTestFiles {
                 scriptParameterValues.add(ArrayUtil.EMPTY_STRING_ARRAY);
             }
         }
-
-        KotlinScriptDefinitionProvider scriptDefinitionProvider = KotlinScriptDefinitionProvider.getInstance(project);
-        assert scriptDefinitionProvider != null;
-        scriptDefinitionProvider.addScriptDefinition(StandardScriptDefinition.INSTANCE);
 
         return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterValues);
     }

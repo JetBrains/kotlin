@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -50,8 +48,6 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         super.initializeEnvironment(testFile)
 
         initializeKotlinEnvironment()
-
-        KotlinScriptDefinitionProvider.getInstance(project)?.addScriptDefinition(StandardScriptDefinition)
 
         val trace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 

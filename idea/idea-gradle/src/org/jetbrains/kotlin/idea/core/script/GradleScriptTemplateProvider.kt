@@ -24,23 +24,51 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.gradle.tooling.ProjectConnection
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.script.ScriptTemplatesProvider
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.util.*
+import kotlin.script.dependencies.Environment
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 abstract class AbstractGradleScriptTemplatesProvider(
-        project: Project, override val id: String, private val templateClass: String, private val dependencySelector: Regex
-): ScriptTemplatesProvider {
+        private val project: Project,
+        override val id: String,
+        private val templateClass: String,
+        private val dependencySelector: Regex
+): ScriptDefinitionContributor {
 
-    private val gradleExeSettings: GradleExecutionSettings? by lazy {
-        try {
-            ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
+    override fun getDefinitions(): List<KotlinScriptDefinition> {
+        val gradleExeSettings = getExeSettings() ?: return emptyList()
+
+        val gradleHome = gradleExeSettings.gradleHome ?: error("Unable to get Gradle home directory")
+
+        val gradleLibDir = File(gradleHome, "lib").let {
+            it.takeIf { it.exists() && it.isDirectory } ?: error("Invalid Gradle libraries directory $it")
+        }
+        val templateClasspath = gradleLibDir.listFiles { it ->
+            /* an inference problem without explicit 'it', TODO: remove when fixed */
+            dependencySelector.matches(it.name)
+        }.takeIf { it.isNotEmpty() }?.asList() ?: error("Missing jars in gradle directory")
+
+        return loadDefinitionsFromTemplates(
+                listOf(templateClass),
+                templateClasspath,
+                createEnvironment(gradleExeSettings),
+                additionalResolverClasspath(gradleLibDir)
+        )
+    }
+
+    open fun additionalResolverClasspath(gradleLibDir: File): List<File> = emptyList()
+
+    private fun getExeSettings(): GradleExecutionSettings? {
+        return try {
+            ExternalSystemApiUtil.getExecutionSettings(
                     project,
-                    com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.toCanonicalPath(project.basePath!!),
-                    org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID)
+                    ExternalSystemApiUtil.toCanonicalPath(project.basePath!!),
+                    GradleConstants.SYSTEM_ID)
         }
         catch (e: Throwable) {
             // TODO: consider displaying the warning to the user
@@ -49,44 +77,26 @@ abstract class AbstractGradleScriptTemplatesProvider(
         }
     }
 
-    private val gradleJvmOptions: List<String> by lazy {
-        gradleExeSettings?.daemonVmOptions?.let { vmOptions ->
+    private fun createEnvironment(gradleExeSettings: GradleExecutionSettings): Environment {
+        val gradleJvmOptions = gradleExeSettings.daemonVmOptions?.let { vmOptions ->
             CommandLineTokenizer(vmOptions).toList()
                     .mapNotNull { it?.let { it as? String } }
                     .filterNot(String::isBlank)
                     .distinct()
         } ?: emptyList()
-    }
 
-    internal val gradleLibDir: File by lazy {
-        val gradleHome = gradleExeSettings?.gradleHome ?: error("Unable to get Gradle home directory")
 
-        File(gradleHome, "lib").let {
-            it.takeIf { it.exists() && it.isDirectory } ?: error("Invalid Gradle libraries directory $it")
-        }
-    }
-
-    override val isValid: Boolean get() = true
-
-    override val templateClassNames get() = listOf(templateClass)
-
-    override val templateClasspath: List<File> get() {
-        return gradleLibDir.listFiles { it ->
-            /* an inference problem without explicit 'it', TODO: remove when fixed */
-            dependencySelector.matches(it.name)
-        }.takeIf { it.isNotEmpty() }?.asList() ?: error("Missing jars in gradle directory")
-    }
-
-    override val environment: Map<String, Any?>? by lazy {
-        mapOf(
-                "gradleHome" to gradleExeSettings?.gradleHome?.let(::File),
+        return mapOf(
+                "gradleHome" to gradleExeSettings.gradleHome?.let(::File),
                 "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File),
                 "gradleWithConnection" to { action: (ProjectConnection) -> Unit ->
-                GradleExecutionHelper().execute(project.basePath!!, null) { action(it) } },
-                "gradleJavaHome" to gradleExeSettings?.javaHome,
+                    GradleExecutionHelper().execute(project.basePath!!, null) { action(it) }
+                },
+                "gradleJavaHome" to gradleExeSettings.javaHome,
                 "gradleJvmOptions" to gradleJvmOptions,
                 "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens
         )
+
     }
 }
 
@@ -97,11 +107,14 @@ abstract class AbstractGradleKotlinDSLTemplateProvider(project: Project, private
         templateClass,
         Regex("^gradle-(?:kotlin-dsl|core).*\\.jar\$")
 ) {
+
     // TODO_R: check this against kotlin-dsl branch that uses daemon
-    override val additionalResolverClasspath: List<File> get() =
-    // additionally need compiler jar to load gradle resolver
-        gradleLibDir.listFiles { file -> file.name.startsWith("kotlin-compiler-embeddable") || file.name.startsWith("kotlin-stdlib") }
+    override fun additionalResolverClasspath(gradleLibDir: File): List<File> {
+        // additionally need compiler jar to load gradle resolver
+        return gradleLibDir.listFiles { file -> file.name.startsWith("kotlin-compiler-embeddable") || file.name.startsWith("kotlin-stdlib") }
                 .firstOrNull()?.let(::listOf).orEmpty()
+
+    }
 }
 
 class GradleSettingsKotlinDSLTemplateProvider(project: Project)

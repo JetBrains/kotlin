@@ -29,7 +29,6 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
 import com.intellij.openapi.components.ServiceManager
@@ -39,7 +38,6 @@ import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
@@ -71,6 +69,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.cli.common.script.CliScriptDependenciesProvider
 import org.jetbrains.kotlin.cli.common.script.CliScriptReportSink
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
@@ -104,7 +103,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.utils.PathUtil
@@ -191,7 +190,8 @@ class KotlinCoreEnvironment private constructor(
         })
         sourceFiles.sortBy { it.virtualFile.path }
 
-        KotlinScriptDefinitionProvider.getInstance(project)?.let { scriptDefinitionProvider ->
+        val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
+        if (scriptDefinitionProvider != null) {
             scriptDefinitionProvider.setScriptDefinitions(
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
@@ -554,9 +554,9 @@ class KotlinCoreEnvironment private constructor(
         @JvmStatic
         fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment, messageCollector: MessageCollector?) {
             with (projectEnvironment.project) {
-                val kotlinScriptDefinitionProvider = KotlinScriptDefinitionProvider()
-                registerService(KotlinScriptDefinitionProvider::class.java, kotlinScriptDefinitionProvider)
-                registerService(ScriptDependenciesProvider::class.java, CliScriptDependenciesProvider(projectEnvironment.project, kotlinScriptDefinitionProvider))
+                val scriptDefinitionProvider = CliScriptDefinitionProvider()
+                registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
+                registerService(ScriptDependenciesProvider::class.java, CliScriptDependenciesProvider(projectEnvironment.project, scriptDefinitionProvider))
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
                 if (messageCollector != null) {

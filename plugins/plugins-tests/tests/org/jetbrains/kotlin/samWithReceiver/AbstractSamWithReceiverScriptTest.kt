@@ -31,7 +31,7 @@ abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
 
     override fun createEnvironment(file: File) = super.createEnvironment(file).apply {
         StorageComponentContainerContributor.registerExtension(project, CliSamWithReceiverComponentContributor(TEST_ANNOTATIONS))
-        val def = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptForSamWithReceivers::class, null, null, emptyMap())
+        val def = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptForSamWithReceivers::class, emptyMap())
         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
     }
 }

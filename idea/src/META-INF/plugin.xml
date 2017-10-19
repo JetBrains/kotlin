@@ -280,8 +280,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer"
                     serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
-                    serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptDefinitionProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptDependenciesProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptDependenciesProvider"/>

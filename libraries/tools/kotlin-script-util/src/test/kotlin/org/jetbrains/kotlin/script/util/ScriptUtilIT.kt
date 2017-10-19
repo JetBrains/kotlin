@@ -115,7 +115,7 @@ done
             suppressOutput: Boolean = false
     ): Class<*>? =
             compileScriptImpl("src/test/resources/scripts/" + scriptFileName,
-                              KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), suppressOutput)
+                              KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, environment), suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
