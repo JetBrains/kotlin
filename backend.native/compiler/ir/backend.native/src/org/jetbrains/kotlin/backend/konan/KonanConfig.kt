@@ -117,7 +117,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         for (klib in libraries) {
             profile("Loading ${klib.libraryName}") {
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
-                val moduleDescriptor = klib.moduleDescriptor(specifics) as ModuleDescriptorImpl
+                val moduleDescriptor = klib.moduleDescriptor(specifics)
                 allMetadata.add(moduleDescriptor)
             }
         }
