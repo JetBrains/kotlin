@@ -23,6 +23,7 @@ dependencies {
         testRuntime(project(it))
     }
     testRuntime(ideaSdkCoreDeps("*.jar"))
+    testRuntime(ideaSdkDeps("resources"))
     testRuntime(ideaSdkDeps("*.jar"))
     //testRuntime(ideaSdkDeps("*.jar", subdir = "jps/test"))
     testRuntime(ideaSdkDeps("*.jar", subdir = "jps"))
