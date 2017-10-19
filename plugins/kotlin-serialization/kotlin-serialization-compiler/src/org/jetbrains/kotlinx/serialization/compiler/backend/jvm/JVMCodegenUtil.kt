@@ -110,7 +110,7 @@ internal fun ImplementationBodyCodegen.generateMethod(function: FunctionDescript
 
 
 internal val enumSerializerId = ClassId(internalPackageFqName, Name.identifier("EnumSerializer"))
-internal val polymorphicSerializerId = ClassId(internalPackageFqName, Name.identifier("PolymorphicSerializer"))
+internal val polymorphicSerializerId = ClassId(packageFqName, Name.identifier("PolymorphicSerializer"))
 internal val referenceArraySerializerId = ClassId(internalPackageFqName, Name.identifier("ReferenceArraySerializer"))
 internal val contextSerializerId = ClassId(packageFqName, Name.identifier("ContextSerializer"))
 
@@ -200,7 +200,7 @@ fun getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialType
         }
         ARRAY -> {
             // check for explicit serialization annotation on this property
-            var serializer = property.serializer.toClassDescriptor
+            var serializer = property.serializableWith.toClassDescriptor
             if (serializer == null) {
                 // no explicit serializer for this property. Select strategy by element type
                 when (type.elementType.sort) {
@@ -222,7 +222,7 @@ fun getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialType
                 return JVMSerialTypeInfo(property, Type.getType("Lkotlin/Unit;"), "Unit", unit = true)
             // todo: more efficient enum support here, but only for enums that don't define custom serializer
             // otherwise, it is a serializer for some other type
-            val serializer = property.serializer?.toClassDescriptor
+            val serializer = property.serializableWith?.toClassDescriptor
                              ?: findTypeSerializer(property.module, property.type, type)
             return JVMSerialTypeInfo(property, Type.getType("Ljava/lang/Object;"),
                                      if (property.type.isMarkedNullable) "Nullable" else "", serializer)

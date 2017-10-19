@@ -53,12 +53,12 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
         KotlinBuiltIns.isUnit(T) -> SerialTypeInfo(property, "Unit", unit = true)
         KotlinBuiltIns.isPrimitiveArray(T) -> TODO("primitive arrays are not supported yet")
         KotlinBuiltIns.isNonPrimitiveArray(T.toClassDescriptor!!) -> {
-            val serializer = property.serializer?.toClassDescriptor ?:
+            val serializer = property.serializableWith?.toClassDescriptor ?:
                              property.module.findClassAcrossModuleDependencies(referenceArraySerializerId)
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
         T.toClassDescriptor?.kind == ClassKind.ENUM_CLASS -> {
-            val serializer = property.serializer?.toClassDescriptor ?:
+            val serializer = property.serializableWith?.toClassDescriptor ?:
                              property.module.findClassAcrossModuleDependencies(enumSerializerId)
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
