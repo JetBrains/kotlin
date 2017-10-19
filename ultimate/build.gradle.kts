@@ -165,3 +165,5 @@ projectTest {
     dependsOn(preparePluginXml)
     workingDir = rootDir
 }
+
+val generateTests by generator("org.jetbrains.kotlin.tests.GenerateUltimateTestsKt")
