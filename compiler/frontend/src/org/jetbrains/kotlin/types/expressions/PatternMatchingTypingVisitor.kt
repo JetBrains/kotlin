@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types.expressions
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean
 import org.jetbrains.kotlin.cfg.WhenChecker
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -34,6 +35,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallChecker
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -95,11 +98,52 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         components.dataFlowAnalyzer.recordExpectedType(trace, expression, contextWithExpectedType.expectedType)
 
         val contextBeforeSubject = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT)
-        // TODO :change scope according to the bound value in the when header
-        val subjectExpression = expression.subjectExpression
 
-        val subjectTypeInfo = subjectExpression?.let { facade.getTypeInfo(it, contextBeforeSubject) }
-        val contextAfterSubject = subjectTypeInfo?.let { contextBeforeSubject.replaceDataFlowInfo(it.dataFlowInfo) } ?: contextBeforeSubject
+        // TODO change scope according to the bound value in the when header
+
+        val subjectExpression = expression.subjectExpression
+        val subjectVariable = expression.subjectVariable
+
+        val subjectTypeInfo: KotlinTypeInfo?
+        val scopeWithSubjectVariable: LexicalScope?
+
+        if (subjectVariable != null) {
+            if (!components.languageVersionSettings.supportsFeature(LanguageFeature.VariableDeclarationInWhenSubject)) {
+                trace.report(Errors.UNSUPPORTED_FEATURE.on(
+                        subjectVariable,
+                        Pair(LanguageFeature.VariableDeclarationInWhenSubject, components.languageVersionSettings)
+                ))
+            }
+
+            scopeWithSubjectVariable = ExpressionTypingUtils.newWritableScopeImpl(contextBeforeSubject, LexicalScopeKind.WHEN, components.overloadChecker)
+
+            val (typeInfo, descriptor) = components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
+            // NB typeInfo returned by 'localVariableResolver.process(...)' treats local variable declaration as a statement,
+            // so 'typeInfo' above it has type 'kotlin.Unit'.
+            // Propagate declared variable type as a "subject expression" type.
+            subjectTypeInfo = typeInfo.replaceType(descriptor.type)
+            scopeWithSubjectVariable.addVariableDescriptor(descriptor)
+        }
+        else {
+            scopeWithSubjectVariable = null
+
+            subjectTypeInfo = subjectExpression?.let { facade.getTypeInfo(it, contextBeforeSubject) }
+        }
+
+        val contextAfterSubject = run {
+            var context = contextBeforeSubject
+            if (subjectTypeInfo != null) {
+                context = context.replaceDataFlowInfo(subjectTypeInfo.dataFlowInfo)
+            }
+            if (scopeWithSubjectVariable != null) {
+                context = context.replaceScope(scopeWithSubjectVariable)
+            }
+            context
+        }
+
+        val contextWithExpectedTypeAndSubjectVariable = scopeWithSubjectVariable?.let { contextWithExpectedType.replaceScope(it) } ?:
+                                                        contextWithExpectedType
+
         val subjectType = subjectTypeInfo?.type ?: ErrorUtils.createErrorType("Unknown type")
         val jumpOutPossibleInSubject: Boolean = subjectTypeInfo?.jumpOutPossible ?: false
         val subjectDataFlowValue = subjectExpression?.let {
@@ -112,7 +156,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         checkSmartCastsInSubjectIfRequired(expression, contextBeforeSubject, subjectType, possibleTypesForSubject)
 
         val dataFlowInfoForEntries = analyzeConditionsInWhenEntries(expression, contextAfterSubject, subjectDataFlowValue, subjectType)
-        val whenReturnType = inferTypeForWhenExpression(expression, contextWithExpectedType, contextAfterSubject, dataFlowInfoForEntries)
+        val whenReturnType = inferTypeForWhenExpression(expression, contextWithExpectedTypeAndSubjectVariable, contextAfterSubject, dataFlowInfoForEntries)
         val whenResultValue = whenReturnType?.let { facade.components.dataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
 
         val branchesTypeInfo =

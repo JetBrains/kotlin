@@ -73,6 +73,7 @@ enum class LanguageFeature(
     ReadDeserializedContracts(KOTLIN_1_3),
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
+    VariableDeclarationInWhenSubject(KOTLIN_1_3),
     AllowContractsForCustomFunctions(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
     ProhibitLocalAnnotations(KOTLIN_1_3, kind = BUG_FIX),
 

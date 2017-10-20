@@ -22457,6 +22457,33 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             public void testWhenWithNothingAndLambdas() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt");
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WithSubjectVariable extends AbstractDiagnosticsUsingJavacTest {
+                public void testAllFilesPresentInWithSubjectVariable() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/when/withSubjectVariable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("invisibleOutsideOfWhen.kt")
+                public void testInvisibleOutsideOfWhen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/invisibleOutsideOfWhen.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("shadowingOtherVariable.kt")
+                public void testShadowingOtherVariable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/shadowingOtherVariable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unsupportedFeature.kt")
+                public void testUnsupportedFeature() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedFeature.kt");
+                    doTest(fileName);
+                }
+            }
         }
     }
 
