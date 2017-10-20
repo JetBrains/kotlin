@@ -621,6 +621,156 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/explicitThis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExplicitThis extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInExplicitThis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/explicitThis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("differentReceiverInstance.kt")
+        public void testDifferentReceiverInstance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/differentReceiverInstance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentReceiverInstanceExtension.kt")
+        public void testDifferentReceiverInstanceExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/differentReceiverInstanceExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentReceiverType.kt")
+        public void testDifferentReceiverType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/differentReceiverType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentReceiverTypeExtension.kt")
+        public void testDifferentReceiverTypeExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/differentReceiverTypeExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/extension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleReceivers.kt")
+        public void testMultipleReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/multipleReceivers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleReceiversExtension.kt")
+        public void testMultipleReceiversExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/multipleReceiversExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedReceivers.kt")
+        public void testNestedReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/nestedReceivers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedReceiversDifferentParameters.kt")
+        public void testNestedReceiversDifferentParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/nestedReceiversDifferentParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedReceiversExtension.kt")
+        public void testNestedReceiversExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/nestedReceiversExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedReceiversExtensionDifferentParameters.kt")
+        public void testNestedReceiversExtensionDifferentParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/nestedReceiversExtensionDifferentParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/property.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variableWithSameName.kt")
+        public void testVariableWithSameName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/explicitThis/variableWithSameName.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/implicitThis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImplicitThis extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInImplicitThis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/implicitThis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionPartOfCall.kt")
+        public void testFunctionPartOfCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/functionPartOfCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleReceivers.kt")
+        public void testMultipleReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/multipleReceivers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nested.kt")
+        public void testNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/nested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedCall.kt")
+        public void testNestedCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/nestedCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/property.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyPartOfCall.kt")
+        public void testPropertyPartOfCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/propertyPartOfCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/topLevel.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/kdocMissingDocumentation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -2623,6 +2623,25 @@
                      level="WARNING"
                      language="kotlin"
     />
+	
+	<localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
+                     displayName="Redundant explicit 'this'"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ImplicitThisInspection"
+                     displayName="Implicit 'this'"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection"
                      displayName="Redundant 'Unit'"
