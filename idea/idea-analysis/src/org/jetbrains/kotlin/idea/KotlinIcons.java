@@ -48,9 +48,9 @@ public interface KotlinIcons {
     Icon TYPE_ALIAS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/typeAlias.png");
 
     Icon SUSPEND_CALL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/suspendCall.png");
-    // TODO: change icon files themselves!
-    Icon FROM_EXPECTED = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/fromHeader.png");
-    Icon FROM_ACTUAL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/fromImpl.png");
+
+    Icon FROM_EXPECTED = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/actual.png");
+    Icon FROM_ACTUAL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/expect.png");
 
     Icon LAUNCH = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_launch_configuration.png");
 
