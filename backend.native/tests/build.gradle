@@ -1410,6 +1410,7 @@ task string0(type: RunKonanTest) {
 }
 
 task parse0(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // KT-20862
     goldValue = "false\n" +
             "true\n" +
             "-1\n" +
