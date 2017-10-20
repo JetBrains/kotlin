@@ -42,6 +42,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
         fun getRange(element: KtCallableDeclaration): TextRange? {
             if (element.containingFile is KtCodeFragment) return null
             val typeReference = element.typeReference ?: return null
+            if (typeReference.annotationEntries.isNotEmpty()) return null
 
             if (element is KtParameter) {
                 if (element.isLoopParameter) return element.textRange
