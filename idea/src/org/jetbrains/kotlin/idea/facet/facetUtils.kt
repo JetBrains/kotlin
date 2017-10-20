@@ -310,6 +310,12 @@ fun parseCompilerArgumentsToFacet(
             copyFieldsSatisfying(this, compilerArguments) { exposeAsAdditionalArgument(it) || it.name in ignoredFields }
         }
 
+        val languageLevel = languageLevel
+        val apiLevel = apiLevel
+        if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
+            this.apiLevel = languageLevel
+        }
+
         updateMergedArguments()
     }
 }
