@@ -31,6 +31,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
     //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "smali"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "IntelliLang"))
