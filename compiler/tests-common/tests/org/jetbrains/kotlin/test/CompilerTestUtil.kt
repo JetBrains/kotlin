@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
 import kotlin.test.assertEquals
 
@@ -41,5 +43,28 @@ object CompilerTestUtil {
         finally {
             System.setErr(origErr)
         }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun compileJvmLibrary(
+            src: File,
+            libraryName: String = "library",
+            extraOptions: List<String> = emptyList(),
+            extraClasspath: List<File> = emptyList()
+    ): File {
+        val destination = File(KotlinTestUtils.tmpDir("testLibrary"), "$libraryName.jar")
+        val args = mutableListOf<String>().apply {
+            add(src.path)
+            add("-d")
+            add(destination.path)
+            if (extraClasspath.isNotEmpty()) {
+                add("-cp")
+                add(extraClasspath.joinToString(":") { it.path })
+            }
+            addAll(extraOptions)
+        }
+        executeCompilerAssertSuccessful(K2JVMCompiler(), args)
+        return destination
     }
 }

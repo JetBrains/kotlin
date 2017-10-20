@@ -22,9 +22,9 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         File library = new File(root, LIBRARY);
         List<File> classPath =
                 library.exists()
-                ? Collections.singletonList(MockLibraryUtil.compileJvmLibraryToJar(library.getPath(), LIBRARY))
+                ? Collections.singletonList(CompilerTestUtil.compileJvmLibrary(library))
                 : Collections.emptyList();
 
         assert !sourceFiles.isEmpty() : getTestName(true) + " should contain at least one .kt file";

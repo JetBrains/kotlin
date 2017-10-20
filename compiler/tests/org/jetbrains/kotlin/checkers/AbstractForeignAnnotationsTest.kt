@@ -40,7 +40,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     }
 
     protected fun compileTestAnnotations(extraClassPath: List<File>): List<File> =
-            listOf(MockLibraryUtil.compileJvmLibraryToJar(
+            listOf(MockLibraryUtil.compileJavaFilesLibraryToJar(
                 TEST_ANNOTATIONS_SOURCE_PATH,
                 "test-foreign-annotations",
                 extraOptions = listOf("-Xallow-kotlin-package"),
@@ -48,7 +48,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
         ))
 
     protected fun createJarWithForeignAnnotations(): List<File> = listOf(
-            MockLibraryUtil.compileJvmLibraryToJar(annotationsPath, "foreign-annotations"),
+            MockLibraryUtil.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations"),
             ForTestCompileRuntime.jvmAnnotationsForTests()
     )
 
