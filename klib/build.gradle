@@ -26,6 +26,7 @@ dependencies {
 }
 
 def dist = rootProject.file('dist').absolutePath
+def suffix = isWindows() ? ".bat" : ""
 
 // TODO: Ideally we want to write just konanArtifacts{} clause here,
 // but we need to make Kotlin/Native Gradle Plugin a dependence
@@ -33,7 +34,7 @@ def dist = rootProject.file('dist').absolutePath
 task compileKonanTestLibrary(type: Exec) {
     dependsOn ':dist'
 
-    def compiler = "$dist/bin/konanc"
+    def compiler = "$dist/bin/konanc$suffix"
     def source = 'src/testLibrary'
     def artifact = 'build/konan/bin/testLibrary'
 
@@ -44,8 +45,8 @@ task compileKonanTestLibrary(type: Exec) {
 task installTestLibrary(type: Exec) {
     dependsOn 'compileKonanTestLibrary'
 
+    def tool = "$dist/bin/klib$suffix"
     def repo = "$dist/klib/common"
-    def tool = "$dist/bin/klib"
     def library = 'build/konan/bin/testLibrary.klib'
 
     executable tool
