@@ -492,7 +492,11 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                 val pointeeIsConst =
                         (clang_isConstQualifiedType(clang_getCanonicalType(pointeeType)) != 0)
 
-                PointerType(convertType(pointeeType), pointeeIsConst = pointeeIsConst)
+                val convertedPointeeType = convertType(pointeeType)
+                PointerType(
+                        if (convertedPointeeType == UnsupportedType) VoidType else convertedPointeeType,
+                        pointeeIsConst = pointeeIsConst
+                )
             }
 
             CXType_ConstantArray -> {
@@ -586,15 +590,20 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         val kind = type.kind
         assert(kind == CXType_Unexposed || kind == CXType_FunctionProto)
 
-        return if (clang_isFunctionTypeVariadic(type) != 0) {
-            VoidType // make this function pointer opaque.
+        if (clang_isFunctionTypeVariadic(type) != 0) {
+            return VoidType // make this function pointer opaque.
         } else {
             val returnType = convertType(clang_getResultType(type))
             val numArgs = clang_getNumArgTypes(type)
             val paramTypes = (0..numArgs - 1).map {
                 convertType(clang_getArgType(type, it))
             }
-            FunctionType(paramTypes, returnType)
+
+            return if (returnType == UnsupportedType || paramTypes.any { it == UnsupportedType }) {
+                VoidType
+            } else {
+                FunctionType(paramTypes, returnType)
+            }
         }
     }
 
