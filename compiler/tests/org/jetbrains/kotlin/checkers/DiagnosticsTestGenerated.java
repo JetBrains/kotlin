@@ -22472,6 +22472,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("reassignmentToWhenSubjectVariable.kt")
+                public void testReassignmentToWhenSubjectVariable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/reassignmentToWhenSubjectVariable.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("shadowingOtherVariable.kt")
                 public void testShadowingOtherVariable() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/shadowingOtherVariable.kt");
