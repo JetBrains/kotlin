@@ -26,13 +26,26 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
 fun LexicalScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
         = getImplicitReceiversWithInstanceToExpression().keys
 
 interface ReceiverExpressionFactory {
+    val isImmediate: Boolean
+    val expressionText: String
     fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean = true): KtExpression
+}
+
+fun LexicalScope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType: KotlinType): ReceiverExpressionFactory? {
+    return getImplicitReceiversWithInstanceToExpression()
+            .entries
+            .firstOrNull { (receiverDescriptor, _) ->
+                receiverDescriptor.type.isSubtypeOf(receiverType)
+            }
+            ?.value
 }
 
 fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
@@ -43,7 +56,7 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverPar
     var current: DeclarationDescriptor? = ownerDescriptor
     while (current != null) {
         if (current is PropertyAccessorDescriptor) {
-            current =  current.correspondingProperty
+            current = current.correspondingProperty
         }
         outerDeclarationsWithInstance.add(current)
 
@@ -75,6 +88,8 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverPar
         }
         val factory = if (expressionText != null)
             object : ReceiverExpressionFactory {
+                override val isImmediate = isImmediateThis
+                override val expressionText get() = expressionText!!
                 override fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean): KtExpression {
                     return psiFactory.createExpression(if (shortThis && isImmediateThis) "this" else expressionText)
                 }
