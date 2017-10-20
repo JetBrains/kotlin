@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types.expressions
 import com.google.common.collect.Lists
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -132,7 +132,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
             val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)
 
-            if (USE_NEW_INFERENCE && functionalTypeExpected)
+            if (components.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) && functionalTypeExpected)
                 createTypeInfo(resultType, context)
             else
                 components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, function)
@@ -242,7 +242,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val newInferenceLambdaInfo = context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
 
         // i.e. this lambda isn't call arguments
-        if (newInferenceLambdaInfo == null && USE_NEW_INFERENCE) {
+        if (newInferenceLambdaInfo == null && context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
             newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
         }
 

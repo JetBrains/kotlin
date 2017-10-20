@@ -672,7 +672,7 @@ public class DescriptorResolver {
             BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
-        UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(type, true);
+        UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(type, true, languageVersionSettings);
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 scope.getOwnerDescriptor(),
                 annotationResolver.resolveAnnotationsWithArguments(scope, parameter.getModifierList(), trace),
@@ -1157,7 +1157,7 @@ public class DescriptorResolver {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
             KotlinType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
             KotlinType publicType = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
-            UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(publicType, false);
+            UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(publicType, false, languageVersionSettings);
             KotlinType sanitizedType = declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings);
             functionsTypingVisitor.checkTypesForReturnStatements(function, trace, sanitizedType);
             return sanitizedType;

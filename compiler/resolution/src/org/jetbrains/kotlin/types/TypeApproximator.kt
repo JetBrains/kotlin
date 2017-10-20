@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStrategy.*
 import org.jetbrains.kotlin.types.checker.*
@@ -80,8 +81,8 @@ class TypeApproximator {
     private val referenceApproximateToSuperType = this::approximateSimpleToSuperType
     private val referenceApproximateToSubType = this::approximateSimpleToSubType
 
-    fun approximateDeclarationType(baseType: KotlinType, local: Boolean): UnwrappedType {
-        if (!USE_NEW_INFERENCE) return baseType.unwrap()
+    fun approximateDeclarationType(baseType: KotlinType, local: Boolean, languageVersionSettings: LanguageVersionSettings): UnwrappedType {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
         val configuration = if (local) TypeApproximatorConfiguration.LocalDeclaration else TypeApproximatorConfiguration.PublicDeclaration
         return approximateToSuperType(baseType.unwrap(), configuration) ?: baseType.unwrap()

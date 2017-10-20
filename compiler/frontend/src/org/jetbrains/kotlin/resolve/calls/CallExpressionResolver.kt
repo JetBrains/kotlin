@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -90,8 +91,10 @@ class CallExpressionResolver(
     ): Pair<Boolean, ResolvedCall<FunctionDescriptor>?> {
         val results = callResolver.resolveFunctionCall(BasicCallResolutionContext.create(
                 context, call, checkArguments, DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call)))
-        return if (!results.isNothing) Pair(true, OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency))
-        else Pair(false, null)
+        return if (!results.isNothing)
+            Pair(true, OverloadResolutionResultsUtil.getResultingCall(results, context))
+        else
+            Pair(false, null)
     }
 
     private fun getVariableType(
@@ -281,7 +284,7 @@ class CallExpressionResolver(
                 }
                 else when (resolutionResult.resultCode) {
                     NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
-                    else -> !USE_NEW_INFERENCE || resolutionResult.isSuccess
+                    else -> !context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) || resolutionResult.isSuccess
                 }
             }
 

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
@@ -65,15 +64,13 @@ internal abstract class AbstractScopeTowerLevel(
             }
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-            if (!USE_NEW_INFERENCE) {
-                val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
-                if (!shouldSkipVisibilityCheck) {
-                    Visibilities.findInvisibleMember(
-                            getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
-                            descriptor,
-                            scopeTower.lexicalScope.ownerDescriptor
-                    )?.let { diagnostics.add(VisibilityError(it)) }
-                }
+            val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext || scopeTower.isNewInferenceEnabled
+            if (!shouldSkipVisibilityCheck) {
+                Visibilities.findInvisibleMember(
+                        getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
+                        descriptor,
+                        scopeTower.lexicalScope.ownerDescriptor
+                )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }
         return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
@@ -89,6 +86,7 @@ internal class MemberScopeTowerLevel(
 ): AbstractScopeTowerLevel(scopeTower) {
 
     private val syntheticScopes = scopeTower.syntheticScopes
+    private val isNewInferenceEnabled = scopeTower.isNewInferenceEnabled
 
     private fun collectMembers(
             getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
@@ -137,7 +135,7 @@ internal class MemberScopeTowerLevel(
      * And we should chose get(Int): String.
      */
     private fun CallableDescriptor.approximateCapturedTypes(): CallableDescriptor {
-        if (!USE_NEW_INFERENCE) return this
+        if (!isNewInferenceEnabled) return this
 
         val approximator = TypeApproximator()
         val wrappedSubstitution = object : TypeSubstitution() {

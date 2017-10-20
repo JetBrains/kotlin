@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -571,12 +572,13 @@ public class CallResolver {
         Call call = context.call;
         tracing.bindCall(context.trace, call);
 
-        if (KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE() && (resolutionTask.resolutionKind.getKotlinCallKind() != KotlinCallKind.UNSUPPORTED)) {
+        boolean newInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
+        if (newInferenceEnabled && (resolutionTask.resolutionKind.getKotlinCallKind() != KotlinCallKind.UNSUPPORTED)) {
             assert resolutionTask.name != null;
             return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
         }
 
-        if (KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE() && resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
+        if (newInferenceEnabled && resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
             assert resolutionTask.givenCandidates != null;
             return PSICallResolver.runResolutionAndInferenceForGivenCandidates(context, resolutionTask.givenCandidates, tracing);
         }

@@ -263,8 +263,7 @@ public class ArgumentTypeResolver {
         if (overloadResolutionResults == null) return null;
 
         if (isSingleAndPossibleTransformToSuccess(overloadResolutionResults)) {
-            ResolvedCall<?> resolvedCall =
-                    OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency);
+            ResolvedCall<?> resolvedCall = OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context);
             if (resolvedCall == null) return null;
 
             return DoubleColonExpressionResolver.Companion.createKCallableTypeForReference(

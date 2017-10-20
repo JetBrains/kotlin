@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -529,7 +528,7 @@ class DelegatedPropertyResolver(
                 trace: BindingTrace,
                 dataFlowInfo: DataFlowInfo
         ): KotlinType? {
-            if (!USE_NEW_INFERENCE) return null
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null
 
             val traceToResolveConventionMethods = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods")
 

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.DiagnosticReporterByTrackingStrategy
-import org.jetbrains.kotlin.resolve.calls.REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isFakeElement
@@ -71,6 +70,11 @@ class KotlinToResolvedCallTransformer(
         private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
         private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
 ) {
+
+    companion object {
+        private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
+            get() = false
+    }
 
     fun <D : CallableDescriptor> onlyTransform(
             resolvedCallAtom: ResolvedCallAtom

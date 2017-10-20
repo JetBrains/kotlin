@@ -42,6 +42,8 @@ interface ImplicitScopeTower {
     val location: LookupLocation
 
     val isDebuggerContext: Boolean
+
+    val isNewInferenceEnabled: Boolean
 }
 
 interface ScopeTowerLevel {
