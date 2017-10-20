@@ -18,6 +18,8 @@ class KotlinJavaStreamChainBuilder(private val callChecker: StreamCallChecker) :
     override fun visitCallExpression(expression: KtCallExpression) {
       if (callChecker.isTerminationCall(expression)) {
         fireElementFound()
+      } else {
+        super.visitCallExpression(expression)
       }
     }
   }
