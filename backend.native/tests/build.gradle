@@ -179,43 +179,6 @@ task slackReport(type:Reporter) {
     reportHome = rootProject.file("test.output").absoluteFile
 }
 
-task buildKonanTests(type: BuildKonanTest) {
-    compileList = [ "codegen",  "datagen", "lower", "runtime", "serialization"]
-    // TODO: move these tests into separate dirs or create this list during build
-    // These tests should not be built into the TestRunner's test executable
-    excludeList = [
-            // Driver tests
-            "runtime/basic/driver0.kt",
-            // Standalone tests
-            "runtime/basic/args0.kt",
-            "runtime/basic/exit.kt",
-            "runtime/basic/hello1.kt",
-            "runtime/basic/hello2.kt",
-            "runtime/basic/entry0.kt",
-            "runtime/basic/entry1.kt",
-            "runtime/basic/assert_failed.kt",
-            "runtime/basic/assert_passed.kt",
-            "runtime/basic/assert_failed.kt",
-            "runtime/basic/initializers2.kt",
-            "runtime/memory/basic0.kt",
-            // Link tests
-            "runtime/basic/entry2.kt",
-            "runtime/basic/libentry2.kt",
-            "codegen/enum/linkTest_main.kt",
-            "codegen/enum/linkTest_lib.kt",
-            "codegen/inline/defaultArgs_linkTest_main.kt",
-            "codegen/inline/defaultArgs_linkTest_lib.kt",
-            "serialization/serialize_members.kt",
-            "serialization/deserialize_members.kt",
-            "codegen/propertyCallableReference/linkTest_main.kt",
-            "codegen/propertyCallableReference/linkTest_lib.kt",
-            "codegen/bridges/linkTest_main.kt",
-            "codegen/bridges/linkTest_lib.kt",
-            "codegen/delegatedProperty/delegatedOverride_main.kt",
-            "codegen/delegatedProperty/delegatedOverride_lib.kt"
-    ]
-}
-
 task sum (type:RunKonanTest) {
     source = "codegen/function/sum.kt"
 }
@@ -2271,4 +2234,22 @@ if (isMac()) {
             }
         }
     }
+}
+
+task buildKonanTests(type: BuildKonanTest) {
+    compileList = [ "codegen",  "datagen", "lower", "runtime", "serialization"]
+
+    // These tests should not be built into the TestRunner's test executable
+    excludeList = []
+    project.tasks.withType(KonanTest)
+            .matching { ! (it instanceof RunKonanTest) }
+            .each {
+                // add library and source files
+                if (it instanceof LinkKonanTest) {
+                    excludeList += it.lib
+                }
+                if (it.source != null) {
+                    excludeList += it.source
+                }
+            }
 }
