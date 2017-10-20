@@ -42,12 +42,14 @@ import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
+import org.junit.Ignore;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Ignore
 public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
     private final PathManager pathManager;
