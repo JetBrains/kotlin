@@ -30,6 +30,7 @@ dependencies {
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "smali"))
 }
 
 sourceSets {

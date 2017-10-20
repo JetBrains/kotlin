@@ -21,6 +21,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "smali"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "maven", optional = true))
     testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
     testRuntime(project(":idea:idea-android"))
