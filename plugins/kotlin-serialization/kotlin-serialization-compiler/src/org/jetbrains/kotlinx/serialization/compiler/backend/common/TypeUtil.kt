@@ -107,7 +107,7 @@ fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDe
 
 fun KotlinType.requiresPolymorphism(): Boolean {
     return this.toClassDescriptor?.getSuperClassNotAny()?.isInternalSerializable == true
-           || this.toClassDescriptor?.modality == Modality.OPEN
+           || (this.toClassDescriptor?.modality == Modality.OPEN && this.toClassDescriptor?.unsubstitutedPrimaryConstructor != null) // open not java class
            || this.containsTypeProjectionsInTopLevelArguments() // List<*>
 }
 
