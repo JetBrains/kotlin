@@ -1245,7 +1245,7 @@ task link_default_libs(type: RunStandaloneKonanTest) {
 
 task link_testLib_explicitly(type: RunKonanTest) {
     dependsOn ':klib:installTestLibrary'
-    goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seing this.\n\nHello\n"
+    goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
     flags = ['-l', 'testLibrary'] 

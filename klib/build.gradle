@@ -27,8 +27,8 @@ dependencies {
 
 def dist = rootProject.file('dist').absolutePath
 
-// TODO: Ideally we want to write just konanArtifacts{} clouse here,
-// but we need to make Kotlin Native Gradle Plugin a dependence
+// TODO: Ideally we want to write just konanArtifacts{} clause here,
+// but we need to make Kotlin/Native Gradle Plugin a dependence
 // of our buildScripts first.
 task compileKonanTestLibrary(type: Exec) {
     dependsOn ':dist'
