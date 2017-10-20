@@ -91,3 +91,7 @@ fun ReferencesSearch.SearchParameters.effectiveSearchScope(element: PsiElement):
     val accessScope = PsiSearchHelper.SERVICE.getInstance(element.project).getUseScope(element)
     return scopeDeterminedByUser.intersectWith(accessScope)
 }
+
+fun isOnlyKotlinSearch(searchScope: SearchScope): Boolean {
+    return searchScope is LocalSearchScope && searchScope.scope.all { it.containingFile is KtFile }
+}

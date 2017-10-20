@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
-import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.idea.search.effectiveSearchScope
-import org.jetbrains.kotlin.idea.search.unionSafe
+import org.jetbrains.kotlin.idea.search.*
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReferenceSearcher
@@ -280,10 +277,6 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                         componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions)
                 longTasks.add { searcher!!.run() }
             }
-        }
-
-        private fun isOnlyKotlinSearch(searchScope: SearchScope): Boolean {
-            return searchScope is LocalSearchScope && searchScope.scope.all { it.containingFile is KtFile }
         }
 
         private fun processStaticsFromCompanionObject(element: KtDeclaration) {
