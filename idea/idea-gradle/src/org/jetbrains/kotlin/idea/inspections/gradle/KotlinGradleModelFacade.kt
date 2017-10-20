@@ -21,15 +21,15 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 
-interface KotlinPlatformGradleDetector {
+interface KotlinGradleModelFacade {
     companion object {
-        val EP_NAME: ExtensionPointName<KotlinPlatformGradleDetector> = ExtensionPointName.create("org.jetbrains.kotlin.platformGradleDetector")
+        val EP_NAME: ExtensionPointName<KotlinGradleModelFacade> = ExtensionPointName.create("org.jetbrains.kotlin.gradleModelFacade")
     }
 
     fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String?
 }
 
-class DefaultPlatformGradleDetector : KotlinPlatformGradleDetector {
+class DefaultGradleModelFacade : KotlinGradleModelFacade {
     override fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String? {
         for (libraryDependencyData in ExternalSystemApiUtil.findAllRecursively(moduleData, ProjectKeys.LIBRARY_DEPENDENCY)) {
             for (libraryId in libraryIds) {

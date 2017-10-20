@@ -110,7 +110,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 }
             }
 
-            return getGradleModule()?.dependencies?.mapNotNullTo(LinkedHashSet()) {
+            val dependencies = getGradleModule()?.dependencies
+            return dependencies?.mapNotNullTo(LinkedHashSet()) {
                 val targetModuleName = (it as? IdeaModuleDependency)?.targetModuleName ?: return@mapNotNullTo null
                 val targetGradleModule = gradleIdeaProject.modules.firstOrNull { it.name == targetModuleName } ?: return@mapNotNullTo null
                 ExternalSystemApiUtil.findFirstRecursively(ideProject) {

@@ -116,7 +116,7 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
 }
 
 internal fun DataNode<*>.getResolvedKotlinStdlibVersionByModuleData(libraryIds: List<String>): String? {
-    return KotlinPlatformGradleDetector.EP_NAME.extensions.asSequence()
+    return KotlinGradleModelFacade.EP_NAME.extensions.asSequence()
             .mapNotNull { it.getResolvedKotlinStdlibVersionByModuleData(this, libraryIds) }
             .firstOrNull()
 }
