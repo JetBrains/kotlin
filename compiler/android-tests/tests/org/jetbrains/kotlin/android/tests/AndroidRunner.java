@@ -20,12 +20,15 @@ import com.google.common.io.Files;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
+import org.junit.runner.RunWith;
+import org.junit.runners.AllTests;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class AndroidRunner extends TestSuite {
+@RunWith(AllTests.class)
+public class AndroidRunner {
 
     private static PathManager pathManager;
 
