@@ -48,6 +48,12 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathTestGenerated extends
         doTest(fileName);
     }
 
+    @TestMetadata("typeUseOnObject.kt")
+    public void testTypeUseOnObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeUseOnObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
