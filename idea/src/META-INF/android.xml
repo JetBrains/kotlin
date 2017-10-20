@@ -80,7 +80,6 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidExtensionsExpressionCodegenExtension"/>
-        <defaultErrorMessages implementation="org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid"/>
         <storageComponentContainerContributor implementation="org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor"/>
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidOnDestroyClassBuilderInterceptorExtension"/>
         <packageFragmentProviderExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidPackageFragmentProviderExtension"/>
