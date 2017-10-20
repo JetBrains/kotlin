@@ -93,8 +93,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     ) {
 
         protected abstract fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns): DataFlowValue
-        abstract fun makeValueArgument(): ValueArgument
-        abstract val valueExpression: KtExpression
+        abstract fun makeValueArgument(): ValueArgument?
+        abstract val valueExpression: KtExpression?
 
         private var _dataFlowValue: DataFlowValue? = null
         val dataFlowValue get() = _dataFlowValue!!
@@ -160,6 +160,20 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
             override val valueExpression: KtExpression
                 get() = error("Should not be called for Subject.None")
+        }
+
+
+        class Error(
+                element: KtElement?,
+                typeInfo: KotlinTypeInfo?,
+                scopeWithSubject: LexicalScope?
+        ) : Subject(element, typeInfo, scopeWithSubject) {
+            override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns): DataFlowValue =
+                    DataFlowValue.nullValue(builtIns)
+
+            override fun makeValueArgument(): ValueArgument? = null
+
+            override val valueExpression: KtExpression? get() = null
         }
     }
 
@@ -240,14 +254,29 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         return createTypeInfo(resultType, resultDataFlowInfo, branchesTypeInfo.jumpOutPossible, contextWithExpectedType.dataFlowInfo)
     }
 
-    private fun processVariableSubject(subjectVariable: KtProperty, contextBeforeSubject: ExpressionTypingContext): Subject.Variable {
+    private fun processVariableSubject(subjectVariable: KtProperty, contextBeforeSubject: ExpressionTypingContext): Subject {
         val trace = contextBeforeSubject.trace
 
+        var hasIllegalDeclarationInSubject = false
         if (!components.languageVersionSettings.supportsFeature(LanguageFeature.VariableDeclarationInWhenSubject)) {
             trace.report(UNSUPPORTED_FEATURE.on(
                     subjectVariable,
                     Pair(LanguageFeature.VariableDeclarationInWhenSubject, components.languageVersionSettings)
             ))
+        }
+        else {
+            val illegalDeclarationString = when {
+                subjectVariable.isVar -> "var"
+                subjectVariable.initializer == null -> "variable without initializer"
+                subjectVariable.hasDelegateExpression() -> "delegated property"
+                subjectVariable.getter != null || subjectVariable.setter != null -> "property with accessors"
+                else -> null
+            }
+
+            if (illegalDeclarationString != null) {
+                hasIllegalDeclarationInSubject = true
+                trace.report(Errors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT.on(subjectVariable, illegalDeclarationString))
+            }
         }
 
         val scopeWithSubjectVariable = ExpressionTypingUtils.newWritableScopeImpl(contextBeforeSubject, LexicalScopeKind.WHEN, components.overloadChecker)
@@ -262,7 +291,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         // NB typeInfo returned by 'localVariableResolver.process(...)' treats local variable declaration as a statement,
         // so 'typeInfo' above it has type 'kotlin.Unit'.
         // Propagate declared variable type as a "subject expression" type.
-        return Subject.Variable(subjectVariable, descriptor, typeInfo.replaceType(descriptor.type), scopeWithSubjectVariable)
+        val subjectTypeInfo = typeInfo.replaceType(descriptor.type)
+        return if (hasIllegalDeclarationInSubject)
+            Subject.Error(subjectVariable, subjectTypeInfo, scopeWithSubjectVariable)
+        else
+            Subject.Variable(subjectVariable, descriptor, subjectTypeInfo, scopeWithSubjectVariable)
     }
 
     private fun inferTypeForWhenExpression(
@@ -460,7 +493,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     return
                 }
 
-                val argumentForSubject = subject.makeValueArgument()
+                val argumentForSubject = subject.makeValueArgument() ?: return
                 val typeInfo = facade.checkInExpression(
                     condition, condition.operationReference,
                     argumentForSubject, rangeExpression, context
@@ -500,14 +533,17 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
                 val expression = condition.expression ?: return
-                val basicDataFlowInfo = checkTypeForExpressionCondition(
-                    context, expression, subject.type, subject is Subject.None, subject.dataFlowValue
-                )
+                val subjectValueExpression = subject.valueExpression
+
+                val basicDataFlowInfo = checkTypeForExpressionCondition(context, expression, subject.type, subject is Subject.None, subject.dataFlowValue)
                 val moduleDescriptor = DescriptorUtils.getContainingModule(context.scope.ownerDescriptor)
-                val dataFlowInfoFromES = components.effectSystem.getDataFlowInfoWhenEquals(
-                    subject.valueExpression, expression, context.trace, moduleDescriptor
-                )
-                newDataFlowInfo = basicDataFlowInfo.and(dataFlowInfoFromES)
+                newDataFlowInfo = if (subjectValueExpression != null) {
+                    val dataFlowInfoFromES = components.effectSystem.getDataFlowInfoWhenEquals(subject.valueExpression, expression, context.trace, moduleDescriptor)
+                    basicDataFlowInfo.and(dataFlowInfoFromES)
+                }
+                else {
+                    basicDataFlowInfo
+                }
             }
 
             override fun visitKtElement(element: KtElement) {

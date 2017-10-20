@@ -1,0 +1,22 @@
+package
+
+public fun foo(): kotlin.Any
+public fun testDelegatedValInWhenSubject(): kotlin.Unit
+public fun testDestructuringInWhenSubject(): kotlin.Unit
+public fun testExtensionValInWhenSubject(): kotlin.Unit
+public fun testSimpleValInWhenSubject(): kotlin.Unit
+public fun testValWithoutInitializerWhenSubject(): kotlin.Unit
+public fun testVarInWhenSubject(): kotlin.Unit
+public fun kotlin.String.bar(): kotlin.Any
+
+public final data class P {
+    public constructor P(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any)
+    public final val x: kotlin.Any
+    public final val y: kotlin.Any
+    public final operator /*synthesized*/ fun component1(): kotlin.Any
+    public final operator /*synthesized*/ fun component2(): kotlin.Any
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Any = ..., /*1*/ y: kotlin.Any = ...): P
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

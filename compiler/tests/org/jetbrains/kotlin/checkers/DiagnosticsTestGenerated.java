@@ -22489,6 +22489,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedFeature.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("unsupportedVariableDeclarationsInWhenSubject.kt")
+                public void testUnsupportedVariableDeclarationsInWhenSubject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedVariableDeclarationsInWhenSubject.kt");
+                    doTest(fileName);
+                }
             }
         }
     }
