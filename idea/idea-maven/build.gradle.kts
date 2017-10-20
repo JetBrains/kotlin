@@ -41,6 +41,7 @@ dependencies {
     testRuntime(ideaPluginDeps("jacocoant", plugin = "coverage"))
     //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "smali"))
 }
 
 sourceSets {
