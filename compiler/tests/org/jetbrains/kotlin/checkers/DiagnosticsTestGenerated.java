@@ -22501,6 +22501,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedVariableDeclarationsInWhenSubject.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("unusedWhenSubjectVariable.kt")
+                public void testUnusedWhenSubjectVariable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unusedWhenSubjectVariable.kt");
+                    doTest(fileName);
+                }
             }
         }
     }
