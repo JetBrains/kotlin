@@ -366,6 +366,18 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertTrue("Source map for stdlib should be copied to $librarySourceMapFile", librarySourceMapFile.exists())
     }
 
+    fun testKotlinJavaScriptProjectWithSourceMapRelativePaths() {
+        initProject(JS_STDLIB)
+        buildAllModules().assertSuccessful()
+
+        val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
+        val expectedPath = "../../../src/pkg/test1.kt"
+        assertTrue("Source map file should contain relative path ($expectedPath)", sourceMapContent.contains("\"$expectedPath\""))
+
+        val librarySourceMapFile = File(getOutputDir(PROJECT_NAME), "lib/kotlin.js.map")
+        assertTrue("Source map for stdlib should be copied to $librarySourceMapFile", librarySourceMapFile.exists())
+    }
+
     fun testKotlinJavaScriptProjectWithTwoModules() {
         initProject(JS_STDLIB)
         buildAllModules().assertSuccessful()
