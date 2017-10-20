@@ -13,11 +13,11 @@ class LldbTests {
         }
     """, """
         > b main.kt:2
-        Breakpoint 1:
+        Breakpoint 1: [..]
 
         > r
         Process [..] stopped
-        [..] at main.kt:2, [..] stop reason = breakpoint
+        [..] at main.kt:2, [..] stop reason = breakpoint 1.1
 
         > n
         Process [..] stopped

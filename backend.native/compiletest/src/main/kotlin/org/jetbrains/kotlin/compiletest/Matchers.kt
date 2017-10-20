@@ -1,27 +1,102 @@
 package org.jetbrains.kotlin.compiletest
 
 import org.intellij.lang.annotations.Language
+import org.junit.Assert.fail
 import java.io.IOException
 import java.nio.file.Files
 
-
-fun multilineMatch(patterns: List<String>, actualLines: List<String>) {
-    fun indexOfLine(line: String): Int {
-        val chunks = line.split("""\[\.\.]""".toRegex()).filter { it.isNotBlank() }
-
-        for ((i, actual) in actualLines.withIndex()) {
-            val indices = chunks.map { actual.indexOf(it) }
-            if (indices.all { it != -1 }) {
-                check(indices == indices.sorted())
-                return i
-            }
-        }
-
-        error("Can't find match for `$line` in\n${actualLines.joinToString("\n")}")
+/**
+ * An integration test for debug info.
+ *
+ * It works by compiling a given [programText] with debug info,
+ * then launching lldb, feeding it commands from [lldbSession]
+ * and matching the output.
+ *
+ * [lldbSession] specifies both lldb commands and expected output
+ * using a DLS, which looks like this:
+ *
+ *     > b main.kt:5
+ *     Breakpoint 1: [..]
+ *     > r
+ *     Process [..] stopped
+ *     [..] at main.kt:5, [..] stop reason = breakpoint [..]
+ *     > fr var
+ *     (int) a = 92
+ *     (int) b = 2
+ *
+ * It consists of blocks of the form
+ *
+ *     > lldb command
+ *     response line pattern
+ *     another pattern
+ *
+ * Command after `>` is passed to lldb exactly. The output of the command
+ * is then matched against a set of patterns. Matching is done line by line:
+ * for every pattern, there must be a matching line in the output, but you don't
+ * have to specify a pattern for every line. In particular, it's possible not to
+ * specify any patterns at all:
+ *
+ *     > b main.kt:2
+ *     > r
+ *     > n
+ *     [..] at main.kt:3, [..] stop reason = step over
+ *
+ * The patterns themselves are simple. The only special symbol is `[..]` which
+ * means arbitrary substring, which can help match random data, timings, and OS-dependent output.
+ * For example, to match
+ *
+ *     Current executable set to '/tmp/debugger_test7458723719928260513/program.kexe' (x86_64).
+ *
+ * one writes
+ *
+ *     Current executable set to [..]program.kexe[..]
+ */
+fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
+    if (!haveLldb) {
+        println("Skipping test: no LLDB")
+        return
     }
 
-    val indices = patterns.map { indexOfLine(it) }
+    val lldbSessionSpec = LldbSessionSpecification.parse(lldbSession)
+
+    val tmpdir = Files.createTempDirectory("debugger_test")
+    tmpdir.toFile().deleteOnExit()
+    val source = tmpdir.resolve("main.kt")
+    val output = tmpdir.resolve("program.kexe")
+
+    val driver = ToolDriver(DistProperties.konanc, DistProperties.lldb)
+    Files.write(source, programText.trimIndent().toByteArray())
+    driver.compile(source, output, "-g")
+    val result = driver.runLldb(output, lldbSessionSpec.commands)
+    lldbSessionSpec.match(result)
+}
+
+
+private fun findMismatch(patterns: List<String>, actualLines: List<String>): String? {
+    val indices = mutableListOf<Int>()
+    for (pattern in patterns) {
+        val idx = actualLines.indexOfFirst { match(pattern, it) }
+        if (idx == -1) {
+            return pattern
+        }
+        indices += idx
+    }
     check(indices == indices.sorted())
+    return null
+}
+
+private fun match(pattern: String, line: String): Boolean {
+    val chunks = pattern.split("""\s*\[\.\.]\s*""".toRegex())
+            .filter { it.isNotBlank() }
+            .map { it.trim() }
+    check(chunks.isNotEmpty())
+    val trimmedLine = line.trim()
+
+    val indices = chunks.map { trimmedLine.indexOf(it) }
+    if (indices.any { it == -1 } || indices != indices.sorted()) return false
+    if (!(trimmedLine.startsWith(chunks.first()) || pattern.startsWith("[..]"))) return false
+    if (!(trimmedLine.endsWith(chunks.last()) || pattern.endsWith("[..]"))) return false
+    return true
 }
 
 private val haveLldb: Boolean by lazy {
@@ -42,26 +117,6 @@ private val haveLldb: Boolean by lazy {
     lldbVersion != null
 }
 
-fun lldbTest(@Language("kotlin") program: String, lldbSession: String) {
-    if (!haveLldb) {
-        println("Skipping test: no LLDB")
-        return
-    }
-
-    val lldbSessionSpec = LldbSessionSpecification.parse(lldbSession)
-
-    val tmpdir = Files.createTempDirectory("debugger_test")
-    tmpdir.toFile().deleteOnExit()
-    val source = tmpdir.resolve("main.kt")
-    val output = tmpdir.resolve("program.kexe")
-
-    val driver = ToolDriver(DistProperties.konanc, DistProperties.lldb)
-    Files.write(source, program.trimIndent().toByteArray())
-    driver.compile(source, output, "-g")
-    val result = driver.runLldb(output, lldbSessionSpec.commands)
-    lldbSessionSpec.match(result)
-}
-
 private class LldbSessionSpecification private constructor(
         val commands: List<String>,
         val patterns: List<List<String>>
@@ -71,17 +126,33 @@ private class LldbSessionSpecification private constructor(
         val blocks = output.split("""(?=\(lldb\))""".toRegex())
         check(blocks.first().startsWith("(lldb) target create"))
         val responses = blocks.drop(1)
-        val headers = responses.map { it.lines().first() }
+        val executedCommands = responses.map { it.lines().first() }
         val bodies = responses.map { it.lines().drop(1) }
-        val responsesMatch = headers.size == commands.size
-                && commands.zip(headers).all { (cmd, h) -> h == "(lldb) $cmd" }
+        val responsesMatch = executedCommands.size == commands.size
+                && commands.zip(executedCommands).all { (cmd, h) -> h == "(lldb) $cmd" }
 
-        check(responsesMatch) {
-            "Responses do not match commands.\nResponses: $headers\nCommands: $commands"
+        if (!responsesMatch) {
+            fail("Responses do not match commands.\nResponses: $executedCommands\nCommands: $commands")
         }
 
-        for ((pattern, body) in patterns.zip(bodies)) {
-            multilineMatch(pattern, body)
+        for ((patternBody, command) in patterns.zip(bodies).zip(executedCommands)) {
+            val (pattern, body) = patternBody
+            val mismatch = findMismatch(pattern, body)
+            if (mismatch != null) {
+                val message = """
+Wrong LLDB output.
+
+COMMAND: $command
+PATTERN: $mismatch
+OUTPUT:
+${body.joinToString("\n")}
+
+FULL SESSION:
+$output
+""".trimStart()
+
+                fail(message)
+            }
         }
     }
 
