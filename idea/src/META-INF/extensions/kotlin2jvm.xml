@@ -2,14 +2,8 @@
     <id>org.jetbrains.kotlin</id>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <defaultErrorMessages implementation="org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm"/>
-        <!--temporary: JS diagnostics included to fix KT-10473 / EA-75782-->
-        <defaultErrorMessages implementation="org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs"/>
-
         <classBuilderInterceptorExtension implementation="org.jetbrains.kotlin.annotation.AnnotationCollectorExtension"/>
-
         <analyzeCompleteHandlerExtension implementation="org.jetbrains.kotlin.resolve.jvm.AnalyzeCompleteHandlerExtension"/>
-
         <scriptHelper implementation="org.jetbrains.kotlin.script.ScriptHelperImpl"/>
     </extensions>
 </idea-plugin>
