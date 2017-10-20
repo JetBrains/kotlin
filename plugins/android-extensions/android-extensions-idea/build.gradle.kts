@@ -41,6 +41,7 @@ dependencies {
     testRuntime(ideaPluginDeps("java-decompiler", plugin = "java-decompiler"))
     //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "smali"))
 }
 
 sourceSets {
