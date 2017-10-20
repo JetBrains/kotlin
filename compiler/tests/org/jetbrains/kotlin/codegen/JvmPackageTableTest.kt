@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
@@ -38,14 +37,12 @@ class JvmPackageTableTest : KtUsefulTestCase() {
         val tmpdir = KotlinTestUtils.tmpDir(this::class.simpleName)
 
         val moduleName = "main"
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf(
                 directory,
                 "-d", tmpdir.path,
                 "-module-name", moduleName,
                 "-language-version", compileWith.versionString
         ))
-        System.err.println(output) // normally output is empty
-        assertEquals("Compilation should complete successfully", ExitCode.OK, exitCode)
 
         val mapping = ModuleMapping.create(
                 File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
@@ -32,18 +31,16 @@ import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
+import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,29 +48,24 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        PrintStream origErr = System.err;
-        try {
-            System.setErr(new PrintStream(bytes));
-            ExitCode exitCode;
-            int index = 0;
-            do {
-                int next = args.subList(index, args.size()).indexOf("---");
-                if (next == -1) {
-                    next = args.size();
-                }
-                exitCode = CLITool.doMainNoExit(compiler, ArrayUtil.toStringArray(args.subList(index, next)));
-                if (exitCode != ExitCode.OK) break;
-                index = next + 1;
-            } while (index < args.size());
-            return new Pair<>(bytes.toString("utf-8"), exitCode);
+        StringBuilder output = new StringBuilder();
+
+        int index = 0;
+        do {
+            int next = args.subList(index, args.size()).indexOf("---");
+            if (next == -1) {
+                next = args.size();
+            }
+            Pair<String, ExitCode> pair = CompilerTestUtil.executeCompiler(compiler, args.subList(index, next));
+            output.append(pair.getFirst());
+            if (pair.getSecond() != ExitCode.OK) {
+                return new Pair<>(output.toString(), pair.getSecond());
+            }
+            index = next + 1;
         }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-        finally {
-            System.setErr(origErr);
-        }
+        while (index < args.size());
+
+        return new Pair<>(output.toString(), ExitCode.OK);
     }
 
     @NotNull
