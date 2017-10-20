@@ -264,4 +264,10 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testConvertActualSealedClassToEnum() = doTestHeaderWithJvmAndJs("js")
+
+    @Test
+    fun testConvertExpectEnumToSealedClass() = doTestHeaderWithJvmAndJs("header")
+
+    @Test
+    fun testConvertActualEnumToSealedClass() = doTestHeaderWithJvmAndJs("js")
 }
