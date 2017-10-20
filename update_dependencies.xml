@@ -884,6 +884,11 @@
             <arg path="${android.destination.dir}/bin/fsnotifier64"/>
             <arg path="${android.destination.dir}/bin/inspect.sh"/>
             <arg path="${android.destination.dir}/bin/studio.sh"/>
+            <!-- Needed to run gradle -->
+            <arg path="${android.destination.dir}/jre/bin/"/>
+            <arg path="${android.destination.dir}/jre/lib/"/>
+            <arg path="${android.destination.dir}/jre/jre/bin/"/>
+            <arg path="${android.destination.dir}/jre/jre/lib/"/>
         </exec>
 
         <!--
