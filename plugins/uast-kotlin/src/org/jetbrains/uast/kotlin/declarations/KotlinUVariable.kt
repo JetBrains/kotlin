@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.java.JavaAbstractUExpression
@@ -78,26 +80,14 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
 
     override val annotations by lz {
 
-        if (sourcePsi == null)
-            return@lz psi.annotations.map { WrappedUAnnotation(it, this) }
+        val sourcePsi = sourcePsi ?: return@lz psi.annotations.map { WrappedUAnnotation(it, this) }
 
-        val annotationEntries = (sourcePsi as? KtModifierListOwner)?.annotationEntries
-        val kotlinAnnotations = annotationEntries?.
-                filter { annotationEntry ->
-                    annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget().let { target ->
-                        acceptsAnnotationTarget(target)
-                    }
-                }?.
-                map { annotationEntry ->
-                    KotlinUAnnotation(annotationEntry, this)
-                } ?: emptyList<UAnnotation>()
+        SmartList<UAnnotation>(KotlinNullabilityUAnnotation(sourcePsi, this)).also { annotations ->
+            (sourcePsi as? KtModifierListOwner)?.annotationEntries?.
+                    filter { it.useSiteTarget?.getAnnotationUseSiteTarget().let { acceptsAnnotationTarget(it) } }?.
+                    mapTo(annotations) { KotlinUAnnotation(it, this) }
+        }
 
-        val targetType = (sourcePsi as? KtCallableDeclaration)?.let { it.typeReference?.getType() }
-                         ?: (sourcePsi as? KtProperty)?.initializer?.let { it.getType(it.analyze()) }
-                         ?: (sourcePsi as? KtProperty)?.delegateExpression?.let { it.getType(it.analyze())?.arguments?.firstOrNull()?.type }
-                         ?: sourcePsi?.getParentOfType<KtProperty>(false)?.let { it.typeReference?.getType() ?: it.initializer?.let { it.getType(it.analyze()) } }
-        val nullability = targetType?.nullability()
-        kotlinAnnotations + (nullability?.let { listOf(KotlinNullabilityUAnnotation(it, this)) } ?: emptyList())
     }
 
     abstract protected fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean
@@ -214,7 +204,27 @@ open class KotlinUParameter(
     }
 }
 
-class KotlinNullabilityUAnnotation(val nullability: TypeNullability, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
+class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
+
+
+    private fun getTargetType(annotatedElement: PsiElement): KotlinType? {
+        if (annotatedElement is KtCallableDeclaration) {
+            annotatedElement.typeReference?.getType()?.let { return it }
+        }
+        if (annotatedElement is KtProperty) {
+            annotatedElement.initializer?.let { it.getType(it.analyze()) }?.let { return it }
+            annotatedElement.delegateExpression?.let { it.getType(it.analyze())?.arguments?.firstOrNull()?.type }?.let { return it }
+        }
+        annotatedElement.getParentOfType<KtProperty>(false)?.let {
+            it.typeReference?.getType() ?: it.initializer?.let { it.getType(it.analyze()) }
+        }?.let { return it }
+        return null
+    }
+
+
+    val nullability by lz { getTargetType(annotatedElement)?.nullability() }
+
+
     override val attributeValues: List<UNamedExpression>
         get() = emptyList()
     override val psi: PsiElement?
@@ -227,7 +237,8 @@ class KotlinNullabilityUAnnotation(val nullability: TypeNullability, override va
         get() = when (nullability) {
             TypeNullability.NOT_NULL -> NotNull::class.qualifiedName
             TypeNullability.NULLABLE -> Nullable::class.qualifiedName
-            TypeNullability.FLEXIBLE -> TODO()
+            TypeNullability.FLEXIBLE -> "FlexibleNullability"
+            null -> null
         }
 
     override fun findAttributeValue(name: String?): UExpression? = null
