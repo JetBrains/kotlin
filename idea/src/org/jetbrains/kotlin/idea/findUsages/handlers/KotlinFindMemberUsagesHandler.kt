@@ -146,14 +146,15 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                     addTask { query.forEach(referenceProcessor) }
                 }
 
+                // TODO: very bad code!! ReferencesSearch does not work correctly for constructors and annotation parameters
+                val psiMethodScopeSearch = when {
+                    element is KtNamedFunction || element is KtParameter && element.dataClassComponentFunction() != null ->
+                        options.searchScope.excludeKotlinSources()
+                    else -> options.searchScope
+                }
 
                 for (psiMethod in element.toLightMethods()) {
-                    var searchScope = options.searchScope
-                    // TODO: very bad code!! ReferencesSearch does not work correctly for constructors and annotation parameters
-                    if (element is KtNamedFunction || (element is KtParameter && element.dataClassComponentFunction() != null)) {
-                        searchScope = searchScope.excludeKotlinSources()
-                    }
-                    applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, searchScope, true)).let { query ->
+                    applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, psiMethodScopeSearch, true)).let { query ->
                         addTask { query.forEach(referenceProcessor) }
                     }
                 }
