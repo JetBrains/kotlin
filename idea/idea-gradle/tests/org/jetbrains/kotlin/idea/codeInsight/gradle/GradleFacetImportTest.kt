@@ -1581,6 +1581,43 @@ compileTestKotlin {
         Assert.assertEquals("MultiTest_myTest", facetSettings("MultiTest-js_myTest").implementedModuleName)
     }
 
+    @Test
+    fun testAPIVersionExceedingLanguageVersion() {
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+            }
+
+            compileKotlin {
+                kotlinOptions.languageVersion = "1.1"
+                kotlinOptions.apiVersion = "1.2"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+        }
+
+        assertAllModulesConfigured()
+    }
+
     private fun assertAllModulesConfigured() {
         runReadAction {
             for (moduleGroup in ModuleSourceRootMap(myProject).groupByBaseModules(myProject.allModules())) {
