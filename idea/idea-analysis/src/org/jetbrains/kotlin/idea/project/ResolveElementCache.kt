@@ -238,7 +238,8 @@ class ResolveElementCache(
                 KtTypeConstraint::class.java,
                 KtPackageDirective::class.java,
                 KtCodeFragment::class.java,
-                KtTypeAlias::class.java) as KtElement?
+                KtTypeAlias::class.java
+        ) as KtElement?
 
         when (elementOfAdditionalResolve) {
             null -> {
@@ -251,7 +252,8 @@ class ResolveElementCache(
                     return element
                 }
 
-                return null
+                // Case of pure script element, like val (x, y) = ... on top of the script
+                return element.getParentOfType<KtScript>(strict = false)
             }
 
             is KtPackageDirective -> return element
@@ -333,6 +335,8 @@ class ResolveElementCache(
             is KtTypeConstraint -> typeConstraintAdditionalResolve(resolveSession, resolveElement)
 
             is KtCodeFragment -> codeFragmentAdditionalResolve(resolveElement, bodyResolveMode)
+
+            is KtScript -> scriptAdditionalResolve(resolveSession, resolveElement, bodyResolveMode.bindingTraceFilter)
 
             else -> {
                 if (resolveElement.getParentOfType<KtPackageDirective>(true) != null) {
@@ -484,6 +488,15 @@ class ResolveElementCache(
             ControlFlowInformationProvider(accessor, trace, accessor.languageVersionSettings).checkDeclaration()
         }
 
+        return trace
+    }
+
+    private fun scriptAdditionalResolve(resolveSession: ResolveSession, script: KtScript,
+                                        bindingTraceFilter: BindingTraceFilter): BindingTrace {
+        val trace = createDelegatingTrace(script, bindingTraceFilter)
+        val scriptDescriptor = resolveSession.resolveToDescriptor(script) as ScriptDescriptor
+        ForceResolveUtil.forceResolveAllContents(scriptDescriptor)
+        forceResolveAnnotationsInside(script)
         return trace
     }
 
