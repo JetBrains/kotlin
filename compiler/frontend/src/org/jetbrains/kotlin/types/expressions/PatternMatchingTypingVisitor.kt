@@ -155,11 +155,9 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns) =
                     DataFlowValue.nullValue(builtIns)
 
-            override fun makeValueArgument(): ValueArgument =
-                    error("Should not be called for Subject.None")
+            override fun makeValueArgument(): ValueArgument? = null
 
-            override val valueExpression: KtExpression
-                get() = error("Should not be called for Subject.None")
+            override val valueExpression: KtExpression? get() = null
         }
 
 
@@ -533,17 +531,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
                 val expression = condition.expression ?: return
-                val subjectValueExpression = subject.valueExpression
 
                 val basicDataFlowInfo = checkTypeForExpressionCondition(context, expression, subject.type, subject is Subject.None, subject.dataFlowValue)
                 val moduleDescriptor = DescriptorUtils.getContainingModule(context.scope.ownerDescriptor)
-                newDataFlowInfo = if (subjectValueExpression != null) {
-                    val dataFlowInfoFromES = components.effectSystem.getDataFlowInfoWhenEquals(subject.valueExpression, expression, context.trace, moduleDescriptor)
-                    basicDataFlowInfo.and(dataFlowInfoFromES)
-                }
-                else {
-                    basicDataFlowInfo
-                }
+                val dataFlowInfoFromES = components.effectSystem.getDataFlowInfoWhenEquals(subject.valueExpression, expression, context.trace, moduleDescriptor)
+                newDataFlowInfo = basicDataFlowInfo.and(dataFlowInfoFromES)
             }
 
             override fun visitKtElement(element: KtElement) {
