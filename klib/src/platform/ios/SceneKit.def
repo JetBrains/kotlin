@@ -1,3 +1,4 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation GLKit Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.SceneKit
 headers = SceneKit/SceneKit.h
