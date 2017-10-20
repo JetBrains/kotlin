@@ -11,6 +11,7 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     // testCompileOnly(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "smali"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
