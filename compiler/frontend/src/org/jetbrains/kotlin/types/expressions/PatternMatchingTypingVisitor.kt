@@ -182,32 +182,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val subjectVariable = expression.subjectVariable
 
         val subject = when {
-            subjectVariable != null -> {
-                if (!components.languageVersionSettings.supportsFeature(LanguageFeature.VariableDeclarationInWhenSubject)) {
-                    trace.report(Errors.UNSUPPORTED_FEATURE.on(
-                            subjectVariable,
-                            Pair(LanguageFeature.VariableDeclarationInWhenSubject, components.languageVersionSettings)
-                    ))
-                }
-
-                val scopeWithSubjectVariable = ExpressionTypingUtils.newWritableScopeImpl(contextBeforeSubject, LexicalScopeKind.WHEN, components.overloadChecker)
-
-                // Destructuring causes SOE in UAST :(
-                val resolveResult = components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
-                val typeInfo = resolveResult.first
-                val descriptor = resolveResult.second
-
-                scopeWithSubjectVariable.addVariableDescriptor(descriptor)
-
-                // NB typeInfo returned by 'localVariableResolver.process(...)' treats local variable declaration as a statement,
-                // so 'typeInfo' above it has type 'kotlin.Unit'.
-                // Propagate declared variable type as a "subject expression" type.
-                Subject.Variable(subjectVariable, descriptor, typeInfo.replaceType(descriptor.type), scopeWithSubjectVariable)
-            }
-
-            subjectExpression != null ->
-                Subject.Expression(subjectExpression, facade.getTypeInfo(subjectExpression, contextBeforeSubject))
-
+            subjectVariable != null -> processVariableSubject(subjectVariable, contextBeforeSubject)
+            subjectExpression != null -> Subject.Expression(subjectExpression, facade.getTypeInfo(subjectExpression, contextBeforeSubject))
             else -> Subject.None()
         }
 
@@ -262,6 +238,31 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val resultType = components.dataFlowAnalyzer.checkType(branchesType, expression, contextWithExpectedType)
 
         return createTypeInfo(resultType, resultDataFlowInfo, branchesTypeInfo.jumpOutPossible, contextWithExpectedType.dataFlowInfo)
+    }
+
+    private fun processVariableSubject(subjectVariable: KtProperty, contextBeforeSubject: ExpressionTypingContext): Subject.Variable {
+        val trace = contextBeforeSubject.trace
+
+        if (!components.languageVersionSettings.supportsFeature(LanguageFeature.VariableDeclarationInWhenSubject)) {
+            trace.report(UNSUPPORTED_FEATURE.on(
+                    subjectVariable,
+                    Pair(LanguageFeature.VariableDeclarationInWhenSubject, components.languageVersionSettings)
+            ))
+        }
+
+        val scopeWithSubjectVariable = ExpressionTypingUtils.newWritableScopeImpl(contextBeforeSubject, LexicalScopeKind.WHEN, components.overloadChecker)
+
+        // Destructuring causes SOE in UAST :(
+        val resolveResult = components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
+        val typeInfo = resolveResult.first
+        val descriptor = resolveResult.second
+
+        scopeWithSubjectVariable.addVariableDescriptor(descriptor)
+
+        // NB typeInfo returned by 'localVariableResolver.process(...)' treats local variable declaration as a statement,
+        // so 'typeInfo' above it has type 'kotlin.Unit'.
+        // Propagate declared variable type as a "subject expression" type.
+        return Subject.Variable(subjectVariable, descriptor, typeInfo.replaceType(descriptor.type), scopeWithSubjectVariable)
     }
 
     private fun inferTypeForWhenExpression(
