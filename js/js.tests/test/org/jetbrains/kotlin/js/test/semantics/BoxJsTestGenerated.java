@@ -821,6 +821,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("charValParameter.kt")
+        public void testCharValParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/charValParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classProperty.kt")
         public void testClassProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/classProperty.kt");
