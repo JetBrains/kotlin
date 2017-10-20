@@ -11,14 +11,13 @@
         <serialization.maven.plugin.resources>${basedir}/src/main/resources</serialization.maven.plugin.resources>
         <serialization.target-src>${basedir}/target/src/main/kotlin</serialization.target-src>
         <serialization.target-resources>${basedir}/target/resource</serialization.target-resources>
-        <kotlin.version>1.1-SNAPSHOT</kotlin.version>
+        <kotlin.version>1.2-SNAPSHOT</kotlin.version>
     </properties>
 
     <groupId>org.jetbrains.kotlinx</groupId>
     <artifactId>kotlinx-maven-serialization-plugin</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.2</version>
-
+    <version>0.2</version>
     <description>Serialization plugin for Maven</description>
 
     <repositories>
@@ -33,6 +32,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
