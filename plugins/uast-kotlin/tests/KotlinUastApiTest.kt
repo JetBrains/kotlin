@@ -131,23 +131,19 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     fun testWhenStringLiteral() {
         doTest("WhenStringLiteral") { _, file ->
 
-            fun UFile.findULiteralExpressionFromPsi(refText: String): ULiteralExpression =
-                    this.psi.findElementAt(file.psi.text.indexOf(refText))!!
-                            .parentsWithSelf.mapNotNull { it.toUElementOfType<ULiteralExpression>() }.first()
-
-            file.findULiteralExpressionFromPsi("abc").let { literalExpression ->
+            file.findFromPsi<ULiteralExpression>("abc").let { literalExpression ->
                 val psi = literalExpression.psi!!
                 Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findULiteralExpressionFromPsi("def").let { literalExpression ->
+            file.findFromPsi<ULiteralExpression>("def").let { literalExpression ->
                 val psi = literalExpression.psi!!
                 Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findULiteralExpressionFromPsi("def1").let { literalExpression ->
+            file.findFromPsi<ULiteralExpression>("def1").let { literalExpression ->
                 val psi = literalExpression.psi!!
                 Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, UBlockExpression::class.java)
@@ -156,4 +152,26 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
         }
     }
+
+    @Test
+    fun testWhenAndDestructing() {
+        doTest("WhenAndDestructing") { _, file ->
+
+            file.findFromPsi<UExpression>("val (bindingContext, statementFilter) = arr").let { e ->
+                val uBlockExpression = e.getParentOfType<UBlockExpression>()
+                Assert.assertNotNull(uBlockExpression)
+                val uMethod = uBlockExpression!!.getParentOfType<UMethod>()
+                Assert.assertNotNull(uMethod)
+            }
+
+        }
+    }
+}
+
+
+
+inline fun <reified T : UElement> UFile.findFromPsi(refText: String): T =
+        (this.psi.findElementAt(this.psi.text.indexOf(refText)) ?: throw AssertionError("requested text '$refText' was not found in ${this.psi.name}"))
+                .parentsWithSelf.dropWhile { !it.text.contains(refText) }.mapNotNull { it.toUElementOfType<T>() }.first().also {
+            if (it.psi != null && it.psi?.text != refText) throw AssertionError("requested text '$refText' found as '${it.psi?.text}' in $it")
 }

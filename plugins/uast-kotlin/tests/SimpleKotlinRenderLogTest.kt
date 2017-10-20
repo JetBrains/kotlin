@@ -48,4 +48,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
     @Test fun testUnexpectedContainer() = doTest("UnexpectedContainerException") { testName, file -> check(testName, file, false) }
 
     @Test fun testWhenStringLiteral() = doTest("WhenStringLiteral") { testName, file -> check(testName, file, false) }
+
+    @Test
+    fun testWhenAndDestructing() = doTest("WhenAndDestructing") { testName, file -> check(testName, file, false) }
 }
