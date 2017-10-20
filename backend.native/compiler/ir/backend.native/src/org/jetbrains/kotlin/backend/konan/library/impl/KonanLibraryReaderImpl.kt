@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
-    val target: KonanTarget? = null, override val isDefaultLink: Boolean = false)
+    val target: KonanTarget? = null, override val isDefaultLibrary: Boolean = false)
     : KonanLibraryReader {
 
     // For the zipped libraries inPlace gives files from zip file system
@@ -98,5 +98,5 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
 
 }
 
-internal fun <T: KonanLibraryReader> List<T>.purgeUnneeded(): List<T> = this.filter{ !it.isDefaultLink || it.isNeededForLink }
+internal fun <T: KonanLibraryReader> List<T>.purgeUnneeded(): List<T> = this.filter{ !it.isDefaultLibrary || it.isNeededForLink }
 

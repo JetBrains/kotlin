@@ -52,7 +52,7 @@ fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
             .map{ LibraryReaderImpl(it, abiVersion, target) }
 
     val defaultLibraries = defaultLinks(nostdlib = noStdLib, noDefaultLibs = noDefaultLibs).map {
-        LibraryReaderImpl(it, abiVersion, target, isDefaultLink = true)
+        LibraryReaderImpl(it, abiVersion, target, isDefaultLibrary = true)
     }
 
     // Make sure the user provided ones appear first, so that 
