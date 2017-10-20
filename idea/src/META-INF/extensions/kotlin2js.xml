@@ -2,9 +2,6 @@
     <id>org.jetbrains.kotlin</id>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <defaultErrorMessages implementation="org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs"/>
-        <!--temporary: JVM diagnostics included to fix KT-10473 / EA-75782-->
-        <defaultErrorMessages implementation="org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm"/>
         <suppressStringProvider implementation="org.jetbrains.kotlin.js.analyze.SuppressUnusedParameterForJsNative"/>
         <suppressStringProvider implementation="org.jetbrains.kotlin.js.analyze.SuppressNoBodyErrorsForNativeDeclarations"/>
         <diagnosticSuppressor implementation="org.jetbrains.kotlin.js.analyze.SuppressUninitializedErrorsForNativeDeclarations"/>

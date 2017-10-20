@@ -168,11 +168,11 @@ fun <D : Diagnostic> DiagnosticSink.reportFromPlugin(diagnostic: D, ext: Default
     val renderer = ext.map[diagnostic.factory] as? DiagnosticRenderer<D>
                    ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
 
-    val text = renderer.render(diagnostic)
+    val renderedDiagnostic = RenderedDiagnostic(diagnostic, renderer)
 
     when (diagnostic.severity) {
-        Severity.ERROR -> report(Errors.PLUGIN_ERROR.on(diagnostic.psiElement, diagnostic.factory.name, text))
-        Severity.WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, diagnostic.factory.name, text))
-        Severity.INFO -> report(Errors.PLUGIN_INFO.on(diagnostic.psiElement, diagnostic.factory.name, text))
+        Severity.ERROR -> report(Errors.PLUGIN_ERROR.on(diagnostic.psiElement, renderedDiagnostic))
+        Severity.WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, renderedDiagnostic))
+        Severity.INFO -> report(Errors.PLUGIN_INFO.on(diagnostic.psiElement, renderedDiagnostic))
     }
 }

@@ -16,26 +16,27 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.RenderedDiagnostic;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
-import org.jetbrains.kotlin.util.MappedExtensionProvider;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
+import org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
@@ -44,47 +45,30 @@ import static org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.of;
 public class DefaultErrorMessages {
 
     public interface Extension {
-        ExtensionPointName<Extension> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.defaultErrorMessages");
-
         @NotNull
         DiagnosticFactoryToRendererMap getMap();
     }
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
-    private static final MappedExtensionProvider<Extension, List<DiagnosticFactoryToRendererMap>> RENDERER_MAPS = MappedExtensionProvider.create(
-            Extension.EP_NAME,
-            extensions -> {
-                List<DiagnosticFactoryToRendererMap> result = new ArrayList<>(extensions.size() + 1);
-                for (Extension extension : extensions) {
-                    result.add(extension.getMap());
-                }
-                result.add(MAP);
-                return result;
-            });
+    private static final List<DiagnosticFactoryToRendererMap> RENDERER_MAPS =
+            CollectionsKt.plus(
+                    Collections.singletonList(MAP),
+                    CollectionsKt.map(ServiceLoader.load(Extension.class, DefaultErrorMessages.class.getClassLoader()), Extension::getMap)
+            );
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public static String render(@NotNull Diagnostic diagnostic) {
-        for (DiagnosticFactoryToRendererMap map : RENDERER_MAPS.get()) {
-            DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
-            if (renderer != null) {
-                //noinspection unchecked
-                return renderer.render(diagnostic);
-            }
+        DiagnosticRenderer renderer = getRendererForDiagnostic(diagnostic);
+        if (renderer != null) {
+            return renderer.render(diagnostic);
         }
-        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName() +
-                                           " with the following renderer maps: " + RENDERER_MAPS.get());
+        return diagnostic.toString() + " (error: could not render message)";
     }
 
-    @TestOnly
     @Nullable
     public static DiagnosticRenderer getRendererForDiagnostic(@NotNull Diagnostic diagnostic) {
-        for (DiagnosticFactoryToRendererMap map : RENDERER_MAPS.get()) {
-            DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
-
-            if (renderer != null) return renderer;
-        }
-
-        return null;
+        return AddToStdlibKt.firstNotNullResult(RENDERER_MAPS, map -> map.get(diagnostic.getFactory()));
     }
 
     static {
@@ -888,9 +872,9 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_SUSPEND_FUNCTION_CALL, "Suspend function ''{0}'' should be called only from a coroutine or another suspend function", NAME);
         MAP.put(ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope");
 
-        MAP.put(PLUGIN_ERROR, "{0}: {1}", TO_STRING, TO_STRING);
-        MAP.put(PLUGIN_WARNING, "{0}: {1}", TO_STRING, TO_STRING);
-        MAP.put(PLUGIN_INFO, "{0}: {1}", TO_STRING, TO_STRING);
+        MAP.put(PLUGIN_ERROR, "{0}", (d, c) -> d.getText());
+        MAP.put(PLUGIN_WARNING, "{0}", (d, c) -> d.getText());
+        MAP.put(PLUGIN_INFO, "{0}", (d, c) -> d.getText());
 
         MAP.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}", TO_STRING);
         MAP.put(CONTRACT_NOT_ALLOWED, "Contract is not allowed here");

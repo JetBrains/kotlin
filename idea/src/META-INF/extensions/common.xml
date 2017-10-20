@@ -2,8 +2,6 @@
     <id>org.jetbrains.kotlin</id>
 
     <extensionPoints>
-        <extensionPoint name="defaultErrorMessages"
-                        interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages$Extension"/>
         <extensionPoint name="suppressStringProvider"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.SuppressStringProvider"/>
         <extensionPoint name="diagnosticSuppressor"

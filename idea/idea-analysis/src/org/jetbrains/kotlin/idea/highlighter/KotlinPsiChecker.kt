@@ -38,6 +38,7 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.xml.util.XmlStringUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -45,7 +46,10 @@ import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
@@ -111,7 +115,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
 private fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiMap<Diagnostic, IntentionAction> {
     val first = similarDiagnostics.minBy { it.toString() }
-    val factory = similarDiagnostics.first().factory
+    val factory = similarDiagnostics.first().getRealDiagnosticFactory()
 
     val actions = MultiMap<Diagnostic, IntentionAction>()
 
@@ -136,6 +140,14 @@ private fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiM
 
     return actions
 }
+
+private fun Diagnostic.getRealDiagnosticFactory(): DiagnosticFactory<*> =
+        when (factory) {
+            Errors.PLUGIN_ERROR -> Errors.PLUGIN_ERROR.cast(this).a.factory
+            Errors.PLUGIN_WARNING -> Errors.PLUGIN_WARNING.cast(this).a.factory
+            Errors.PLUGIN_INFO -> Errors.PLUGIN_INFO.cast(this).a.factory
+            else -> factory
+        }
 
 private object NoDeclarationDescriptorsChecker {
     private val LOG = Logger.getInstance(NoDeclarationDescriptorsChecker::class.java)
