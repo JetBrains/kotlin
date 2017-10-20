@@ -282,6 +282,7 @@ class PSICallResolver(
 
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
+        override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         override val lexicalScope: LexicalScope get() = context.scope
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
 

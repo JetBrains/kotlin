@@ -524,7 +524,7 @@ class DoubleColonExpressionResolver(
     ): KotlinType? {
         val descriptor =
                 if (resolutionResults != null && !resolutionResults.isNothing) {
-                    val resolvedCall = OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context.contextDependency)
+                    val resolvedCall = OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context)
                     resolvedCall?.resultingDescriptor ?: return null
                 }
                 else {

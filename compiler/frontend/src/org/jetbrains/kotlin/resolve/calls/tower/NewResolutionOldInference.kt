@@ -316,6 +316,9 @@ class NewResolutionOldInference(
         override val lexicalScope: LexicalScope get() = resolutionContext.scope
 
         override val isDebuggerContext: Boolean get() = resolutionContext.isDebuggerContext
+
+        override val isNewInferenceEnabled: Boolean
+            get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
     }
 
     internal class MyCandidate(
