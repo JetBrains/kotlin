@@ -63,6 +63,7 @@ dependencies {
     testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
     //testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+    testRuntime(ideaPluginDeps("*.jar", plugin = "smali"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
 
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
