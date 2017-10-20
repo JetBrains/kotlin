@@ -506,17 +506,6 @@ fun ObjCClassOrProtocol.kotlinClassName(isMeta: Boolean): String {
     return if (isMeta) "${baseClassName}Meta" else baseClassName
 }
 
-fun ObjCClassOrProtocol.shouldBeImportedAsForwardDeclaration(): Boolean {
-    // Note: currently it is not very easy to distinct class or protocol declarations from forward references,
-    // so the code below treats the empty declarations as forward ones;
-    // it is correct because empty and forward declarations feel exactly the same.
-
-    return this.protocols.isEmpty() &&
-            this.methods.isEmpty() &&
-            this.properties.isEmpty() &&
-            (this as? ObjCClass)?.baseClass == null
-}
-
 private fun Parameter.getTypeStringRepresentation() =
         (if (this.nsConsumed) "__attribute__((ns_consumed)) " else "") + type.getStringRepresentation()
 

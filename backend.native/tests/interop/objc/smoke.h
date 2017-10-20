@@ -1,19 +1,33 @@
 #import <objc/NSObject.h>
 
-@protocol Printer
-@required
--(void)print:(const char*)string;
+@class Foo;
+
+@protocol Printer;
+@protocol Printer;
+
+@protocol Empty
 @end;
+
+@protocol Forward;
+@class Forward;
+
+void useForward1(Forward * p) {}
+void useForward2(id<Forward> p) {}
 
 typedef NSString NSStringTypedef;
 
-@interface Foo : NSObject
+@interface Foo : NSObject <Empty>
 @property NSStringTypedef* name;
 -(void)helloWithPrinter:(id <Printer>)printer;
 @end;
 
 @interface Foo (FooExtensions)
 -(void)hello;
+@end;
+
+@protocol Printer
+@required
+-(void)print:(const char*)string;
 @end;
 
 @protocol MutablePair

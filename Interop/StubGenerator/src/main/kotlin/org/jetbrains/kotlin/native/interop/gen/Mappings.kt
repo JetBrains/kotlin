@@ -29,7 +29,7 @@ fun DeclarationMapper.getKotlinClassFor(
         objCClassOrProtocol: ObjCClassOrProtocol,
         isMeta: Boolean = false
 ): Classifier {
-    val pkg = if (objCClassOrProtocol.shouldBeImportedAsForwardDeclaration()) {
+    val pkg = if (objCClassOrProtocol.isForwardDeclaration) {
         when (objCClassOrProtocol) {
             is ObjCClass -> "objcnames.classes"
             is ObjCProtocol -> "objcnames.protocols"

@@ -49,7 +49,8 @@ private interface ObjCContainerImpl {
 
 private class ObjCProtocolImpl(
         name: String,
-        override val location: Location
+        override val location: Location,
+        override val isForwardDeclaration: Boolean
 ) : ObjCProtocol(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -58,7 +59,8 @@ private class ObjCProtocolImpl(
 
 private class ObjCClassImpl(
         name: String,
-        override val location: Location
+        override val location: Location,
+        override val isForwardDeclaration: Boolean
 ) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -285,28 +287,55 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         }
     }
 
+    private fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
+        assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
+
+        // It is forward declaration <=> the first child is reference to it:
+        var result = false
+        visitChildren(cursor) { child, _ ->
+            result = (child.kind == CXCursorKind.CXCursor_ObjCClassRef && clang_getCursorReferenced(child) == cursor)
+            CXChildVisitResult.CXChildVisit_Break
+        }
+        return result
+    }
+
     private fun getObjCClassAt(cursor: CValue<CXCursor>): ObjCClassImpl {
         assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
 
-        return objCClassRegistry.getOrPut(cursor, { ObjCClassImpl(name, getLocation(cursor)) }) {
+        if (isObjCInterfaceDeclForward(cursor)) {
+            return objCClassRegistry.getOrPut(cursor) {
+                ObjCClassImpl(name, getLocation(cursor), isForwardDeclaration = true)
+            }
+        }
+
+        return objCClassRegistry.getOrPut(cursor, {
+            ObjCClassImpl(name, getLocation(cursor), isForwardDeclaration = false)
+        }) {
             addChildrenToObjCContainer(cursor, it)
         }
 
     }
 
-    private fun getObjCProtocolAt(cursor: CValue<CXCursor>): ObjCProtocolImpl? {
+    private fun getObjCProtocolAt(cursor: CValue<CXCursor>): ObjCProtocolImpl {
         assert(cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) { cursor.kind }
-        if (clang_isCursorDefinition(cursor) == 0) {
-            val definition = clang_getCursorDefinition(cursor)
-            if (clang_isCursorDefinition(cursor) == 0) return null
-            return getObjCProtocolAt(definition)
-        }
-
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
 
-        return objCProtocolRegistry.getOrPut(cursor, { ObjCProtocolImpl(name, getLocation(cursor)) }) {
+        if (clang_isCursorDefinition(cursor) == 0) {
+            val definition = clang_getCursorDefinition(cursor)
+            return if (clang_isCursorDefinition(definition) != 0) {
+                getObjCProtocolAt(definition)
+            } else {
+                objCProtocolRegistry.getOrPut(cursor) {
+                    ObjCProtocolImpl(name, getLocation(cursor), isForwardDeclaration = true)
+                }
+            }
+        }
+
+        return objCProtocolRegistry.getOrPut(cursor, {
+            ObjCProtocolImpl(name, getLocation(cursor), isForwardDeclaration = false)
+        }) {
             addChildrenToObjCContainer(cursor, it)
         }
     }
@@ -340,10 +369,9 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                     result.baseClass = getObjCClassAt(clang_getCursorReferenced(child))
                 }
                 CXCursorKind.CXCursor_ObjCProtocolRef -> {
-                    getObjCProtocolAt(clang_getCursorReferenced(child))?.let {
-                        if (it !in result.protocols) {
-                            result.protocols.add(it)
-                        }
+                    val protocol = getObjCProtocolAt(clang_getCursorReferenced(child))
+                    if (protocol !in result.protocols) {
+                        result.protocols.add(protocol)
                     }
                 }
                 CXCursorKind.CXCursor_ObjCClassMethodDecl, CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> {
@@ -576,7 +604,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
     private fun getProtocols(type: CValue<CXType>): List<ObjCProtocol> {
         val num = clang_Type_getNumProtocols(type)
-        return (0 until num).mapNotNull { index ->
+        return (0 until num).map { index ->
             getObjCProtocolAt(clang_Type_getProtocol(type, index))
         }
     }
@@ -745,7 +773,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                         val objCContainer: ObjCContainerImpl? = when (container.kind) {
                             CXCursorKind.CXCursor_ObjCCategoryDecl -> getObjCCategoryAt(container)
                             CXCursorKind.CXCursor_ObjCInterfaceDecl -> getObjCClassAt(container)
-                            CXCursorKind.CXCursor_ObjCProtocolDecl -> getObjCProtocolAt(container)!!
+                            CXCursorKind.CXCursor_ObjCProtocolDecl -> getObjCProtocolAt(container)
                             else -> error(container.kind)
                         }
 

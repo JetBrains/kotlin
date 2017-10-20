@@ -785,13 +785,13 @@ class StubGenerator(
         stubs.addAll(generateStubsForFunctions(functionsToBind))
 
         nativeIndex.objCProtocols.forEach {
-            if (!it.shouldBeImportedAsForwardDeclaration()) {
+            if (!it.isForwardDeclaration) {
                 stubs.add(ObjCProtocolStub(this, it))
             }
         }
 
         nativeIndex.objCClasses.forEach {
-            if (!it.shouldBeImportedAsForwardDeclaration()) {
+            if (!it.isForwardDeclaration) {
                 stubs.add(ObjCClassStub(this, it))
             }
         }

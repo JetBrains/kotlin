@@ -136,7 +136,9 @@ sealed class ObjCContainer {
     abstract val properties: List<ObjCProperty>
 }
 
-sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclaration
+sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclaration {
+    abstract val isForwardDeclaration: Boolean
+}
 
 data class ObjCMethod(
         val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
