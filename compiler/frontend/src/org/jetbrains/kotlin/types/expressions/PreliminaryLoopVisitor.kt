@@ -38,7 +38,7 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
         var resultFlowInfo = dataFlowInfo
         val nullabilityMap = resultFlowInfo.completeNullabilityInfo
         val valueSetToClear = LinkedHashSet<DataFlowValue>()
-        for (value in nullabilityMap.keys) {
+        for (value in nullabilityMap.keySet()) {
             // Only stable variables are under interest here
             val identifierInfo = value.identifierInfo
             if (value.kind == DataFlowValue.Kind.STABLE_VARIABLE && identifierInfo is IdentifierInfo.Variable) {
