@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import com.intellij.mock.MockApplication
-import com.intellij.openapi.application.Application
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -167,10 +164,6 @@ inline fun <reified T : KtDeclaration> reportOnDeclarationAs(trace: BindingTrace
 }
 
 fun <D : Diagnostic> DiagnosticSink.reportFromPlugin(diagnostic: D, ext: DefaultErrorMessages.Extension) {
-    if (ApplicationManager.getApplication() !is MockApplication) {
-        return this.report(diagnostic)
-    }
-
     @Suppress("UNCHECKED_CAST")
     val renderer = ext.map[diagnostic.factory] as? DiagnosticRenderer<D>
                    ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
