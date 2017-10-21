@@ -8,30 +8,6 @@ import kotlin.test.*
 
 class StringJVMTest {
 
-    @Test fun toBoolean() {
-        assertEquals(true, "true".toBoolean())
-        assertEquals(true, "True".toBoolean())
-        assertEquals(false, "false".toBoolean())
-        assertEquals(false, "not so true".toBoolean())
-    }
-
-    @Test fun toByte() {
-        assertEquals(77.toByte(), "77".toByte())
-        assertFails { "255".toByte() }
-    }
-
-    @Test fun toShort() {
-        assertEquals(77.toShort(), "77".toShort())
-    }
-
-    @Test fun toInt() {
-        assertEquals(77, "77".toInt())
-    }
-
-    @Test fun toLong() {
-        assertEquals(77.toLong(), "77".toLong())
-    }
-
     @Test fun testSplitByPattern() = withOneCharSequenceArg("ab1cd2def3") { s ->
         val isDigit = "\\d".toRegex()
         assertEquals(listOf("ab", "cd", "def", ""), s.split(isDigit))
