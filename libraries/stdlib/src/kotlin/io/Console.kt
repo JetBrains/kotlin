@@ -2,9 +2,9 @@
 @file:JvmName("ConsoleKt")
 package kotlin.io
 
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.io.InputStreamReader
-import java.io.BufferedReader
 
 /** Prints the given message to the standard output stream. */
 @kotlin.internal.InlineOnly
@@ -132,10 +132,9 @@ public inline fun println() {
     System.out.println()
 }
 
-// Since System.in can change its value on the course of program running,
-// we should always delegate to current value and cannot just pass it to InputStreamReader constructor.
+// Since System.in can change its value on the course of program running, we should always delegate to current value.
 // We could use "by" implementation, but we can only use "by" with interfaces and InputStream is abstract class.
-private val stdin: BufferedReader by lazy { BufferedReader(InputStreamReader(object : InputStream() {
+private val stdin: InputStream by lazy { object : InputStream() {
     public override fun read(): Int {
         return System.`in`.read()
     }
@@ -171,11 +170,36 @@ private val stdin: BufferedReader by lazy { BufferedReader(InputStreamReader(obj
     public override fun read(b: ByteArray, off: Int, len: Int): Int {
         return System.`in`.read(b, off, len)
     }
-}))}
+}}
 
 /**
  * Reads a line of input from the standard input stream.
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
-public fun readLine(): String? = stdin.readLine()
+public fun readLine(): String? {
+    // Writing line into ByteArray because InputStreamReader uses buffer
+    val bytes = ByteArrayOutputStream().use { outputStream ->
+        val inputStream = stdin
+        val endOfStream = -1
+        val carriageReturn = '\r'.toInt()
+        val lineFeed = '\n'.toInt()
+
+        var previous = inputStream.read()
+        if (previous == endOfStream) return null
+        if (previous == lineFeed) return ""
+        var current = inputStream.read()
+
+        while (current != endOfStream && current != lineFeed) {
+            outputStream.write(previous)
+            previous = current
+            current = inputStream.read()
+        }
+
+        if (!(previous == carriageReturn && current == lineFeed)) outputStream.write(previous)
+
+        outputStream.toByteArray()
+    }
+
+    return ByteArrayInputStream(bytes).reader().use { it.readText() }
+}
