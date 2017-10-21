@@ -291,6 +291,7 @@ karma {
 
 karmaGenerateConfig.outputs.upToDateWhen { false }
 karmaRun {
+    ignoreExitValue = Boolean.valueOf(ignoreTestFailures)
     dependsOn testClasses
     dependsOn tasks.getByPath(':kotlin-test:kotlin-test-js:testClasses')
 }

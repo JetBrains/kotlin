@@ -217,6 +217,7 @@ fun Task.listConfigurationContents(configName: String) {
 
 val defaultJvmTarget = "1.8"
 val defaultJavaHome = jdkPath(defaultJvmTarget!!)
+val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toString()?.toBoolean() ?: project.hasProperty("teamcity"))
 
 allprojects {
 
@@ -250,6 +251,10 @@ allprojects {
         kotlinOptions {
             freeCompilerArgs = commonCompilerArgs + listOf("-Xnormalize-constructor-calls=enable")
         }
+    }
+
+    tasks.withType(VerificationTask::class.java as Class<Task>) {
+        (this as VerificationTask).ignoreFailures = ignoreTestFailures
     }
 
     tasks.withType<Javadoc> {
