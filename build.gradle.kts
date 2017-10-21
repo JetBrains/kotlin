@@ -327,11 +327,6 @@ tasks {
         }
     }
 
-    "gradlePluginsTest" {
-        // deprecated
-        dependsOn("gradlePluginTest")
-    }
-
     "gradlePluginIntegrationTest" {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
