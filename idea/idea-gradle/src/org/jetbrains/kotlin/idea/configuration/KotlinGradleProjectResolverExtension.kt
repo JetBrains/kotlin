@@ -26,10 +26,10 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.tooling.model.idea.IdeaModule
-import org.gradle.tooling.model.idea.IdeaModuleDependency
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.gradle.KotlinGradleModel
 import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
+import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
@@ -81,10 +81,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         val gradleIdeaProject = gradleModule.project
 
-        fun DataNode<out ModuleData>.getGradleModule() =
-                if (this != ideModule) gradleIdeaProject.modules.firstOrNull { it.gradleProject.path == data.id } else gradleModule
-
-        fun DataNode<out ModuleData>.getDependencies(): Set<DataNode<out ModuleData>> {
+        fun DataNode<out ModuleData>.getDependencies(): Collection<DataNode<out ModuleData>> {
             if (useModulePerSourceSet()) {
                 if (sourceSetByName == null) return emptySet()
                 val externalSourceSet = sourceSetByName[data.id]?.second ?: return emptySet()
@@ -110,14 +107,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 }
             }
 
-            val dependencies = getGradleModule()?.dependencies
-            return dependencies?.mapNotNullTo(LinkedHashSet()) {
-                val targetModuleName = (it as? IdeaModuleDependency)?.targetModuleName ?: return@mapNotNullTo null
-                val targetGradleModule = gradleIdeaProject.modules.firstOrNull { it.name == targetModuleName } ?: return@mapNotNullTo null
-                ExternalSystemApiUtil.findFirstRecursively(ideProject) {
-                    (it.data as? ModuleData)?.id == targetGradleModule.gradleProject.path
-                } as DataNode<ModuleData>?
-            } ?: emptySet()
+            return getDependencyModules(ideModule, gradleIdeaProject)
         }
 
         fun addTransitiveDependenciesOnImplementedModules() {
