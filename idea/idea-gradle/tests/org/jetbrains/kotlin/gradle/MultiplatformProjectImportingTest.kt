@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.junit.Test
+import java.io.File
 
 class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     @Test
@@ -384,5 +386,95 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
         assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
         assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+    }
+
+    @Test
+    fun testTransitiveImplementWithAndroid() {
+        createProjectSubFile(
+                "settings.gradle",
+                "include ':project1', ':project2', ':project3'"
+        )
+
+        val kotlinVersion = "1.1.51"
+
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    jcenter()
+                    maven { url 'https://maven.google.com' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                    classpath 'com.android.tools.build:gradle:2.3.3'
+                }
+            }
+
+            project('project1') {
+                apply plugin: 'kotlin-platform-common'
+
+                sourceSets {
+                    custom
+                }
+            }
+
+            project('project2') {
+                repositories {
+                    mavenCentral()
+                }
+
+                apply plugin: 'kotlin-platform-jvm'
+
+                sourceSets {
+                    custom
+                }
+
+                dependencies {
+                    implement project(':project1')
+                }
+            }
+
+            project('project3') {
+                repositories {
+                    mavenCentral()
+                }
+
+                apply plugin: 'com.android.application'
+                apply plugin: 'kotlin-android'
+
+                sourceSets {
+                    custom
+                }
+
+                android {
+                    compileSdkVersion 23
+                    buildToolsVersion "23.0.1"
+                    defaultConfig {
+                        applicationId "org.jetbrains.kotlin"
+                        minSdkVersion 18
+                        targetSdkVersion 26
+                        versionCode 1
+                        versionName "1.0"
+                        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                    }
+                }
+
+                dependencies {
+                    compile project(':project2')
+                    customCompile project(':project2')
+                    testCompile(project(':project2').sourceSets.test.output)
+                }
+            }
+        """)
+        createProjectSubFile("local.properties", """
+            sdk.dir=/${StringUtil.escapeBackSlashes(File(homePath).parent + "/dependencies/androidSDK")}
+        """)
+
+
+        importProject()
+
+        assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+
     }
 }
