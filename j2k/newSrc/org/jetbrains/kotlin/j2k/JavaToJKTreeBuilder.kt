@@ -41,6 +41,13 @@ class JavaToJKTreeBuilder {
         fun result(): JKExpression = resultExpression!!
     }
 
+    private object ClassTreeMapper {
+        fun PsiClass.toJK(): JKClass {
+            val jkModifierList = with(ModifierMapper) { modifierList.toJK() }
+            return JKClassImpl(jkModifierList, JKNameIdentifierImpl(this.name!!))
+        }
+    }
+
     private object ModifierMapper {
         fun PsiModifierList?.toJK(): JKModifierList {
 
