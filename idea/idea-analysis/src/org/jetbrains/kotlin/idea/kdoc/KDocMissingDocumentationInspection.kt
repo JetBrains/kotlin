@@ -23,23 +23,28 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
+class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
             KDocMissingDocumentationInspection(holder)
 
-    private class KDocMissingDocumentationInspection(private val holder: ProblemsHolder): PsiElementVisitor() {
+    private class KDocMissingDocumentationInspection(private val holder: ProblemsHolder) : PsiElementVisitor() {
         override fun visitElement(element: PsiElement) {
 
             if (element is KtNamedDeclaration) {
@@ -66,9 +71,27 @@ class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
             if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val declaration = descriptor.psiElement.getParentOfType<KtNamedDeclaration>(true)
                               ?: throw IllegalStateException("Can't find declaration")
-            declaration.addBefore(KDocElementFactory(project).createKDocFromText("/**  */"), declaration.firstChild)
-            val editor = descriptor.psiElement.findExistingEditor()
-            editor?.caretModel?.moveToOffset(declaration.startOffset + 4)
+
+
+            declaration.addBefore(KDocElementFactory(project).createKDocFromText("/**\n*\n*/\n"), declaration.firstChild)
+
+            val editor = descriptor.psiElement.findExistingEditor() ?: return
+
+
+            // If we just add whitespace
+            // /**
+            //  *[HERE]
+            // it will be erased by formatter, so following code adds it right way and moves caret then
+            editor.unblockDocument()
+
+            val section = declaration.firstChild.getChildOfType<KDocSection>() ?: return
+            val asterisk = section.firstChild
+
+            PostprocessReformattingAspect.getInstance(project).disablePostprocessFormattingInside {
+                val whitespace = KtPsiFactory(project).createWhiteSpace()
+                section.addAfter(whitespace, asterisk)
+                editor.caretModel.moveToOffset(asterisk.endOffset + 1)
+            }
         }
     }
 }

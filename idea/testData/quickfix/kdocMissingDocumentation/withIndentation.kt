@@ -1,7 +1,9 @@
 // "Add documentation" "true"
 
-/**
- * <caret>
- */
+
 class C {
+
+    fun <caret>foo() {
+
+    }
 }
