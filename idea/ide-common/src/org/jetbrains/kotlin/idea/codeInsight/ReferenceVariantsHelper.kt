@@ -269,7 +269,11 @@ class ReferenceVariantsHelper(
         }
         else {
             // process non-instance members and class constructors
-            descriptors.addNonExtensionCallablesAndConstructors(resolutionScope, kindFilter, nameFilter, constructorFilter = { !it.isInner })
+            descriptors.addNonExtensionCallablesAndConstructors(
+                    resolutionScope,
+                    kindFilter, nameFilter, constructorFilter = { !it.isInner },
+                    classesOnly = false
+            )
         }
         return descriptors
     }
@@ -328,7 +332,18 @@ class ReferenceVariantsHelper(
             constructorFilter: (ClassDescriptor) -> Boolean
     ) {
         for (receiverType in receiverTypes) {
-            addNonExtensionCallablesAndConstructors(receiverType.memberScope.memberScopeAsImportingScope(), kindFilter, nameFilter, constructorFilter)
+            addNonExtensionCallablesAndConstructors(
+                    receiverType.memberScope.memberScopeAsImportingScope(),
+                    kindFilter, nameFilter, constructorFilter,
+                    false
+            )
+            receiverType.constructor.supertypes.forEach {
+                addNonExtensionCallablesAndConstructors(
+                        it.memberScope.memberScopeAsImportingScope(),
+                        kindFilter, nameFilter, constructorFilter,
+                        true
+                )
+            }
         }
     }
 
@@ -336,7 +351,8 @@ class ReferenceVariantsHelper(
             scope: HierarchicalScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
-            constructorFilter: (ClassDescriptor) -> Boolean
+            constructorFilter: (ClassDescriptor) -> Boolean,
+            classesOnly: Boolean
     ) {
         var filterToUse = DescriptorKindFilter(kindFilter.kindMask and DescriptorKindFilter.CALLABLES.kindMask).exclude(DescriptorKindExclude.Extensions)
 
@@ -351,7 +367,7 @@ class ReferenceVariantsHelper(
                 if (!constructorFilter(descriptor)) continue
                 descriptor.constructors.filterTo(this) { kindFilter.accepts(it) }
             }
-            else if (kindFilter.accepts(descriptor)) {
+            else if (!classesOnly && kindFilter.accepts(descriptor)) {
                 this.add(descriptor)
             }
         }
