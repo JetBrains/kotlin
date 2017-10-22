@@ -138,17 +138,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             override fun visitDeclaration(declaration: KtDeclaration) {
                 if (declaration !is KtNamedDeclaration) return
-                val name = declaration.name ?: return
-                val message = when (declaration) {
-                    is KtClass -> "Class ''$name'' is never used"
-                    is KtObjectDeclaration -> "Object ''$name'' is never used"
-                    is KtNamedFunction -> "Function ''$name'' is never used"
-                    is KtSecondaryConstructor -> "Constructor is never used"
-                    is KtProperty, is KtParameter -> "Property ''$name'' is never used"
-                    is KtTypeParameter -> "Type parameter ''$name'' is never used"
-                    is KtTypeAlias -> "Type alias ''$name'' is never used"
-                    else -> return
-                }
+                val message = declaration.describe()?.let { "$it is never used" } ?: return
 
                 if (!ProjectRootsUtil.isInProjectSource(declaration)) return
 

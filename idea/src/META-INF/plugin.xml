@@ -1869,7 +1869,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocMissingDocumentationInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.kdoc.KDocMissingDocumentationInspection"
                      displayName="Missing KDoc comments for public declarations"
                      groupPath="Kotlin"
                      groupName="Other problems"
