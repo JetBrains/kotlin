@@ -5,7 +5,7 @@ if (!file.exists() || !file.isFile()) {
     throw new FileNotFoundException("Could not find generated JAR: " + file);
 }
 
-File generatedFile = new File(baseDir, "target/generated-sources/kapt/compile/coffee/CoffeeMaker_Factory.java");
+File generatedFile = new File(basedir, "target/generated-sources/kapt/compile/coffee/CoffeeMaker_Factory.java");
 if (!generatedFile.exists() || !generatedFile.isFile()) {
     throw new FileNotFoundException("Kapt was not executed, file is absent: " + generatedFile);
 }
