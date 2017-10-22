@@ -159,8 +159,10 @@ task compileJs(type: JavaExec) {
     }
 
     main = "org.jetbrains.kotlin.js.FileMergerKt"
-    args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
-           ["$buildDir/classes/builtins/kotlin.js", "$buildDir/classes/main/kotlin.js"]
+    doFirst {
+        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
+               ["$buildDir/classes/builtins/kotlin.js", "$buildDir/classes/main/kotlin.js"]
+    }
     classpath = configurations.merger
 
     doLast {
