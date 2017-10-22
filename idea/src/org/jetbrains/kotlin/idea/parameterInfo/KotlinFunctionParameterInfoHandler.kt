@@ -254,6 +254,10 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         return buildString {
             if (named) append("[")
 
+            parameter.annotations.getAllAnnotations().forEach {
+                it.annotation.fqName?.shortName()?.asString()?.let { append("@$it ") }
+            }
+
             if (parameter.varargElementType != null) {
                 append("vararg ")
             }
