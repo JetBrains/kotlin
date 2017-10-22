@@ -24,23 +24,23 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.describe
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
+import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.source.getPsi
 
 class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
@@ -51,12 +51,11 @@ class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
 
             if (element is KtNamedDeclaration) {
                 val nameIdentifier = element.nameIdentifier
-                val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? MemberDescriptor
-                if (nameIdentifier != null && descriptor?.visibility == Visibilities.PUBLIC) {
-                    val hasDocumentation = element.docComment != null ||
-                                           (descriptor as? CallableMemberDescriptor)?.overriddenDescriptors
-                                                   ?.any { (it.source.getPsi() as? KtNamedDeclaration)?.docComment != null } ?: false
-                    if (!hasDocumentation) {
+                val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+                                         as? DeclarationDescriptorWithVisibility
+                                         as? MemberDescriptor ?: return
+                if (nameIdentifier != null && descriptor.isEffectivelyPublicApi) {
+                    if (descriptor.findKDoc() == null) {
                         val message = element.describe()?.let { "$it is missing documentation" } ?: "Missing documentation"
                         holder.registerProblem(nameIdentifier, message, AddDocumentationFix())
                     }
