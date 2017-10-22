@@ -1914,6 +1914,147 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/selfAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SelfAssignment extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInSelfAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/selfAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("applyCorrect.kt")
+        public void testApplyCorrect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/applyCorrect.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("applyIncorrect.kt")
+        public void testApplyIncorrect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/applyIncorrect.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignToProperty.kt")
+        public void testAssignToProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/assignToProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentThese.kt")
+        public void testDifferentThese() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/differentThese.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentThis.kt")
+        public void testDifferentThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/differentThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("list.kt")
+        public void testList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/list.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localVal.kt")
+        public void testLocalVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/localVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/localVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notAssignment.kt")
+        public void testNotAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/notAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notSelf.kt")
+        public void testNotSelf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/notSelf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("openProperty.kt")
+        public void testOpenProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/openProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parameter.kt")
+        public void testParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/parameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property1.kt")
+        public void testProperty1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/property1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property2.kt")
+        public void testProperty2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/property2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property3.kt")
+        public void testProperty3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/property3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyHasDelegate.kt")
+        public void testPropertyHasDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/propertyHasDelegate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyHasGetter.kt")
+        public void testPropertyHasGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/propertyHasGetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyHasSetter.kt")
+        public void testPropertyHasSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/propertyHasSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameThese.kt")
+        public void testSameThese() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/sameThese.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameThis.kt")
+        public void testSameThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/sameThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shadow.kt")
+        public void testShadow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/shadow.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withReceiver.kt")
+        public void testWithReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/withReceiver.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/unnecessaryVariable")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
