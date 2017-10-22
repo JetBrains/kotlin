@@ -143,7 +143,7 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
     val primaryConstructor = parameter.getStrictParentOfType<KtPrimaryConstructor>() ?: return null
     val containingClass = primaryConstructor.getContainingClassOrObject()
     if (containingClass.isAnnotation()) {
-        return KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as UClass
+        return KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as? UClass
     }
     return null
 }
