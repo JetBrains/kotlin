@@ -88,7 +88,6 @@
 
         <module>tools/kotlin-maven-plugin-test</module>
 
-        <module>examples/annotation-processor-example</module>
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
         <module>examples/kotlin-js-library-example</module>
