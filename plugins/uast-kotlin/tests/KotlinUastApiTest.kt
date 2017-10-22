@@ -6,11 +6,11 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.findElementByText
+import org.jetbrains.uast.test.env.findElementByTextFromPsi
 import org.junit.Assert
 import org.junit.Test
 
@@ -131,19 +131,19 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     fun testWhenStringLiteral() {
         doTest("WhenStringLiteral") { _, file ->
 
-            file.findFromPsi<ULiteralExpression>("abc").let { literalExpression ->
+            file.findElementByTextFromPsi<ULiteralExpression>("abc").let { literalExpression ->
                 val psi = literalExpression.psi!!
                 Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findFromPsi<ULiteralExpression>("def").let { literalExpression ->
+            file.findElementByTextFromPsi<ULiteralExpression>("def").let { literalExpression ->
                 val psi = literalExpression.psi!!
                 Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findFromPsi<ULiteralExpression>("def1").let { literalExpression ->
+            file.findElementByTextFromPsi<ULiteralExpression>("def1").let { literalExpression ->
                 val psi = literalExpression.psi!!
                 Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, UBlockExpression::class.java)
@@ -157,7 +157,7 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     fun testWhenAndDestructing() {
         doTest("WhenAndDestructing") { _, file ->
 
-            file.findFromPsi<UExpression>("val (bindingContext, statementFilter) = arr").let { e ->
+            file.findElementByTextFromPsi<UExpression>("val (bindingContext, statementFilter) = arr").let { e ->
                 val uBlockExpression = e.getParentOfType<UBlockExpression>()
                 Assert.assertNotNull(uBlockExpression)
                 val uMethod = uBlockExpression!!.getParentOfType<UMethod>()
@@ -166,12 +166,4 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
         }
     }
-}
-
-
-
-inline fun <reified T : UElement> UFile.findFromPsi(refText: String): T =
-        (this.psi.findElementAt(this.psi.text.indexOf(refText)) ?: throw AssertionError("requested text '$refText' was not found in ${this.psi.name}"))
-                .parentsWithSelf.dropWhile { !it.text.contains(refText) }.mapNotNull { it.toUElementOfType<T>() }.first().also {
-            if (it.psi != null && it.psi?.text != refText) throw AssertionError("requested text '$refText' found as '${it.psi?.text}' in $it")
 }
