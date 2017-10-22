@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
+import org.jetbrains.kotlin.j2k.ast.CommentsAndSpacesInheritance
+import org.jetbrains.kotlin.j2k.ast.Modifiers
+import org.jetbrains.kotlin.j2k.ast.assignPrototype
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
@@ -39,6 +42,12 @@ class JavaToJKTreeBuilder {
         }
 
         fun result(): JKExpression = resultExpression!!
+    }
+
+    private object ClassTreeMapper {
+        fun PsiClass.toJK(): JKClass{
+            return JKClassImpl(with(ModifierMapper){modifierList.toJK()}, JKNameIdentifierImpl(this.name!!))
+        }
     }
 
     private object ModifierMapper {
