@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.kdoc
+package org.jetbrains.kotlin.idea.inspections.kdoc
 
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.LocalQuickFix
@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.inspections.describe
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
+import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -55,7 +57,8 @@ class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
                                            (descriptor as? CallableMemberDescriptor)?.overriddenDescriptors
                                                    ?.any { (it.source.getPsi() as? KtNamedDeclaration)?.docComment != null } ?: false
                     if (!hasDocumentation) {
-                        holder.registerProblem(nameIdentifier, "Missing documentation", AddDocumentationFix())
+                        val message = element.describe()?.let { "$it is missing documentation" } ?: "Missing documentation"
+                        holder.registerProblem(nameIdentifier, message, AddDocumentationFix())
                     }
                 }
             }

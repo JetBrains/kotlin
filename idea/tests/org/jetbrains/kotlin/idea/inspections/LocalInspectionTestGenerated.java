@@ -582,6 +582,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/kdocMissingDocumentation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class KdocMissingDocumentation extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInKdocMissingDocumentation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/kdocMissingDocumentation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/kdocMissingDocumentation/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/leakingThis")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
