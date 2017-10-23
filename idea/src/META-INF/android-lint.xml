@@ -1,8 +1,5 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij">
         <externalAnnotator language="kotlin" implementationClass="org.jetbrains.android.inspections.lint.AndroidLintExternalAnnotator"/>
-
-        <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
-                        serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
     </extensions>
 </idea-plugin>
