@@ -1,7 +1,7 @@
+// !LANGUAGE: -NullabilityAssertionOnExtensionReceiver
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: test.kt
-// LANGUAGE_VERSION: 1.1
 import kotlin.test.*
 
 fun String.extension() {}
