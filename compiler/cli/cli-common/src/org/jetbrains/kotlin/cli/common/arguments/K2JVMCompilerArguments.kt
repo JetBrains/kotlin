@@ -111,11 +111,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
             value = "-Xnormalize-constructor-calls",
-            valueDescription = "{disable|enable|preserve-class-initialization}",
-            description = "Normalize constructor calls " +
-                          "(disable: don't normalize; enable: normalize; " +
-                          "preserve-class-initialization: normalize preserving class initialization order), " +
-                          "default is disable"
+            valueDescription = "{disable|enable}",
+            description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
     )
     var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
