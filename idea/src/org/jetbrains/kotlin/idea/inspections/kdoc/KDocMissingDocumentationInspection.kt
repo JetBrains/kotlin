@@ -27,6 +27,7 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.describe
@@ -55,7 +56,7 @@ class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
                                          as? DeclarationDescriptorWithVisibility
                                          as? MemberDescriptor ?: return
                 if (nameIdentifier != null && descriptor.isEffectivelyPublicApi) {
-                    if (descriptor.findKDoc() == null) {
+                    if (descriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it) } == null) {
                         val message = element.describe()?.let { "$it is missing documentation" } ?: "Missing documentation"
                         holder.registerProblem(nameIdentifier, message, AddDocumentationFix())
                     }
