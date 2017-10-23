@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.konan.descriptors.createKonanModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -32,15 +34,13 @@ object TopDownAnalyzerFacadeForKonan {
         val moduleName = Name.special("<${config.moduleId}>") 
 
         val projectContext = ProjectContext(config.project)
-        val builtIns = KonanBuiltIns(projectContext.storageManager)
-        val context = ContextForNewModule(projectContext, moduleName, builtIns, null)
 
-        val module = context.module
-        builtIns.builtInsModule = module
+        val module = createKonanModuleDescriptor(moduleName, projectContext.storageManager, origin = CurrentKonanModule)
+        val context = MutableModuleContextImpl(module, projectContext)
 
         if (!module.isStdlib()) {
             context.setDependencies(listOf(module) + config.moduleDescriptors +
-                    config.getOrCreateForwardDeclarationsModule(builtIns, projectContext.storageManager))
+                    config.getOrCreateForwardDeclarationsModule(module.builtIns, projectContext.storageManager))
         } else {
             assert (config.moduleDescriptors.isEmpty())
             context.setDependencies(module)

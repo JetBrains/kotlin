@@ -146,10 +146,11 @@ private class ForwardDeclarationsPackageFragmentDescriptor(
  * Note: this module should be unique per compilation and should always be the last dependency of any module.
  */
 fun createForwardDeclarationsModule(builtIns: KotlinBuiltIns, storageManager: StorageManager): ModuleDescriptorImpl {
-    val module = ModuleDescriptorImpl(
+    val module = createKonanModuleDescriptor(
             Name.special("<forward declarations>"),
             storageManager,
-            builtIns
+            builtIns,
+            origin = SyntheticModules
     )
 
     fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind = ClassKind.CLASS) =
