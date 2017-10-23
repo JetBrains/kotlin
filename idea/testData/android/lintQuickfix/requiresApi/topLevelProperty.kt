@@ -1,5 +1,5 @@
 // INTENTION_TEXT: Add @RequiresApi(M) Annotation
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintNewApiInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintNewApiInspection
 // DEPENDENCY: RequiresApi.java -> android/support/annotation/RequiresApi.java
 import android.app.Activity
 
