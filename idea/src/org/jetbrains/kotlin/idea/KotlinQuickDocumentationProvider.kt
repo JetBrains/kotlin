@@ -281,7 +281,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             renderedDecl += renderDeprecationInfo(declarationDescriptor, deprecationProvider)
 
             if (!quickNavigation) {
-                val comment = declarationDescriptor.findKDoc()
+                val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
                 if (comment != null) {
                     val renderedComment = KDocRenderer.renderKDoc(comment)
                     if (renderedComment.startsWith("<p>")) {

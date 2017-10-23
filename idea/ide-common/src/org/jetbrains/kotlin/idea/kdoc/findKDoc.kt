@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -23,11 +24,13 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-fun DeclarationDescriptor.findKDoc(): KDocTag? {
+fun DeclarationDescriptor.findKDoc(
+        descriptorToPsi: (DeclarationDescriptorWithSource) -> PsiElement? = { DescriptorToSourceUtils.descriptorToDeclaration(it) }
+): KDocTag? {
     if (this is DeclarationDescriptorWithSource) {
-        var psiDeclaration = (this.source as? PsiSourceElement)?.psi?.navigationElement
+        var psiDeclaration = descriptorToPsi(this)?.navigationElement
         // KDoc for primary constructor is located inside of its class KDoc
         if (psiDeclaration is KtPrimaryConstructor) {
             psiDeclaration = psiDeclaration.getContainingClassOrObject()
@@ -51,7 +54,7 @@ fun DeclarationDescriptor.findKDoc(): KDocTag? {
     if (this is PropertyDescriptor) {
         val containingClassDescriptor = this.containingDeclaration as? ClassDescriptor
         if (containingClassDescriptor != null) {
-            val classKDoc = containingClassDescriptor.findKDoc()?.getParentOfType<KDoc>(false)
+            val classKDoc = containingClassDescriptor.findKDoc(descriptorToPsi)?.getParentOfType<KDoc>(false)
             if (classKDoc != null) {
                 val propertySection = classKDoc.findSectionByTag(KDocKnownTag.PROPERTY,
                                                                  getName().asString())
@@ -64,7 +67,7 @@ fun DeclarationDescriptor.findKDoc(): KDocTag? {
 
     if (this is CallableDescriptor) {
         for (baseDescriptor in this.overriddenDescriptors) {
-            val baseKDoc = baseDescriptor.original.findKDoc()
+            val baseKDoc = baseDescriptor.original.findKDoc(descriptorToPsi)
             if (baseKDoc != null) {
                 return baseKDoc
             }
