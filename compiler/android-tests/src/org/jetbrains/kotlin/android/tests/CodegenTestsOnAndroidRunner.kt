@@ -14,172 +14,157 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.tests;
+package org.jetbrains.kotlin.android.tests
 
-import com.intellij.util.PlatformUtils;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.android.tests.download.SDKDownloader;
-import org.jetbrains.kotlin.android.tests.emulator.Emulator;
-import org.jetbrains.kotlin.android.tests.gradle.GradleRunner;
-import org.jetbrains.kotlin.android.tests.run.PermissionManager;
-import org.junit.Assert;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import com.intellij.util.PlatformUtils
+import junit.framework.TestCase
+import junit.framework.TestSuite
+import org.jetbrains.kotlin.android.tests.download.SDKDownloader
+import org.jetbrains.kotlin.android.tests.emulator.Emulator
+import org.jetbrains.kotlin.android.tests.gradle.GradleRunner
+import org.jetbrains.kotlin.android.tests.run.PermissionManager
+import org.junit.Assert
+import org.w3c.dom.Element
+import org.xml.sax.SAXException
+import java.io.File
+import java.io.IOException
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
 
-public class CodegenTestsOnAndroidRunner {
+    private fun generateTestSuite(): TestSuite {
+        val rootSuite = TestSuite("Root")
 
-    private final PathManager pathManager;
+        downloadDependencies()
+        val emulator = Emulator(pathManager, Emulator.ARM)
+        emulator.createEmulator()
 
-    public static TestSuite getTestSuite(PathManager pathManager) {
-        return new CodegenTestsOnAndroidRunner(pathManager).generateTestSuite();
-    }
-
-    private CodegenTestsOnAndroidRunner(PathManager pathManager) {
-        this.pathManager = pathManager;
-    }
-
-    private TestSuite generateTestSuite() {
-        TestSuite rootSuite = new TestSuite("Root");
-
-        downloadDependencies();
-        Emulator emulator = new Emulator(pathManager, Emulator.ARM);
-        emulator.createEmulator();
-
-        GradleRunner gradleRunner = new GradleRunner(pathManager);
+        val gradleRunner = GradleRunner(pathManager)
         //old dex
-        cleanAndBuildProject(gradleRunner);
+        cleanAndBuildProject(gradleRunner)
 
         try {
-            emulator.startEmulator();
+            emulator.startEmulator()
 
             try {
-                emulator.waitEmulatorStart();
+                emulator.waitEmulatorStart()
 
-                TestSuite dex = runTestsOnEmulator(gradleRunner, new TestSuite("Dex"));
-                rootSuite.addTest(dex);
+                runTestsOnEmulator(gradleRunner, TestSuite("Dex")).apply {
+                    rootSuite.addTest(this)
+                }
+
             }
-            catch (RuntimeException e) {
-                e.printStackTrace();
-                throw e;
+            catch (e: RuntimeException) {
+                e.printStackTrace()
+                throw e
             }
             finally {
-                emulator.stopEmulator();
+                emulator.stopEmulator()
             }
         }
-        catch (RuntimeException e) {
-            e.printStackTrace();
-            throw e;
+        catch (e: RuntimeException) {
+            e.printStackTrace()
+            throw e
         }
         finally {
-            emulator.finishEmulatorProcesses();
+            emulator.finishEmulatorProcesses()
         }
 
-        return rootSuite;
+        return rootSuite
     }
 
-    private void processReport(TestSuite suite, String resultOutput) {
-        String reportFolder = pathManager.getTmpFolder() + "/build/outputs/androidTest-results/connected";
+    private fun processReport(suite: TestSuite, resultOutput: String) {
+        val reportFolder = pathManager.tmpFolder + "/build/outputs/androidTest-results/connected"
         try {
-            List<TestCase> testCases = parseSingleReportInFolder(reportFolder);
-            for (TestCase aCase : testCases) {
-                suite.addTest(aCase);
-            }
-            Assert.assertNotEquals("There is no test results in report", 0, testCases.size());
+            val testCases = parseSingleReportInFolder(reportFolder)
+            testCases.forEach { aCase -> suite.addTest(aCase) }
+            Assert.assertNotEquals("There is no test results in report", 0, testCases.size.toLong())
         }
-        catch (Exception e) {
-            throw new RuntimeException("Can't parse test results in " + reportFolder +"\n" + resultOutput);
+        catch (e: Exception) {
+            throw RuntimeException("Can't parse test results in " + reportFolder + "\n" + resultOutput)
         }
+
     }
 
-    @Nullable
-    private TestSuite runTestsOnEmulator(GradleRunner gradleRunner, TestSuite suite) {
-        String platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea");
+    private fun runTestsOnEmulator(gradleRunner: GradleRunner, suite: TestSuite): TestSuite? {
+        val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
         try {
-            String resultOutput = gradleRunner.connectedDebugAndroidTest();
-            processReport(suite, resultOutput);
-            return suite;
+            val resultOutput = gradleRunner.connectedDebugAndroidTest()
+            processReport(suite, resultOutput)
+            return suite
         }
         finally {
             if (platformPrefixProperty != null) {
-                System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty);
+                System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty)
             }
             else {
-                System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY);
+                System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY)
             }
         }
 
     }
 
-    private static void cleanAndBuildProject(GradleRunner gradleRunner) {
-        gradleRunner.clean();
-        gradleRunner.build();
-    }
-
-    private void downloadDependencies() {
-        File rootForAndroidDependencies = new File(pathManager.getDependenciesRoot());
+    private fun downloadDependencies() {
+        val rootForAndroidDependencies = File(pathManager.dependenciesRoot)
         if (!rootForAndroidDependencies.exists()) {
-            rootForAndroidDependencies.mkdirs();
+            rootForAndroidDependencies.mkdirs()
         }
 
-        SDKDownloader downloader = new SDKDownloader(pathManager);
-        downloader.downloadAll();
-        downloader.unzipAll();
-        PermissionManager.setPermissions(pathManager);
+        val downloader = SDKDownloader(pathManager)
+        downloader.downloadAll()
+        downloader.unzipAll()
+        PermissionManager.setPermissions(pathManager)
     }
 
-    private static List<TestCase> parseSingleReportInFolder(String reportFolder) throws
-                                                                                 IOException,
-                                                                                 SAXException,
-                                                                                 ParserConfigurationException {
-        File folder = new File(reportFolder);
-        File[] files = folder.listFiles();
-        assert files != null;
-        assert files.length == 1;
-        File reportFile = files[0];
+    companion object {
 
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(reportFile);
-        Element root = doc.getDocumentElement();
-        NodeList testCases = root.getElementsByTagName("testcase");
-        List<TestCase> result = new ArrayList(testCases.getLength());
-
-        for (int i = 0; i < testCases.getLength(); i++) {
-            Element item = (Element) testCases.item(i);
-            NodeList failure = item.getElementsByTagName("failure");
-            String name = item.getAttribute("name");
-            String clazz = item.getAttribute("classname");
-
-            if (failure.getLength() == 0) {
-                result.add(new TestCase(name) {
-                    @Override
-                    protected void runTest() throws Throwable {
-
-                    }
-                });
-            }
-            else {
-                result.add(new TestCase(name) {
-                    @Override
-                    protected void runTest() throws Throwable {
-                        Assert.fail(failure.item(0).getTextContent());
-                    }
-                });
-            }
+        @JvmStatic
+        fun getTestSuite(pathManager: PathManager): TestSuite {
+            return CodegenTestsOnAndroidRunner(pathManager).generateTestSuite()
         }
 
-        return result;
+        private fun cleanAndBuildProject(gradleRunner: GradleRunner) {
+            gradleRunner.clean()
+            gradleRunner.build()
+        }
+
+        @Throws(IOException::class, SAXException::class, ParserConfigurationException::class)
+        private fun parseSingleReportInFolder(reportFolder: String): List<TestCase> {
+            val folder = File(reportFolder)
+            val files = folder.listFiles()!!
+            assert(files.size == 1)
+            val reportFile = files[0]
+
+            val dbFactory = DocumentBuilderFactory.newInstance()
+            val dBuilder = dbFactory.newDocumentBuilder()
+            val doc = dBuilder.parse(reportFile)
+            val root = doc.documentElement
+            val testCases = root.getElementsByTagName("testcase")
+
+            return (0 until testCases.length).map { i ->
+                val item = testCases.item(i) as Element
+                val failure = item.getElementsByTagName("failure")
+                val name = item.getAttribute("name")
+                val clazz = item.getAttribute("classname")
+
+                if (failure.length == 0) {
+                    object : TestCase(name) {
+                        @Throws(Throwable::class)
+                        override fun runTest() {
+
+                        }
+                    }
+                }
+                else {
+                    object : TestCase(name) {
+                        @Throws(Throwable::class)
+                        override fun runTest() {
+                            Assert.fail(failure.item(0).textContent)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
