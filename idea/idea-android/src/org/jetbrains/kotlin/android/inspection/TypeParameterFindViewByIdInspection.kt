@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.inspection
 
+import com.android.tools.idea.model.AndroidModuleInfo
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
@@ -29,7 +30,11 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class TypeParameterFindViewByIdInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        val compileSdk = AndroidFacet.getInstance(session.file)?.androidModuleInfo?.buildSdkVersion?.apiLevel
+        val compileSdk = AndroidFacet.getInstance(session.file)
+                ?.let { facet -> AndroidModuleInfo.getInstance(facet) }
+                ?.buildSdkVersion
+                ?.apiLevel
+
         if (compileSdk == null || compileSdk < 26) {
             return KtVisitorVoid()
         }
