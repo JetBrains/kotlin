@@ -1244,6 +1244,9 @@ task link_default_libs(type: RunStandaloneKonanTest) {
 }
 
 task link_testLib_explicitly(type: RunStandaloneKonanTest) {
+    // there are no testLibrary for cross targets yet.
+    disabled = (project.testTarget != null && project.testTarget != project.hostName) 
+
     dependsOn ':klib:installTestLibrary'
     goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
