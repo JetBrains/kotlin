@@ -1,0 +1,6 @@
+apply plugin: 'kotlin2js'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile project(":lib")
+}
