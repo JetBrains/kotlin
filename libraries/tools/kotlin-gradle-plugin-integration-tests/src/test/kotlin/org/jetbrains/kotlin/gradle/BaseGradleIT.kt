@@ -404,6 +404,12 @@ abstract class BaseGradleIT {
         }
     }
 
+    val Project.allKotlinFiles: Iterable<File>
+        get() = projectDir.allKotlinFiles()
+
+    fun Project.projectFile(name: String): File =
+        projectDir.getFileByName(name)
+
     fun CompiledProject.assertCompiledJavaSources(
             sources: Iterable<String>,
             weakTesting: Boolean = false
