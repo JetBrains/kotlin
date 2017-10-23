@@ -372,7 +372,10 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                 return
             }
 
-            context.llvm.externalFunction(descriptor.symbolName, llvmFunctionType)
+            context.llvm.externalFunction(descriptor.symbolName, llvmFunctionType,
+                    // Assume that `external fun` is defined in native libs attached to this module:
+                    origin = descriptor.llvmSymbolOrigin
+            )
         } else {
             val symbolName = if (descriptor.isExported()) {
                 descriptor.symbolName

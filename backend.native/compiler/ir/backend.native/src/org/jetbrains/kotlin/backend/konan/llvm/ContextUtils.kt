@@ -19,8 +19,12 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
+import org.jetbrains.kotlin.backend.konan.descriptors.DeserializedKonanModule
+import org.jetbrains.kotlin.backend.konan.descriptors.LlvmSymbolOrigin
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
+import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -167,7 +171,8 @@ internal interface ContextUtils : RuntimeAware {
             }
 
             return if (isExternal(this)) {
-                context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this))
+                context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this),
+                        origin = this.llvmSymbolOrigin)
             } else {
                 context.llvmDeclarations.forFunction(this).llvmFunction
             }
@@ -185,7 +190,8 @@ internal interface ContextUtils : RuntimeAware {
     val ClassDescriptor.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
-                constPointer(importGlobal(this.typeInfoSymbolName, runtime.typeInfoType))
+                constPointer(importGlobal(this.typeInfoSymbolName, runtime.typeInfoType,
+                        origin = this.llvmSymbolOrigin))
             } else {
                 context.llvmDeclarations.forClass(this).typeInfo
             }
@@ -280,7 +286,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
     }
 
-    internal fun externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
+    internal fun externalFunction(name: String, type: LLVMTypeRef, origin: LlvmSymbolOrigin): LLVMValueRef {
+        this.imports.add(origin)
+
         val found = LLVMGetNamedFunction(llvmModule, name)
         if (found != null) {
             assert (getFunctionType(found) == type)
@@ -291,10 +299,30 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    private fun externalNounwindFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
-        val function = externalFunction(name, type)
+    private fun externalNounwindFunction(name: String, type: LLVMTypeRef, origin: LlvmSymbolOrigin): LLVMValueRef {
+        val function = externalFunction(name, type, origin)
         LLVMAddFunctionAttr(function, LLVMNoUnwindAttribute)
         return function
+    }
+
+    private val usedLibraries = mutableSetOf<LibraryReaderImpl>()
+
+    val imports = object : LlvmImports {
+
+        private val allLibraries = context.librariesWithDependencies.toSet()
+
+        override fun add(origin: LlvmSymbolOrigin) {
+            val reader = when (origin) {
+                CurrentKonanModule -> return
+                is DeserializedKonanModule -> origin.reader
+            }
+
+            if (reader !in allLibraries) {
+                error("$reader (${reader.libraryName}) is used but not requested")
+            }
+
+            usedLibraries.add(reader as LibraryReaderImpl)
+        }
     }
 
     val staticData = StaticData(context)
@@ -335,9 +363,21 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         else -> "__gxx_personality_v0"
     }
 
-    val gxxPersonalityFunction = externalNounwindFunction(personalityFunctionName, functionType(int32Type, true))
-    val cxaBeginCatchFunction = externalNounwindFunction("__cxa_begin_catch", functionType(int8TypePtr, false, int8TypePtr))
-    val cxaEndCatchFunction = externalNounwindFunction("__cxa_end_catch", functionType(voidType, false))
+    val gxxPersonalityFunction = externalNounwindFunction(
+            personalityFunctionName,
+            functionType(int32Type, true),
+            origin = context.standardLlvmSymbolsOrigin
+    )
+    val cxaBeginCatchFunction = externalNounwindFunction(
+            "__cxa_begin_catch",
+            functionType(int8TypePtr, false, int8TypePtr),
+            origin = context.standardLlvmSymbolsOrigin
+    )
+    val cxaEndCatchFunction = externalNounwindFunction(
+            "__cxa_end_catch",
+            functionType(voidType, false),
+            origin = context.standardLlvmSymbolsOrigin
+    )
 
     val memsetFunction = importMemset()
 

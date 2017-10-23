@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.descriptors.LlvmSymbolOrigin
 
 internal val LLVMValueRef.type: LLVMTypeRef
     get() = LLVMTypeOf(this)!!
@@ -191,8 +192,11 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
     return result
 }
 
-internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef,
+internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: LlvmSymbolOrigin,
                                        threadLocal: Boolean = false): LLVMValueRef {
+
+    context.llvm.imports.add(origin)
+
     val found = LLVMGetNamedGlobal(context.llvmModule, name)
     if (found != null) {
         assert (getGlobalType(found) == type)

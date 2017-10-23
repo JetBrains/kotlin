@@ -1273,8 +1273,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             context.llvmDeclarations.forSingleton(descriptor).instanceFieldRef
         } else {
             val llvmType = codegen.getLLVMType(descriptor.defaultType)
-            codegen.importGlobal(descriptor.objectInstanceFieldSymbolName, llvmType,
-                    threadLocal = true)
+            codegen.importGlobal(
+                    descriptor.objectInstanceFieldSymbolName,
+                    llvmType,
+                    origin = descriptor.llvmSymbolOrigin,
+                    threadLocal = true
+            )
         }
         objects += llvmGlobal
         return llvmGlobal
@@ -2114,8 +2118,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         assert(!classDescriptor.isInterface)
 
         return if (classDescriptor.isExternalObjCClass()) {
+            context.llvm.imports.add(classDescriptor.llvmSymbolOrigin)
+
             val lookUpFunction = context.llvm.externalFunction("Kotlin_Interop_getObjCClass",
-                    functionType(int8TypePtr, false, int8TypePtr))
+                    functionType(int8TypePtr, false, int8TypePtr),
+                    origin = context.standardLlvmSymbolsOrigin
+            )
 
             call(lookUpFunction,
                     listOf(codegen.staticData.cStringLiteral(classDescriptor.name.asString()).llvm))
@@ -2160,8 +2168,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val functionType = functionType(int8TypePtr, true, int8TypePtr, int8TypePtr)
 
-        val normalMessenger = context.llvm.externalFunction("objc_msgSend$messengerNameSuffix", functionType)
-        val superMessenger = context.llvm.externalFunction("objc_msgSendSuper$messengerNameSuffix", functionType)
+        val libobjc = context.standardLlvmSymbolsOrigin
+        val normalMessenger = context.llvm.externalFunction(
+                "objc_msgSend$messengerNameSuffix",
+                functionType,
+                origin = libobjc
+        )
+        val superMessenger = context.llvm.externalFunction(
+                "objc_msgSendSuper$messengerNameSuffix",
+                functionType,
+                origin = libobjc
+        )
 
         val superClass = args.single()
         val messenger = LLVMBuildSelect(gen.builder,

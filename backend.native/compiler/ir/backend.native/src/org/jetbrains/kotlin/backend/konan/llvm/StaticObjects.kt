@@ -159,7 +159,11 @@ internal val ContextUtils.theUnitInstanceRef: ConstPointer
     get() {
         val unitDescriptor = context.builtIns.unit
         return if (isExternal(unitDescriptor)) {
-            constPointer(importGlobal(theUnitInstanceName, context.llvm.runtime.objHeaderType))
+            constPointer(importGlobal(
+                    theUnitInstanceName,
+                    context.llvm.runtime.objHeaderType,
+                    origin = unitDescriptor.llvmSymbolOrigin
+            ))
         } else {
             context.llvmDeclarations.getUnitInstanceRef()
         }
