@@ -536,12 +536,11 @@ public class JsAstMapper {
             JsNode init = map(fromInit);
             JsExpression condition = mapOptionalExpression(fromTest);
             JsExpression increment = mapOptionalExpression(fromIncr);
-            assert (init != null);
             if (init instanceof JsVars) {
                 toFor = new JsFor((JsVars) init, condition, increment);
             }
             else {
-                assert (init instanceof JsExpression);
+                assert (init == null || init instanceof JsExpression);
                 toFor = new JsFor((JsExpression) init, condition, increment);
             }
 
