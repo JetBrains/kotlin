@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintUseValueOfInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintUseValueOfInspection
 
 @Suppress("UsePropertyAccessSyntax", "UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER", "DEPRECATION")
 class Simple {

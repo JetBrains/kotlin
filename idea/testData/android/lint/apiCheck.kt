@@ -1,7 +1,7 @@
 
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintNewApiInspection
-// INSPECTION_CLASS2: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintInlinedApiInspection
-// INSPECTION_CLASS3: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintOverrideInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintNewApiInspection
+// INSPECTION_CLASS2: com.android.tools.idea.lint.AndroidLintInlinedApiInspection
+// INSPECTION_CLASS3: com.android.tools.idea.lint.AndroidLintOverrideInspection
 
 import android.animation.RectEvaluator
 import android.annotation.SuppressLint

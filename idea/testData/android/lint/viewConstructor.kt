@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintViewConstructorInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintViewConstructorInspection
 
 import android.content.Context
 import android.util.AttributeSet

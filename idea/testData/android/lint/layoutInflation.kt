@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintInflateParamsInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintInflateParamsInspection
 
 import android.view.LayoutInflater
 import android.view.View
