@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintServiceCastInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintServiceCastInspection
 
 import android.content.ClipboardManager
 import android.app.Activity
@@ -13,8 +13,8 @@ class SystemServiceTest : Activity() {
     fun test1() {
         val displayServiceOk = getSystemService(DISPLAY_SERVICE) as DisplayManager
         val displayServiceWrong = <error descr="Suspicious cast to `DisplayManager` for a `DEVICE_POLICY_SERVICE`: expected `DevicePolicyManager`">getSystemService(DEVICE_POLICY_SERVICE) as DisplayManager</error>
-        val wallPaperOk = getSystemService(WALLPAPER_SERVICE) as WallpaperService
-        val wallPaperWrong = <error descr="Suspicious cast to `WallpaperManager` for a `WALLPAPER_SERVICE`: expected `WallpaperService`">getSystemService(WALLPAPER_SERVICE) as WallpaperManager</error>
+        val wallPaperWrong = <error descr="Suspicious cast to `WallpaperService` for a `WALLPAPER_SERVICE`: expected `WallpaperManager`">getSystemService(WALLPAPER_SERVICE) as WallpaperService</error>
+        val wallPaperOk = getSystemService(WALLPAPER_SERVICE) as WallpaperManager
     }
 
     fun test2(context: Context) {

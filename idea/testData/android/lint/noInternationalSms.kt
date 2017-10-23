@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintUnlocalizedSmsInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintUnlocalizedSmsInspection
 
 import android.content.Context
 import android.telephony.SmsManager
