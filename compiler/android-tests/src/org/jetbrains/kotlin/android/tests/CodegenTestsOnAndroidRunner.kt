@@ -33,7 +33,7 @@ import javax.xml.parsers.ParserConfigurationException
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
 
-    private fun generateTestSuite(): TestSuite {
+    private fun runTestsInEmulator(): TestSuite {
         val rootSuite = TestSuite("Root")
 
         downloadDependencies()
@@ -54,6 +54,14 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     rootSuite.addTest(this)
                 }
 
+                enableD8(true)
+                runTestsOnEmulator(gradleRunner, TestSuite("D8")).apply {
+                    (0 until this.countTestCases()).forEach {
+                        val testCase = testAt(it) as TestCase
+                        testCase.name += "_D8"
+                    }
+                    rootSuite.addTest(this)
+                }
             }
             catch (e: RuntimeException) {
                 e.printStackTrace()
@@ -74,6 +82,17 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         return rootSuite
     }
 
+    private fun enableD8(enable: Boolean) {
+        val file = File(pathManager.androidTmpFolder, "gradle.properties")
+        val lines = file.readLines().map {
+            if (it.startsWith("android.enableD8=")) {
+                "android.enableD8=$enable"
+            }
+            else it
+        }
+        file.writeText(lines.joinToString("\n"))
+    }
+
     private fun processReport(suite: TestSuite, resultOutput: String) {
         val reportFolder = pathManager.tmpFolder + "/build/outputs/androidTest-results/connected"
         try {
@@ -87,7 +106,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
     }
 
-    private fun runTestsOnEmulator(gradleRunner: GradleRunner, suite: TestSuite): TestSuite? {
+    private fun runTestsOnEmulator(gradleRunner: GradleRunner, suite: TestSuite): TestSuite {
         val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
         try {
             val resultOutput = gradleRunner.connectedDebugAndroidTest()
@@ -120,8 +139,8 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
     companion object {
 
         @JvmStatic
-        fun getTestSuite(pathManager: PathManager): TestSuite {
-            return CodegenTestsOnAndroidRunner(pathManager).generateTestSuite()
+        fun runTestsInEmulator(pathManager: PathManager): TestSuite {
+            return CodegenTestsOnAndroidRunner(pathManager).runTestsInEmulator()
         }
 
         private fun cleanAndBuildProject(gradleRunner: GradleRunner) {
