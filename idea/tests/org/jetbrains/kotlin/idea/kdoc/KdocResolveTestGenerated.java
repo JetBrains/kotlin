@@ -157,6 +157,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ReceiverReference.kt")
+    public void testReceiverReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ReceiverReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SeeReference.kt")
     public void testSeeReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/SeeReference.kt");
