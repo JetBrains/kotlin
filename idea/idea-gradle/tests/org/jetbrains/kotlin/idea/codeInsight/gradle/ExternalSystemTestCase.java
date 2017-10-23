@@ -37,6 +37,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
@@ -75,28 +76,20 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
     setUpFixtures();
     myProject = myTestFixture.getProject();
 
-    invokeTestRunnable(new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              setUpInWriteAction();
-            }
-            catch (Throwable e) {
-              try {
-                tearDown();
-              }
-              catch (Exception e1) {
-                e1.printStackTrace();
-              }
-              throw new RuntimeException(e);
-            }
-          }
-        });
+    UIUtil.invokeAndWaitIfNeeded((Runnable) () -> ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        setUpInWriteAction();
       }
-    });
+      catch (Throwable e) {
+        try {
+          tearDown();
+        }
+        catch (Exception e1) {
+          e1.printStackTrace();
+        }
+        throw new RuntimeException(e);
+      }
+    }));
 
     List<String> allowedRoots = new ArrayList<String>();
     collectAllowedRoots(allowedRoots);
