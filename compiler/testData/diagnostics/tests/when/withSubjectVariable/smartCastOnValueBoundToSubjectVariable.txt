@@ -1,0 +1,4 @@
+package
+
+public fun foo(/*0*/ s1: kotlin.String, /*1*/ s2: kotlin.String): kotlin.String
+public fun test(/*0*/ x: kotlin.Any?): kotlin.String
