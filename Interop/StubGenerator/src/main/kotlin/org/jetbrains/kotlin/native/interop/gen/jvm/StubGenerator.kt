@@ -57,6 +57,10 @@ class StubGenerator(
     val excludedFunctions: Set<String>
         get() = configuration.excludedFunctions
 
+    val noStringConversion: Set<String>
+        get() = configuration.noStringConversion
+
+
     val platformWStringTypes = setOf("LPCWSTR")
 
     /**
@@ -305,10 +309,11 @@ class StubGenerator(
         return false
     }
 
-    fun representCFunctionParameterAsString(type: Type): Boolean {
+    fun representCFunctionParameterAsString(function: FunctionDecl, type: Type): Boolean {
         val unwrappedType = type.unwrapTypedefs()
         return unwrappedType is PointerType && unwrappedType.pointeeIsConst &&
-                unwrappedType.pointeeType.unwrapTypedefs() == CharType
+                unwrappedType.pointeeType.unwrapTypedefs() == CharType &&
+                !noStringConversion.contains(function.name)
     }
 
     // We take this approach as generic 'const short*' shall not be used as String.
@@ -612,7 +617,7 @@ class StubGenerator(
 
                 val representAsValuesRef = representCFunctionParameterAsValuesRef(parameter.type)
 
-                val bridgeArgument = if (representCFunctionParameterAsString(parameter.type)) {
+                val bridgeArgument = if (representCFunctionParameterAsString(func, parameter.type)) {
                     kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.cstr?.getPointer(memScope)"

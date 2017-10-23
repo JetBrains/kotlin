@@ -62,3 +62,10 @@ static void posix_FD_SET(int bit, fd_set *set) {
 static int posix_FD_ISSET(int bit, fd_set *set) {
     return FD_ISSET(bit, set);
 }
+
+static int init_sockets() {
+    return 0;
+}
+
+static void deinit_sockets() {
+}

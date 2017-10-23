@@ -72,6 +72,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getSpaceSeparated("nonStrictEnums")
         }
 
+        val noStringConversion by lazy {
+            properties.getSpaceSeparated("noStringConversion")
+        }
+
         val depends by lazy {
             properties.getSpaceSeparated("depends")
         }

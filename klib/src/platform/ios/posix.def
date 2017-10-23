@@ -26,3 +26,10 @@ static int posix_errno() {
 static int posix_h_errno() {
     return h_errno;
 }
+
+static int init_sockets() {
+        return 0;
+}
+
+static void deinit_sockets() {
+}

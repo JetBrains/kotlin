@@ -310,7 +310,8 @@ private fun processLib(args: Map<String, List<String>>,
             pkgName = outKtPkg,
             excludedFunctions = excludedFunctions,
             strictEnums = def.config.strictEnums.toSet(),
-            nonStrictEnums = def.config.nonStrictEnums.toSet()
+            nonStrictEnums = def.config.nonStrictEnums.toSet(),
+            noStringConversion = def.config.noStringConversion.toSet()
     )
 
     val nativeIndex = buildNativeIndex(library)

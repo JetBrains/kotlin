@@ -26,5 +26,6 @@ class InteropConfiguration(
         val pkgName: String,
         val excludedFunctions: Set<String>,
         val strictEnums: Set<String>,
-        val nonStrictEnums: Set<String>
+        val nonStrictEnums: Set<String>,
+        val noStringConversion: Set<String>
 )

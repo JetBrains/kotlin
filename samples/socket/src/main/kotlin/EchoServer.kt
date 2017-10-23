@@ -25,55 +25,61 @@ fun main(args: Array<String>) {
 
     val port = args[0].toShort()
 
+    // Initialize sockets in platform-dependent way.
+    init_sockets()
+
     memScoped {
 
-        val bufferLength = 100L
-        val buffer = allocArray<ByteVar>(bufferLength)
+        val buffer = ByteArray(1024)
+        val prefixBuffer = kotlin.text.toUtf8Array("echo: ", 0, 6)
         val serverAddr = alloc<sockaddr_in>()
 
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)
-                .ensureUnixCallResult { it >= 0 }
+                .ensureUnixCallResult("socket") { it >= 0 }
 
         with(serverAddr) {
             memset(this.ptr, 0, sockaddr_in.size)
             sin_family = AF_INET.narrow()
-            sin_addr.s_addr = posix_htons(0).toInt()
             sin_port = posix_htons(port)
         }
 
         bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toInt())
-                .ensureUnixCallResult { it == 0 }
+                .ensureUnixCallResult("bind") { it == 0 }
 
         listen(listenFd, 10)
-                .ensureUnixCallResult { it == 0 }
+                .ensureUnixCallResult("listen") { it == 0 }
 
         val commFd = accept(listenFd, null, null)
-                .ensureUnixCallResult { it >= 0 }
+                .ensureUnixCallResult("accept") { it >= 0 }
 
-        while (true) {
-            val length = read(commFd, buffer, bufferLength)
-                    .ensureUnixCallResult { it >= 0 }
+        buffer.usePinned { pinned ->
+          while (true) {
+            val length = recv(commFd, pinned.addressOf(0), buffer.size, 0)
+                    .ensureUnixCallResult("read") { it >= 0 }
 
-            if (length.toInt() == 0) {
+            if (length == 0) {
                 break
             }
 
-            write(commFd, buffer, length)
-                    .ensureUnixCallResult { it >= 0 }
+            send(commFd, prefixBuffer.refTo(0), prefixBuffer.size, 0)
+                    .ensureUnixCallResult("write") { it >= 0 }
+            send(commFd, pinned.addressOf(0), length, 0)
+                    .ensureUnixCallResult("write") { it >= 0 }
+          }
         }
     }
 }
 
-inline fun Int.ensureUnixCallResult(predicate: (Int) -> Boolean): Int {
+inline fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean): Int {
     if (!predicate(this)) {
-        throw Error(strerror(posix_errno())!!.toKString())
+        throw Error("$op: ${strerror(posix_errno())!!.toKString()}")
     }
     return this
 }
 
-inline fun Long.ensureUnixCallResult(predicate: (Long) -> Boolean): Long {
+inline fun Long.ensureUnixCallResult(op: String, predicate: (Long) -> Boolean): Long {
     if (!predicate(this)) {
-        throw Error(strerror(posix_errno())!!.toKString())
+        throw Error("$op: ${strerror(posix_errno())!!.toKString()}")
     }
     return this
 }
