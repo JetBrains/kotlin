@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintSetJavaScriptEnabledInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintSetJavaScriptEnabledInspection
 
 import android.annotation.SuppressLint
 import android.app.Activity

@@ -1,4 +1,4 @@
 // INTENTION_TEXT: Suppress: Add @SuppressLint("SdCardPath") annotation
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintSdCardPathInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintSdCardPathInspection
 
 fun foo(path: String = "<caret>/sdcard") = path
