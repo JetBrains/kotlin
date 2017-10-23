@@ -20,6 +20,7 @@ package kotlin.collections
 /**
  * Given an [iterator] function constructs an [Iterable] instance that returns values through the [Iterator]
  * provided by that function.
+ * @sample samples.collections.Iterables.iterable
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable(crossinline iterator: () -> Iterator<T>): Iterable<T> = object : Iterable<T> {
@@ -73,6 +74,7 @@ internal fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
 
 /**
  * Returns a single list of all elements from all collections in the given collection.
+ * @sample samples.collections.Iterables.flattenIterable
  */
 public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
     val result = ArrayList<T>()
@@ -86,6 +88,7 @@ public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
  * Returns a pair of lists, where
  * *first* list is built from the first values of each pair from this collection,
  * *second* list is built from the second values of each pair from this collection.
+ * @sample samples.collections.Iterables.unzipIterable
  */
 public fun <T, R> Iterable<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     val expectedSize = collectionSizeOrDefault(10)
