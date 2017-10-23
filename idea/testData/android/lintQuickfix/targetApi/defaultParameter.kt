@@ -1,5 +1,5 @@
 // INTENTION_TEXT: Add @TargetApi(LOLLIPOP) Annotation
-// INSPECTION_CLASS: org.jetbrains.android.inspections.lint.AndroidLintInspectionToolProvider$AndroidLintNewApiInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintNewApiInspection
 
 import android.graphics.drawable.VectorDrawable
 
