@@ -51,52 +51,24 @@ public class CodegenTestsOnAndroidRunner {
     }
 
     private TestSuite generateTestSuite() {
-        TestSuite suite = new TestSuite("MySuite");
+        TestSuite rootSuite = new TestSuite("Root");
 
-        String resultOutput = runTests();
-
-        String reportFolder = pathManager.getTmpFolder() + "/build/outputs/androidTest-results/connected";
-        try {
-            List<TestCase> testCases = parseSingleReportInFolder(reportFolder);
-            for (TestCase aCase : testCases) {
-                suite.addTest(aCase);
-            }
-            Assert.assertNotEquals("There is no test results in report", 0, testCases.size());
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Can't parse test results in " + reportFolder +"\n" + resultOutput);
-        }
-
-        return suite;
-    }
-
-    @Nullable
-    public String runTests() {
-        File rootForAndroidDependencies = new File(pathManager.getDependenciesRoot());
-        if (!rootForAndroidDependencies.exists()) {
-            rootForAndroidDependencies.mkdirs();
-        }
-
-        SDKDownloader downloader = new SDKDownloader(pathManager);
-        downloader.downloadAll();
-        downloader.unzipAll();
-        PermissionManager.setPermissions(pathManager);
-
+        downloadDependencies();
         Emulator emulator = new Emulator(pathManager, Emulator.ARM);
-        GradleRunner gradleRunner = new GradleRunner(pathManager);
-        gradleRunner.clean();
-        gradleRunner.build();
-
         emulator.createEmulator();
 
-        String platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea");
+        GradleRunner gradleRunner = new GradleRunner(pathManager);
+        //old dex
+        cleanAndBuildProject(gradleRunner);
+
         try {
             emulator.startEmulator();
 
             try {
                 emulator.waitEmulatorStart();
-                //runTestsViaAdb(emulator, gradleRunner);
-                return gradleRunner.connectedDebugAndroidTest();
+
+                TestSuite dex = runTestsOnEmulator(gradleRunner, new TestSuite("Dex"));
+                rootSuite.addTest(dex);
             }
             catch (RuntimeException e) {
                 e.printStackTrace();
@@ -111,22 +83,60 @@ public class CodegenTestsOnAndroidRunner {
             throw e;
         }
         finally {
+            emulator.finishEmulatorProcesses();
+        }
+
+        return rootSuite;
+    }
+
+    private void processReport(TestSuite suite, String resultOutput) {
+        String reportFolder = pathManager.getTmpFolder() + "/build/outputs/androidTest-results/connected";
+        try {
+            List<TestCase> testCases = parseSingleReportInFolder(reportFolder);
+            for (TestCase aCase : testCases) {
+                suite.addTest(aCase);
+            }
+            Assert.assertNotEquals("There is no test results in report", 0, testCases.size());
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Can't parse test results in " + reportFolder +"\n" + resultOutput);
+        }
+    }
+
+    @Nullable
+    private TestSuite runTestsOnEmulator(GradleRunner gradleRunner, TestSuite suite) {
+        String platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea");
+        try {
+            String resultOutput = gradleRunner.connectedDebugAndroidTest();
+            processReport(suite, resultOutput);
+            return suite;
+        }
+        finally {
             if (platformPrefixProperty != null) {
                 System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty);
             }
             else {
                 System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY);
             }
-            emulator.finishEmulatorProcesses();
         }
+
     }
 
-    private String runTestsViaAdb(Emulator emulator, GradleRunner gradleRunner) {
-        gradleRunner.installDebugAndroidTest();
-        String result = emulator.runTestsViaAdb();
-        System.out.println(result);
-        gradleRunner.uninstallDebugAndroidTest();
-        return result;
+    private static void cleanAndBuildProject(GradleRunner gradleRunner) {
+        gradleRunner.clean();
+        gradleRunner.build();
+    }
+
+    private void downloadDependencies() {
+        File rootForAndroidDependencies = new File(pathManager.getDependenciesRoot());
+        if (!rootForAndroidDependencies.exists()) {
+            rootForAndroidDependencies.mkdirs();
+        }
+
+        SDKDownloader downloader = new SDKDownloader(pathManager);
+        downloader.downloadAll();
+        downloader.unzipAll();
+        PermissionManager.setPermissions(pathManager);
     }
 
     private static List<TestCase> parseSingleReportInFolder(String reportFolder) throws
