@@ -849,14 +849,16 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (at(LPAR)) {
             advanceAt(LPAR);
 
-            PsiBuilder.Marker property = mark();
+            PsiBuilder.Marker atWhenStart = mark();
             myKotlinParsing.parseModifierList(DEFAULT, TokenSet.create(EQ, RPAR));
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
-                myKotlinParsing.parseLocalProperty(false);
-                property.done(PROPERTY);
+                IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.PropertyParsingMode.LOCAL);
+
+                atWhenStart.done(declType);
+                atWhenStart.setCustomEdgeTokenBinders(PrecedingDocCommentsBinder.INSTANCE, TrailingCommentsBinder.INSTANCE);
             }
             else {
-                property.rollbackTo();
+                atWhenStart.drop();
                 parseExpression();
             }
 

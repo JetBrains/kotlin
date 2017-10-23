@@ -711,6 +711,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/When.kt");
         }
 
+        @TestMetadata("WhenWithSubjectVariable.kt")
+        public void testWhenWithSubjectVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/WhenWithSubjectVariable.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("WhenWithSubjectVariable_ERR.kt")
+        public void testWhenWithSubjectVariable_ERR() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/WhenWithSubjectVariable_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("When_ERR.kt")
         public void testWhen_ERR() throws Exception {
             runTest("compiler/testData/psi/When_ERR.kt");
