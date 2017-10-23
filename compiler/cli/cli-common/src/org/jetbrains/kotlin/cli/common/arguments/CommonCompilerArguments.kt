@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +105,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
     var coroutinesState: String? by FreezableVar(WARN)
+
+    @Argument(
+            value = "-Xnew-inference",
+            description = "Enable new experimental generic type inference algorithm"
+    )
+    var newInference: Boolean by FreezableVar(false)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
