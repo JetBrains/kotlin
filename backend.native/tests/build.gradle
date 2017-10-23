@@ -1243,7 +1243,7 @@ task link_default_libs(type: RunStandaloneKonanTest) {
     source = "link/default/default.kt"
 }
 
-task link_testLib_explicitly(type: RunKonanTest) {
+task link_testLib_explicitly(type: RunStandaloneKonanTest) {
     dependsOn ':klib:installTestLibrary'
     goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
