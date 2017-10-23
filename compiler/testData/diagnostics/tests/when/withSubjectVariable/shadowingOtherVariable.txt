@@ -1,4 +1,7 @@
 package
 
 public fun foo(): kotlin.Any
-public fun test(/*0*/ y: kotlin.Any): kotlin.Unit
+public fun testShadowedInWhenBody(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun testShadowinLocalVariable(): kotlin.Unit
+public fun testShadowingParameter(/*0*/ y: kotlin.Any): kotlin.Unit
+public fun useInt(/*0*/ i: kotlin.Int): kotlin.Unit

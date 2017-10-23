@@ -95,17 +95,18 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         protected abstract fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns): DataFlowValue
         abstract fun makeValueArgument(): ValueArgument?
         abstract val valueExpression: KtExpression?
+        open fun makeCalleeExpressionForSpecialCall(): KtExpression? = null
 
-        private var _dataFlowValue: DataFlowValue? = null
-        val dataFlowValue get() = _dataFlowValue!!
+        lateinit var dataFlowValue: DataFlowValue; private set
 
         fun initDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns) {
-            _dataFlowValue = createDataFlowValue(contextAfterSubject, builtIns)
+            dataFlowValue = createDataFlowValue(contextAfterSubject, builtIns)
         }
 
         val dataFlowInfo get() = typeInfo?.dataFlowInfo
 
         val jumpOutPossible get() = typeInfo?.jumpOutPossible ?: false
+
 
         class Expression(
                 val expression: KtExpression,
@@ -128,8 +129,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 typeInfo: KotlinTypeInfo,
                 scopeWithSubject: LexicalScope
         ) : Subject(variable, typeInfo, scopeWithSubject) {
-            private val initializer = variable.initializer!!
-
             override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns) =
                     DataFlowValue(
                             IdentifierInfo.Variable(
@@ -140,18 +139,23 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                             descriptor.type
                     )
 
-            override fun makeValueArgument(): ValueArgument =
-                    CallMaker.makeExternalValueArgument(
-                            KtPsiFactory(variable.project, true).createExpression(variable.name!!),
-                            initializer
-                    )
+            override fun makeValueArgument(): ValueArgument? =
+                    variable.initializer?.let {
+                        CallMaker.makeExternalValueArgument(
+                                KtPsiFactory(variable.project, true).createExpression(variable.name!!),
+                                it
+                        )
+                    }
 
-            override val valueExpression: KtExpression
-                get() = initializer
+            override fun makeCalleeExpressionForSpecialCall(): KtExpression? =
+                    KtPsiFactory(variable.project, true).createExpression(variable.name!!)
+
+            override val valueExpression: KtExpression?
+                get() = variable.initializer
         }
 
 
-        class None : Subject(null, null, null) {
+        object None : Subject(null, null, null) {
             override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns) =
                     DataFlowValue.nullValue(builtIns)
 
@@ -160,19 +164,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             override val valueExpression: KtExpression? get() = null
         }
 
-
-        class Error(
-                element: KtElement?,
-                typeInfo: KotlinTypeInfo?,
-                scopeWithSubject: LexicalScope?
-        ) : Subject(element, typeInfo, scopeWithSubject) {
-            override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns): DataFlowValue =
-                    DataFlowValue.nullValue(builtIns)
-
-            override fun makeValueArgument(): ValueArgument? = null
-
-            override val valueExpression: KtExpression? get() = null
-        }
     }
 
     fun visitWhenExpression(
@@ -196,7 +187,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val subject = when {
             subjectVariable != null -> processVariableSubject(subjectVariable, contextBeforeSubject)
             subjectExpression != null -> Subject.Expression(subjectExpression, facade.getTypeInfo(subjectExpression, contextBeforeSubject))
-            else -> Subject.None()
+            else -> Subject.None
         }
 
         val contextAfterSubject = run {
@@ -225,7 +216,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         checkSmartCastsInSubjectIfRequired(expression, contextBeforeSubject, subject.type, possibleTypesForSubject)
 
         val dataFlowInfoForEntries = analyzeConditionsInWhenEntries(expression, contextAfterSubject, subject)
-        val whenReturnType = inferTypeForWhenExpression(expression, contextWithExpectedTypeAndSubjectVariable, contextAfterSubject, dataFlowInfoForEntries)
+        val whenReturnType = inferTypeForWhenExpression(expression, subject, contextWithExpectedTypeAndSubjectVariable, contextAfterSubject, dataFlowInfoForEntries)
         val whenResultValue = whenReturnType?.let { facade.components.dataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
 
         val branchesTypeInfo =
@@ -255,7 +246,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     private fun processVariableSubject(subjectVariable: KtProperty, contextBeforeSubject: ExpressionTypingContext): Subject {
         val trace = contextBeforeSubject.trace
 
-        var hasIllegalDeclarationInSubject = false
         if (!components.languageVersionSettings.supportsFeature(LanguageFeature.VariableDeclarationInWhenSubject)) {
             trace.report(UNSUPPORTED_FEATURE.on(
                     subjectVariable,
@@ -264,6 +254,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         }
         else {
             val illegalDeclarationString = when {
+                subjectVariable is KtDestructuringDeclaration -> "destructuring declaration"
                 subjectVariable.isVar -> "var"
                 subjectVariable.initializer == null -> "variable without initializer"
                 subjectVariable.hasDelegateExpression() -> "delegated property"
@@ -272,7 +263,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             }
 
             if (illegalDeclarationString != null) {
-                hasIllegalDeclarationInSubject = true
                 trace.report(Errors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT.on(subjectVariable, illegalDeclarationString))
             }
         }
@@ -290,36 +280,41 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         // so 'typeInfo' above it has type 'kotlin.Unit'.
         // Propagate declared variable type as a "subject expression" type.
         val subjectTypeInfo = typeInfo.replaceType(descriptor.type)
-        return if (hasIllegalDeclarationInSubject)
-            Subject.Error(subjectVariable, subjectTypeInfo, scopeWithSubjectVariable)
-        else
-            Subject.Variable(subjectVariable, descriptor, subjectTypeInfo, scopeWithSubjectVariable)
+
+        return Subject.Variable(subjectVariable, descriptor, subjectTypeInfo, scopeWithSubjectVariable)
     }
 
     private fun inferTypeForWhenExpression(
-        expression: KtWhenExpression,
-        contextWithExpectedType: ExpressionTypingContext,
-        contextAfterSubject: ExpressionTypingContext,
-        dataFlowInfoForEntries: List<DataFlowInfo>
+            expression: KtWhenExpression,
+            subject: Subject,
+            contextWithExpectedType: ExpressionTypingContext,
+            contextAfterSubject: ExpressionTypingContext,
+            dataFlowInfoForEntries: List<DataFlowInfo>
     ): KotlinType? {
         if (expression.entries.all { it.expression == null }) {
             return components.builtIns.unitType
         }
 
         val wrappedArgumentExpressions = wrapWhenEntryExpressionsAsSpecialCallArguments(expression)
-        val callForWhen = createCallForSpecialConstruction(expression, expression, wrappedArgumentExpressions)
-        val dataFlowInfoForArguments =
-            createDataFlowInfoForArgumentsOfWhenCall(callForWhen, contextAfterSubject.dataFlowInfo, dataFlowInfoForEntries)
+        val callForWhen = createCallForSpecialConstruction(
+            expression,
+            subject.makeCalleeExpressionForSpecialCall() ?: expression,
+            wrappedArgumentExpressions
+        )
+        val dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfWhenCall(
+            callForWhen, contextAfterSubject.dataFlowInfo, dataFlowInfoForEntries
+        )
 
         val resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
-            callForWhen, ResolveConstruct.WHEN,
+            callForWhen,
+            ResolveConstruct.WHEN,
             object : AbstractList<String>() {
                 override fun get(index: Int): String = "entry$index"
                 override val size: Int get() = wrappedArgumentExpressions.size
             },
             Collections.nCopies(wrappedArgumentExpressions.size, false),
-            contextWithExpectedType, dataFlowInfoForArguments
-        )
+            contextWithExpectedType,
+            dataFlowInfoForArguments)
 
         return resolvedCall.resultingDescriptor.returnType
     }

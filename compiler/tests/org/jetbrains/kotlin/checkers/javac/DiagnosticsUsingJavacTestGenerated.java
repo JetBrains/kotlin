@@ -22496,6 +22496,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("subjectVariableInIsPattern.kt")
+                public void testSubjectVariableInIsPattern() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/subjectVariableInIsPattern.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("unsupportedFeature.kt")
                 public void testUnsupportedFeature() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedFeature.kt");
