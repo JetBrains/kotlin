@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintRecycleInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintRecycleInspection
 
 @file:Suppress("UNUSED_VARIABLE")
 
