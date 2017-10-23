@@ -1236,7 +1236,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
-    private StackValue genCoroutineInstanceForSuspendLambda(@NotNull FunctionDescriptor suspendFunction) {
+    public StackValue genCoroutineInstanceForSuspendLambda(@NotNull FunctionDescriptor suspendFunction) {
         if (!(suspendFunction instanceof AnonymousFunctionDescriptor)) return null;
 
         ClassDescriptor suspendLambdaClassDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, suspendFunction);
@@ -2209,6 +2209,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         assert enclosingSuspendFunctionJvmView != null : "No JVM view function found for " + enclosingSuspendFunction;
 
+        return getContinuationParameterFromEnclosingSuspendFunctionDescriptor(enclosingSuspendFunctionJvmView);
+    }
+
+    @Nullable
+    public StackValue getContinuationParameterFromEnclosingSuspendFunctionDescriptor(@NotNull FunctionDescriptor enclosingSuspendFunctionJvmView) {
         ValueParameterDescriptor continuationParameter =
                 enclosingSuspendFunctionJvmView.getValueParameters()
                         .get(enclosingSuspendFunctionJvmView.getValueParameters().size() - 1);

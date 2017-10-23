@@ -1876,6 +1876,7 @@ public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
 	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
+	public static final fun getCoroutineContext ()Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
 public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/experimental/Continuation {

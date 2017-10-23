@@ -716,7 +716,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
     ).generateDeclaration().declaration.getGeneratedBody()
     val virtualContext = body.analyzeFully()
-    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL }) {
+    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL || it.factory == Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS }) {
         descriptor = descriptor.copy(modifiers = listOf(KtTokens.SUSPEND_KEYWORD))
     }
 

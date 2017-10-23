@@ -1271,6 +1271,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             doTest(fileName);
         }
 
+        @TestMetadata("coroutineContext.kt")
+        public void testCoroutineContext() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutineContext.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("coroutinesDisabled.kt")
         public void testCoroutinesDisabled() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutinesDisabled.kt");

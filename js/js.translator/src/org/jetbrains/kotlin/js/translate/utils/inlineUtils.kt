@@ -81,6 +81,7 @@ fun setInlineCallMetadata(
         descriptor: CallableDescriptor,
         context: TranslationContext
 ) {
+    if (nameRef.inlineStrategy != null) return
     nameRef.descriptor = descriptor
     nameRef.inlineStrategy = InlineStrategy.IN_PLACE
     nameRef.psiElement = psiElement
