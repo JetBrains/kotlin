@@ -242,22 +242,25 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     }
 
     @Test
-    fun testIncrementalCompilation() {
-        val project = Project("kotlin2JsICProject", "4.0")
-        project.build("build") {
+    fun testIncrementalCompilation() = Project("kotlin2JsICProject", "4.0").run {
+        build("build") {
             assertSuccessful()
             assertContains(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
-            assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()))
+            assertCompiledKotlinSources(project.relativize(allKotlinFiles))
         }
 
-        val aKt = project.projectDir.getFileByName("A.kt").apply {
-            modify { it.replace("val x: String", "val x: Int") }
+        build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(emptyList())
         }
-        val useAKt = project.projectDir.getFileByName("useA.kt")
-        project.build("build") {
+
+        projectFile("A.kt").modify {
+            it.replace("val x = 0", "val x = \"a\"")
+        }
+        build("build") {
             assertSuccessful()
             assertContains(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
-            assertCompiledKotlinSources(project.relativize(aKt, useAKt))
+            assertCompiledKotlinSources(project.relativize(allKotlinFiles - projectFile("DummyInLibMain.kt")))
         }
     }
 }
