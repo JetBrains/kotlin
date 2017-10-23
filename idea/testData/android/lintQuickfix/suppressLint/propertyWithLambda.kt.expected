@@ -1,7 +1,7 @@
 import android.annotation.SuppressLint
 
 // INTENTION_TEXT: Suppress: Add @SuppressLint("SdCardPath") annotation
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintSdCardPathInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintSdCardPathInspection
 
 @SuppressLint("SdCardPath")
 val getPath = { "/sdcard" }
