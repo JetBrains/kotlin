@@ -20,10 +20,10 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -90,11 +89,8 @@ class KDocMissingDocumentationInspection() : AbstractKotlinInspection() {
             val section = declaration.firstChild.getChildOfType<KDocSection>() ?: return
             val asterisk = section.firstChild
 
-            PostprocessReformattingAspect.getInstance(project).disablePostprocessFormattingInside {
-                val whitespace = KtPsiFactory(project).createWhiteSpace()
-                section.addAfter(whitespace, asterisk)
-                editor.caretModel.moveToOffset(asterisk.endOffset + 1)
-            }
+            editor.caretModel.moveToOffset(asterisk.endOffset)
+            EditorModificationUtil.insertStringAtCaret(editor, " ")
         }
     }
 }
