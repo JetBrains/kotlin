@@ -1,5 +1,5 @@
 // INTENTION_TEXT: Add @RequiresApi(KITKAT) Annotation
-// INSPECTION_CLASS: org.jetbrains.android.inspections.lint.AndroidLintInspectionToolProvider$AndroidLintInlinedApiInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintInlinedApiInspection
 // DEPENDENCY: RequiresApi.java -> android/support/annotation/RequiresApi.java
 
 class Test {
