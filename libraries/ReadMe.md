@@ -17,7 +17,7 @@ The main part of the Kotlin standard library, `kotlin-stdlib`, is compiled again
 for the standard library, `kotlin-stdlib-jdk7` and `kotlin-stdlib-jdk8`, which are compiled against JDK 1.7 and 1.8 respectively,
 so you need to have all these JDKs installed.
 
-Be sure to build Kotlin compiler distribution before launching Gradle and Maven: see [root ReadMe.md, section "Building"](../ReadMe.md#installing-plugin).
+Be sure to build Kotlin compiler distribution before launching Gradle and Maven: see [root ReadMe.md, section "Building"](../ReadMe.md#building).
 
 Core libraries are built with gradle, you can run that build using the gradle wrapper script even without local gradle installation:
     
