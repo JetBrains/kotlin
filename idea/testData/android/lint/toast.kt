@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintShowToastInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintShowToastInspection
 
 import android.app.Activity
 import android.content.Context
