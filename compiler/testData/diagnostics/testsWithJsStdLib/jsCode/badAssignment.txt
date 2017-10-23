@@ -1,0 +1,3 @@
+package
+
+public fun kotlin.Int.foo(/*0*/ x: kotlin.Int): kotlin.Unit
