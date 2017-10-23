@@ -1,6 +1,6 @@
+// !LANGUAGE: -InlineConstVals
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
-// LANGUAGE_VERSION: 1.0
 
 object A {
     const val a: String = "$"

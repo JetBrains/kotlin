@@ -1,7 +1,7 @@
+// !LANGUAGE: -NullabilityAssertionOnExtensionReceiver
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 // WITH_RUNTIME
-// LANGUAGE_VERSION: 1.1
 private operator fun A.inc() = A()
 
 fun box(): String {
