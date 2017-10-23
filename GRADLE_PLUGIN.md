@@ -43,13 +43,14 @@ The Kotlin/Native Gradle plugin allows one to build artifacts of the following t
 * Interoperability library - a special type of library providing an interoperability with some native API. See [`INTEROP.md`](INTEROP.md) for details
 * LLVM bitcode
 
-All Kotlin/Native artifacts should be declared in the `konanArtifacts` block:
+All Kotlin/Native artifacts should be declared in the `konanArtifacts` block. Note that the `konanInterop` script block was removed in
+v0.3.4. Use the `interop` method of the `konanArtifact` block instead:
 
     konanArtifacts {
         program('foo')  // executable 'foo'
         library('bar')  // library 'bar'
         bitcode('baz')  // bitcode file 'baz'
-        interop('qux')  // interoperability library 'qux'
+        interop('qux')  // interoperability library 'qux'. Use it instead of konanInterop block.
 	}
 
 All artifacts except interop libraries are built by the Kotlin/Native compiler. Such an artifact may be configured using its script block.
@@ -168,6 +169,7 @@ and set dependencies between building tasks.
         artifact kotlinArtifacts.bar
 
         // Interopability libraries are also allowed
+        // Use it instead of the `useInterop` method available in versions before 0.3.4
         artifact 'stdio'
     }
     ```
