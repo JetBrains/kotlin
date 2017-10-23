@@ -223,7 +223,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
                 JsFor(initVars, condition, increment, body)
             }
             else {
-                JsFor(initExpr!!, condition, increment, body)
+                JsFor(initExpr, condition, increment, body)
             }
         }
 
