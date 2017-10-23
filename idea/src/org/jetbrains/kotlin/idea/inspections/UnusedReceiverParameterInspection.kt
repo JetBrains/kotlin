@@ -93,7 +93,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                             receiverTypeReference,
                             KotlinBundle.message("unused.receiver.parameter"),
                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                            MyQuickFix(callableDeclaration)
+                            MyQuickFix()
                     )
                 }
             }
@@ -108,10 +108,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class MyQuickFix(val declaration: KtCallableDeclaration): LocalQuickFix {
-        override fun getName(): String {
-            return KotlinBundle.message("unused.receiver.parameter.remove")
-        }
+    private class MyQuickFix : LocalQuickFix {
+        override fun getName(): String = KotlinBundle.message("unused.receiver.parameter.remove")
 
         private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
             override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
