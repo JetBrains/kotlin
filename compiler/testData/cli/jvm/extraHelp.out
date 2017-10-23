@@ -5,8 +5,8 @@ where advanced options include:
                              or all modules on the module path if <module> is ALL-MODULE-PATH
   -Xbuild-file=<path>        Path to the .xml build file to compile
   -Xcompile-java             Reuse javac analysis and compile Java source files
-  -Xnormalize-constructor-calls={disable|enable|preserve-class-initialization}
-                             Normalize constructor calls (disable: don't normalize; enable: normalize; preserve-class-initialization: normalize preserving class initialization order), default is disable
+  -Xnormalize-constructor-calls={disable|enable}
+                             Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
