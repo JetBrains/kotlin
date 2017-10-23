@@ -67,8 +67,15 @@ inline fun <reified T : Any> UElement.findElementByText(refText: String): T = fi
 
 inline fun <reified T : UElement> UElement.findElementByTextFromPsi(refText: String): T = (this.psi ?: fail("no psi for $this")).findUElementByTextFromPsi(refText)
 
-inline fun <reified T : UElement> PsiElement.findUElementByTextFromPsi(refText: String): T =
-        (this.findElementAt(this.text.indexOf(refText)) ?: throw AssertionError("requested text '$refText' was not found in $this"))
-                .parentsWithSelf.dropWhile { !it.text.contains(refText) }.mapNotNull { it.toUElementOfType<T>() }.first().also {
-            if (it.psi != null && it.psi?.text != refText) throw AssertionError("requested text '$refText' found as '${it.psi?.text}' in $it")
-        }
+inline fun <reified T : UElement> PsiElement.findUElementByTextFromPsi(refText: String): T {
+    val elementAtStart = this.findElementAt(this.text.indexOf(refText))
+                         ?: throw AssertionError("requested text '$refText' was not found in $this")
+    val uElementContainingText = elementAtStart.parentsWithSelf.
+            dropWhile { !it.text.contains(refText) }.
+            mapNotNull { it.toUElementOfType<T>() }.
+            first()
+    if (uElementContainingText.psi != null && uElementContainingText.psi?.text != refText) {
+        throw AssertionError("requested text '$refText' found as '${uElementContainingText.psi?.text}' in $uElementContainingText")
+    }
+    return uElementContainingText;
+}
