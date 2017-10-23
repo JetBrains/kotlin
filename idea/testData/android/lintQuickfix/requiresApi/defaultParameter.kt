@@ -1,5 +1,5 @@
 // INTENTION_TEXT: Add @RequiresApi(LOLLIPOP) Annotation
-// INSPECTION_CLASS: org.jetbrains.android.inspections.lint.AndroidLintInspectionToolProvider$AndroidLintNewApiInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintNewApiInspection
 // DEPENDENCY: RequiresApi.java -> android/support/annotation/RequiresApi.java
 
 import android.graphics.drawable.VectorDrawable
