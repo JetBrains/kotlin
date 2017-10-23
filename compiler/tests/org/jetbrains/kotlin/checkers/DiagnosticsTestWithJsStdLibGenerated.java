@@ -434,6 +434,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("incompleteReifiedArg.kt")
+        public void testIncompleteReifiedArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/incompleteReifiedArg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsModuleNonExternal.kt")
         public void testJsModuleNonExternal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/jsModuleNonExternal.kt");
