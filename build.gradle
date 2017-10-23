@@ -274,7 +274,7 @@ targetList.each { target ->
         }
         if (target == 'wasm32') {
             from(project(':runtime').file('src/launcher/js')) {
-                into('$stdlib/targets/wasm32/included')
+                into("$stdlib/targets/wasm32/included")
             }
         }
     }
