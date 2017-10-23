@@ -44,6 +44,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             Renderers.STRING, Renderers.COMPACT)
         put(ErrorsJs.JS_FAKE_NAME_CLASH, "JavaScript name {0} is generated for different inherited members: {1} and {2}",
             Renderers.STRING, Renderers.COMPACT, Renderers.COMPACT)
+        put(ErrorsJs.JS_BUILTIN_NAME_CLASH, "JavaScript name generated for this declaration clashes with built-in declaration {1}",
+            Renderers.STRING)
         put(ErrorsJs.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "@JsName annotation is prohibited for primary constructors")
         put(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY, "@JsName can be either on a property or its accessors, not both of them")
         put(ErrorsJs.JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all of the property accessors")
@@ -69,10 +71,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Can''t put non-external declarations in file marked with {0} annotation", RENDER_TYPE)
         put(ErrorsJs.WRONG_JS_QUALIFIER, "Qualifier contains illegal characters")
 
-        put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
-        put(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE, "Unchecked cast to native interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
-        put(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass native interface {0} for reified type parameter", RENDER_TYPE)
-        put(ErrorsJs.NATIVE_INTERFACE_AS_CLASS_LITERAL, "Can't refer to native interface from class literal")
+        put(ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE, "Cannot check for external interface: {0}", RENDER_TYPE)
+        put(ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE, "Unchecked cast to external interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
+        put(ErrorsJs.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass external interface {0} for reified type parameter", RENDER_TYPE)
+        put(ErrorsJs.EXTERNAL_INTERFACE_AS_CLASS_LITERAL, "Can't refer to external interface from class literal")
         put(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, "External type extends non-external type")
 
         put(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC, "Wrong operation with dynamic value: {0}", Renderers.STRING)

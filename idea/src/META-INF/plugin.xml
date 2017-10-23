@@ -1644,7 +1644,12 @@
       <className>org.jetbrains.kotlin.idea.intentions.AddPropertySetterIntention</className>
       <category>Kotlin</category>
     </intentionAction>
-
+    
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.MoveMemberToTopLevelIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+    
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertSealedSubClassToObjectIntention</className>
       <category>Kotlin</category>

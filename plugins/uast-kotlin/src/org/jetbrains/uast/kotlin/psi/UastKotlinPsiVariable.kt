@@ -71,8 +71,8 @@ class UastKotlinPsiVariable private constructor(
 
     companion object {
         fun create(
-                declaration: KtVariableDeclaration, 
-                parent: PsiElement?, 
+                declaration: KtVariableDeclaration,
+                parent: PsiElement?,
                 containingElement: KotlinUDeclarationsExpression,
                 initializer: KtExpression? = null
         ): PsiLocalVariable {
@@ -89,32 +89,38 @@ class UastKotlinPsiVariable private constructor(
                     ktElement = declaration)
         }
 
-        fun create(declaration: KtDestructuringDeclaration, containingElement: UElement): PsiLocalVariable = UastKotlinPsiVariable(
-                manager = declaration.manager,
-                name = "var" + Integer.toHexString(declaration.getHashCode()),
-                typeProducer = { declaration.getType(containingElement) ?: UastErrorType },
-                ktInitializer = declaration.initializer,
-                psiParentProducer = { containingElement.getParentOfType<UDeclaration>()?.psi ?: declaration.parent },
-                containingElement = containingElement,
-                ktElement = declaration)
+        fun create(declaration: KtDestructuringDeclaration, containingElement: UElement): PsiLocalVariable =
+                UastKotlinPsiVariable(
+                        manager = declaration.manager,
+                        name = "var" + Integer.toHexString(declaration.getHashCode()),
+                        typeProducer = { declaration.getType(containingElement) ?: UastErrorType },
+                        ktInitializer = declaration.initializer,
+                        psiParentProducer = { containingElement.getParentOfType<UDeclaration>()?.psi ?: declaration.parent },
+                        containingElement = containingElement,
+                        ktElement = declaration
+                )
 
-        fun create(initializer: KtExpression, containingElement: UElement, parent: PsiElement): PsiLocalVariable = UastKotlinPsiVariable(
-                manager = initializer.manager,
-                name = "var" + Integer.toHexString(initializer.getHashCode()),
-                typeProducer = { initializer.getType(containingElement) ?: UastErrorType },
-                ktInitializer = initializer,
-                psiParentProducer = { containingElement.getParentOfType<UDeclaration>()?.psi ?: parent },
-                containingElement = containingElement,
-                ktElement = initializer)
+        fun create(initializer: KtExpression, containingElement: UElement, parent: PsiElement): PsiLocalVariable =
+                UastKotlinPsiVariable(
+                        manager = initializer.manager,
+                        name = "var" + Integer.toHexString(initializer.getHashCode()),
+                        typeProducer = { initializer.getType(containingElement) ?: UastErrorType },
+                        ktInitializer = initializer,
+                        psiParentProducer = { containingElement.getParentOfType<UDeclaration>()?.psi ?: parent },
+                        containingElement = containingElement,
+                        ktElement = initializer
+                )
 
-        fun create(name: String, localFunction: KtFunction, containingElement: UElement): PsiLocalVariable = UastKotlinPsiVariable(
-                manager = localFunction.manager,
-                name = name,
-                typeProducer = { localFunction.getFunctionType(containingElement) ?: UastErrorType },
-                ktInitializer = localFunction,
-                psiParentProducer = { containingElement.getParentOfType<UDeclaration>()?.psi ?: localFunction.parent },
-                containingElement = containingElement,
-                ktElement = localFunction)
+        fun create(name: String, localFunction: KtFunction, containingElement: UElement): PsiLocalVariable =
+                UastKotlinPsiVariable(
+                        manager = localFunction.manager,
+                        name = name,
+                        typeProducer = { localFunction.getFunctionType(containingElement) ?: UastErrorType },
+                        ktInitializer = localFunction,
+                        psiParentProducer = { containingElement.getParentOfType<UDeclaration>()?.psi ?: localFunction.parent },
+                        containingElement = containingElement,
+                        ktElement = localFunction
+                )
     }
 }
 
@@ -141,9 +147,9 @@ private fun KtExpression.getType(parent: UElement): PsiType? =
 
 private fun KtDeclaration.getType(parent: UElement): PsiType? {
     return (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor)
-                   ?.returnType
-                   ?.takeIf { !it.isError }
-                   ?.toPsiType(parent, this, false)
+            ?.returnType
+            ?.takeIf { !it.isError }
+            ?.toPsiType(parent, this, false)
 }
 
 private fun PsiElement.getHashCode(): Int {

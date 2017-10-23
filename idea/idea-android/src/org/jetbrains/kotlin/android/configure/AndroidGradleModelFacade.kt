@@ -34,10 +34,14 @@ package org.jetbrains.kotlin.android.configure
 
 import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys
 import com.intellij.openapi.externalSystem.model.DataNode
+import com.intellij.openapi.externalSystem.model.project.ModuleData
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import org.jetbrains.kotlin.idea.inspections.gradle.KotlinPlatformGradleDetector
+import org.gradle.tooling.model.idea.IdeaProject
+import org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade
+import org.jetbrains.kotlin.idea.inspections.gradle.findModulesByNames
 
-class PlatformAndroidGradleDetector : KotlinPlatformGradleDetector {
+class AndroidGradleModelFacade : KotlinGradleModelFacade {
     override fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String? {
         ExternalSystemApiUtil
                 .findAllRecursively(moduleData, AndroidProjectKeys.JAVA_MODULE_MODEL).asSequence()
@@ -50,5 +54,25 @@ class PlatformAndroidGradleDetector : KotlinPlatformGradleDetector {
                     }
                 }
         return null
+    }
+
+    override fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
+        val ideProject = ideModule.parent as DataNode<ProjectData>
+        ExternalSystemApiUtil.find(ideModule, AndroidProjectKeys.JAVA_MODULE_MODEL)?.let { javaModuleModel ->
+            val moduleNames = javaModuleModel.data.javaModuleDependencies.map { it.moduleName }
+            return findModulesByNames(moduleNames, gradleIdeaProject, ideProject)
+        }
+        ExternalSystemApiUtil.find(ideModule, AndroidProjectKeys.ANDROID_MODEL)?.let { androidModel ->
+            val libraries = androidModel.data.mainArtifact.dependencies.javaLibraries
+            val projects = androidModel.data.mainArtifact.dependencies.projects
+            val projectIds = libraries.mapNotNull { it.project } + projects
+            return projectIds.mapNotNullTo(LinkedHashSet()) { projectId ->
+                ExternalSystemApiUtil.findFirstRecursively(ideProject) {
+                    (it.data as? ModuleData)?.id == projectId
+                } as DataNode<ModuleData>?
+            }
+
+        }
+        return emptyList()
     }
 }

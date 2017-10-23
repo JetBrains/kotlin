@@ -48,6 +48,8 @@ public interface ErrorsJs {
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory3<KtElement, String, DeclarationDescriptor, DeclarationDescriptor> JS_FAKE_NAME_CLASH =
             DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<KtElement, String> JS_BUILTIN_NAME_CLASH = DiagnosticFactory1.create(
+            ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_ACCESSOR_AND_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_IS_NOT_ON_ALL_ACCESSORS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
@@ -71,10 +73,10 @@ public interface ErrorsJs {
             DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtValueArgument> WRONG_JS_QUALIFIER = DiagnosticFactory0.create(ERROR, PositioningStrategies.DEFAULT);
 
-    DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_NATIVE_INTERFACE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> UNCHECKED_CAST_TO_NATIVE_INTERFACE = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory1<PsiElement, KotlinType> NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> NATIVE_INTERFACE_AS_CLASS_LITERAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_EXTERNAL_INTERFACE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> UNCHECKED_CAST_TO_EXTERNAL_INTERFACE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory1<PsiElement, KotlinType> EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> EXTERNAL_INTERFACE_AS_CLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE = DiagnosticFactory0.create(
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
 

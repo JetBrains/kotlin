@@ -485,6 +485,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("builtinClash.kt")
+        public void testBuiltinClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/builtinClash.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classAndFunction.kt")
         public void testClassAndFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/classAndFunction.kt");

@@ -5390,6 +5390,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertObjectLiteralToClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("inClass.kt")
+        public void testInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inClassHasMethodReference.kt")
+        public void testInClassHasMethodReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inClassHasMethodReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inClassHasPropertyReference.kt")
+        public void testInClassHasPropertyReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inClassHasPropertyReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inFunction.kt")
+        public void testInFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/inFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectLiteralNoCapture.kt")
         public void testObjectLiteralNoCapture() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/objectLiteralNoCapture.kt");
@@ -11705,6 +11729,72 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("noTwoConsequentLambdas.kt")
         public void testNoTwoConsequentLambdas() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/noTwoConsequentLambdas.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/moveMemberToTopLevel")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveMemberToTopLevel extends AbstractIntentionTest {
+        @TestMetadata("abstractFunction.kt")
+        public void testAbstractFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/abstractFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("abstractProperty.kt")
+        public void testAbstractProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/abstractProperty.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInMoveMemberToTopLevel() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveMemberToTopLevel"),
+                                                            Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionInCompanion.kt")
+        public void testFunctionInCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/functionInCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/property.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyInCompanion.kt")
+        public void testPropertyInCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/propertyInCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("redeclarationConflict.kt")
+        public void testRedeclarationConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/redeclarationConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("redeclarationConflictWithPackage.kt")
+        public void testRedeclarationConflictWithPackage() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/redeclarationConflictWithPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("redeclarationPropertyConflict.kt")
+        public void testRedeclarationPropertyConflict() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/redeclarationPropertyConflict.kt");
             doTest(fileName);
         }
     }
