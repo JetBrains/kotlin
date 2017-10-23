@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.android.configure
 
-import com.android.tools.idea.gradle.project.model.JavaModuleModel
-import com.android.tools.idea.gradle.project.AndroidProjectKeys
+import com.android.tools.idea.gradle.AndroidProjectKeys
+import com.android.tools.idea.gradle.JavaProject
 import com.android.tools.idea.gradle.util.FilePaths
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
