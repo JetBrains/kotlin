@@ -243,6 +243,7 @@ void Kotlin_objc_release(void* ptr) {
 
 void* Kotlin_objc_lookUpClass(const char* name) {
   RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
 }
 
 } // extern "C"

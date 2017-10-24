@@ -17,13 +17,13 @@
 
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
+
 #include "cbigint.h"
+#include "../Exceptions.h"
 #include "../KString.h"
 #include "../Natives.h"
-#include "../Exceptions.h"
 #include "../utf8.h"
-#include <stdlib.h>
-#include <string>
 
 #if defined(LINUX) || defined(FREEBSD) || defined(ZOS) || defined(MACOSX) || defined(AIX)
 #define USE_LL

@@ -17,13 +17,13 @@
 
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
+
 #include "cbigint.h"
+#include "../Exceptions.h"
 #include "../KString.h"
 #include "../Natives.h"
-#include "../Exceptions.h"
 #include "../utf8.h"
-#include <stdlib.h>
-#include <string>
 
 #if defined(LINUX) || defined(FREEBSD) || defined(MACOSX) || defined(ZOS) || defined(AIX)
 #define USE_LL
@@ -39,13 +39,7 @@
 
 #define DEFAULT_WIDTH MAX_ACCURACY_WIDTH
 
-extern "C" {
-KFloat Konan_FloatingPointParser_parseFloatImpl (KString s, KInt e);
-
-KFloat Konan_int_bits_to_float(KInt x);
-}
-
-KFloat Konan_int_bits_to_float(KInt x) {
+extern "C" KFloat Konan_int_bits_to_float(KInt x) {
   union {
     int32_t x;
     float f;
@@ -73,6 +67,7 @@ static const U_32 tens[] = {
 };
 
 #define tenToTheE(e) (*((KFloat *) (tens + (e))))
+
 #define LOG5_OF_TWO_TO_THE_N 11
 
 #define sizeOfTenToTheE(e) (((e) / 19) + 1)
@@ -124,9 +119,7 @@ static const U_32 tens[] = {
 #define allocateU64(x, n) if (!((x) = (U_64*) konan::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
 #define release(r) if ((r)) konan::free((r));
 
-KFloat
-createFloat (const char *s, KInt e)
-{
+KFloat createFloat(const char *s, KInt e) {
   /* assumes s is a null terminated string with at least one
    * character in it */
   U_64 def[DEFAULT_WIDTH];
@@ -328,7 +321,7 @@ createFloat1 (U_64 * f, IDATA length, KInt e)
   if (e <= -309 || FLOAT_TO_INTBITS (result) == 0)
     FLOAT_TO_INTBITS (result) = MINIMUM_INTBITS;
 
-  return floatAlgorithm (f, length, e, (KFloat) result);
+  return floatAlgorithm (f, length, e, result);
 }
 
 #if defined(WIN32)
@@ -544,27 +537,24 @@ OutOfMemory:
 #pragma optimize("",on)         /*restore optimizations */
 #endif
 
-KFloat
-Konan_FloatingPointParser_parseFloatImpl (KString s, KInt e)
+extern "C" KFloat
+Konan_FloatingPointParser_parseFloatImpl(KString s, KInt e)
 {
   const KChar* utf16 = CharArrayAddressOfElementAt(s, 0);
   KStdString utf8;
   utf8::unchecked::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8));
   const char *str = utf8.c_str();
-  auto flt = createFloat (str, e);
+  auto flt = createFloat(str, e);
 
-  if (((I_32) FLOAT_TO_INTBITS (flt)) >= 0)
-    {
-      return flt;
-    }
-  else if (((I_32) FLOAT_TO_INTBITS (flt)) == (I_32) - 1)
-    {                           /* NumberFormatException */
-      ThrowNumberFormatException();
-    }
-  else
-    {                           /* OutOfMemoryError */
-      ThrowOutOfMemoryError();
-    }
+  if (((I_32) FLOAT_TO_INTBITS (flt)) >= 0) {
+    return flt;
+  } else if (((I_32) FLOAT_TO_INTBITS (flt)) == (I_32) - 1) {
+      /* NumberFormatException */
+    ThrowNumberFormatException();
+  } else {
+    /* OutOfMemoryError */
+    ThrowOutOfMemoryError();
+  }
 
-  return 0.0;
+  return 0.0f;
 }
