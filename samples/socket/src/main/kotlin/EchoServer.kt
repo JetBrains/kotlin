@@ -54,14 +54,14 @@ fun main(args: Array<String>) {
 
         buffer.usePinned { pinned ->
           while (true) {
-            val length = recv(commFd, pinned.addressOf(0), buffer.size, 0)
+            val length = recv(commFd, pinned.addressOf(0), buffer.size.signExtend(), 0)
                     .ensureUnixCallResult("read") { it >= 0 }
 
-            if (length == 0) {
+            if (length == 0L) {
                 break
             }
 
-            send(commFd, prefixBuffer.refTo(0), prefixBuffer.size, 0)
+            send(commFd, prefixBuffer.refTo(0), prefixBuffer.size.signExtend(), 0)
                     .ensureUnixCallResult("write") { it >= 0 }
             send(commFd, pinned.addressOf(0), length, 0)
                     .ensureUnixCallResult("write") { it >= 0 }
