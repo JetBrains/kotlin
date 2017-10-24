@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
+import org.jetbrains.kotlin.gradle.util.allKotlinFiles
+import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
@@ -119,6 +121,41 @@ class MultiplatformGradleIT : BaseGradleIT() {
             build("build") {
                 assertSuccessful()
             }
+        }
+    }
+
+    @Test
+    fun testNonIncrementalCompileByDefault(): Unit = Project("multiplatformProject", GRADLE_VERSION).run {
+        val compileCommonTask = ":lib:compileKotlinCommon"
+        val compileJsTask = ":libJs:compileKotlin2Js"
+        val compileJvmTask = ":libJvm:compileKotlin"
+        val allKotlinTasks = listOf(compileCommonTask, compileJsTask, compileJvmTask)
+
+        build("build") {
+            assertSuccessful()
+        }
+
+        val commonProjectDir = File(projectDir, "lib")
+        commonProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
+        build("build") {
+            assertSuccessful()
+            assertTasksExecuted(allKotlinTasks)
+        }
+
+        val jvmProjectDir = File(projectDir, "libJvm")
+        jvmProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
+        build("build") {
+            assertSuccessful()
+            assertTasksExecuted(listOf(compileJvmTask))
+            assertTasksUpToDate(listOf(compileCommonTask, compileJsTask))
+        }
+
+        val jsProjectDir = File(projectDir, "libJs")
+        jsProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
+        build("build") {
+            assertSuccessful()
+            assertTasksExecuted(listOf(compileJsTask))
+            assertTasksUpToDate(listOf(compileCommonTask, compileJvmTask))
         }
     }
 }

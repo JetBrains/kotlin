@@ -81,6 +81,16 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 }
             }
         }
+
+        val incrementalMultiplatform = PropertiesProvider(project).incrementalMultiplatform ?: false
+        project.afterEvaluate {
+            project.tasks.withType(AbstractKotlinCompile::class.java).all {
+                if (it.incremental && !incrementalMultiplatform) {
+                    project.logger.debug("IC is turned off for task '${it.path}' because multiplatform IC is not enabled")
+                }
+                it.incremental = it.incremental && incrementalMultiplatform
+            }
+        }
     }
 
     private var implementConfigurationIsUsed = false
