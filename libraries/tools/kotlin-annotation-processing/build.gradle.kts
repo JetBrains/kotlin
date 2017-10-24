@@ -24,14 +24,11 @@ projectTest {
     workingDir = projectDir
 }
 
-//noDefaultJar()
-//tasks.remove(tasks.findByName("jar"))
-//
-//runtimeJar(task<ShadowJar>("jar"))  {
-//    from(packedJars)
-//    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
-//    configureRelocation()
-//}
+val jar: Jar by tasks
+jar.apply {
+    classifier = "base"
+}
+
 runtimeJar(rewriteDepsToShadedCompiler(
         task<ShadowJar>("shadowJar")  {
             from(packedJars)
