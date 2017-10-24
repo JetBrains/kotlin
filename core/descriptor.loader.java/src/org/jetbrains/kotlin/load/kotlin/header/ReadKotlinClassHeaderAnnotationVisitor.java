@@ -52,6 +52,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private JvmBytecodeBinaryVersion bytecodeVersion = null;
     private String extraString = null;
     private int extraInt = 0;
+    private String packageName = null;
     private String[] data = null;
     private String[] strings = null;
     private String[] incompatibleData = null;
@@ -84,7 +85,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 incompatibleData,
                 strings,
                 extraString,
-                extraInt
+                extraInt,
+                packageName
         );
     }
 
@@ -151,6 +153,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if (METADATA_EXTRA_INT_FIELD_NAME.equals(string)) {
                 if (value instanceof Integer) {
                     extraInt = (Integer) value;
+                }
+            }
+            else if (METADATA_PACKAGE_NAME_FIELD_NAME.equals(string)) {
+                if (value instanceof String) {
+                    packageName = (String) value;
                 }
             }
         }
