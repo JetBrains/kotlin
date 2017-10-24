@@ -74,6 +74,23 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    fun testLiteralInClassInitializerFromFactory() {
+
+        val detachedClass = KtPsiFactory(project).createClass("""
+        class MyAnnotation(){
+            init {
+                "default"
+            }
+        }
+        """)
+
+        val literalInside = detachedClass.findUElementByTextFromPsi<UElement>("default")
+        generateSequence(literalInside, { it.uastParent }).count().let {
+            TestCase.assertTrue("it should have some parents $it actually", it > 1)
+        }
+
+    }
+
 }
 
 fun <T> T?.orFail(msg: String): T = this ?: error(msg)
