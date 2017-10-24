@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.test.testFramework
 
+import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.annotations.TestOnly
 import java.lang.reflect.InvocationTargetException
 import javax.swing.SwingUtilities
@@ -39,7 +40,11 @@ fun runInEdtAndWait(runnable: () -> Unit) {
     }
     else {
         try {
-            SwingUtilities.invokeAndWait(runnable)
+            val application = ApplicationManager.getApplication()
+            if (application != null)
+                application.invokeAndWait(runnable)
+            else
+                SwingUtilities.invokeAndWait(runnable)
         }
         catch (e: InvocationTargetException) {
             throw e.cause ?: e
