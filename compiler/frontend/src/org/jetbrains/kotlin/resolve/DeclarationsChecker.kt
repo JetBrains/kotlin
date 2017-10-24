@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -49,10 +50,13 @@ internal class DeclarationsCheckerBuilder(
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
         private val languageVersionSettings: LanguageVersionSettings,
-        private val typeSpecificityComparator: TypeSpecificityComparator
+        private val typeSpecificityComparator: TypeSpecificityComparator,
+        private val diagnosticSuppressor: PlatformDiagnosticSuppressor
 ) {
-    fun withTrace(trace: BindingTrace) =
-            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings, typeSpecificityComparator)
+    fun withTrace(trace: BindingTrace) = DeclarationsChecker(
+            descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings,
+            typeSpecificityComparator, diagnosticSuppressor
+    )
 }
 
 class DeclarationsChecker(
@@ -62,7 +66,8 @@ class DeclarationsChecker(
         private val identifierChecker: IdentifierChecker,
         private val trace: BindingTrace,
         private val languageVersionSettings: LanguageVersionSettings,
-        typeSpecificityComparator: TypeSpecificityComparator
+        typeSpecificityComparator: TypeSpecificityComparator,
+        private val diagnosticSuppressor: PlatformDiagnosticSuppressor
 ) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
@@ -670,11 +675,13 @@ class DeclarationsChecker(
                 if (propertyDescriptor.extensionReceiverParameter != null && !hasAccessorImplementation) {
                     trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
                 }
-                else if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
-                    trace.report(MUST_BE_INITIALIZED.on(property))
-                }
-                else {
-                    trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
+                else if (diagnosticSuppressor.shouldReportNoBody(propertyDescriptor)) {
+                    if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
+                        trace.report(MUST_BE_INITIALIZED.on(property))
+                    }
+                    else {
+                        trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
+                    }
                 }
             }
             else if (property.typeReference == null && !languageVersionSettings.supportsFeature(LanguageFeature.ShortSyntaxForPropertyGetters)) {
@@ -733,12 +740,14 @@ class DeclarationsChecker(
                     trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(function))
                 }
             }
-            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isExpectClass) {
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isExpectClass &&
+                diagnosticSuppressor.shouldReportNoBody(functionDescriptor)) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
         }
         else /* top-level only */ {
-            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isExpect) {
+            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isExpect &&
+                diagnosticSuppressor.shouldReportNoBody(functionDescriptor)) {
                 trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
             }
         }
