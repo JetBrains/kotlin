@@ -21,7 +21,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
@@ -369,4 +368,6 @@ val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenCo
 val MAVEN_TEST_ID = "kotlin-test"
 val MAVEN_TEST_JUNIT_ID = "kotlin-test-junit"
 val MAVEN_COMMON_TEST_ID = "kotlin-test-common"
+val MAVEN_COMMON_TEST_ANNOTATIONS_ID = "kotlin-test-annotations-common"
+
 val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt")
