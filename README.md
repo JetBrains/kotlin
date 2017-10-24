@@ -16,13 +16,14 @@ First download dependencies:
 
 	./gradlew dependencies:update
 
-Then build the compiler and standard library:
+Then build the compiler and libraries:
 
-	./gradlew dist
+	./gradlew bundle
 
-To build standard library for cross-targets use:
+The build can take about an hour on a Macbook Pro.
+To run a shorter build with only host compiler and libraries run:
 
-    ./gradlew cross_dist
+    ./gradlew dist distPlatformLibs
 
 After that you should be able to compile your programs like that:
 
