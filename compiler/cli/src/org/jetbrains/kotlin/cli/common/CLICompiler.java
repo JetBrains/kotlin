@@ -204,12 +204,21 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
+        setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, arguments);
+
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
                 languageVersion,
                 ApiVersion.createByLanguageVersion(apiVersion),
                 arguments.configureAnalysisFlags(collector),
                 extraLanguageFeatures
         ));
+    }
+
+    protected void setupPlatformSpecificLanguageFeatureSettings(
+            @NotNull Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures,
+            @NotNull A commandLineArguments
+    ) {
+        // do nothing
     }
 
     @Nullable

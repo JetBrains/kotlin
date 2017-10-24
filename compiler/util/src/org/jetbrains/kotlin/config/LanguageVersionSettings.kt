@@ -74,6 +74,8 @@ enum class LanguageFeature(
     RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3),
     ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3),
 
+    StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
+
     // Experimental features
 
     Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines", State.ENABLED_WITH_WARNING),

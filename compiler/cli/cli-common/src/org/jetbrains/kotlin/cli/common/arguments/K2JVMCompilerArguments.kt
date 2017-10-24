@@ -106,6 +106,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
     var noParamAssertions: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xstrict-java-nullability-assertions", description = "Generate nullability assertions for non-null Java expressions")
+    var strictJavaNullabilityAssertions: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xno-optimize", description = "Disable optimizations")
     var noOptimize: Boolean by FreezableVar(false)
 
