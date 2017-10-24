@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 interface OverloadFilter {
     fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot>
 
-    object DEFAULT : OverloadFilter {
+    object Default : OverloadFilter {
         override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> =
                 overloads
     }

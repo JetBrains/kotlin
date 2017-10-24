@@ -87,6 +87,7 @@ public class DescriptorResolver {
     private final WrappedTypeFactory wrappedTypeFactory;
     private final SyntheticResolveExtension syntheticResolveExtension;
     private final TypeApproximator typeApproximator;
+    private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -103,7 +104,8 @@ public class DescriptorResolver {
             @NotNull ModifiersChecker modifiersChecker,
             @NotNull WrappedTypeFactory wrappedTypeFactory,
             @NotNull Project project,
-            TypeApproximator approximator
+            @NotNull TypeApproximator approximator,
+            @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -120,6 +122,7 @@ public class DescriptorResolver {
         this.wrappedTypeFactory = wrappedTypeFactory;
         this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
         typeApproximator = approximator;
+        this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -1152,12 +1155,12 @@ public class DescriptorResolver {
     ) {
         return wrappedTypeFactory.createRecursionIntolerantDeferredType(trace, () -> {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
-            KotlinType type = expressionTypingServices.getBodyExpressionType(
-                    trace, scope, dataFlowInfo, function, functionDescriptor);
-            KotlinType result = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
-            UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(result, false);
-            functionsTypingVisitor.checkTypesForReturnStatements(function, trace, approximatedType);
-            return approximatedType;
+            KotlinType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
+            KotlinType publicType = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
+            UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(publicType, false);
+            KotlinType sanitizedType = declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings);
+            functionsTypingVisitor.checkTypesForReturnStatements(function, trace, sanitizedType);
+            return sanitizedType;
         });
     }
 
