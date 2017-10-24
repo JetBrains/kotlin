@@ -32,7 +32,7 @@
 
 package org.jetbrains.kotlin.android.configure
 
-import com.android.tools.idea.gradle.AndroidProjectKeys
+import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -46,7 +46,7 @@ import com.android.builder.model.Library
 class AndroidGradleModelFacade : KotlinGradleModelFacade {
     override fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String? {
         ExternalSystemApiUtil
-                .findAllRecursively(moduleData, AndroidProjectKeys.JAVA_PROJECT).asSequence()
+                .findAllRecursively(moduleData, AndroidProjectKeys.JAVA_MODULE_MODEL).asSequence()
                 .flatMap { it.data.jarLibraryDependencies.asSequence() }
                 .forEach {
                     val libraryName = it.name
@@ -60,10 +60,12 @@ class AndroidGradleModelFacade : KotlinGradleModelFacade {
 
     override fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
         val ideProject = ideModule.parent as DataNode<ProjectData>
+/*
         ExternalSystemApiUtil.find(ideModule, AndroidProjectKeys.JAVA_PROJECT)?.let { javaModuleModel ->
             val moduleNames = javaModuleModel.data.javaModuleDependencies.map { it.moduleName }.toHashSet()
             return findModulesByNames(moduleNames, gradleIdeaProject, ideProject)
         }
+*/
         ExternalSystemApiUtil.find(ideModule, AndroidProjectKeys.ANDROID_MODEL)?.let { androidModel ->
             val libraries = androidModel.data.mainArtifact.dependencies.javaLibraries
             val projects = androidModel.data.mainArtifact.dependencies.projects
