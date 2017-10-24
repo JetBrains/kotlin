@@ -78,10 +78,10 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
                       LibraryJarDescriptor.TEST_JAR)
         val sdkVersion = sdk?.version ?: return result
         if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_7)) {
-            result += listOf(LibraryJarDescriptor.RUNTIME_JRE7_JAR, LibraryJarDescriptor.RUNTIME_JRE7_SOURCES_JAR)
+            result += listOf(LibraryJarDescriptor.RUNTIME_JDK7_JAR, LibraryJarDescriptor.RUNTIME_JDK7_SOURCES_JAR)
         }
         if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
-            result += listOf(LibraryJarDescriptor.RUNTIME_JRE8_JAR, LibraryJarDescriptor.RUNTIME_JRE8_SOURCES_JAR)
+            result += listOf(LibraryJarDescriptor.RUNTIME_JDK8_JAR, LibraryJarDescriptor.RUNTIME_JDK8_SOURCES_JAR)
         }
 
         return result

@@ -93,6 +93,41 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testDifferentStdlibJdk7GradleVersion() {
+        val localFile = createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-17")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.1.0-beta-22"
+            }
+        """)
+        importProject()
+
+        val tool = DifferentStdlibGradleVersionInspection()
+        val problems = getInspectionResult(tool, localFile)
+
+        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
+    }
+
+
+    @Test
     fun testDifferentStdlibGradleVersionWithVariables() {
         createProjectSubFile("gradle.properties", """
         |kotlin=1.0.1

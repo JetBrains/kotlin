@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     testCompile("junit:junit:4.12")
-    compile(kotlinModule("stdlib-jre8", kotlin_version))
+    compile(kotlinModule("stdlib-jdk8", kotlin_version))
 }
 
 // VERSION: $VERSION$

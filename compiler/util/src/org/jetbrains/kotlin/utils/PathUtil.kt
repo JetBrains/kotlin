@@ -30,10 +30,19 @@ object PathUtil {
     const val NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar"
     const val SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "sam-with-receiver-compiler-plugin.jar"
     const val JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar"
+
     const val KOTLIN_JAVA_RUNTIME_JRE7_JAR = "kotlin-stdlib-jre7.jar"
+    const val KOTLIN_JAVA_RUNTIME_JDK7_JAR = "kotlin-stdlib-jdk7.jar"
+
     const val KOTLIN_JAVA_RUNTIME_JRE8_JAR = "kotlin-stdlib-jre8.jar"
+    const val KOTLIN_JAVA_RUNTIME_JDK8_JAR = "kotlin-stdlib-jdk8.jar"
+
     const val KOTLIN_JAVA_RUNTIME_JRE7_SRC_JAR = "kotlin-stdlib-jre7-sources.jar"
+    const val KOTLIN_JAVA_RUNTIME_JDK7_SRC_JAR = "kotlin-stdlib-jdk7-sources.jar"
+
     const val KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR = "kotlin-stdlib-jre8-sources.jar"
+    const val KOTLIN_JAVA_RUNTIME_JDK8_SRC_JAR = "kotlin-stdlib-jdk8-sources.jar"
+
     const val KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar"
     const val KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar"
     const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
