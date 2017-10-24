@@ -142,7 +142,8 @@ include ":kotlin-build-common",
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
         ':kotlin-allopen:plugin-marker',
-        ':kotlin-noarg:plugin-marker'
+        ':kotlin-noarg:plugin-marker',
+        ":test-instrumenter"
 
 
 rootProject.name = "kotlin"

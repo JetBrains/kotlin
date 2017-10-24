@@ -40,6 +40,16 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
         }
     }
 
+    doFirst {
+        val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
+
+        val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
+
+        jvmArgs("-javaagent:$agent$args")
+    }
+
+    dependsOn(":test-instrumenter:jar")
+
     jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1100m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
     maxHeapSize = "1100m"
     systemProperty("idea.is.unit.test", "true")
