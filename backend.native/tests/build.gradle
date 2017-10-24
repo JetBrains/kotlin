@@ -2099,41 +2099,37 @@ task inline_defaultArgs_linkTest(type: LinkKonanTest) {
 }
 
 kotlinNativeInterop {
+    target project.testTarget ?: 'host'
+    flavor 'native'
+
     sysstat {
         pkg 'sysstat'
         headers 'sys/stat.h'
-        flavor 'native'
     }
 
     cstdlib {
         pkg 'cstdlib'
         headers 'stdlib.h'
-        flavor 'native'
     }
 
     cstdio {
         defFile 'interop/basics/cstdio.def'
-        flavor 'native'
     }
 
     sockets {
         defFile 'interop/basics/sockets.def'
-        flavor 'native'
     }
 
     bitfields {
         defFile 'interop/basics/bitfields.def'
-        flavor 'native'
     }
 
     cglobals {
         defFile 'interop/basics/cglobals.def'
-        flavor 'native'
     }
 
     cfunptr {
         defFile 'interop/basics/cfunptr.def'
-        flavor 'native'
     }
 
     if (isMac()) {
@@ -2141,7 +2137,6 @@ kotlinNativeInterop {
             defFile 'interop/objc/objcSmoke.def'
             headers "$projectDir/interop/objc/smoke.h"
             linkerOpts "-L$buildDir",  "-lobjcsmoke"
-            flavor 'native'
         }
     }
 }
