@@ -41,8 +41,6 @@
                         interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"/>
         <extensionPoint name="gradleModelFacade"
                         interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"/>
-        <extensionPoint name="scriptHelper"
-                        interface="org.jetbrains.kotlin.script.ScriptHelper"/>
         <extensionPoint name="completionInformationProvider"
                         interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
         <extensionPoint name="moduleBuilder"

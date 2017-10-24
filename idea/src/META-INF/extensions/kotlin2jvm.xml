@@ -2,6 +2,5 @@
     <id>org.jetbrains.kotlin</id>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <scriptHelper implementation="org.jetbrains.kotlin.script.ScriptHelperImpl"/>
     </extensions>
 </idea-plugin>
