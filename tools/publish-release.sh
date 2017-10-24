@@ -21,17 +21,21 @@ function stage {
 set -eu
 
 if [[ $# -lt 1 ]]; then
-    echo "No version is set. Usage: `basename $0` [--no-upload] <version>"
+    echo "No version is set. Usage: `basename $0` [--no-upload] [--no-build] <version>"
     exit 1
 fi
 
 UPLOAD=true
+BUILD=true
 # Prepare command line args.
 while [[ $# -gt 1 ]]; do
     arg="$1"
     case $arg in
         --no-upload)
             UPLOAD=false
+            ;;
+        --no-build)
+            BUILD=false
             ;;
         *)
             echo "Unknown option: $arg. Usage: `basename $0` [--no-upload] <version>"
@@ -56,20 +60,21 @@ BUNDLE_TAR="$TREE_DIR/kotlin-native-$OS-$VERSION.tar.gz"
 BUNDLE_DIR="$TREE_DIR/kotlin-native-$OS-$VERSION"
 WAIT_TIME=120
 
+if [ "$BUILD" == "true" ]; then
+    # Build and test.
+    # 1. Download kotlin-native sources
+    stage "Cloning repo: $REPO (branch: $BRANCH)"
+    git clone "$REPO" .
+    git checkout "$BRANCH"
 
-# Build and test.
-# 1. Download kotlin-native sources
-stage "Cloning repo: $REPO (branch: $BRANCH)"
-git clone "$REPO" .
-git checkout "$BRANCH"
+    # 2.1 Update dependencies
+    stage "Building bundle: $BUNDLE_TAR"
+    ./gradlew dependencies:update
 
-# 2.1 Update dependencies
-stage "Building bundle: $BUNDLE_TAR"
-./gradlew dependencies:update
-
-# 2.2 Build the bundle
-./gradlew clean bundle
-tar -xf "$BUNDLE_TAR"
+    # 2.2 Build the bundle
+    ./gradlew clean bundle
+    tar -xf "$BUNDLE_TAR"
+fi
 
 # 3. Check the bundle in commandline mode
 stage "Checking commandline build"
@@ -86,34 +91,34 @@ stage "Building samples with the plugin built"
 cd "$TREE_DIR/samples"
 ./gradlew build --refresh-dependencies
 
-# 6. Upload the plugin
 if [ "$UPLOAD" == "true" ]; then
+    # 6. Upload the plugin
     stage "Uploading the gradle plugin to bintray"
     cd "$TREE_DIR"
     export BINTRAY_USER
     export BINTRAY_KEY
     ./gradlew :tools:kotlin-native-gradle-plugin:bintrayUpload -Poverride
+
+    sleep 10 # Wait some time to ensure that the plugin can be downloaded on the following step.
+
+    # 5. Build the bundle samples with the plugin
+    stage "Building samples with gradle plugin and bundle compiler"
+    cd "$BUNDLE_DIR/samples"
+    ./gradlew build --refresh-dependencies
+
+    # 6. Upload the bundle to the CDN
+    stage "Uploading the bundle to CDN: $BUNDLE_TAR -> ftp://uploadcds.labs.intellij.net/kotlin/native/"
+    curl --upload-file "$BUNDLE_TAR" "ftp://$CDN_USER:$CDN_PASS@uploadcds.labs.intellij.net/kotlin/native/"
+
+    echo "Wait ${WAIT_TIME} seconds to ensure that the bundle can be downloaded."
+    sleep ${WAIT_TIME}
+
+    # 7. Remove gradle.properties and build the bundle samples with gradle plugin.
+    stage "Building samples with gradle plugin and downloaded compiler"
+    cd "$BUNDLE_DIR/samples"
+    rm -rf gradle.properties
+    ./gradlew build --refresh-dependencies
 fi
-sleep 10 # Wait some time to ensure that the plugin can be downloaded on the following step.
-
-# 5. Build the bundle samples with the plugin
-stage "Building samples with gradle plugin and bundle compiler"
-cd "$BUNDLE_DIR/samples"
-./gradlew build --refresh-dependencies
-
-# 6. Upload the bundle to the CDN
-if [ "$UPLOAD" == "true" ]; then
-    stage "Uploading the bundle to CDN: $BUNDLE_TAR -> ftp://upload.cds.intellij.net/kotlin/native/"
-    curl --upload-file "$BUNDLE_TAR" "ftp://$CDN_USER:$CDN_PASS@upload.cds.intellij.net/kotlin/native/"
-fi
-echo "Wait ${WAIT_TIME} seconds to ensure that the bundle can be downloaded."
-sleep ${WAIT_TIME}
-
-# 7. Remove gradle.properties and build the bundle samples with gradle plugin.
-stage "Building samples with gradle plugin and downloaded compiler"
-cd "$BUNDLE_DIR/samples"
-rm -rf gradle.properties
-./gradlew build --refresh-dependencies
 
 date
 echo "Done."
