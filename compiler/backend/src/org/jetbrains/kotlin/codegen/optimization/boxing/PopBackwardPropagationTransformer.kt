@@ -79,18 +79,22 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         private fun analyzeMethodBody(): Array<out Frame<SourceValue>?> {
             val frames = Analyzer<SourceValue>(HazardsTrackingInterpreter()).analyze("fake", methodNode)
 
-            postprocessDupNxM(frames)
+            postprocessStackHazards(frames)
 
             return frames
         }
 
-        private fun postprocessDupNxM(frames: Array<out Frame<SourceValue>?>) {
+        private fun postprocessStackHazards(frames: Array<out Frame<SourceValue>?>) {
             val insns = methodNode.instructions.toArray()
             for (i in frames.indices) {
                 val frame = frames[i] ?: continue
                 val insn = insns[i]
 
                 when (insn.opcode) {
+                    Opcodes.POP2 -> {
+                        val top2 = frame.peekWords(2) ?: throwIncorrectBytecode(insn, frame)
+                        top2.forEach { it.insns.markAsDontTouch() }
+                    }
                     Opcodes.DUP_X1 -> {
                         val top2 = frame.peekWords(1, 1) ?: throwIncorrectBytecode(insn, frame)
                         top2.forEach { it.insns.markAsDontTouch() }

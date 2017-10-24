@@ -15454,6 +15454,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("comparisonWithRangeBoundEliminated.kt")
+            public void testComparisonWithRangeBoundEliminated() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/comparisonWithRangeBoundEliminated.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("evaluationOrderForCollection.kt")
             public void testEvaluationOrderForCollection() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/evaluationOrderForCollection.kt");
