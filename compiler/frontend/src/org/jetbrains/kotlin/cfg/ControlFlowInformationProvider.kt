@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWi
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasThisOrNoDispatchReceiver
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
+import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
@@ -64,15 +65,26 @@ class ControlFlowInformationProvider private constructor(
         private val subroutine: KtElement,
         private val trace: BindingTrace,
         private val pseudocode: Pseudocode,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val diagnosticSuppressor: PlatformDiagnosticSuppressor
 ) {
 
     private val pseudocodeVariablesData by lazy {
         PseudocodeVariablesData(pseudocode, trace.bindingContext)
     }
 
-    constructor(declaration: KtElement, trace: BindingTrace, languageVersionSettings: LanguageVersionSettings)
-    : this(declaration, trace, ControlFlowProcessor(trace).generatePseudocode(declaration), languageVersionSettings)
+    constructor(
+            declaration: KtElement,
+            trace: BindingTrace,
+            languageVersionSettings: LanguageVersionSettings,
+            diagnosticSuppressor: PlatformDiagnosticSuppressor
+    ) : this(
+            declaration,
+            trace,
+            ControlFlowProcessor(trace).generatePseudocode(declaration),
+            languageVersionSettings,
+            diagnosticSuppressor
+    )
 
     fun checkForLocalClassOrObjectMode() {
         // Local classes and objects are analyzed twice: when TopDownAnalyzer processes it and as a part of its container.
@@ -178,7 +190,8 @@ class ControlFlowInformationProvider private constructor(
                 val expectedType = functionDescriptor?.returnType
 
                 val providerForLocalDeclaration = ControlFlowInformationProvider(
-                        element, trace, localDeclarationInstruction.body, languageVersionSettings)
+                        element, trace, localDeclarationInstruction.body, languageVersionSettings, diagnosticSuppressor
+                )
 
                 providerForLocalDeclaration.checkFunction(expectedType)
             }
@@ -656,8 +669,10 @@ class ControlFlowInformationProvider private constructor(
             is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
                 val containingClass = owner.getContainingClassOrObject()
                 val containingClassDescriptor = trace.get(DECLARATION_TO_DESCRIPTOR, containingClass) as? ClassDescriptor
-                if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor) && containingClassDescriptor?.isExpect == false &&
-                    !containingClassDescriptor.isEffectivelyExternal()
+                if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor) &&
+                    containingClassDescriptor?.isExpect == false &&
+                    !containingClassDescriptor.isEffectivelyExternal() &&
+                    diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor)
                 ) {
                     report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
                 }
@@ -680,7 +695,8 @@ class ControlFlowInformationProvider private constructor(
                     || functionDescriptor.isEffectivelyExternal()
                     || OperatorNameConventions.GET_VALUE == functionName
                     || OperatorNameConventions.SET_VALUE == functionName
-                    || OperatorNameConventions.PROVIDE_DELEGATE == functionName) {
+                    || OperatorNameConventions.PROVIDE_DELEGATE == functionName
+                    || !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor)) {
                     return
                 }
                 if (anonymous) {

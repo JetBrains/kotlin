@@ -349,7 +349,9 @@ class ResolveElementCache(
         }
 
         val controlFlowTrace = DelegatingBindingTrace(trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true)
-        ControlFlowInformationProvider(resolveElement, controlFlowTrace, resolveElement.languageVersionSettings).checkDeclaration()
+        ControlFlowInformationProvider(
+                resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
+        ).checkDeclaration()
         controlFlowTrace.addOwnDataTo(trace, null, false)
 
         return Pair(trace.bindingContext, statementFilterUsed)
@@ -485,7 +487,9 @@ class ResolveElementCache(
         forceResolveAnnotationsInside(property)
 
         for (accessor in property.accessors) {
-            ControlFlowInformationProvider(accessor, trace, accessor.languageVersionSettings).checkDeclaration()
+            ControlFlowInformationProvider(
+                    accessor, trace, accessor.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
+            ).checkDeclaration()
         }
 
         return trace
