@@ -163,9 +163,6 @@
       <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
               text="Search Not Property Candidates"/>
 
-      <action id="CheckPartialBodyResolve" class="org.jetbrains.kotlin.idea.actions.internal.CheckPartialBodyResolveAction"
-              text="Check Partial Body Resolve"/>
-
       <action id="CreateIncrementalCompilationBackup"
               class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup"/>
 
