@@ -228,6 +228,17 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
+    override fun setupPlatformSpecificLanguageFeatureSettings(
+            extraLanguageFeatures: MutableMap<LanguageFeature, LanguageFeature.State>,
+            commandLineArguments: K2JVMCompilerArguments
+    ) {
+        if (commandLineArguments.strictJavaNullabilityAssertions) {
+            extraLanguageFeatures[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
+        }
+
+        super.setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, commandLineArguments)
+    }
+
     private fun registerJavacIfNeeded(environment: KotlinCoreEnvironment,
                                       arguments: K2JVMCompilerArguments): Boolean {
         if (arguments.useJavac) {
@@ -373,8 +384,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
             configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, arguments.addCompilerBuiltIns)
             configuration.put(JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES, arguments.loadBuiltInsFromDependencies)
-
-
 
             arguments.declarationsOutputPath?.let { configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
         }
