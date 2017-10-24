@@ -11104,6 +11104,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("subclassingExtensionReceiverClass.kt")
+        public void ignoreSubclassingExtensionReceiverClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/subclassingExtensionReceiverClass.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
         public void testAllFilesPresentInLocalClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
