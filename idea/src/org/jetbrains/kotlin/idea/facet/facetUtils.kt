@@ -106,7 +106,7 @@ fun TargetPlatformKind<*>.getPlatformCompilerArgumentsByProject(project: Project
 
 val TargetPlatformKind<*>.mavenLibraryIds: List<String>
     get() = when (this) {
-        is TargetPlatformKind.Jvm -> listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JRE8)
+        is TargetPlatformKind.Jvm -> listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JDK7, MAVEN_STDLIB_ID_JRE8, MAVEN_STDLIB_ID_JDK8)
         is TargetPlatformKind.JavaScript -> listOf(MAVEN_JS_STDLIB_ID, MAVEN_OLD_JS_STDLIB_ID)
         is TargetPlatformKind.Common -> listOf(MAVEN_COMMON_STDLIB_ID)
     }

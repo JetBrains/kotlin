@@ -108,7 +108,7 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
         require(artifact.artifactId != null) { "artifactId shouldn't be null" }
 
         ensureDependencies()
-        val versionless = artifact.withNoVersion().withoutJreSuffix()
+        val versionless = artifact.withNoVersion().withoutJDKSpecificSuffix()
         val dependency = domModel.dependencies.dependencies.firstOrNull { it.matches(versionless) } ?: domModel.dependencies.addDependency()
         dependency.groupId.stringValue = artifact.groupId
         dependency.artifactId.stringValue = artifact.artifactId
@@ -397,7 +397,10 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
             && (artifact.version == null || version.stringValue == artifact.version)
 
     private fun MavenId.withNoVersion() = MavenId(groupId, artifactId, null)
-    private fun MavenId.withoutJreSuffix() = MavenId(groupId, artifactId?.substringBeforeLast("-jre"), null)
+    private fun MavenId.withoutJDKSpecificSuffix() = MavenId(
+            groupId,
+            artifactId?.substringBeforeLast("-jre")?.substringBeforeLast("-jdk"),
+            null)
 
     private fun MavenDomElement.createChildTag(name: String, value: String? = null) = xmlTag.createChildTag(name, value)
     private fun XmlTag.createChildTag(name: String, value: String? = null) = createChildTag(name, namespace, value, false)!!
