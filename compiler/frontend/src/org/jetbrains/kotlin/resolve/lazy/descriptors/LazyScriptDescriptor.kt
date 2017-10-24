@@ -80,5 +80,5 @@ class LazyScriptDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun computeSupertypes() = listOf(ScriptHelper.getInstance()!!.getKotlinType(this, scriptDefinition.template)).ifEmpty { listOf(builtIns.anyType) }
+    override fun computeSupertypes() = listOf(ScriptHelper.getInstance().getKotlinType(this, scriptDefinition.template)).ifEmpty { listOf(builtIns.anyType) }
 }
