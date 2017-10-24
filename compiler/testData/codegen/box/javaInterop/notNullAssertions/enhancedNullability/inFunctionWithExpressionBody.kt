@@ -1,5 +1,5 @@
+// !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// STRICT_JAVA_NULLABILITY_ASSERTIONS
 
 // FILE: box.kt
 fun box(): String {
