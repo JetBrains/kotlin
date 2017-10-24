@@ -25,27 +25,21 @@ import java.util.*
 import kotlin.reflect.KMutableProperty1
 
 fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
-    val properties = PropertiesProvider(project)
+    PropertiesProvider(project).apply {
+        coroutines?.let { task.coroutinesFromGradleProperties = it }
 
-    properties["kotlin.coroutines"]?.let {
-        task.coroutinesFromGradleProperties = Coroutines.byCompilerArgument(it)
-    }
-
-    if (task is KotlinCompile) {
-        properties["kotlin.incremental"]?.let {
-            task.incremental = it.toBoolean()
+        if (task is KotlinCompile) {
+            incrementalJvm?.let { task.incremental = it }
         }
-    }
 
-    if (task is Kotlin2JsCompile) {
-        properties["kotlin.incremental.js"]?.let {
-            task.incremental = it.toBoolean()
+        if (task is Kotlin2JsCompile) {
+            incrementalJs?.let { task.incremental = it }
         }
     }
 }
 
-private class PropertiesProvider(private val project: Project) {
-    val localProperties = Properties()
+internal class PropertiesProvider(private val project: Project) {
+    private val localProperties = Properties()
 
     init {
         val localPropertiesFile = project.rootProject.file("local.properties")
@@ -56,7 +50,22 @@ private class PropertiesProvider(private val project: Project) {
         }
     }
 
-    operator fun get(propName: String): String? =
+    val coroutines: Coroutines?
+        get() = property("kotlin.coroutines")?.let { Coroutines.byCompilerArgument(it) }
+
+    val incrementalJvm: Boolean?
+        get() = booleanProperty("kotlin.incremental")
+
+    val incrementalJs: Boolean?
+        get() = booleanProperty("kotlin.incremental.js")
+
+    val incrementalMultiplatform: Boolean?
+        get() = booleanProperty("kotlin.incremental.multiplatform")
+
+    private fun booleanProperty(propName: String): Boolean? =
+            property(propName)?.toBoolean()
+
+    private fun property(propName: String): String? =
             if (project.hasProperty(propName)) {
                 project.property(propName) as? String
             }
