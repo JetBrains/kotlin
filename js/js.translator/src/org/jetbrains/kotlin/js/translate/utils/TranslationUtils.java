@@ -310,20 +310,8 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
-        JsInvocation throwNPE = new JsInvocation(context.getReferenceToIntrinsic(Namer.THROW_NPE_FUN_NAME));
-        JsConditional ensureNotNull = notNullConditional(expression, throwNPE, context);
-
-        JsExpression thenExpression = ensureNotNull.getThenExpression();
-        if (thenExpression instanceof JsNameRef) {
-            JsName name = ((JsNameRef) thenExpression).getName();
-            if (name != null) {
-                // associate(cache) ensureNotNull expression to new TemporaryConstVariable with same name.
-                context.associateExpressionToLazyValue(ensureNotNull, new TemporaryConstVariable(name, ensureNotNull));
-            }
-        }
-
-        return ensureNotNull;
+    public static JsExpression sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        return new JsInvocation(context.getReferenceToIntrinsic(Namer.NULL_CHECK_INTRINSIC_NAME), expression);
     }
 
     public static boolean isSimpleNameExpressionNotDelegatedLocalVar(@Nullable KtExpression expression, @NotNull TranslationContext context) {
