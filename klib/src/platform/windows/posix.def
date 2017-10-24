@@ -1,7 +1,7 @@
 package = platform.posix
-headers = stdio.h winsock.h io.h math.h
+headers = stdio.h io.h math.h minwindef.h
 compilerOpts = -DUNICODE -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DWINAPI_FAMILY=3 \
-   -Wno-incompatible-pointer-types -Wno-deprecated-declarations
+   -D_INC_WINDOWS -Wno-incompatible-pointer-types -Wno-deprecated-declarations
 noStringConversion = send recv
 linkerOpts = -lWs2_32
 
@@ -11,13 +11,31 @@ static int posix_errno() {
     return errno;
 }
 
+static short posix_htons(short x) {
+    return htons(x);
+}
+
+// Hacks to make MinGW Windows headers look more modular than they are.
+typedef void* HWND;
+struct _OVERLAPPED;
+typedef struct _OVERLAPPED* LPOVERLAPPED;
+#define __INSIDE_CYGWIN__
+#include <winsock.h>
+
 // Wrapper to access h_errno variable.
 static int posix_h_errno() {
     return h_errno;
 }
 
-static short posix_htons(short x) {
-    return htons(x);
+static int init_sockets() {
+    WORD wVersionRequested = MAKEWORD(2, 2);
+    WSADATA wsaData;
+    return WSAStartup(wVersionRequested, &wsaData);
+}
+
+static void deinit_sockets() {
+    WSACleanup();
+    return;
 }
 
 static void posix_FD_ZERO(fd_set *set) {
@@ -30,15 +48,4 @@ static void posix_FD_SET(int bit, fd_set *set) {
 
 static int posix_FD_ISSET(int bit, fd_set *set) {
     return FD_ISSET(bit, set);
-}
-
-static int init_sockets() {
-    WORD wVersionRequested = MAKEWORD(2, 2);
-    WSADATA wsaData;
-    return WSAStartup(wVersionRequested, &wsaData);
-}
-
-static void deinit_sockets() {
-    WSACleanup();
-    return;
 }
