@@ -2006,9 +2006,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
-        @TestMetadata("noSwap2ForConstLongRangeTo.kt")
-        public void testNoSwap2ForConstLongRangeTo() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/noSwap2ForConstLongRangeTo.kt");
+        @TestMetadata("noDupXForLiteralRangeContains.kt")
+        public void testNoDupXForLiteralRangeContains() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ranges/noDupXForLiteralRangeContains.kt");
             doTest(fileName);
         }
     }

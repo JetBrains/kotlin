@@ -42,7 +42,9 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<o
     ): InExpressionGenerator {
         val comparisonGenerator = getComparisonGeneratorForRangeContainsCall(codegen, resolvedCall)
         return if (comparisonGenerator != null)
-            InPrimitiveContinuousRangeExpressionGenerator(operatorReference, getBoundedValue(codegen), comparisonGenerator)
+            InPrimitiveContinuousRangeExpressionGenerator(
+                    operatorReference, getBoundedValue(codegen), comparisonGenerator, codegen.frameMap
+            )
         else
             CallBasedInExpressionGenerator(codegen, operatorReference)
     }
