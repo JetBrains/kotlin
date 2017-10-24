@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.range.inExpression
 
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.BranchedValue
-import org.jetbrains.kotlin.codegen.Invert
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.range.BoundedValue
 import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -31,7 +28,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class InPrimitiveContinuousRangeExpressionGenerator(
         operatorReference: KtSimpleNameExpression,
         private val boundedValue: BoundedValue,
-        private val comparisonGenerator: ComparisonGenerator
+        private val comparisonGenerator: ComparisonGenerator,
+        private val frameMap: FrameMap
 ) : InExpressionGenerator {
     private val isNotIn = operatorReference.getReferencedNameElementType() == KtTokens.NOT_IN
 
@@ -51,78 +49,88 @@ class InPrimitiveContinuousRangeExpressionGenerator(
 
                 private fun genJumpIfTrue(v: InstructionAdapter, jumpLabel: Label) {
                     // if (arg is in range) goto jumpLabel
+                    frameMap.useTmpVar(operandType) { arg1Var ->
+                        val exitLabel1 = Label()
+                        val exitLabel2 = Label()
 
-                    val exitLabel1 = Label()
-                    val exitLabel2 = Label()
+                        boundedValue.putHighLow(v, operandType)
 
-                    boundedValue.putHighLow(v, operandType)
-                    arg1.put(operandType, v)
-                    AsmUtil.dupx(v, operandType)
+                        arg1.put(operandType, v)
+                        v.store(arg1Var, operandType)
+                        v.load(arg1Var, operandType)
 
-                    // On stack: high arg low arg
-                    // if (low bound is NOT satisfied) goto exitLabel1
-                    if (boundedValue.isLowInclusive) {
-                        // low > arg
-                        comparisonGenerator.jumpIfGreater(v, exitLabel1)
+                        // On stack: high low arg
+                        // if (low bound is NOT satisfied) goto exitLabel1
+                        if (boundedValue.isLowInclusive) {
+                            // low > arg
+                            comparisonGenerator.jumpIfGreater(v, exitLabel1)
+                        }
+                        else {
+                            // low >= arg
+                            comparisonGenerator.jumpIfGreaterOrEqual(v, exitLabel1)
+                        }
+
+                        v.load(arg1Var, operandType)
+                        // On stack: high arg
+                        // if (high bound is satisfied) goto jumpLabel
+                        if (boundedValue.isHighInclusive) {
+                            // high >= arg
+                            comparisonGenerator.jumpIfGreaterOrEqual(v, jumpLabel)
+                        }
+                        else {
+                            // high > arg
+                            comparisonGenerator.jumpIfGreater(v, jumpLabel)
+                        }
+                        v.goTo(exitLabel2)
+
+                        v.mark(exitLabel1)
+                        AsmUtil.pop(v, operandType)
+
+                        v.mark(exitLabel2)
                     }
-                    else {
-                        // low >= arg
-                        comparisonGenerator.jumpIfGreaterOrEqual(v, exitLabel1)
-                    }
-
-                    // On stack: high arg
-                    // if (high bound is satisfied) goto jumpLabel
-                    if (boundedValue.isHighInclusive) {
-                        // high >= arg
-                        comparisonGenerator.jumpIfGreaterOrEqual(v, jumpLabel)
-                    }
-                    else {
-                        // high > arg
-                        comparisonGenerator.jumpIfGreater(v, jumpLabel)
-                    }
-                    v.goTo(exitLabel2)
-
-                    v.mark(exitLabel1)
-                    AsmUtil.pop2(v, operandType)
-
-                    v.mark(exitLabel2)
                 }
 
                 private fun genJumpIfFalse(v: InstructionAdapter, jumpLabel: Label) {
                     // if (arg is NOT in range) goto jumpLabel
 
-                    val cmpHighLabel = Label()
+                    frameMap.useTmpVar(operandType) { arg1Var ->
+                        val cmpHighLabel = Label()
 
-                    boundedValue.putHighLow(v, operandType)
-                    arg1.put(operandType, v)
-                    AsmUtil.dupx(v, operandType)
+                        boundedValue.putHighLow(v, operandType)
 
-                    // On stack: high arg low arg
-                    // if ([low bound is satisfied]) goto cmpHighLabel
-                    if (boundedValue.isLowInclusive) {
-                        // low <= arg
-                        comparisonGenerator.jumpIfLessOrEqual(v, cmpHighLabel)
-                    }
-                    else {
-                        // low < arg
-                        comparisonGenerator.jumpIfLess(v, cmpHighLabel)
+                        arg1.put(operandType, v)
+                        v.store(arg1Var, operandType)
+                        v.load(arg1Var, operandType)
+
+                        // On stack: high low arg
+                        // if ([low bound is satisfied]) goto cmpHighLabel
+                        if (boundedValue.isLowInclusive) {
+                            // low <= arg
+                            comparisonGenerator.jumpIfLessOrEqual(v, cmpHighLabel)
+                        }
+                        else {
+                            // low < arg
+                            comparisonGenerator.jumpIfLess(v, cmpHighLabel)
+                        }
+
+                        // Low bound is NOT satisfied, clear stack and goto jumpLabel
+                        AsmUtil.pop(v, operandType)
+                        v.goTo(jumpLabel)
+
+                        v.mark(cmpHighLabel)
+                        v.load(arg1Var, operandType)
+                        // On stack: high arg
+                        // if ([high bound is NOT satisfied]) goto jumpLabel
+                        if (boundedValue.isHighInclusive) {
+                            // high < arg
+                            comparisonGenerator.jumpIfLess(v, jumpLabel)
+                        }
+                        else {
+                            // high <= arg
+                            comparisonGenerator.jumpIfLessOrEqual(v, jumpLabel)
+                        }
                     }
 
-                    // Low bound is NOT satisfied, clear stack and goto jumpLabel
-                    AsmUtil.pop2(v, operandType)
-                    v.goTo(jumpLabel)
-
-                    v.mark(cmpHighLabel)
-                    // On stack: high arg
-                    // if ([high bound is NOT satisfied]) goto jumpLabel
-                    if (boundedValue.isHighInclusive) {
-                        // high < arg
-                        comparisonGenerator.jumpIfLess(v, jumpLabel)
-                    }
-                    else {
-                        // high <= arg
-                        comparisonGenerator.jumpIfLessOrEqual(v, jumpLabel)
-                    }
                 }
             }
 }

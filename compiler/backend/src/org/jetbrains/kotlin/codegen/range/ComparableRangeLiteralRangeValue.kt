@@ -41,5 +41,5 @@ class ComparableRangeLiteralRangeValue(
             codegen: ExpressionCodegen,
             operatorReference: KtSimpleNameExpression,
             resolvedCall: ResolvedCall<out CallableDescriptor>
-    ) = InContinuousRangeOfComparableExpressionGenerator(operatorReference, boundedValue)
+    ) = InContinuousRangeOfComparableExpressionGenerator(operatorReference, boundedValue, codegen.frameMap)
 }
