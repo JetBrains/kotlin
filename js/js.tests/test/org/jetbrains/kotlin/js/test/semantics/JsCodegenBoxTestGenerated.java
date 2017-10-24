@@ -11157,6 +11157,15 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class EnhancedNullability extends AbstractJsCodegenBoxTest {
+                public void testAllFilesPresentInEnhancedNullability() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
@@ -13107,15 +13116,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testTrivialInstanceOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullCheckOptimization/trivialInstanceOf.kt");
             doTest(fileName);
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/nullabilityAssertions")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class NullabilityAssertions extends AbstractJsCodegenBoxTest {
-        public void testAllFilesPresentInNullabilityAssertions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/nullabilityAssertions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
     }
 

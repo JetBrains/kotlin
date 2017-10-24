@@ -10174,9 +10174,39 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt")
+            public void testDestructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionReceiverParameter.kt")
             public void testExtensionReceiverParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/extensionReceiverParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11.kt")
+            public void testIncWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv12.kt")
+            public void testIncWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("incWithNullabilityAssertionOnExtensionReceiver_lv11.kt")
+            public void testIncWithNullabilityAssertionOnExtensionReceiver_lv11() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/incWithNullabilityAssertionOnExtensionReceiver_lv11.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("incWithNullabilityAssertionOnExtensionReceiver_lv12.kt")
+            public void testIncWithNullabilityAssertionOnExtensionReceiver_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/incWithNullabilityAssertionOnExtensionReceiver_lv12.kt");
                 doTest(fileName);
             }
 
@@ -10184,6 +10214,93 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testMapPut() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("nullabilityAssertionOnExtensionReceiver_lv11.kt")
+            public void testNullabilityAssertionOnExtensionReceiver_lv11() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnExtensionReceiver_lv11.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullabilityAssertionOnExtensionReceiver_lv12.kt")
+            public void testNullabilityAssertionOnExtensionReceiver_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnExtensionReceiver_lv12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullabilityAssertionOnInlineFunExtensionReceiver_lv11.kt")
+            public void testNullabilityAssertionOnInlineFunExtensionReceiver_lv11() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnInlineFunExtensionReceiver_lv11.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullabilityAssertionOnInlineFunExtensionReceiver_lv12.kt")
+            public void testNullabilityAssertionOnInlineFunExtensionReceiver_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnInlineFunExtensionReceiver_lv12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullabilityAssertionOnMemberExtensionReceiver_lv12.kt")
+            public void testNullabilityAssertionOnMemberExtensionReceiver_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnMemberExtensionReceiver_lv12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullabilityAssertionOnPrivateMemberExtensionReceiver_lv12.kt")
+            public void testNullabilityAssertionOnPrivateMemberExtensionReceiver_lv12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnPrivateMemberExtensionReceiver_lv12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class EnhancedNullability extends AbstractIrBlackBoxCodegenTest {
+                public void testAllFilesPresentInEnhancedNullability() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("inFunctionWithExpressionBody.kt")
+                public void testInFunctionWithExpressionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inFunctionWithExpressionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inFunctionWithExpressionBodyWithJavaGeneric.kt")
+                public void testInFunctionWithExpressionBodyWithJavaGeneric() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inFunctionWithExpressionBodyWithJavaGeneric.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inLocalFunctionWithExpressionBody.kt")
+                public void testInLocalFunctionWithExpressionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inLocalFunctionWithExpressionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inLocalVariableInitializer.kt")
+                public void testInLocalVariableInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inLocalVariableInitializer.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inMemberPropertyInitializer.kt")
+                public void testInMemberPropertyInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inMemberPropertyInitializer.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inPropertyGetterWithExpressionBody.kt")
+                public void testInPropertyGetterWithExpressionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inPropertyGetterWithExpressionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inTopLevelPropertyInitializer.kt")
+                public void testInTopLevelPropertyInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inTopLevelPropertyInitializer.kt");
+                    doTest(fileName);
+                }
             }
         }
 
@@ -11906,81 +12023,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("trivialInstanceOf.kt")
         public void testTrivialInstanceOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullCheckOptimization/trivialInstanceOf.kt");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/nullabilityAssertions")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class NullabilityAssertions extends AbstractIrBlackBoxCodegenTest {
-        public void testAllFilesPresentInNullabilityAssertions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/nullabilityAssertions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
-        }
-
-        @TestMetadata("destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt")
-        public void testDestructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11.kt")
-        public void testIncWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv12.kt")
-        public void testIncWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv12.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("incWithNullabilityAssertionOnExtensionReceiver_lv11.kt")
-        public void testIncWithNullabilityAssertionOnExtensionReceiver_lv11() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/incWithNullabilityAssertionOnExtensionReceiver_lv11.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("incWithNullabilityAssertionOnExtensionReceiver_lv12.kt")
-        public void testIncWithNullabilityAssertionOnExtensionReceiver_lv12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/incWithNullabilityAssertionOnExtensionReceiver_lv12.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullabilityAssertionOnExtensionReceiver_lv11.kt")
-        public void testNullabilityAssertionOnExtensionReceiver_lv11() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/nullabilityAssertionOnExtensionReceiver_lv11.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullabilityAssertionOnExtensionReceiver_lv12.kt")
-        public void testNullabilityAssertionOnExtensionReceiver_lv12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/nullabilityAssertionOnExtensionReceiver_lv12.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullabilityAssertionOnInlineFunExtensionReceiver_lv11.kt")
-        public void testNullabilityAssertionOnInlineFunExtensionReceiver_lv11() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/nullabilityAssertionOnInlineFunExtensionReceiver_lv11.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullabilityAssertionOnInlineFunExtensionReceiver_lv12.kt")
-        public void testNullabilityAssertionOnInlineFunExtensionReceiver_lv12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/nullabilityAssertionOnInlineFunExtensionReceiver_lv12.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullabilityAssertionOnMemberExtensionReceiver_lv12.kt")
-        public void testNullabilityAssertionOnMemberExtensionReceiver_lv12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/nullabilityAssertionOnMemberExtensionReceiver_lv12.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullabilityAssertionOnPrivateMemberExtensionReceiver_lv12.kt")
-        public void testNullabilityAssertionOnPrivateMemberExtensionReceiver_lv12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullabilityAssertions/nullabilityAssertionOnPrivateMemberExtensionReceiver_lv12.kt");
             doTest(fileName);
         }
     }
