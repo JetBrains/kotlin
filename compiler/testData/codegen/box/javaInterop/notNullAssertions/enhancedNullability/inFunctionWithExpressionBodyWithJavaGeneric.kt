@@ -1,5 +1,5 @@
+// !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// STRICT_JAVA_NULLABILITY_ASSERTIONS
 
 // See KT-8135
 // We could generate runtime assertion on call site for 'generic<NOT_NULL_TYPE>()' below.
