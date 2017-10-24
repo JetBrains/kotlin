@@ -86,10 +86,10 @@ public final class Namer {
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     public static final String ANOTHER_THIS_PARAMETER_NAME = "$this";
 
-    public static final String THROW_NPE_FUN_NAME = "throwNPE";
     public static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
     public static final String THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE";
     public static final String THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION = "throwUPAE";
+    public static final String NULL_CHECK_INTRINSIC_NAME = "ensureNotNull";
     private static final String PROTOTYPE_NAME = "prototype";
     private static final String CAPTURED_VAR_FIELD = "v";
 
