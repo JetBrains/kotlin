@@ -20,9 +20,7 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
-import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JRE7
-import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JRE8
+import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
@@ -36,7 +34,8 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
 import java.util.*
 
 class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
-    override fun buildVisitor(): BaseInspectionVisitor = MyVisitor(listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JRE8))
+    override fun buildVisitor(): BaseInspectionVisitor = MyVisitor(
+            listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JDK7, MAVEN_STDLIB_ID_JRE8, MAVEN_STDLIB_ID_JDK8))
 
     override fun buildErrorString(vararg args: Any) =
             "Plugin version (${args[0]}) is not the same as library version (${args[1]})"
