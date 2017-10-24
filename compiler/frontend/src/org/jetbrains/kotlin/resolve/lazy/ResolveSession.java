@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo;
@@ -82,6 +83,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LanguageVersionSettings languageVersionSettings;
     private DelegationFilter delegationFilter;
     private WrappedTypeFactory wrappedTypeFactory;
+    private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -135,15 +137,19 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.languageVersionSettings = languageVersionSettings;
     }
 
-
     @Inject
     public void setDelegationFilter(@NotNull DelegationFilter delegationFilter) {
         this.delegationFilter = delegationFilter;
     }
 
     @Inject
-    public void setWrappedTypeFactory(WrappedTypeFactory wrappedTypeFactory) {
+    public void setWrappedTypeFactory(@NotNull WrappedTypeFactory wrappedTypeFactory) {
         this.wrappedTypeFactory = wrappedTypeFactory;
+    }
+
+    @Inject
+    public void setPlatformDiagnosticSuppressor(@NotNull PlatformDiagnosticSuppressor platformDiagnosticSuppressor) {
+        this.platformDiagnosticSuppressor = platformDiagnosticSuppressor;
     }
 
     // Only calls from injectors expected
@@ -460,6 +466,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public WrappedTypeFactory getWrappedTypeFactory() {
         return wrappedTypeFactory;
+    }
+
+    @NotNull
+    public PlatformDiagnosticSuppressor getPlatformDiagnosticSuppressor() {
+        return platformDiagnosticSuppressor;
     }
 
     @Override
