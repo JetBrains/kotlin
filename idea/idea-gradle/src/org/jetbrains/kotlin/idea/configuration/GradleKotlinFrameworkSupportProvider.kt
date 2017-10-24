@@ -142,7 +142,7 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
     override fun getPluginId() = "kotlin-platform-common"
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_COMMON_STDLIB_ID)
-    override fun getTestDependencies() = listOf(MAVEN_COMMON_TEST_ID)
+    override fun getTestDependencies() = listOf(MAVEN_COMMON_TEST_ID, MAVEN_COMMON_TEST_ANNOTATIONS_ID)
 
     override fun getDescription() = "Shared code for a Kotlin multiplatform project (targeting JVM and JS)"
 }
