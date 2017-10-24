@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsOnDeclarationBodyChecker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -86,6 +88,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final JvmRuntimeTypes runtimeTypes;
     private final TypeMappingConfiguration<Type> typeMappingConfiguration;
     private final SwitchCodegenProvider switchCodegenProvider;
+    private final LanguageVersionSettings languageVersionSettings;
+    private final ClassBuilderMode classBuilderMode;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
@@ -94,6 +98,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.runtimeTypes = state.getJvmRuntimeTypes();
         this.typeMappingConfiguration = state.getTypeMapper().getTypeMappingConfiguration();
         this.switchCodegenProvider = new SwitchCodegenProvider(state);
+        this.languageVersionSettings = state.getLanguageVersionSettings();
+        this.classBuilderMode = state.getClassBuilderMode();
     }
 
     @NotNull
@@ -411,6 +417,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         // working around a problem with shallow analysis
         if (descriptor == null) return;
 
+        checkRuntimeAsserionsOnDeclarationBody(property, descriptor);
+
         if (descriptor instanceof LocalVariableDescriptor) {
             recordLocalVariablePropertyMetadata((LocalVariableDescriptor) descriptor);
         }
@@ -447,6 +455,14 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         nameStack.pop();
     }
 
+    private void checkRuntimeAsserionsOnDeclarationBody(@NotNull KtDeclaration declaration, DeclarationDescriptor descriptor) {
+        if (classBuilderMode.generateBodies) {
+            // NB This is required only for bodies generation.
+            // In light class generation can cause recursion in types resolution.
+            RuntimeAssertionsOnDeclarationBodyChecker.check(declaration, descriptor, bindingTrace, languageVersionSettings);
+        }
+    }
+
     @NotNull
     private Type getMetadataOwner(@NotNull KtProperty property) {
         for (int i = classStack.size() - 1; i >= 0; i--) {
@@ -470,10 +486,22 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Override
+    public void visitPropertyAccessor(@NotNull KtPropertyAccessor accessor) {
+        PropertyAccessorDescriptor accessorDescriptor = bindingContext.get(PROPERTY_ACCESSOR, accessor);
+        if (accessorDescriptor != null) {
+            checkRuntimeAsserionsOnDeclarationBody(accessor, accessorDescriptor);
+        }
+
+        super.visitPropertyAccessor(accessor);
+    }
+
+    @Override
     public void visitNamedFunction(@NotNull KtNamedFunction function) {
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
+
+        checkRuntimeAsserionsOnDeclarationBody(function, functionDescriptor);
 
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
 

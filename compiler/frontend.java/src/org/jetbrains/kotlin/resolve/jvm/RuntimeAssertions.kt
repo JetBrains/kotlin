@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -31,9 +34,9 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.isClassType
+import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {
@@ -83,6 +86,9 @@ class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: Strin
     }
 }
 
+private val KtExpression.textForRuntimeAssertionInfo
+    get() = StringUtil.trimMiddle(text, 50)
+
 class RuntimeAssertionsDataFlowExtras(
         private val c: ResolutionContext<*>,
         private val dataFlowValue: DataFlowValue,
@@ -93,7 +99,7 @@ class RuntimeAssertionsDataFlowExtras(
     override val possibleTypes: Set<KotlinType>
         get() = c.dataFlowInfo.getCollectedTypes(dataFlowValue)
     override val presentableText: String
-        get() = StringUtil.trimMiddle(expression.text, 50)
+        get() = expression.textForRuntimeAssertionInfo
 }
 
 object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
@@ -136,6 +142,103 @@ object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {
 
         if (assertionInfo != null) {
             c.trace.record(JvmBindingContextSlices.RECEIVER_RUNTIME_ASSERTION_INFO, expressionReceiverValue, assertionInfo)
+        }
+    }
+}
+
+object RuntimeAssertionsOnDeclarationBodyChecker {
+    @JvmStatic
+    fun check(
+            declaration: KtDeclaration,
+            descriptor: DeclarationDescriptor,
+            bindingTrace: BindingTrace,
+            languageVersionSettings: LanguageVersionSettings
+    ) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.StrictJavaNullabilityAssertions)) return
+
+        when {
+            declaration is KtProperty && descriptor is VariableDescriptor ->
+                checkLocalVariable(declaration, descriptor, bindingTrace)
+            declaration is KtFunction && descriptor is FunctionDescriptor ->
+                checkFunction(declaration, descriptor, bindingTrace)
+            declaration is KtProperty && descriptor is PropertyDescriptor ->
+                checkProperty(declaration, descriptor, bindingTrace)
+            declaration is KtPropertyAccessor && descriptor is PropertyAccessorDescriptor ->
+                checkPropertyAccessor(declaration, descriptor, bindingTrace)
+        }
+    }
+
+    private fun checkLocalVariable(
+            declaration: KtProperty,
+            descriptor: VariableDescriptor,
+            bindingTrace: BindingTrace
+    ) {
+        if (declaration.typeReference != null) return
+
+        checkNullabilityAssertion(declaration.initializer ?: return, descriptor.type, bindingTrace)
+    }
+
+    private fun checkFunction(
+            declaration: KtFunction,
+            descriptor: FunctionDescriptor,
+            bindingTrace: BindingTrace
+    ) {
+        if (declaration.typeReference != null || declaration.hasBlockBody()) return
+
+        checkNullabilityAssertion(declaration.bodyExpression ?: return, descriptor.returnType ?: return,
+                                  bindingTrace)
+    }
+
+    private fun checkProperty(
+            declaration: KtProperty,
+            descriptor: PropertyDescriptor,
+            bindingTrace: BindingTrace
+    ) {
+        if (declaration.typeReference != null) return
+
+        // TODO nullability assertion on delegate initialization expression, see KT-20823
+        if (declaration.hasDelegateExpression()) return
+
+        checkNullabilityAssertion(declaration.initializer ?: return, descriptor.type, bindingTrace)
+    }
+
+    private fun checkPropertyAccessor(
+            declaration: KtPropertyAccessor,
+            descriptor: PropertyAccessorDescriptor,
+            bindingTrace: BindingTrace
+    ) {
+        if (declaration.property.typeReference != null || declaration.hasBlockBody()) return
+
+        checkNullabilityAssertion(declaration.bodyExpression ?: return, descriptor.correspondingProperty.type,
+                                  bindingTrace)
+    }
+
+
+    private fun checkNullabilityAssertion(
+            expression: KtExpression,
+            declarationType: KotlinType,
+            bindingTrace: BindingTrace
+    ) {
+        if (declarationType.unwrap().canContainNull()) return
+
+        val expressionType = bindingTrace.getType(expression) ?: return
+        if (expressionType.isError) return
+
+        if (!expressionType.hasEnhancedNullability()) return
+
+        bindingTrace.record(
+                JvmBindingContextSlices.BODY_RUNTIME_ASSERTION_INFO,
+                expression,
+                RuntimeAssertionInfo(true, expression.textForRuntimeAssertionInfo)
+        )
+    }
+
+    private fun UnwrappedType.canContainNull(): Boolean {
+        val upper = upperIfFlexible()
+        return when {
+            upper.isMarkedNullable -> true
+            upper.isClassType -> false
+            else -> upper.immediateSupertypes().all { it.unwrap().canContainNull() }
         }
     }
 }
