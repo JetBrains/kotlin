@@ -464,6 +464,7 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
         options.isFork = true
         options.forkOptions.javaHome = file(javaHome)
         options.compilerArgs.add("-proc:none")
+        options.encoding = "UTF-8"
     }
 
     tasks.withType<KotlinCompile> {
