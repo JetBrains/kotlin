@@ -30,7 +30,8 @@ class KotlinClassHeader(
         val incompatibleData: Array<String>?,
         val strings: Array<String>?,
         val extraString: String?,
-        val extraInt: Int
+        val extraInt: Int,
+        val packageName: String?
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {
