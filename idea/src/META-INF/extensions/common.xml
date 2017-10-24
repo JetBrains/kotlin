@@ -2,8 +2,6 @@
     <id>org.jetbrains.kotlin</id>
 
     <extensionPoints>
-        <extensionPoint name="suppressStringProvider"
-                        interface="org.jetbrains.kotlin.resolve.diagnostics.SuppressStringProvider"/>
         <extensionPoint name="diagnosticSuppressor"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"/>
         <extensionPoint name="expressionCodegenExtension"

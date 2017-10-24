@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.analyze
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -26,25 +27,24 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
-import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
-import org.jetbrains.kotlin.resolve.diagnostics.PROPERTY_NOT_INITIALIZED_ERRORS
-import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 
 private val NATIVE_ANNOTATIONS = arrayOf(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
 
-object JsNativeDiagnosticSuppressor : PlatformDiagnosticSuppressor {
-    override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean {
-        var descriptor: DeclarationDescriptor = parameter
-        while (true) {
-            val annotations = descriptor.annotations
-            if (!annotations.isEmpty() && NATIVE_ANNOTATIONS.any(annotations::hasAnnotation)) return false
-            descriptor = descriptor.containingDeclaration ?: break
-        }
-        return true
+private fun DeclarationDescriptor.isLexicallyInsideJsNative(): Boolean {
+    var descriptor: DeclarationDescriptor = this
+    while (true) {
+        val annotations = descriptor.annotations
+        if (!annotations.isEmpty() && NATIVE_ANNOTATIONS.any(annotations::hasAnnotation)) return true
+        descriptor = descriptor.containingDeclaration ?: break
     }
+    return false
 }
 
-class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS + PROPERTY_NOT_INITIALIZED_ERRORS, *NATIVE_ANNOTATIONS)
+object JsNativeDiagnosticSuppressor : PlatformDiagnosticSuppressor {
+    override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean = !parameter.isLexicallyInsideJsNative()
+
+    override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = !descriptor.isLexicallyInsideJsNative()
+}
 
 class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
