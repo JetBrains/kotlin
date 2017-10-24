@@ -25,13 +25,13 @@ import java.nio.charset.Charset
 
 /**
  * Returns the array if it's not `null`, or an empty array otherwise.
- * @sample samples.collections.Arrays.ContentOperations.arrayOrEmpty
+ * @sample samples.collections.Arrays.Usage.arrayOrEmpty
  */
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
 /**
  * Converts the contents of this byte array to a string using the specified [charset].
- * @sample samples.collections.Arrays.ContentOperations.byteArrayToString
+ * @sample samples.text.Strings.stringToByteArray
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.toString(charset: Charset): String = String(this, charset)

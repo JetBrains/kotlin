@@ -43,12 +43,11 @@ class Collections {
         }
 
         @Sample
-        @Suppress("UselessCallOnNotNull")
         fun collectionOrEmpty() {
             val nullCollection: Collection<Any>? = null
             assertPrints(nullCollection.orEmpty(), "[]")
 
-            val collection = listOf('a', 'b', 'c')
+            val collection: List<Char>? = listOf('a', 'b', 'c')
             assertPrints(collection.orEmpty(), "[a, b, c]")
         }
 
@@ -183,12 +182,11 @@ class Collections {
         }
 
         @Sample
-        @Suppress("UselessCallOnNotNull")
         fun listOrEmpty() {
             val nullList: List<Any>? = null
             assertPrints(nullList.orEmpty(), "[]")
 
-            val list = listOf('a', 'b', 'c')
+            val list: List<Char>? = listOf('a', 'b', 'c')
             assertPrints(list.orEmpty(), "[a, b, c]")
         }
 
@@ -206,46 +204,42 @@ class Collections {
 
         @Sample
         fun binarySearchOnComparable() {
-            val list = listOf('a', 'b', 'c', 'd', 'e')
+            val list = mutableListOf('a', 'b', 'c', 'd', 'e')
             assertPrints(list.binarySearch('d'), "3")
 
-            // prints inverted insertion point
-            assertPrints(list.binarySearch('d', toIndex = 2), "-3")
+            list.remove('d')
+
+            val invertedInsertionPoint = list.binarySearch('d')
+            val actualInsertionPoint = -(invertedInsertionPoint + 1)
+            assertPrints(actualInsertionPoint, "3")
+
+            list.add(actualInsertionPoint, 'd')
+            assertPrints(list, "[a, b, c, d, e]")
         }
 
         @Sample
         fun binarySearchWithComparator() {
-            val list = listOf(5, 4, 3, 2, 1)
-            val comparator = Comparator<Int> { x, y -> y - x }
-            assertPrints(list.binarySearch(2, comparator), "3")
-
-            // prints inverted insertion point
-            assertPrints(list.binarySearch(2, comparator, toIndex = 2), "-3")
+            val colors = listOf("Blue", "green", "ORANGE", "Red", "yellow")
+            assertPrints(colors.binarySearch("RED", String.CASE_INSENSITIVE_ORDER), "3")
         }
 
         @Sample
         fun binarySearchBySelector() {
             data class Box(val value: Int)
 
-            val numbers = listOf(1, 3, 7, 10, 12, 15, 22, 45)
+            val numbers = listOf(1, 3, 7, 10, 12)
             val boxes = numbers.map { Box(it) }
             assertPrints(boxes.binarySearchBy(10) { it.value }, "3")
-
-            // prints inverted insertion point
-            assertPrints(boxes.binarySearchBy(10, toIndex = 2) { it.value }, "-3")
         }
 
         @Sample
         fun binarySearchByKeyWithComparator() {
             data class Box(val value: Int)
-            val comparator = Comparator<Box> { x, y -> x.value - y.value }
+            val comparator = Comparator<Box> { x, y -> y.value - x.value }
 
-            val numbers = listOf(1, 3, 7, 10, 12, 15, 22, 45)
+            val numbers = listOf(12, 10, 7, 3, 1)
             val boxes = numbers.map { Box(it) }
-            assertPrints(boxes.binarySearch { comparator.compare(it, Box(10)) }, "3")
-
-            // prints inverted insertion point
-            assertPrints(boxes.binarySearch(toIndex = 2) { comparator.compare(it, Box(10)) }, "-3")
+            assertPrints(boxes.binarySearch { comparator.compare(it, Box(10)) }, "1")
         }
     }
 

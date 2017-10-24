@@ -71,4 +71,11 @@ class Strings {
         assertPrints(proteins.take(5).toList(), "[Isoleucine, Arginine, Glycine, Arginine, Glutamine]")
     }
 
+    @Sample
+    fun stringToByteArray() {
+        val charset = Charsets.UTF_8
+        val byteArray = "Hello".toByteArray(charset)
+        assertPrints(byteArray.toString(charset), "Hello")
+    }
+
 }
