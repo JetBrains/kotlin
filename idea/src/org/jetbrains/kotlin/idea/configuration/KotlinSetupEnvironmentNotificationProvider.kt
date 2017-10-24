@@ -40,10 +40,13 @@ import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
 class KotlinSetupEnvironmentNotificationProvider(
@@ -65,7 +68,7 @@ class KotlinSetupEnvironmentNotificationProvider(
             return null
         }
 
-        val psiFile = PsiManager.getInstance(myProject).findFile(file) ?: return null
+        val psiFile = PsiManager.getInstance(myProject).findFile(file) as? KtFile ?: return null
         if (psiFile.language !== KotlinLanguage.INSTANCE) {
             return null
         }
@@ -75,7 +78,8 @@ class KotlinSetupEnvironmentNotificationProvider(
             return null
         }
 
-        if (ModuleRootManager.getInstance(module).sdk == null) {
+        if (ModuleRootManager.getInstance(module).sdk == null &&
+            TargetPlatformDetector.getPlatform(psiFile) == JvmPlatform) {
             return createSetupSdkPanel(myProject, psiFile)
         }
 
