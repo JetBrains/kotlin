@@ -81,7 +81,9 @@ object JvmPlatformConfigurator : PlatformConfigurator(
 
         delegationFilter = JvmDelegationFilter,
 
-        overridesBackwardCompatibilityHelper = JvmOverridesBackwardCompatibilityHelper
+        overridesBackwardCompatibilityHelper = JvmOverridesBackwardCompatibilityHelper,
+
+        declarationReturnTypeSanitizer = JvmDeclarationReturnTypeSanitizer
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JvmReflectionAPICallChecker>()

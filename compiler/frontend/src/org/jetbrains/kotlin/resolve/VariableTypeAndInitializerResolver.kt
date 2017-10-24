@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorWithInitializerImpl
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -39,7 +40,9 @@ class VariableTypeAndInitializerResolver(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
         private val delegatedPropertyResolver: DelegatedPropertyResolver,
         private val wrappedTypeFactory: WrappedTypeFactory,
-        private val typeApproximator: TypeApproximator
+        private val typeApproximator: TypeApproximator,
+        private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
     companion object {
         @JvmField
@@ -92,6 +95,7 @@ class VariableTypeAndInitializerResolver(
 
                 else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace, local)
             }
+
             else -> null
         }
     }
@@ -152,7 +156,9 @@ class VariableTypeAndInitializerResolver(
             trace: BindingTrace,
             local: Boolean
     ): KotlinType {
-        return approximateType(expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace), local)
+        val inferredType = expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace)
+        val approximatedType = approximateType(inferredType, local)
+        return declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings)
     }
 
     private fun approximateType(type: KotlinType, local: Boolean): UnwrappedType = typeApproximator.approximateDeclarationType(type, local)
