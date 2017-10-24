@@ -40,7 +40,7 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
   private fun toUpperLevel(element: PsiElement): PsiElement? {
     var current = element.parent
 
-    while (current != null && !(current is KtLambdaExpression || current is KtAnonymousInitializer)) {
+    while (current != null && !(current is KtLambdaExpression || current is KtAnonymousInitializer || current is KtObjectDeclaration)) {
       current = current.parent
     }
 
