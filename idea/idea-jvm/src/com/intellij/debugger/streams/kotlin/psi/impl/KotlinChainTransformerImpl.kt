@@ -38,7 +38,8 @@ class KotlinChainTransformerImpl : ChainTransformer<KtCallExpression> {
 
     val terminationsPsiCall = callChain.last()
     // TODO: infer true types
-    val terminationCall = TerminatorStreamCallImpl(terminationsPsiCall.callName(), emptyList(),
+    val terminationCall = TerminatorStreamCallImpl(terminationsPsiCall.callName(),
+        terminationsPsiCall.valueArguments.map { it.toCallArgument() },
         KotlinTypes.ANY, KotlinTypes.ANY,
         terminationsPsiCall.textRange)
 
