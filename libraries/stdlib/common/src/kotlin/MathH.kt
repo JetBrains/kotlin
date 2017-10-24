@@ -29,59 +29,59 @@ public const val E: Double = 2.718281828459045
 
 // ================ Double Math ========================================
 
-/** Computes the sine of the angle [a] given in radians.
+/** Computes the sine of the angle [x] given in radians.
  *
  *  Special cases:
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun sin(a: Double): Double
+public expect fun sin(x: Double): Double
 
-/** Computes the cosine of the angle [a] given in radians.
+/** Computes the cosine of the angle [x] given in radians.
  *
  *  Special cases:
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun cos(a: Double): Double
+public expect fun cos(x: Double): Double
 
-/** Computes the tangent of the angle [a] given in radians.
+/** Computes the tangent of the angle [x] given in radians.
  *
  *  Special cases:
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun tan(a: Double): Double
+public expect fun tan(x: Double): Double
 
 /**
- * Computes the arc sine of the value [a];
+ * Computes the arc sine of the value [x];
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
+ *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun asin(a: Double): Double
+public expect fun asin(x: Double): Double
 
 /**
- * Computes the arc cosine of the value [a];
+ * Computes the arc cosine of the value [x];
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
+ *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun acos(a: Double): Double
+public expect fun acos(x: Double): Double
 
 /**
- * Computes the arc tangent of the value [a];
+ * Computes the arc tangent of the value [x];
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun atan(a: Double): Double
+public expect fun atan(x: Double): Double
 
 /**
  * Returns the angle `theta` of the polar coordinates `(r, theta)` that correspond
@@ -103,7 +103,7 @@ public expect fun atan(a: Double): Double
 public expect fun atan2(y: Double, x: Double): Double
 
 /**
- * Computes the hyperbolic sine of the value [a].
+ * Computes the hyperbolic sine of the value [x].
  *
  * Special cases:
  *   - `sinh(NaN)` is `NaN`
@@ -111,20 +111,20 @@ public expect fun atan2(y: Double, x: Double): Double
  *   - `sinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun sinh(a: Double): Double
+public expect fun sinh(x: Double): Double
 
 /**
- * Computes the hyperbolic cosine of the value [a].
+ * Computes the hyperbolic cosine of the value [x].
  *
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-public expect fun cosh(a: Double): Double
+public expect fun cosh(x: Double): Double
 
 /**
- * Computes the hyperbolic tangent of the value [a].
+ * Computes the hyperbolic tangent of the value [x].
  *
  * Special cases:
  *   - `tanh(NaN)` is `NaN`
@@ -132,12 +132,12 @@ public expect fun cosh(a: Double): Double
  *   - `tanh(-Inf)` is `-1.0`
  */
 @SinceKotlin("1.2")
-public expect fun tanh(a: Double): Double
+public expect fun tanh(x: Double): Double
 
 /**
- * Computes the inverse hyperbolic sine of the value [a].
+ * Computes the inverse hyperbolic sine of the value [x].
  *
- * The returned value is `x` such that `sinh(x) == a`.
+ * The returned value is `y` such that `sinh(y) == x`.
  *
  * Special cases:
  *   - `asinh(NaN)` is `NaN`
@@ -145,12 +145,12 @@ public expect fun tanh(a: Double): Double
  *   - `asinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun asinh(a: Double): Double
+public expect fun asinh(x: Double): Double
 
 /**
- * Computes the inverse hyperbolic cosine of the value [a].
+ * Computes the inverse hyperbolic cosine of the value [x].
  *
- * The returned value is positive `x` such that `cosh(x) == a`.
+ * The returned value is positive `y` such that `cosh(y) == x`.
  *
  * Special cases:
  *   - `acosh(NaN)` is `NaN`
@@ -158,12 +158,12 @@ public expect fun asinh(a: Double): Double
  *   - `acosh(+Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-public expect fun acosh(a: Double): Double
+public expect fun acosh(x: Double): Double
 
 /**
- * Computes the inverse hyperbolic tangent of the value [a].
+ * Computes the inverse hyperbolic tangent of the value [x].
  *
- * The returned value is `x` such that `tanh(x) == a`.
+ * The returned value is `y` such that `tanh(y) == x`.
  *
  * Special cases:
  *   - `tanh(NaN)` is `NaN`
@@ -172,7 +172,7 @@ public expect fun acosh(a: Double): Double
  *   - `tanh(-1.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun atanh(a: Double): Double
+public expect fun atanh(x: Double): Double
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
@@ -185,16 +185,16 @@ public expect fun atanh(a: Double): Double
 public expect fun hypot(x: Double, y: Double): Double
 
 /**
- * Computes the positive square root of the value [a].
+ * Computes the positive square root of the value [x].
  *
  * Special cases:
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun sqrt(a: Double): Double
+public expect fun sqrt(x: Double): Double
 
 /**
- * Computes Euler's number `e` raised to the power of the value [a].
+ * Computes Euler's number `e` raised to the power of the value [x].
  *
  * Special cases:
  *   - `exp(NaN)` is `NaN`
@@ -202,12 +202,12 @@ public expect fun sqrt(a: Double): Double
  *   - `exp(-Inf)` is `0.0`
  */
 @SinceKotlin("1.2")
-public expect fun exp(a: Double): Double
+public expect fun exp(x: Double): Double
 
 /**
- * Computes `exp(a) - 1`.
+ * Computes `exp(x) - 1`.
  *
- * This function can be implemented to produce more precise result for [a] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `expm1(NaN)` is `NaN`
@@ -217,14 +217,14 @@ public expect fun exp(a: Double): Double
  * @see [exp] function.
  */
 @SinceKotlin("1.2")
-public expect fun expm1(a: Double): Double
+public expect fun expm1(x: Double): Double
 
 /**
- * Computes the logarithm of the value [a] to the given [base].
+ * Computes the logarithm of the value [x] to the given [base].
  *
  * Special cases:
- *   - `log(a, b)` is `NaN` if either `a` or `b` are `NaN`
- *   - `log(a, b)` is `NaN` when `a < 0` or `b <= 0` or `b == 1.0`
+ *   - `log(x, b)` is `NaN` if either `x` or `b` are `NaN`
+ *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
  *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
@@ -232,10 +232,10 @@ public expect fun expm1(a: Double): Double
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
  */
 @SinceKotlin("1.2")
-public expect fun log(a: Double, base: Double): Double
+public expect fun log(x: Double, base: Double): Double
 
 /**
- * Computes the natural logarithm (base `E`) of the value [a].
+ * Computes the natural logarithm (base `E`) of the value [x].
  *
  * Special cases:
  *   - `ln(NaN)` is `NaN`
@@ -244,28 +244,28 @@ public expect fun log(a: Double, base: Double): Double
  *   - `ln(0.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun ln(a: Double): Double
+public expect fun ln(x: Double): Double
 
 /**
- * Computes the common logarithm (base 10) of the value [a].
+ * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-public expect fun log10(a: Double): Double
+public expect fun log10(x: Double): Double
 
 /**
- * Computes the binary logarithm (base 2) of the value [a].
+ * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-public expect fun log2(a: Double): Double
+public expect fun log2(x: Double): Double
 
 /**
- * Computes `ln(a + 1)`.
+ * Computes `ln(x + 1)`.
  *
- * This function can be implemented to produce more precise result for [a] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `ln1p(NaN)` is `NaN`
@@ -277,52 +277,52 @@ public expect fun log2(a: Double): Double
  * @see [expm1] function
  */
 @SinceKotlin("1.2")
-public expect fun ln1p(a: Double): Double
+public expect fun ln1p(x: Double): Double
 
 /**
- * Rounds the given value [a] to an integer towards positive infinity.
+ * Rounds the given value [x] to an integer towards positive infinity.
 
- * @return the smallest double value that is greater than the given value [a] and is a mathematical integer.
+ * @return the smallest double value that is greater than the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun ceil(a: Double): Double
+public expect fun ceil(x: Double): Double
 
 /**
- * Rounds the given value [a] to an integer towards negative infinity.
+ * Rounds the given value [x] to an integer towards negative infinity.
 
- * @return the largest double value that is smaller than the given value [a] and is a mathematical integer.
+ * @return the largest double value that is smaller than the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun floor(a: Double): Double
+public expect fun floor(x: Double): Double
 
 /**
- * Rounds the given value [a] to an integer towards zero.
+ * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [a] having its fractional part truncated.
+ * @return the value [x] having its fractional part truncated.
  *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun truncate(a: Double): Double
+public expect fun truncate(x: Double): Double
 
 /**
- * Rounds the given value [a] towards the closest integer with ties rounded towards even integer.
+ * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun round(a: Double): Double
+public expect fun round(x: Double): Double
 
 /**
- * Returns the absolute value of the given value [a].
+ * Returns the absolute value of the given value [x].
  *
  * Special cases:
  *   - `abs(NaN)` is `NaN`
@@ -330,10 +330,10 @@ public expect fun round(a: Double): Double
  * @see absoluteValue extension property for [Double]
  */
 @SinceKotlin("1.2")
-public expect fun abs(a: Double): Double
+public expect fun abs(x: Double): Double
 
 /**
- * Returns the sign of the given value [a]:
+ * Returns the sign of the given value [x]:
  *   - `-1.0` if the value is negative,
  *   - zero if the value is zero,
  *   - `1.0` if the value is positive
@@ -342,7 +342,7 @@ public expect fun abs(a: Double): Double
  *   - `sign(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun sign(a: Double): Double
+public expect fun sign(x: Double): Double
 
 
 /**
@@ -363,26 +363,26 @@ public expect fun max(a: Double, b: Double): Double
 // extensions
 
 /**
- * Raises this value to the power [other].
+ * Raises this value to the power [x].
  *
  * Special cases:
- *   - `x.pow(0.0)` is `1.0`
- *   - `x.pow(1.0) == x`
- *   - `x.pow(NaN)` is `NaN`
+ *   - `b.pow(0.0)` is `1.0`
+ *   - `b.pow(1.0) == b`
+ *   - `b.pow(NaN)` is `NaN`
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
- *   - `x.pow(Inf)` is `NaN` for `abs(x) == 1.0`
- *   - `x.pow(y)` is `NaN` for `x < 0` and `y` is finite and not an integer
+ *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
+ *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
  */
 @SinceKotlin("1.2")
-public expect fun Double.pow(other: Double): Double
+public expect fun Double.pow(x: Double): Double
 
 /**
- * Raises this value to the integer power [other].
+ * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
  */
 @SinceKotlin("1.2")
-public expect fun Double.pow(other: Int): Double
+public expect fun Double.pow(n: Int): Double
 
 /**
  * Returns the absolute value of this value.
@@ -487,59 +487,59 @@ public expect fun Double.roundToLong(): Long
 
 // ================ Float Math ========================================
 
-/** Computes the sine of the angle [a] given in radians.
+/** Computes the sine of the angle [x] given in radians.
  *
  *  Special cases:
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun sin(a: Float): Float
+public expect fun sin(x: Float): Float
 
-/** Computes the cosine of the angle [a] given in radians.
+/** Computes the cosine of the angle [x] given in radians.
  *
  *  Special cases:
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun cos(a: Float): Float
+public expect fun cos(x: Float): Float
 
-/** Computes the tangent of the angle [a] given in radians.
+/** Computes the tangent of the angle [x] given in radians.
  *
  *  Special cases:
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun tan(a: Float): Float
+public expect fun tan(x: Float): Float
 
 /**
- * Computes the arc sine of the value [a];
+ * Computes the arc sine of the value [x];
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
+ *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun asin(a: Float): Float
+public expect fun asin(x: Float): Float
 
 /**
- * Computes the arc cosine of the value [a];
+ * Computes the arc cosine of the value [x];
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(v)` is `NaN`, when `abs(v) > 1` or v is `NaN`
+ *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun acos(a: Float): Float
+public expect fun acos(x: Float): Float
 
 /**
- * Computes the arc tangent of the value [a];
+ * Computes the arc tangent of the value [x];
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun atan(a: Float): Float
+public expect fun atan(x: Float): Float
 
 /**
  * Returns the angle `theta` of the polar coordinates `(r, theta)` that correspond
@@ -561,7 +561,7 @@ public expect fun atan(a: Float): Float
 public expect fun atan2(y: Float, x: Float): Float
 
 /**
- * Computes the hyperbolic sine of the value [a].
+ * Computes the hyperbolic sine of the value [x].
  *
  * Special cases:
  *   - `sinh(NaN)` is `NaN`
@@ -569,20 +569,20 @@ public expect fun atan2(y: Float, x: Float): Float
  *   - `sinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun sinh(a: Float): Float
+public expect fun sinh(x: Float): Float
 
 /**
- * Computes the hyperbolic cosine of the value [a].
+ * Computes the hyperbolic cosine of the value [x].
  *
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-public expect fun cosh(a: Float): Float
+public expect fun cosh(x: Float): Float
 
 /**
- * Computes the hyperbolic tangent of the value [a].
+ * Computes the hyperbolic tangent of the value [x].
  *
  * Special cases:
  *   - `tanh(NaN)` is `NaN`
@@ -590,12 +590,12 @@ public expect fun cosh(a: Float): Float
  *   - `tanh(-Inf)` is `-1.0`
  */
 @SinceKotlin("1.2")
-public expect fun tanh(a: Float): Float
+public expect fun tanh(x: Float): Float
 
 /**
- * Computes the inverse hyperbolic sine of the value [a].
+ * Computes the inverse hyperbolic sine of the value [x].
  *
- * The returned value is `x` such that `sinh(x) == a`.
+ * The returned value is `y` such that `sinh(y) == x`.
  *
  * Special cases:
  *   - `asinh(NaN)` is `NaN`
@@ -603,12 +603,12 @@ public expect fun tanh(a: Float): Float
  *   - `asinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun asinh(a: Float): Float
+public expect fun asinh(x: Float): Float
 
 /**
- * Computes the inverse hyperbolic cosine of the value [a].
+ * Computes the inverse hyperbolic cosine of the value [x].
  *
- * The returned value is positive `x` such that `cosh(x) == a`.
+ * The returned value is positive `y` such that `cosh(y) == x`.
  *
  * Special cases:
  *   - `acosh(NaN)` is `NaN`
@@ -616,12 +616,12 @@ public expect fun asinh(a: Float): Float
  *   - `acosh(+Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-public expect fun acosh(a: Float): Float
+public expect fun acosh(x: Float): Float
 
 /**
- * Computes the inverse hyperbolic tangent of the value [a].
+ * Computes the inverse hyperbolic tangent of the value [x].
  *
- * The returned value is `x` such that `tanh(x) == a`.
+ * The returned value is `y` such that `tanh(y) == x`.
  *
  * Special cases:
  *   - `tanh(NaN)` is `NaN`
@@ -630,7 +630,7 @@ public expect fun acosh(a: Float): Float
  *   - `tanh(-1.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun atanh(a: Float): Float
+public expect fun atanh(x: Float): Float
 
 /**
  * Computes `sqrt(x^2 + y^2)` without intermediate overflow or underflow.
@@ -643,16 +643,16 @@ public expect fun atanh(a: Float): Float
 public expect fun hypot(x: Float, y: Float): Float
 
 /**
- * Computes the positive square root of the value [a].
+ * Computes the positive square root of the value [x].
  *
  * Special cases:
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun sqrt(a: Float): Float
+public expect fun sqrt(x: Float): Float
 
 /**
- * Computes Euler's number `e` raised to the power of the value [a].
+ * Computes Euler's number `e` raised to the power of the value [x].
  *
  * Special cases:
  *   - `exp(NaN)` is `NaN`
@@ -660,12 +660,12 @@ public expect fun sqrt(a: Float): Float
  *   - `exp(-Inf)` is `0.0`
  */
 @SinceKotlin("1.2")
-public expect fun exp(a: Float): Float
+public expect fun exp(x: Float): Float
 
 /**
- * Computes `exp(a) - 1`.
+ * Computes `exp(x) - 1`.
  *
- * This function can be implemented to produce more precise result for [a] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `expm1(NaN)` is `NaN`
@@ -675,14 +675,14 @@ public expect fun exp(a: Float): Float
  * @see [exp] function.
  */
 @SinceKotlin("1.2")
-public expect fun expm1(a: Float): Float
+public expect fun expm1(x: Float): Float
 
 /**
- * Computes the logarithm of the value [a] to the given [base].
+ * Computes the logarithm of the value [x] to the given [base].
  *
  * Special cases:
- *   - `log(a, b)` is `NaN` if either `a` or `b` are `NaN`
- *   - `log(a, b)` is `NaN` when `a < 0` or `b <= 0` or `b == 1.0`
+ *   - `log(x, b)` is `NaN` if either `x` or `b` are `NaN`
+ *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
  *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
@@ -690,10 +690,10 @@ public expect fun expm1(a: Float): Float
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
  */
 @SinceKotlin("1.2")
-public expect fun log(a: Float, base: Float): Float
+public expect fun log(x: Float, base: Float): Float
 
 /**
- * Computes the natural logarithm (base `E`) of the value [a].
+ * Computes the natural logarithm (base `E`) of the value [x].
  *
  * Special cases:
  *   - `ln(NaN)` is `NaN`
@@ -702,28 +702,28 @@ public expect fun log(a: Float, base: Float): Float
  *   - `ln(0.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-public expect fun ln(a: Float): Float
+public expect fun ln(x: Float): Float
 
 /**
- * Computes the common logarithm (base 10) of the value [a].
+ * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-public expect fun log10(a: Float): Float
+public expect fun log10(x: Float): Float
 
 /**
- * Computes the binary logarithm (base 2) of the value [a].
+ * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
-public expect fun log2(a: Float): Float
+public expect fun log2(x: Float): Float
 
 /**
  * Computes `ln(a + 1)`.
  *
- * This function can be implemented to produce more precise result for [a] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `ln1p(NaN)` is `NaN`
@@ -735,53 +735,53 @@ public expect fun log2(a: Float): Float
  * @see [expm1] function
  */
 @SinceKotlin("1.2")
-public expect fun ln1p(a: Float): Float
+public expect fun ln1p(x: Float): Float
 
 /**
- * Rounds the given value [a] to an integer towards positive infinity.
+ * Rounds the given value [x] to an integer towards positive infinity.
 
- * @return the smallest Float value that is greater than the given value [a] and is a mathematical integer.
+ * @return the smallest Float value that is greater than the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun ceil(a: Float): Float
+public expect fun ceil(x: Float): Float
 
 /**
- * Rounds the given value [a] to an integer towards negative infinity.
+ * Rounds the given value [x] to an integer towards negative infinity.
 
- * @return the largest Float value that is smaller than the given value [a] and is a mathematical integer.
+ * @return the largest Float value that is smaller than the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun floor(a: Float): Float
+public expect fun floor(x: Float): Float
 
 /**
- * Rounds the given value [a] to an integer towards zero.
+ * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [a] having its fractional part truncated.
+ * @return the value [x] having its fractional part truncated.
  *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun truncate(a: Float): Float
+public expect fun truncate(x: Float): Float
 
 /**
- * Rounds the given value [a] towards the closest integer with ties rounded towards even integer.
+ * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-public expect fun round(a: Float): Float
+public expect fun round(x: Float): Float
 
 
 /**
- * Returns the absolute value of the given value [a].
+ * Returns the absolute value of the given value [x].
  *
  * Special cases:
  *   - `abs(NaN)` is `NaN`
@@ -789,10 +789,10 @@ public expect fun round(a: Float): Float
  * @see absoluteValue extension property for [Float]
  */
 @SinceKotlin("1.2")
-public expect fun abs(a: Float): Float
+public expect fun abs(x: Float): Float
 
 /**
- * Returns the sign of the given value [a]:
+ * Returns the sign of the given value [x]:
  *   - `-1.0` if the value is negative,
  *   - zero if the value is zero,
  *   - `1.0` if the value is positive
@@ -801,7 +801,7 @@ public expect fun abs(a: Float): Float
  *   - `sign(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-public expect fun sign(a: Float): Float
+public expect fun sign(x: Float): Float
 
 
 
@@ -824,26 +824,26 @@ public expect fun max(a: Float, b: Float): Float
 
 
 /**
- * Raises this value to the power [other].
+ * Raises this value to the power [x].
  *
  * Special cases:
- *   - `x.pow(0.0)` is `1.0`
- *   - `x.pow(1.0) == x`
- *   - `x.pow(NaN)` is `NaN`
+ *   - `b.pow(0.0)` is `1.0`
+ *   - `b.pow(1.0) == b`
+ *   - `b.pow(NaN)` is `NaN`
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
- *   - `x.pow(Inf)` is `NaN` for `abs(x) == 1.0`
- *   - `x.pow(y)` is `NaN` for `x < 0` and `y` is finite and not an integer
+ *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
+ *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
  */
 @SinceKotlin("1.2")
-public expect fun Float.pow(other: Float): Float
+public expect fun Float.pow(x: Float): Float
 
 /**
- * Raises this value to the integer power [other].
+ * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
  */
 @SinceKotlin("1.2")
-public expect fun Float.pow(other: Int): Float
+public expect fun Float.pow(n: Int): Float
 
 /**
  * Returns the absolute value of this value.
@@ -912,7 +912,7 @@ public expect fun Float.roundToLong(): Long
 
 
 /**
- * Returns the absolute value of the given value [a].
+ * Returns the absolute value of the given value [n].
  *
  * Special cases:
  *   - `abs(Int.MIN_VALUE)` is `Int.MIN_VALUE` due to an overflow
@@ -920,7 +920,7 @@ public expect fun Float.roundToLong(): Long
  * @see absoluteValue extension property for [Int]
  */
 @SinceKotlin("1.2")
-public expect fun abs(a: Int): Int
+public expect fun abs(n: Int): Int
 
 /**
  * Returns the smaller of two values.
@@ -957,7 +957,7 @@ public expect val Int.sign: Int
 
 
 /**
- * Returns the absolute value of the given value [a].
+ * Returns the absolute value of the given value [n].
  *
  * Special cases:
  *   - `abs(Long.MIN_VALUE)` is `Long.MIN_VALUE` due to an overflow
@@ -965,7 +965,7 @@ public expect val Int.sign: Int
  * @see absoluteValue extension property for [Long]
  */
 @SinceKotlin("1.2")
-public expect fun abs(a: Long): Long
+public expect fun abs(n: Long): Long
 
 /**
  * Returns the smaller of two values.
