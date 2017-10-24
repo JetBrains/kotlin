@@ -69,10 +69,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -163,6 +160,9 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     ) {
         List<String> kotlinConfigurationFlags = new ArrayList<>(0);
         LanguageVersion explicitLanguageVersion = null;
+
+        boolean withStrictJavaNullabilityAssertions = false;
+
         for (TestFile testFile : testFilesWithConfigurationDirectives) {
             kotlinConfigurationFlags.addAll(InTextDirectivesUtils.findListWithPrefixes(testFile.content, "// KOTLIN_CONFIGURATION_FLAGS:"));
 
@@ -179,13 +179,29 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 assert explicitLanguageVersion == null : "Should not specify LANGUAGE_VERSION twice";
                 explicitLanguageVersion = LanguageVersion.fromVersionString(version);
             }
+
+            if (InTextDirectivesUtils.isDirectiveDefined(testFile.content, "// STRICT_JAVA_NULLABILITY_ASSERTIONS")) {
+                withStrictJavaNullabilityAssertions = true;
+            }
         }
 
-        if (explicitLanguageVersion != null) {
-            CommonConfigurationKeysKt.setLanguageVersionSettings(
-                    configuration,
-                    new LanguageVersionSettingsImpl(explicitLanguageVersion, ApiVersion.createByLanguageVersion(explicitLanguageVersion))
+        if (explicitLanguageVersion != null || withStrictJavaNullabilityAssertions) {
+            if (explicitLanguageVersion == null) {
+                explicitLanguageVersion = LanguageVersion.LATEST_STABLE;
+            }
+
+            HashMap<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<>();
+            if (withStrictJavaNullabilityAssertions) {
+                extraLanguageFeatures.put(LanguageFeature.StrictJavaNullabilityAssertions, LanguageFeature.State.ENABLED);
+            }
+
+            LanguageVersionSettingsImpl languageVersionSettings = new LanguageVersionSettingsImpl(
+                    explicitLanguageVersion,
+                    ApiVersion.createByLanguageVersion(explicitLanguageVersion),
+                    Collections.emptyMap(),
+                    extraLanguageFeatures
             );
+            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
         }
 
         updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);
