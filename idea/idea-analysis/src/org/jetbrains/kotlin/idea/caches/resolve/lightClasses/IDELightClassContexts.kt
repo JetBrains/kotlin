@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -277,7 +276,7 @@ object IDELightClassContexts {
         val sm = LockBasedStorageManager.NO_LOCKS
         val moduleDescriptor = ModuleDescriptorImpl(realWorldModule.name, sm, realWorldModule.builtIns)
 
-        setupDependencies(moduleDescriptor, realWorldModule)
+        moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
 
         val moduleInfo = files.first().getModuleInfo()
         val container = createContainer("LightClassStub", JvmPlatform) {
@@ -293,6 +292,7 @@ object IDELightClassContexts {
             useInstance(IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project))
             useInstance(FileBasedDeclarationProviderFactory(sm, files))
 
+            useInstance(CodegenAffectingAnnotations(realWorldModule))
             useImpl<AdHocAnnotationResolver>()
 
             useInstance(object : WrappedTypeFactory(sm) {
@@ -314,26 +314,23 @@ object IDELightClassContexts {
         return resolveSession
     }
 
-    private fun setupDependencies(moduleDescriptor: ModuleDescriptorImpl, realWorldModule: ModuleDescriptor) {
-        val jvmFieldClass = realWorldModule.getPackage(FqName("kotlin.jvm")).memberScope
-                .getContributedClassifier(Name.identifier("JvmField"), NoLookupLocation.FROM_IDE)
+    class CodegenAffectingAnnotations(private val realModule: ModuleDescriptor) {
+        fun get(name: String): ClassDescriptor? {
+            val annotationFqName = annotationsThatAffectCodegen.firstOrNull { it.shortName().asString() == name } ?: return null
+            return realModule.getPackage(annotationFqName.parent()).memberScope
+                    .getContributedClassifier(annotationFqName.shortName(), NoLookupLocation.FROM_IDE) as? ClassDescriptor
+        }
 
-        if (jvmFieldClass != null) {
-            moduleDescriptor.setDependencies(moduleDescriptor, jvmFieldClass.module as ModuleDescriptorImpl, moduleDescriptor.builtIns.builtInsModule)
-        }
-        else {
-            moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
-        }
+        // see JvmPlatformAnnotations.kt, JvmFlagAnnotations.kt, also PsiModifier.MODIFIERS
+        private val annotationsThatAffectCodegen = listOf(
+                "JvmField", "JvmOverloads", "JvmName", "JvmStatic",
+                "Synchronized", "Transient", "Volatile", "Strictfp"
+        ).map { FqName("kotlin.jvm").child(Name.identifier(it)) } + FqName("kotlin.PublishedApi") + FqName("kotlin.Deprecated") + FqName("kotlin.internal.InlineOnly")
+
     }
 
-    // see JvmPlatformAnnotations.kt, JvmFlagAnnotations.kt, also PsiModifier.MODIFIERS
-    private val annotationsThatAffectCodegen = listOf(
-            "JvmField", "JvmOverloads", "JvmName", "JvmStatic",
-            "Synchronized", "Transient", "Volatile", "Strictfp"
-    ).map { FqName("kotlin.jvm").child(Name.identifier(it)) } + FqName("kotlin.PublishedApi") + FqName("kotlin.Deprecated")
-
     class AdHocAnnotationResolver(
-            private val moduleDescriptor: ModuleDescriptor,
+            private val codegenAffectingAnnotations: CodegenAffectingAnnotations,
             private val callResolver: CallResolver,
             private val languageVersionSettings: LanguageVersionSettings,
             constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -347,14 +344,7 @@ object IDELightClassContexts {
         private fun annotationClassByEntry(entryElement: KtAnnotationEntry): ClassDescriptor? {
             val annotationTypeReferencePsi = entryElement.calleeExpression?.constructorReferenceExpression ?: return null
             val referencedName = annotationTypeReferencePsi.getReferencedName()
-            for (annotationFqName in annotationsThatAffectCodegen) {
-                if (referencedName == annotationFqName.shortName().asString()) {
-                    moduleDescriptor.getPackage(annotationFqName.parent()).memberScope
-                            .getContributedClassifier(annotationFqName.shortName(), NoLookupLocation.FROM_IDE)?.let { return it as? ClassDescriptor }
-
-               }
-            }
-            return null
+            return codegenAffectingAnnotations.get(referencedName)
         }
 
         override fun resolveAnnotationCall(annotationEntry: KtAnnotationEntry, scope: LexicalScope, trace: BindingTrace): OverloadResolutionResults<FunctionDescriptor> {
