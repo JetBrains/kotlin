@@ -17,7 +17,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMLinkModules2
 import llvm.LLVMWriteBitcodeToFile
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -49,7 +48,7 @@ internal fun produceOutput(context: Context) {
             val output = context.config.outputName
             val libraryName = context.config.moduleId
             val neededLibraries 
-                = context.librariesWithDependencies
+                = context.llvm.librariesForLibraryManifest
             val abiVersion = context.config.currentAbiVersion
             val target = context.config.targetManager.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)

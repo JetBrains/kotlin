@@ -79,7 +79,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
     private val resolver = defaultResolver(repositories, distribution)
 
-    private val immediateLibraries: List<LibraryReaderImpl> by lazy {
+    internal val immediateLibraries: List<LibraryReaderImpl> by lazy {
         val result = resolver.resolveImmediateLibraries(
                 libraryNames,
                 targetManager.target,

@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.backend.konan.descriptors.DeserializedKonanModule
 import org.jetbrains.kotlin.backend.konan.descriptors.LlvmSymbolOrigin
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
+import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -323,6 +325,22 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
             usedLibraries.add(reader as LibraryReaderImpl)
         }
+    }
+
+    val librariesToLink: List<KonanLibraryReader> get() = context.config.immediateLibraries
+            .filter { !it.isDefaultLibrary || it in usedLibraries }
+            .withResolvedDependencies()
+
+    val librariesForLibraryManifest: List<KonanLibraryReader> get() {
+        // Note: library manifest should contain the list of all user libraries and frontend-used default libraries.
+        // However this would result into linking too many default libraries into the application which uses current
+        // library. This problem should probably be fixed by adding different kind of dependencies to library
+        // manifest.
+        // Currently the problem is workarounded like this:
+        return this.librariesToLink
+        // This list contains all user libraries and the default libraries required for link (not frontend).
+        // That's why the workaround doesn't work only in very special cases, e.g. when `-nodefaultlibs` is enabled
+        // when compiling the application, while the library API uses types from default libs.
     }
 
     val staticData = StaticData(context)
