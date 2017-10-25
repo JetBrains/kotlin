@@ -90,6 +90,7 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
 
     @Override
     public void filter(Filter filter) throws NoTestsRemainException {
+        initialize();
         delegateRunner.filter(filter);
     }
 
