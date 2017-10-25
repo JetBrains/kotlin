@@ -2494,6 +2494,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("overArrayWithIndex.kt")
+            public void testOverArrayWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/for/overArrayWithIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overCollectionWithIndex.kt")
+            public void testOverCollectionWithIndex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/for/overCollectionWithIndex.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("rangeOptimization.kt")
             public void testRangeOptimization() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/for/rangeOptimization.kt");
