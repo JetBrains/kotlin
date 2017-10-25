@@ -15252,6 +15252,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("propertyImportedFromObject.kt")
+                public void testPropertyImportedFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/propertyImportedFromObject.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
                 @TestMetadata("sideEffects.kt")
                 public void testSideEffects() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/sideEffects.kt");
