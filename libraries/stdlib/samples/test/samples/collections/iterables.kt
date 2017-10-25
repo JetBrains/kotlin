@@ -17,13 +17,14 @@
 package samples.collections
 
 import samples.*
+import kotlin.coroutines.experimental.buildIterator
 import kotlin.test.*
 
 class Iterables {
 
     @Sample
     fun iterable() {
-        val iterator = Sequence { arrayOf(1, 2, 3).iterator() }.iterator()
+        val iterator = buildIterator { yieldAll(listOf(1, 2, 3)) }
         assertPrints(iterator.next(), "1")
         assertPrints(iterator.next(), "2")
         assertPrints(iterator.next(), "3")
