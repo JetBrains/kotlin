@@ -39,7 +39,7 @@ class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
         try {
             if (typeComponent.isDelegateToDefaultInterfaceImpl()) return true
 
-            if (typeComponent.location().lineNumber() != 1) return false
+            if (typeComponent.location()?.lineNumber() != 1) return false
 
             if (typeComponent.allLineLocations().any { it.lineNumber() != 1 }) {
                 return false
