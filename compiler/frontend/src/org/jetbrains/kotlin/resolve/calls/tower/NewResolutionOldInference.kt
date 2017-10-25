@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSupport
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
@@ -56,6 +55,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalStateException
 import java.util.*
@@ -208,12 +208,15 @@ class NewResolutionOldInference(
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
                     resolvedCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
-                    CandidateResolveMode.FULLY // todo
+                    CandidateResolveMode.EXIT_ON_FIRST_ERROR
             )
             candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
 
             val diagnostics = listOfNotNull(createPreviousResolveError(resolvedCall.status))
-            MyCandidate(diagnostics, resolvedCall)
+            MyCandidate(diagnostics, resolvedCall) {
+                resolvedCall.performRemainingTasks()
+                listOfNotNull(createPreviousResolveError(resolvedCall.status))
+            }
         }
         if (basicCallContext.collectAllCandidates) {
             val allCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolvedCandidates),
@@ -315,12 +318,26 @@ class NewResolutionOldInference(
         override val isDebuggerContext: Boolean get() = resolutionContext.isDebuggerContext
     }
 
-    internal data class MyCandidate(
-            val diagnostics: List<KotlinCallDiagnostic>,
-            val resolvedCall: MutableResolvedCall<*>
+    internal class MyCandidate(
+            // Diagnostics that are already computed
+            // if resultingApplicability is successful they must be the same as `diagnostics`,
+            // otherwise they might be a bit different but result remains unsuccessful
+            val eagerDiagnostics: List<KotlinCallDiagnostic>,
+            val resolvedCall: MutableResolvedCall<*>,
+            finalDiagnosticsComputation: (() -> List<KotlinCallDiagnostic>)? = null
     ) : Candidate {
-        override val resultingApplicability: ResolutionCandidateApplicability = getResultApplicability(diagnostics)
-        override val isSuccessful get() = resultingApplicability.isSuccess
+        val diagnostics: List<KotlinCallDiagnostic> by lazy(LazyThreadSafetyMode.NONE) {
+            finalDiagnosticsComputation?.invoke() ?: eagerDiagnostics
+        }
+
+        operator fun component1() = diagnostics
+        operator fun component2() = resolvedCall
+
+        override val resultingApplicability: ResolutionCandidateApplicability by lazy(LazyThreadSafetyMode.NONE) {
+            getResultApplicability(diagnostics)
+        }
+
+        override val isSuccessful = getResultApplicability(eagerDiagnostics).isSuccess
     }
 
     private inner class CandidateFactoryImpl(
@@ -366,15 +383,26 @@ class NewResolutionOldInference(
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
                     candidateCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
-                    CandidateResolveMode.FULLY // todo
+                    CandidateResolveMode.EXIT_ON_FIRST_ERROR
             )
             candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
 
-            val diagnostics = (towerCandidate.diagnostics +
-                               checkInfixAndOperator(basicCallContext.call, towerCandidate.descriptor) +
-                               createPreviousResolveError(candidateCall.status)).filterNotNull() // todo
-            return MyCandidate(diagnostics, candidateCall)
+            val diagnostics = createDiagnosticsForCandidate(towerCandidate, candidateCall)
+            return MyCandidate(diagnostics, candidateCall) {
+                candidateCall.performRemainingTasks()
+                createDiagnosticsForCandidate(towerCandidate, candidateCall)
+            }
         }
+
+        private fun createDiagnosticsForCandidate(
+                towerCandidate: CandidateWithBoundDispatchReceiver,
+                candidateCall: ResolvedCallImpl<CallableDescriptor>
+        ): List<ResolutionDiagnostic> =
+                mutableListOf<ResolutionDiagnostic>().apply {
+                    addAll(towerCandidate.diagnostics)
+                    addAll(checkInfixAndOperator(basicCallContext.call, towerCandidate.descriptor))
+                    addIfNotNull(createPreviousResolveError(candidateCall.status))
+                }
 
         private fun checkInfixAndOperator(call: Call, descriptor: CallableDescriptor): List<ResolutionDiagnostic> {
             if (descriptor !is FunctionDescriptor || ErrorUtils.isError(descriptor)) return emptyList()
@@ -405,7 +433,9 @@ class NewResolutionOldInference(
                 "Variable call must be success: $variable"
             }
 
-            return MyCandidate(variable.diagnostics + invoke.diagnostics, resolvedCallImpl)
+            return MyCandidate(variable.eagerDiagnostics + invoke.eagerDiagnostics, resolvedCallImpl) {
+                variable.diagnostics + invoke.diagnostics
+            }
         }
 
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<MyCandidate> {
