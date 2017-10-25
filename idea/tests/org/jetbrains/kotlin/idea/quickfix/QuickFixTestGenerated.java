@@ -851,6 +851,63 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/addStarProjections/inner")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inner extends AbstractQuickFixTest {
+            public void testAllFilesPresentInInner() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/inner"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("inner1.kt")
+            public void testInner1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inner2.kt")
+            public void testInner2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inner3.kt")
+            public void testInner3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inner4.kt")
+            public void testInner4() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inner5.kt")
+            public void testInner5() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inner6.kt")
+            public void testInner6() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner6.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inner7.kt")
+            public void testInner7() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner7.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inner8.kt")
+            public void testInner8() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/inner/inner8.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/addStarProjections/when")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
