@@ -368,6 +368,9 @@ tasks {
         dependsOn("examplesTest")
     }
 
+    "androidCodegenTest" {
+        dependsOn(":compiler:android-tests:test")
+    }
 
     "jps-tests" {
         dependsOn("dist")
@@ -393,12 +396,11 @@ tasks {
                   "idea-plugin-additional-tests")
     }
 
-    "android-tests" {
+    "android-ide-tests" {
         dependsOn("dist")
         dependsOn(":plugins:android-extensions-ide:test",
                   ":idea:idea-android:test",
-                  ":kotlin-annotation-processing:test",
-                  ":compiler:android-tests:test")
+                  ":kotlin-annotation-processing:test")
     }
 
     "plugins-tests" {
@@ -409,14 +411,14 @@ tasks {
                   ":plugins:uast-kotlin:test",
                   ":kotlin-annotation-processing-gradle:test")
     }
-    
+
 
     "ideaPluginTest" {
         dependsOn(
                 "idea-plugin-tests",
                 "jps-tests",
                 "plugins-tests",
-                "android-tests",
+                "android-ide-tests",
                 ":generators:test"
         )
     }
