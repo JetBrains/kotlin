@@ -75,6 +75,7 @@ class Strings {
     fun stringToByteArray() {
         val charset = Charsets.UTF_8
         val byteArray = "Hello".toByteArray(charset)
+        assertPrints(byteArray.contentToString(), "[72, 101, 108, 108, 111]")
         assertPrints(byteArray.toString(charset), "Hello")
     }
 

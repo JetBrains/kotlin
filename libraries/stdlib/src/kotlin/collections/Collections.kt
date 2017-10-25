@@ -258,6 +258,7 @@ private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
  * @sample samples.collections.Collections.Lists.binarySearchOnComparable
+ * @sample samples.collections.Collections.Lists.binarySearchWithBoundaries
  */
 public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
     rangeCheck(size, fromIndex, toIndex)
@@ -330,7 +331,7 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
- * @sample samples.collections.Collections.Lists.binarySearchBySelector
+ * @sample samples.collections.Collections.Lists.binarySearchByKey
  */
 public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size, crossinline selector: (T) -> K?): Int =
         binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
@@ -353,7 +354,7 @@ public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromInd
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
- * @sample samples.collections.Collections.Lists.binarySearchByKeyWithComparator
+ * @sample samples.collections.Collections.Lists.binarySearchWithComparisonFunction
  */
 public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, comparison: (T) -> Int): Int {
     rangeCheck(size, fromIndex, toIndex)

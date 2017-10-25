@@ -47,7 +47,7 @@ class Collections {
             val nullCollection: Collection<Any>? = null
             assertPrints(nullCollection.orEmpty(), "[]")
 
-            val collection: List<Char>? = listOf('a', 'b', 'c')
+            val collection: Collection<Char>? = listOf('a', 'b', 'c')
             assertPrints(collection.orEmpty(), "[a, b, c]")
         }
 
@@ -218,13 +218,25 @@ class Collections {
         }
 
         @Sample
+        fun binarySearchWithBoundaries() {
+            val list = listOf('a', 'b', 'c', 'd', 'e')
+            assertPrints(list.binarySearch('d'), "3")
+
+            // element is out of range from the left
+            assertTrue(list.binarySearch('b', fromIndex = 2) < 0)
+
+            // element is out of range from the right
+            assertTrue(list.binarySearch('d', toIndex = 2) < 0)
+        }
+
+        @Sample
         fun binarySearchWithComparator() {
             val colors = listOf("Blue", "green", "ORANGE", "Red", "yellow")
             assertPrints(colors.binarySearch("RED", String.CASE_INSENSITIVE_ORDER), "3")
         }
 
         @Sample
-        fun binarySearchBySelector() {
+        fun binarySearchByKey() {
             data class Box(val value: Int)
 
             val numbers = listOf(1, 3, 7, 10, 12)
@@ -233,13 +245,14 @@ class Collections {
         }
 
         @Sample
-        fun binarySearchByKeyWithComparator() {
+        fun binarySearchWithComparisonFunction() {
             data class Box(val value: Int)
-            val comparator = Comparator<Box> { x, y -> y.value - x.value }
 
             val numbers = listOf(12, 10, 7, 3, 1)
             val boxes = numbers.map { Box(it) }
-            assertPrints(boxes.binarySearch { comparator.compare(it, Box(10)) }, "1")
+
+            // `boxes` is sorted according to the comparison function
+            assertPrints(boxes.binarySearch { 10 - it.value }, "1")
         }
     }
 
