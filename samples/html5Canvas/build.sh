@@ -24,8 +24,16 @@ konanc $DIR/src/jsinterop/kotlin \
         -includeBinary $DIR/src/jsinterop/js/jsinterop.js \
         -p library -o $DIR/build/klib/jsinterop -target wasm32 || exit 1
 
-konanc $DIR/src/canvas/kotlin \
-        -includeBinary $DIR/src/canvas/js/canvas.js \
+konanc $DIR/src/jsinterop_tool/kotlin \
+        -e org.jetbrains.kotlin.konan.jsinterop.tool.main \
+        -o $DIR/build/bin/generator || exit 1
+       
+# TODO: make a couple of args to name the result, for example.
+$DIR/build/bin/generator.kexe || exit 1 
+
+# TODO: use the proper path and names
+konanc kotlin_stubs.kt \
+        -includeBinary js_stubs.js \
         -l $DIR/build/klib/jsinterop \
         -p library -o $DIR/build/klib/canvas -target wasm32 || exit 1
 

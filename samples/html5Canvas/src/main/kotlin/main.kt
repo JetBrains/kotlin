@@ -4,7 +4,7 @@ import konan.internal.ExportForCppRuntime
 
 fun main(args: Array<String>) {
 
-    val html5 = Html5()
+    //val html5 = Html5()
     val document = html5.document
 
     val canvas = document.getElementById("myCanvas").asCanvas
