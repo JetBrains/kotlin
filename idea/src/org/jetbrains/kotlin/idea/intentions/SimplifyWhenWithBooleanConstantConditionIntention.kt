@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.cfg.WhenChecker
-import org.jetbrains.kotlin.cfg.hasUnknown
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.replaceWithBranch
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isFalseConstant
