@@ -169,7 +169,7 @@ fun suspendFunctionFirstLineLocation(location: Location): Int? {
         return null
     }
 
-    val lineNumber = location.method().location().lineNumber()
+    val lineNumber = location.method().location()?.lineNumber()
     if (lineNumber == -1) {
         return null
     }
