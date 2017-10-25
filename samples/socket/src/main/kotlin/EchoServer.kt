@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
 
             send(commFd, prefixBuffer.refTo(0), prefixBuffer.size.signExtend(), 0)
                     .ensureUnixCallResult("write") { it >= 0 }
-            send(commFd, pinned.addressOf(0), length, 0)
+            send(commFd, pinned.addressOf(0), length.signExtend(), 0)
                     .ensureUnixCallResult("write") { it >= 0 }
           }
         }
