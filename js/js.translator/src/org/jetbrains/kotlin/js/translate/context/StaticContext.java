@@ -456,7 +456,7 @@ public final class StaticContext {
     }
 
     @NotNull
-    private JsName importDeclaration(@NotNull String suggestedName, @NotNull String tag, @NotNull JsExpression declaration) {
+    public JsName importDeclaration(@NotNull String suggestedName, @NotNull String tag, @NotNull JsExpression declaration) {
         JsName result = importDeclarationImpl(suggestedName, tag, declaration);
         fragment.getNameBindings().add(new JsNameBinding(tag, result));
         return result;

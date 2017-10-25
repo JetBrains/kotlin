@@ -41,15 +41,9 @@ import org.jetbrains.kotlin.js.translate.declaration.FileDeclarationVisitor;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtUnaryExpression;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -99,15 +93,41 @@ public final class Translation {
         }
 
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
-        if (compileTimeValue != null) {
+        if (compileTimeValue != null && !compileTimeValue.getUsesNonConstValAsConstant()) {
             KotlinType type = context.bindingContext().getType(expression);
             if (type != null) {
-                if ((KotlinBuiltIns.isLong(type) && !compileTimeValue.getUsesNonConstValAsConstant()) ||
-                    (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression))
-                {
+                if (KotlinBuiltIns.isLong(type) /*&& expression instanceof KtReferenceExpression*/) {
+                    if (expression instanceof KtQualifiedExpression) {
+                        KtSimpleNameExpression referenceExpression = PsiUtils.getNotNullSimpleNameSelector((KtQualifiedExpression) expression);
+                        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression);
+
+                        JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
+
+                        //JsName name = context.getInlineableInnerNameForDescriptor(descriptor);
+
+                        JsName name = context.declareConstantValue(descriptor, constantResult);
+
+                        //context.addDeclarationStatement(JsAstUtils.assignment(name.makeRef(), constantResult).makeStmt());
+                        return name.makeRef();
+                    }
+                    //System.out.println("sdfds");
+                    //DeclarationDescriptor descriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), expression, KtProperty.class);
+                    //JsName name = context.getNameForDescriptor(descriptor);
+                    //JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
+                    //context.addDeclarationStatement(new JsVars(new JsVars.JsVar(name, constantResult)));
+                    //return new JsNameRef(name);
+                    //KtReferenceExpression referenceExpression = (KtReferenceExpression) expression;
+                    //DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression);
+                    //return new JsNameRef(context.getNameForDescriptor(descriptor));
+                }
+                //else {
+                    //if (KotlinBuiltIns.isLong(type) ||
+                    //    (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression))
+                    //{
                     JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
                     if (constantResult != null) return constantResult.source(expression);
-                }
+                    //}
+                //}
             }
         }
 

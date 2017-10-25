@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -887,6 +888,24 @@ public class TranslationContext {
     @Nullable
     public TranslationContext getParent() {
         return parent;
+    }
+
+    @NotNull
+    public JsName declareConstantValue(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression value) {
+        String tag = Objects.requireNonNull(staticContext.getTag(descriptor));
+        String suggestedName = StaticContext.getSuggestedName(descriptor);
+
+        if (inlineFunctionContext == null || !isPublicInlineFunction()) {
+            return staticContext.importDeclaration(suggestedName, tag, value);
+        }
+        else {
+            return inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
+                JsName result = JsScope.declareTemporaryName(suggestedName);
+                MetadataProperties.setImported(result, true);
+                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, value));
+                return result;
+            });
+        }
     }
 
     @NotNull
