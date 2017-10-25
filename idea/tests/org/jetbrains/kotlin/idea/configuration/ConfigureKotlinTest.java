@@ -30,6 +30,7 @@ import com.intellij.psi.PsiRequiresStatement;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
 import org.jetbrains.kotlin.idea.facet.FacetUtilsKt;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.StreamSupport;
 
@@ -262,6 +264,13 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testJava9WithModuleInfoWithStdlibAlready() {
         checkAddStdlibModule();
+    }
+
+    public void testProjectWithFreeArgs() {
+        assertEquals(
+                Collections.singletonList("true"),
+                KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getFreeArgs()
+        );
     }
 
     private void checkAddStdlibModule() {
