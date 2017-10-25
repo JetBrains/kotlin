@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.file.FileTree
+import org.gradle.api.internal.file.UnionFileCollection
 import org.gradle.api.internal.file.UnionFileTree
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
@@ -39,15 +42,15 @@ class KotlinJsDcePlugin : Plugin<Project> {
         val dceTaskName = sourceSet.getTaskName(DCE_TASK_PREFIX, TASK_SUFFIX)
         val dceTask = project.tasks.create(dceTaskName, KotlinJsDce::class.java).also {
             it.dependsOn(kotlinTask)
-            project.tasks.findByName("build").dependsOn(it)
+            project.tasks.findByName("build")!!.dependsOn(it)
         }
 
         project.afterEvaluate {
             val outputDir = File(File(project.buildDir, DEFAULT_OUT_DIR), sourceSet.name)
 
-            val configuration = project.configurations.findByName(sourceSet.compileConfigurationName)
+            val configuration = project.configurations.findByName(sourceSet.compileConfigurationName)!!
             val dceInputTrees = listOf(project.fileTree(kotlinTask.outputFile)) + configuration.map { project.fileTree(it) }
-            val dceInputFiles = UnionFileTree("dce-input", dceInputTrees)
+            val dceInputFiles = dceInputTrees.reduce { acc: FileTree, tree -> acc + tree }
 
             with (dceTask) {
                 classpath = sourceSet.compileClasspath
