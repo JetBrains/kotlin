@@ -1,10 +1,11 @@
 apply plugin: 'konan'
 
 buildscript {
+
+    def konanVersion = gradle.startParameter.projectProperties['konanVersion']
+
     dependencies {
-        classpath files(project.file('../tools/kotlin-native-gradle-plugin/build/libs').listFiles().findAll {
-            it.name.endsWith('.jar')
-        }.collect().first().absolutePath)
+        classpath files("../tools/kotlin-native-gradle-plugin/build/libs/kotlin-native-gradle-plugin-${konanVersion}.jar")
     }
 }
 

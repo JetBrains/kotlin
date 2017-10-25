@@ -300,7 +300,7 @@ targetList.each { target ->
                 dir project(':klib').projectDir
                 startParameter.projectProperties = [
                         'konan.jvmArgs'  : jvmArgs,
-                        'kotlin_version' : kotlin_version,
+                        'konanVersion'   : konanVersion,
                         'name'           : defFile.name,
                         'defFile'        : defFile.file.absolutePath,
                         'konan.home'     : distDir,
