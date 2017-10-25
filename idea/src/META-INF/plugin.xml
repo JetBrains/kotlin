@@ -1645,12 +1645,17 @@
       <category>Kotlin</category>
     </intentionAction>
 
-      <intentionAction>
-          <className>org.jetbrains.kotlin.idea.intentions.MoveMemberToTopLevelIntention</className>
-          <category>Kotlin</category>
-      </intentionAction>
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.MoveMemberToTopLevelIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.inspections.SimplifyWhenWithBooleanConstantConditionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
                      groupName="Style issues"
@@ -2626,7 +2631,7 @@
                      level="WARNING"
                      language="kotlin"
     />
-	
+
 	<localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
                      displayName="Redundant explicit 'this'"
                      groupPath="Kotlin"
