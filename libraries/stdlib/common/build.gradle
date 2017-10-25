@@ -34,6 +34,8 @@ compileKotlinCommon {
 }
 */
 
+kotlin.experimental.coroutines 'enable'
+
 jar {
     manifestAttributes(manifest, project, 'Main')
 }

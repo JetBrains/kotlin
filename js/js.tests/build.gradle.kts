@@ -2,6 +2,7 @@
 apply { plugin("kotlin") }
 
 dependencies {
+    testCompile(protobufFull())
     testCompile(project(":compiler.tests-common"))
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
@@ -19,6 +20,7 @@ dependencies {
     testRuntime(project(":compiler:backend-common"))
 //    testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
+    testCompile(projectTests(":kotlin-build-common"))
 }
 
 sourceSets {

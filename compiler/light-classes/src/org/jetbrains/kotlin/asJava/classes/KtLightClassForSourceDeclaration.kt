@@ -91,7 +91,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
-    protected fun getDescriptor(): ClassDescriptor? {
+    fun getDescriptor(): ClassDescriptor? {
         return LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
     }
 
@@ -481,13 +481,13 @@ fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
 
 interface LightClassInheritanceHelper {
     fun isInheritor(
-            lightClass: KtLightClassForSourceDeclaration,
+            lightClass: KtLightClass,
             baseClass: PsiClass,
             checkDeep: Boolean
     ): ImpreciseResolveResult
 
     object NoHelp : LightClassInheritanceHelper {
-        override fun isInheritor(lightClass: KtLightClassForSourceDeclaration, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
+        override fun isInheritor(lightClass: KtLightClass, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
     }
 
     companion object {

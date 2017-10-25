@@ -103,7 +103,7 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     if (parent is KtClassInitializer) {
         val containingClass = parent.containingClassOrObject
         if (containingClass != null) {
-            val containingUClass = KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as KotlinUClass?
+            val containingUClass = KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as? KotlinUClass
             containingUClass?.methods?.filterIsInstance<KotlinPrimaryConstructorUMethod>()?.firstOrNull()?.let {
                 return it.uastBody
             }
@@ -143,7 +143,7 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
     val primaryConstructor = parameter.getStrictParentOfType<KtPrimaryConstructor>() ?: return null
     val containingClass = primaryConstructor.getContainingClassOrObject()
     if (containingClass.isAnnotation()) {
-        return KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as UClass
+        return KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as? UClass
     }
     return null
 }

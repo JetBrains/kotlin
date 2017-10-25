@@ -1178,18 +1178,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt19767_3.kt")
-        public void testKt19767_3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/kt19767_3.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
-        }
-
         @TestMetadata("kt19767_chain.kt")
         public void testKt19767_chain() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/kt19767_chain.kt");
@@ -11169,6 +11157,15 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class EnhancedNullability extends AbstractJsCodegenBoxTest {
+                public void testAllFilesPresentInEnhancedNullability() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
@@ -13119,15 +13116,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testTrivialInstanceOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullCheckOptimization/trivialInstanceOf.kt");
             doTest(fileName);
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/nullabilityAssertions")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class NullabilityAssertions extends AbstractJsCodegenBoxTest {
-        public void testAllFilesPresentInNullabilityAssertions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/nullabilityAssertions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
     }
 
@@ -15252,10 +15240,28 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
                 }
 
+                @TestMetadata("emptyLhs.kt")
+                public void testEmptyLhs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/emptyLhs.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("innerSubclass.kt")
                 public void testInnerSubclass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/innerSubclass.kt");
                     doTest(fileName);
+                }
+
+                @TestMetadata("propertyImportedFromObject.kt")
+                public void testPropertyImportedFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/propertyImportedFromObject.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
                 }
 
                 @TestMetadata("sideEffects.kt")
@@ -15458,6 +15464,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public static class Contains extends AbstractJsCodegenBoxTest {
             public void testAllFilesPresentInContains() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("comparisonWithRangeBoundEliminated.kt")
+            public void testComparisonWithRangeBoundEliminated() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/comparisonWithRangeBoundEliminated.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("evaluationOrderForCollection.kt")

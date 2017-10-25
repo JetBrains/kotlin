@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import com.intellij.mock.MockApplication
-import com.intellij.openapi.application.Application
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -167,19 +164,15 @@ inline fun <reified T : KtDeclaration> reportOnDeclarationAs(trace: BindingTrace
 }
 
 fun <D : Diagnostic> DiagnosticSink.reportFromPlugin(diagnostic: D, ext: DefaultErrorMessages.Extension) {
-    if (ApplicationManager.getApplication() !is MockApplication) {
-        return this.report(diagnostic)
-    }
-
     @Suppress("UNCHECKED_CAST")
     val renderer = ext.map[diagnostic.factory] as? DiagnosticRenderer<D>
                    ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
 
-    val text = renderer.render(diagnostic)
+    val renderedDiagnostic = RenderedDiagnostic(diagnostic, renderer)
 
     when (diagnostic.severity) {
-        Severity.ERROR -> report(Errors.PLUGIN_ERROR.on(diagnostic.psiElement, diagnostic.factory.name, text))
-        Severity.WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, diagnostic.factory.name, text))
-        Severity.INFO -> report(Errors.PLUGIN_INFO.on(diagnostic.psiElement, diagnostic.factory.name, text))
+        Severity.ERROR -> report(Errors.PLUGIN_ERROR.on(diagnostic.psiElement, renderedDiagnostic))
+        Severity.WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, renderedDiagnostic))
+        Severity.INFO -> report(Errors.PLUGIN_INFO.on(diagnostic.psiElement, renderedDiagnostic))
     }
 }

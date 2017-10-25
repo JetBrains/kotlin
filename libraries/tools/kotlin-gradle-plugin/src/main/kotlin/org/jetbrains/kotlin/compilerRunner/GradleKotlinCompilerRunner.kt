@@ -120,7 +120,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args: K2JSCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        args.freeArgs.addAll(kotlinSources.map { it.absolutePath })
+        args.freeArgs += kotlinSources.map { it.absolutePath }
         return runCompiler(K2JS_COMPILER, args, environment)
     }
 
@@ -129,7 +129,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args: K2MetadataCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        args.freeArgs.addAll(kotlinSources.map { it.absolutePath })
+        args.freeArgs += kotlinSources.map { it.absolutePath }
         return runCompiler(K2METADATA_COMPILER, args, environment)
     }
 

@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.js.resolve
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -50,17 +52,20 @@ object JsPlatformConfigurator : PlatformConfigurator(
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),
         identifierChecker = JsIdentifierChecker,
-        overloadFilter = OverloadFilter.DEFAULT,
+        overloadFilter = OverloadFilter.Default,
         platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
-        delegationFilter = DelegationFilter.DEFAULT,
-        overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.DEFAULT
+        delegationFilter = DelegationFilter.Default,
+        overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.Default,
+        declarationReturnTypeSanitizer = DeclarationReturnTypeSanitizer.Default
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
+        container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(JsTypeSpecificityComparator)
-        container.useInstance(JsNameClashChecker())
-        container.useInstance(JsNameCharsChecker())
+        container.useImpl<JsNameClashChecker>()
+        container.useImpl<JsNameCharsChecker>()
+        container.useImpl<JsBuiltinNameClashChecker>()
         container.useInstance(JsModuleClassLiteralChecker)
         container.useImpl<JsReflectionAPICallChecker>()
         container.useImpl<JsNativeRttiChecker>()

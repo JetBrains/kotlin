@@ -109,6 +109,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         val builder = ClassModel.newBuilder()
         builder.nameId = serialize(classModel.name)
         classModel.superName?.let { builder.superNameId = serialize(it) }
+        classModel.interfaces.forEach { builder.addInterfaceNameId(serialize(it)) }
         if (classModel.postDeclarationBlock.statements.isNotEmpty()) {
             builder.postDeclarationBlock = serializeBlock(classModel.postDeclarationBlock)
         }

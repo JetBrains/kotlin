@@ -134,7 +134,7 @@ class KotlinCompletionContributor : CompletionContributor() {
             if (tokenAt.node.elementType == KtTokens.IDENTIFIER) {
                 val parameter = tokenAt.parent as? KtParameter
                 if (parameter != null) {
-                    context.offsetMap.addOffset(ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
+                    context.offsetMap.addOffset(VariableOrParameterNameWithTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
                 }
             }
         }

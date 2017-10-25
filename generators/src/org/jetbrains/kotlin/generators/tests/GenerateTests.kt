@@ -713,7 +713,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIntentionTest> {
-            model("intentions", pattern = "^([\\w\\-_]+)\\.kt$")
+            model("intentions", pattern = "^([\\w\\-_]+)\\.(kt|kts)$")
         }
 
         testClass<AbstractIntentionTest2> {

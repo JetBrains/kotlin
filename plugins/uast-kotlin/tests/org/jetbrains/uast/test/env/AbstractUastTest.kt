@@ -17,10 +17,14 @@
 package org.jetbrains.uast.test.env
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UFile
+import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.UastVisitor
 import java.io.File
+import kotlin.test.fail
 
 abstract class AbstractUastTest : AbstractTestWithCoreEnvironment() {
     protected companion object {
@@ -60,3 +64,18 @@ fun <T> UElement.findElementByText(refText: String, cls: Class<T>): T {
 }
 
 inline fun <reified T : Any> UElement.findElementByText(refText: String): T = findElementByText(refText, T::class.java)
+
+inline fun <reified T : UElement> UElement.findElementByTextFromPsi(refText: String): T = (this.psi ?: fail("no psi for $this")).findUElementByTextFromPsi(refText)
+
+inline fun <reified T : UElement> PsiElement.findUElementByTextFromPsi(refText: String): T {
+    val elementAtStart = this.findElementAt(this.text.indexOf(refText))
+                         ?: throw AssertionError("requested text '$refText' was not found in $this")
+    val uElementContainingText = elementAtStart.parentsWithSelf.
+            dropWhile { !it.text.contains(refText) }.
+            mapNotNull { it.toUElementOfType<T>() }.
+            first()
+    if (uElementContainingText.psi != null && uElementContainingText.psi?.text != refText) {
+        throw AssertionError("requested text '$refText' found as '${uElementContainingText.psi?.text}' in $uElementContainingText")
+    }
+    return uElementContainingText;
+}

@@ -127,7 +127,7 @@ task proguard(type: proguard.gradle.ProGuardTask) {
     injars stripMetadata.outputs.files
     outjars outputJarPath
 
-    libraryjars configurations.proguardDeps.files
+    libraryjars configurations.proguardDeps
     libraryjars rtJar
 
     configuration "${core}/reflection.jvm/reflection.pro"

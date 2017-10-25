@@ -156,7 +156,7 @@ class CreateActualClassFix(
         klass: KtClassOrObject,
         actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtClassOrObject>(klass, actualPlatform, { project, element ->
-    generateClassOrObject(project, element, actualNeeded = true)
+    generateClassOrObjectByExpectedClass(project, element, actualNeeded = true)
 }) {
 
     override val elementType = run {
@@ -206,15 +206,36 @@ private fun KtModifierListOwner.replaceExpectModifier(actualNeeded: Boolean) {
     }
 }
 
-private fun KtPsiFactory.generateClassOrObject(
+internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         project: Project,
         expectedClass: KtClassOrObject,
-        actualNeeded: Boolean
+        actualNeeded: Boolean,
+        existingDeclarations: List<KtDeclaration> = emptyList()
 ): KtClassOrObject {
+    fun KtDeclaration.exists() =
+        existingDeclarations.any {
+            name == it.name && this.javaClass == it.javaClass && when (this) {
+                is KtClassOrObject, is KtProperty, is KtEnumEntry -> true
+                is KtFunction -> {
+                    it as KtFunction
+                    valueParameters.size == it.valueParameters.size &&
+                    valueParameters.zip(it.valueParameters).all { (parameter, existingParameter) ->
+                        parameter.name == existingParameter.name &&
+                        parameter.typeReference?.text == existingParameter.typeReference?.text
+                    }
+                }
+                else -> true
+            }
+        }
+
     val expectedText = expectedClass.text
     val actualClass = if (expectedClass is KtObjectDeclaration) createObject(expectedText) else createClass(expectedText)
     val isInterface = expectedClass is KtClass && expectedClass.isInterface()
     actualClass.declarations.forEach {
+        if (it.exists()) {
+            it.delete()
+            return@forEach
+        }
         when (it) {
             is KtEnumEntry -> return@forEach
             is KtClassOrObject -> it.delete()
@@ -229,12 +250,12 @@ private fun KtPsiFactory.generateClassOrObject(
         }
     }
 
-    declLoop@ for (expectedDeclaration in expectedClass.declarations) {
+    declLoop@ for (expectedDeclaration in expectedClass.declarations.filter { !it.exists() }) {
         val descriptor = expectedDeclaration.toDescriptor() ?: continue
         val actualDeclaration: KtDeclaration = when (expectedDeclaration) {
             is KtClassOrObject ->
                 if (expectedDeclaration !is KtEnumEntry) {
-                    generateClassOrObject(project, expectedDeclaration, actualNeeded = true)
+                    generateClassOrObjectByExpectedClass(project, expectedDeclaration, actualNeeded = true)
                 }
                 else {
                     continue@declLoop

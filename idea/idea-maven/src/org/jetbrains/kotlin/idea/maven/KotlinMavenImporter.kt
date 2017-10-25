@@ -176,7 +176,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID) ?: return
         val compilerVersion = mavenPlugin.version ?: LanguageVersion.LATEST_STABLE.versionString
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider, false)
-        val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
+        val platform = detectPlatform(mavenProject)
 
         kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, platform, modifiableModelsProvider)
         val configuredPlatform = kotlinFacet.configuration.settings.targetPlatformKind!!
@@ -190,7 +190,11 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet, modifiableModelsProvider)
         }
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
+        setImplementedModuleName(kotlinFacet, mavenProject, module)
     }
+
+    private fun detectPlatform(mavenProject: MavenProject) = detectPlatformByExecutions(mavenProject) ?:
+                                                             detectPlatformByLibraries(mavenProject)
 
     private fun detectPlatformByExecutions(mavenProject: MavenProject): TargetPlatformKind<*>? {
         return mavenProject.findPlugin(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_ARTIFACT_ID)?.executions?.flatMap { it.goals }?.mapNotNull { goal ->
@@ -254,6 +258,18 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                 plugin.configurationElement.sourceDirectories().map { SourceType.PROD to it } +
                 plugin.executions.flatMap { execution -> execution.configurationElement.sourceDirectories().map { execution.sourceType() to it } }
             }.distinct()
+
+    private fun setImplementedModuleName(kotlinFacet: KotlinFacet, mavenProject: MavenProject, module: Module) {
+        if (kotlinFacet.configuration.settings.targetPlatformKind == TargetPlatformKind.Common) {
+            kotlinFacet.configuration.settings.implementedModuleName = null
+        } else {
+            val manager = MavenProjectsManager.getInstance(module.project)
+            val mavenDependencies = mavenProject.dependencies.mapNotNull { manager?.findProject(it) }
+            val implemented = mavenDependencies.singleOrNull { detectPlatformByExecutions(it) == TargetPlatformKind.Common }
+
+            kotlinFacet.configuration.settings.implementedModuleName = implemented?.let { manager.findModule(it)?.name ?: it.displayName }
+        }
+    }
 }
 
 private fun MavenPlugin.isKotlinPlugin() = groupId == KotlinMavenImporter.KOTLIN_PLUGIN_GROUP_ID && artifactId == KotlinMavenImporter.KOTLIN_PLUGIN_ARTIFACT_ID

@@ -217,3 +217,8 @@ messages/**)
 
 # for coroutines
 -keep class kotlinx.coroutines.** { *; }
+
+# for webdemo
+-keep class com.intellij.openapi.progress.ProgressManager { *; }
+
+        

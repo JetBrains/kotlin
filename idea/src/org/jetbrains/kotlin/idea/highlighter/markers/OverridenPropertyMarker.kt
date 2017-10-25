@@ -33,9 +33,10 @@ import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.util.AdapterProcessor
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Function
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.getAccessorLightMethods
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
+import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -50,9 +51,9 @@ fun getOverriddenPropertyTooltip(property: KtNamedDeclaration): String? {
             Function { method: PsiMethod? -> method?.containingClass }
     )
 
-    for (method in property.getAccessorLightMethods()) {
+    for (method in property.toPossiblyFakeLightMethods()) {
         if (!overriddenInClassesProcessor.isOverflow) {
-            OverridingMethodsSearch.search(method, true).forEach(consumer)
+            method.forEachOverridingMethod(processor = consumer::process)
         }
     }
 
@@ -85,11 +86,7 @@ fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: 
         return null
     }
 
-    val psiPropertyMethods = when(propertyOrParameter) {
-        is KtProperty  -> LightClassUtil.getLightClassPropertyMethods(propertyOrParameter)
-        is KtParameter -> LightClassUtil.getLightClassPropertyMethods(propertyOrParameter)
-        else -> return null
-    }
+    val psiPropertyMethods = propertyOrParameter.toPossiblyFakeLightMethods()
     val elementProcessor = CommonProcessors.CollectUniquesProcessor<PsiElement>()
     val ktPsiMethodProcessor = Runnable {
         KotlinDefinitionsSearcher.processPropertyImplementationsMethods(

@@ -27,5 +27,6 @@
     <node text="LazyThreadSafetyMode (kotlin)"/>
     <node text="DeprecationLevel (kotlin)"/>
     <node text="Kind in KParameter (kotlin.reflect)"/>
+    <node text="RequireKotlinVersionKind (kotlin.internal)"/>
   </node>
 </node>

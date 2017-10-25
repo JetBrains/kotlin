@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.util.SmartList
+import org.jetbrains.kotlin.utils.SmartList
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -100,12 +100,14 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
         return argument.value == arg
     }
 
+    val freeArgs = ArrayList<String>()
+
     var i = 0
     loop@ while (i < args.size) {
         val arg = args[i++]
 
         if (freeArgsStarted) {
-            result.freeArgs.add(arg)
+            freeArgs.add(arg)
             continue
         }
         if (arg == FREE_ARGS_DELIMITER) {
@@ -118,7 +120,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
             when {
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.unknownExtraFlags.add(arg)
                 arg.startsWith("-") -> errors.unknownArgs.add(arg)
-                else -> result.freeArgs.add(arg)
+                else -> freeArgs.add(arg)
             }
             continue
         }
@@ -148,6 +150,8 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
 
         updateField(property, result, value, argument.delimiter)
     }
+
+    result.freeArgs += freeArgs
 }
 
 private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A, Any?>, result: A, value: Any, delimiter: String) {

@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -486,6 +487,7 @@ compileTestKotlin {
         val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
+        assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
 
         assertAllModulesConfigured()
     }
@@ -1062,7 +1064,8 @@ compileTestKotlin {
         }
 
         val rootManager = ModuleRootManager.getInstance(getModule("js-module"))
-        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library!!
+        assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
     }
 
@@ -1576,6 +1579,43 @@ compileTestKotlin {
         Assert.assertEquals("MultiTest_myTest", facetSettings("MultiTest-jvm_myTest").implementedModuleName)
         Assert.assertEquals("MultiTest_myMain", facetSettings("MultiTest-js_myMain").implementedModuleName)
         Assert.assertEquals("MultiTest_myTest", facetSettings("MultiTest-js_myTest").implementedModuleName)
+    }
+
+    @Test
+    fun testAPIVersionExceedingLanguageVersion() {
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+            }
+
+            compileKotlin {
+                kotlinOptions.languageVersion = "1.1"
+                kotlinOptions.apiVersion = "1.2"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+        }
+
+        assertAllModulesConfigured()
     }
 
     private fun assertAllModulesConfigured() {

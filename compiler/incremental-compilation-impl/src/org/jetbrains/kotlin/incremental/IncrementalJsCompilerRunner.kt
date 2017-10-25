@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -83,6 +83,16 @@ class IncrementalJsCompilerRunner(
     override fun calculateSourcesToCompile(caches: IncrementalJsCachesManager, changedFiles: ChangedFiles.Known, args: K2JSCompilerArguments): CompilationMode {
         if (BuildInfo.read(lastBuildInfoFile) == null) return CompilationMode.Rebuild { "No information on previous build" }
 
+        val libs = (args.libraries ?: "").split(File.pathSeparator).mapTo(HashSet()) { File(it) }
+        val libsDirs = libs.filter { it.isDirectory }
+
+        val changedLib = changedFiles.allAsSequence.find { it in libs }
+                         ?: changedFiles.allAsSequence.find { changedFile ->
+                                libsDirs.any { libDir -> FileUtil.isAncestor(libDir, changedFile, true) }
+                            }
+
+        if (changedLib != null) return CompilationMode.Rebuild { "Library has been changed: $changedLib" }
+
         return CompilationMode.Incremental(getDirtyFiles(changedFiles))
     }
 
@@ -121,10 +131,10 @@ class IncrementalJsCompilerRunner(
             services: Services,
             messageCollector: MessageCollector
     ): ExitCode {
-        val freeArgsBackup = args.freeArgs.toMutableList()
+        val freeArgsBackup = args.freeArgs
 
         try {
-            sourcesToCompile.mapTo(args.freeArgs) { it.absolutePath }
+            args.freeArgs += sourcesToCompile.map() { it.absolutePath }
             val exitCode = K2JSCompiler().exec(messageCollector, services, args)
             reporter.reportCompileIteration(sourcesToCompile, exitCode)
             return exitCode
@@ -133,4 +143,7 @@ class IncrementalJsCompilerRunner(
             args.freeArgs = freeArgsBackup
         }
     }
+
+    private val ChangedFiles.Known.allAsSequence: Sequence<File>
+        get() = modified.asSequence() + removed.asSequence()
 }

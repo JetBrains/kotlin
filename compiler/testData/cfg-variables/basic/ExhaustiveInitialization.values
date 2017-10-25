@@ -3,10 +3,10 @@ enum class Direction {
     NORTH, SOUTH, WEST, EAST
 }
 ---------------------
-    <v0>: Direction   NEW: magic[FAKE_INITIALIZER](NORTH,) -> <v0>
-    <v1>: Direction   NEW: magic[FAKE_INITIALIZER](SOUTH,) -> <v1>
-    <v2>: Direction   NEW: magic[FAKE_INITIALIZER](WEST,) -> <v2>
-    <v3>: Direction   NEW: magic[FAKE_INITIALIZER](EAST) -> <v3>
+    <v0>: {<: Direction}   NEW: magic[FAKE_INITIALIZER](NORTH,) -> <v0>
+    <v1>: {<: Direction}   NEW: magic[FAKE_INITIALIZER](SOUTH,) -> <v1>
+    <v2>: {<: Direction}   NEW: magic[FAKE_INITIALIZER](WEST,) -> <v2>
+    <v3>: {<: Direction}   NEW: magic[FAKE_INITIALIZER](EAST) -> <v3>
 =====================
 == foo ==
 fun foo(dir: Direction): Int {
@@ -20,31 +20,31 @@ fun foo(dir: Direction): Int {
     return res
 }
 ---------------------
-                                                                                                                                                       <v0>: Direction   NEW: magic[FAKE_INITIALIZER](dir: Direction) -> <v0>
-                                                                                                                                                       <v14>: *          NEW: magic[EXHAUSTIVE_WHEN_ELSE](when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }) -> <v14>
-dir                                                                                                                                                    <v1>: *           NEW: r(dir) -> <v1>
-NORTH                                                                                                                                                  <v2>: *           NEW: r(NORTH) -> <v2>
-Direction.NORTH                                                                                                                                        <v2>: *           COPY
-Direction.NORTH                                                                                                                                        <v3>: *           NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.NORTH|<v1>, <v2>) -> <v3>
-1                                                                                                                                                      <v4>: Int         NEW: r(1) -> <v4>
+                                                                                                                                                       <v0>: {<: Direction}   NEW: magic[FAKE_INITIALIZER](dir: Direction) -> <v0>
+                                                                                                                                                       <v14>: *               NEW: magic[EXHAUSTIVE_WHEN_ELSE](when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }) -> <v14>
+dir                                                                                                                                                    <v1>: *                NEW: r(dir) -> <v1>
+NORTH                                                                                                                                                  <v2>: *                NEW: r(NORTH) -> <v2>
+Direction.NORTH                                                                                                                                        <v2>: *                COPY
+Direction.NORTH                                                                                                                                        <v3>: *                NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.NORTH|<v1>, <v2>) -> <v3>
+1                                                                                                                                                      <v4>: Int              NEW: r(1) -> <v4>
 res = 1                                                                                                                                                !<v15>: *
-SOUTH                                                                                                                                                  <v5>: *           NEW: r(SOUTH) -> <v5>
-Direction.SOUTH                                                                                                                                        <v5>: *           COPY
-Direction.SOUTH                                                                                                                                        <v6>: *           NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.SOUTH|<v1>, <v5>) -> <v6>
-2                                                                                                                                                      <v7>: Int         NEW: r(2) -> <v7>
+SOUTH                                                                                                                                                  <v5>: *                NEW: r(SOUTH) -> <v5>
+Direction.SOUTH                                                                                                                                        <v5>: *                COPY
+Direction.SOUTH                                                                                                                                        <v6>: *                NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.SOUTH|<v1>, <v5>) -> <v6>
+2                                                                                                                                                      <v7>: Int              NEW: r(2) -> <v7>
 res = 2                                                                                                                                                !<v16>: *
-WEST                                                                                                                                                   <v8>: *           NEW: r(WEST) -> <v8>
-Direction.WEST                                                                                                                                         <v8>: *           COPY
-Direction.WEST                                                                                                                                         <v9>: *           NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.WEST|<v1>, <v8>) -> <v9>
-3                                                                                                                                                      <v10>: Int        NEW: r(3) -> <v10>
+WEST                                                                                                                                                   <v8>: *                NEW: r(WEST) -> <v8>
+Direction.WEST                                                                                                                                         <v8>: *                COPY
+Direction.WEST                                                                                                                                         <v9>: *                NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.WEST|<v1>, <v8>) -> <v9>
+3                                                                                                                                                      <v10>: Int             NEW: r(3) -> <v10>
 res = 3                                                                                                                                                !<v17>: *
-EAST                                                                                                                                                   <v11>: *          NEW: r(EAST) -> <v11>
-Direction.EAST                                                                                                                                         <v11>: *          COPY
-Direction.EAST                                                                                                                                         <v12>: *          NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.EAST|<v1>, <v11>) -> <v12>
-4                                                                                                                                                      <v13>: Int        NEW: r(4) -> <v13>
+EAST                                                                                                                                                   <v11>: *               NEW: r(EAST) -> <v11>
+Direction.EAST                                                                                                                                         <v11>: *               COPY
+Direction.EAST                                                                                                                                         <v12>: *               NEW: magic[EQUALS_IN_WHEN_CONDITION](Direction.EAST|<v1>, <v11>) -> <v12>
+4                                                                                                                                                      <v13>: Int             NEW: r(4) -> <v13>
 res = 4                                                                                                                                                !<v18>: *
-when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }                               <v19>: *          NEW: merge(when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }|!<v15>, !<v16>, !<v17>, !<v18>) -> <v19>
-res                                                                                                                                                    <v20>: Int        NEW: r(res) -> <v20>
+when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }                               <v19>: *               NEW: merge(when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }|!<v15>, !<v16>, !<v17>, !<v18>) -> <v19>
+res                                                                                                                                                    <v20>: Int             NEW: r(res) -> <v20>
 return res                                                                                                                                             !<v21>: *
-{ val res: Int when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 } return res }   !<v21>: *         COPY
+{ val res: Int when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 } return res }   !<v21>: *              COPY
 =====================

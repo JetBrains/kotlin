@@ -217,6 +217,7 @@ fun Task.listConfigurationContents(configName: String) {
 
 val defaultJvmTarget = "1.8"
 val defaultJavaHome = jdkPath(defaultJvmTarget!!)
+val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toString()?.toBoolean() ?: project.hasProperty("teamcity"))
 
 allprojects {
 
@@ -236,12 +237,24 @@ allprojects {
     }
     configureJvmProject(javaHome!!, jvmTarget!!)
 
+    val commonCompilerArgs = listOf("-Xallow-kotlin-package")
+    
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
             languageVersion = kotlinLanguageVersion
             apiVersion = kotlinLanguageVersion
-            freeCompilerArgs = listOf("-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable")
+            freeCompilerArgs = commonCompilerArgs
         }
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+        kotlinOptions {
+            freeCompilerArgs = commonCompilerArgs + listOf("-Xnormalize-constructor-calls=enable")
+        }
+    }
+
+    tasks.withType(VerificationTask::class.java as Class<Task>) {
+        (this as VerificationTask).ignoreFailures = ignoreTestFailures
     }
 
     tasks.withType<Javadoc> {
@@ -317,11 +330,6 @@ tasks {
         gradlePluginProjects.forEach {
             dependsOn(it + ":check")
         }
-    }
-
-    "gradlePluginsTest" {
-        // deprecated
-        dependsOn("gradlePluginTest")
     }
 
     "gradlePluginIntegrationTest" {

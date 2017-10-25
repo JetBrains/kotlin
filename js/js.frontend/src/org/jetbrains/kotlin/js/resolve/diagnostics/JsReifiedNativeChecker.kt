@@ -37,7 +37,7 @@ class JsReifiedNativeChecker : CallChecker {
                     resolvedCall.call.callElement
                 }
 
-                context.trace.report(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT.on(typeArgumentPsi!!, typeArg))
+                context.trace.report(ErrorsJs.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT.on(typeArgumentPsi!!, typeArg))
             }
         }
     }

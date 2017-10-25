@@ -138,7 +138,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
         val args = K2JSCompilerArguments().apply {
             outputFile = File(outDir, "out.js").canonicalPath
             reportOutputFiles = true
-            freeArgs.addAll(filesToCompile.map { it.canonicalPath })
+            freeArgs = filesToCompile.map { it.canonicalPath }
         }
         return runJSCompiler(args, env)
     }

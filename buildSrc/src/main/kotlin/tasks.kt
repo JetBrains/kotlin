@@ -47,7 +47,6 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
     environment("PROJECT_CLASSES_DIRS", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.asPath)
     environment("PROJECT_BUILD_DIR", buildDir)
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"])
-    ignoreFailures = System.getenv("kotlin_build_ignore_test_failures")?.let { it == "yes" } ?: false
     body()
 }
 

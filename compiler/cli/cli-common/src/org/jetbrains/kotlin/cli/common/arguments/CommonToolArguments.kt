@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.utils.SmartList
 import java.io.Serializable
 
 abstract class CommonToolArguments : Freezable(), Serializable {
@@ -24,7 +23,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         @JvmStatic private val serialVersionUID = 0L
     }
 
-    var freeArgs: MutableList<String> = SmartList()
+    var freeArgs: List<String> by FreezableVar(emptyList())
 
     @Transient var errors: ArgumentParseErrors = ArgumentParseErrors()
 
