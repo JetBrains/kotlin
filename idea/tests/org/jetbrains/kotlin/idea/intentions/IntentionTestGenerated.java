@@ -11735,8 +11735,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
 
         public void testAllFilesPresentInMoveMemberToTopLevel() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveMemberToTopLevel"),
-                                                            Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveMemberToTopLevel"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("function.kt")
@@ -11771,15 +11770,13 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("redeclarationConflictWithPackage.kt")
         public void testRedeclarationConflictWithPackage() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/redeclarationConflictWithPackage.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/redeclarationConflictWithPackage.kt");
             doTest(fileName);
         }
 
         @TestMetadata("redeclarationPropertyConflict.kt")
         public void testRedeclarationPropertyConflict() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/redeclarationPropertyConflict.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveMemberToTopLevel/redeclarationPropertyConflict.kt");
             doTest(fileName);
         }
     }
