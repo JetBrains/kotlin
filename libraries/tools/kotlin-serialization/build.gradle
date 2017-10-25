@@ -28,7 +28,7 @@ repositories {
 dependencies {
     compileOnly project(':kotlin-gradle-plugin-api')
 
-    compile project(':kotlin-stdlib')
+    compileOnly project(':kotlin-stdlib')
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
     compileOnly project(':kotlin-allopen-compiler-plugin')
 
