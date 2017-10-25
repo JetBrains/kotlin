@@ -1,7 +1,8 @@
 package = platform.posix
-headers = stdio.h io.h math.h minwindef.h
+headers = minwindef.h wtypesbase.h stdio.h io.h math.h
 compilerOpts = -DUNICODE -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DWINAPI_FAMILY=3 \
-   -D_INC_WINDOWS -Wno-incompatible-pointer-types -Wno-deprecated-declarations
+   -D_INC_WINDOWS -DRPC_NO_WINDOWS_H -DCOM_NO_WINDOWS_H \
+   -Wno-incompatible-pointer-types -Wno-deprecated-declarations
 noStringConversion = send recv
 linkerOpts = -lWs2_32
 

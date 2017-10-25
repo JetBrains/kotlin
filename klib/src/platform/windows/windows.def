@@ -1,5 +1,5 @@
 package = platform.windows
-headers = windows.h commctrl.h dwmapi.h shlobj.h shlwapi.h shobjidl.h \
+headers = wtypes.h minwindef.h windows.h commctrl.h dwmapi.h shlobj.h shlwapi.h shobjidl.h \
     urlmon.h usp10.h uxtheme.h vfw.h wininet.h winsock2.h ws2tcpip.h ws2def.h
 compilerOpts = -DUNICODE -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DWINAPI_FAMILY=3 \
     -Wno-incompatible-pointer-types -Wno-deprecated-declarations
