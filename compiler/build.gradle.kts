@@ -84,7 +84,9 @@ projectTest {
 
 evaluationDependsOn(":compiler:tests-common-jvm6")
 
-fun Project.codegenTest(taskName: String, jdk: String, body: Test.() -> Unit): Test = projectTest(taskName) {
+fun Project.codegenTest(target: Int, jvm: Int,
+                        jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
+                        body: Test.() -> Unit): Test = projectTest("codegenTarget${target}Jvm${jvm}Test") {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
 
@@ -103,14 +105,10 @@ fun Project.codegenTest(taskName: String, jdk: String, body: Test.() -> Unit): T
         executable = "$jdkPath/bin/java"
         println("Running test with $executable")
     }
-}.also {
-    task(taskName.replace(Regex("-[a-z]"), { it.value.takeLast(1).toUpperCase() })) {
-        dependsOn(it)
-        group = "verification"
-    }
+    group = "verification"
 }
 
-codegenTest("codegen-target6-jvm6-test", "JDK_18") {
+codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     dependsOn(":compiler:tests-common-jvm6:build")
 
     //TODO make port flexible
@@ -150,19 +148,19 @@ codegenTest("codegen-target6-jvm6-test", "JDK_18") {
     }
 }
 
-codegenTest("codegen-target6-jvm9-test", "JDK_9") {
+codegenTest(target = 6, jvm = 9) {
     systemProperty("kotlin.test.default.jvm.target", "1.6")
 }
 
-codegenTest("codegen-target8-jvm8-test", "JDK_18") {
+codegenTest(target = 8, jvm = 8) {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
 }
 
-codegenTest("codegen-target8-jvm9-test", "JDK_9") {
+codegenTest(target = 8, jvm = 9) {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
 }
 
-codegenTest("codegen-target9-jvm9-test", "JDK_9") {
+codegenTest(target = 9, jvm = 9) {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.1.9", "true")
 }

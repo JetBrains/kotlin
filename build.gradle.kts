@@ -302,11 +302,6 @@ task<Copy>("ideaPlugin") {
     into("$ideaPluginDir/lib")
 }
 
-task("dist-plugin") {
-    dependsOn("ideaPlugin")
-    doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
-}
-
 tasks {
     "clean" {
         doLast {
@@ -343,28 +338,13 @@ tasks {
                   ":compiler:tests-java8:test")
     }
 
-    "compiler-tests" {
-        dependsOn("jvmCompilerTest")
-        doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
-    }
-
     "jsCompilerTest" {
         dependsOn(":js:js.tests:test")
-    }
-
-    "js-tests" {
-        dependsOn("jsCompilerTest")
-        doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
     }
 
     "scriptingTest" {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
-    }
-
-    "scripting-tests" {
-        dependsOn("scriptingTest")
-        doFirst { logger.warn("'$name' task is deprecated, use '${dependsOn.last()}' instead") }
     }
 
     "compilerTest" {
@@ -429,14 +409,7 @@ tasks {
                   ":plugins:uast-kotlin:test",
                   ":kotlin-annotation-processing-gradle:test")
     }
-
-    "other-tests" {
-        dependsOn("dist")
-        dependsOn(":kotlin-build-common:test",
-                  ":generators:test")
-        doFirst { logger.warn("'$name' task is deprecated") }
-    }
-
+    
 
     "ideaPluginTest" {
         dependsOn(
