@@ -58,8 +58,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         val jvmArgumentsElement = compilerInfoElement?.getOptionBody("k2jvmCompilerArguments")
         val jsArgumentsElement = compilerInfoElement?.getOptionBody("k2jsCompilerArguments")
 
-        val compilerArguments = targetPlatform.createCompilerArguments()
-        compilerArguments.freeArgs = ArrayList()
+        val compilerArguments = targetPlatform.createCompilerArguments { freeArgs = ArrayList() }
 
         commonArgumentsElement?.let { XmlSerializer.deserializeInto(compilerArguments, it) }
         when (compilerArguments) {
@@ -105,7 +104,7 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
             XmlSerializer.deserializeInto(compilerSettings!!, it)
         }
         element.getChild("compilerArguments")?.let {
-            compilerArguments = platformKind.createCompilerArguments()
+            compilerArguments = platformKind.createCompilerArguments { freeArgs = ArrayList() }
             XmlSerializer.deserializeInto(compilerArguments!!, it)
         }
         testOutputPath = element.getChild("testOutputPath")?.let {
