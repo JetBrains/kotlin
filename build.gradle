@@ -366,6 +366,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         include 'INTEROP.md'
         include 'RELEASE_NOTES.md'
         include 'GRADLE_PLUGIN.md'
+        include 'PLATFORM_LIBS.md'
         exclude '**/gradle.properties'
         exclude '**/settings.gradle'
         exclude '**/build'
