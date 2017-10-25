@@ -119,6 +119,8 @@ var JsName.imported by MetadataProperty(default = false)
 
 var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default = null)
 
+var JsExpression.range: Pair<RangeType, RangeKind>? by MetadataProperty(default = null)
+
 data class CoroutineMetadata(
         val doResumeName: JsName,
         val stateName: JsName,
@@ -161,4 +163,14 @@ enum class BoxingKind {
     NONE,
     BOXING,
     UNBOXING
+}
+
+enum class RangeType {
+    INT,
+    LONG
+}
+
+enum class RangeKind {
+    RANGE_TO,
+    UNTIL
 }

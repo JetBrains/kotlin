@@ -167,26 +167,31 @@ public final class JsAstUtils {
     }
 
     public static JsExpression newLong(long value) {
+        JsExpression result;
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             int low = (int) value;
             int high = (int) (value >> 32);
             List<JsExpression> args = new SmartList<>();
             args.add(new JsIntLiteral(low));
             args.add(new JsIntLiteral(high));
-            return new JsNew(Namer.kotlinLong(), args);
+            result = new JsNew(Namer.kotlinLong(), args);
         }
         else {
             if (value == 0) {
-                return new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong());
             }
             else if (value == 1) {
-                return new JsNameRef(Namer.LONG_ONE, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_ONE, Namer.kotlinLong());
             }
             else if (value == -1) {
-                return new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
             }
-            return longFromInt(new JsIntLiteral((int) value));
+            else {
+                result = longFromInt(new JsIntLiteral((int) value));
+            }
         }
+        MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
+        return result;
     }
 
     @NotNull

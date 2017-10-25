@@ -7385,6 +7385,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("numberRangesOptimized.kt")
+        public void testNumberRangesOptimized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/range/numberRangesOptimized.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("rangeEquals.kt")
         public void testRangeEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/range/rangeEquals.kt");

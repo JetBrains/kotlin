@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
@@ -35,6 +37,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -138,6 +142,9 @@ private fun translateFunctionCall(
         inlineResolvedCall: ResolvedCall<out CallableDescriptor>,
         explicitReceivers: ExplicitReceivers
 ): JsExpression {
+    val rangeCheck = RangeCheckTranslator(context).translateAsRangeCheck(resolvedCall, explicitReceivers)
+    if (rangeCheck != null) return rangeCheck
+
     val callExpression = context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
 
     if (CallExpressionTranslator.shouldBeInlined(inlineResolvedCall.resultingDescriptor, context)) {
@@ -164,8 +171,33 @@ private fun translateFunctionCall(
     }
 
     callExpression.type = resolvedCall.getReturnType().let { if (resolvedCall.call.isSafeCall()) it.makeNullable() else it }
+    mayBeMarkByRangeMetadata(resolvedCall, callExpression)
     return callExpression
 }
+
+
+private fun mayBeMarkByRangeMetadata(resolvedCall: ResolvedCall<out FunctionDescriptor>, callExpression: JsExpression) {
+    when (resolvedCall.resultingDescriptor.fqNameSafe) {
+        intRangeToFqName -> {
+            callExpression.range = Pair(RangeType.INT, RangeKind.RANGE_TO)
+        }
+        longRangeToFqName -> {
+            callExpression.range = Pair(RangeType.LONG, RangeKind.RANGE_TO)
+        }
+        untilFqName -> when (resolvedCall.resultingDescriptor.returnType?.constructor?.declarationDescriptor?.fqNameUnsafe) {
+            KotlinBuiltIns.FQ_NAMES.intRange -> {
+                callExpression.range = Pair(RangeType.INT, RangeKind.UNTIL)
+            }
+            KotlinBuiltIns.FQ_NAMES.longRange -> {
+                callExpression.range = Pair(RangeType.LONG, RangeKind.UNTIL)
+            }
+        }
+    }
+}
+
+private val intRangeToFqName = FqName("kotlin.Int.rangeTo")
+private val longRangeToFqName = FqName("kotlin.Long.rangeTo")
+private val untilFqName = FqName("kotlin.ranges.until")
 
 fun ResolvedCall<out CallableDescriptor>.getReturnType(): KotlinType = TranslationUtils.getReturnTypeForCoercion(resultingDescriptor)
 
