@@ -142,7 +142,7 @@ object TestRunner {
         val negativePatterns = filters.getOrNull(1)?.toGTestPatterns() ?: emptyList()
 
         this.filters.add { testCase ->
-            positivePatterns.all { testCase.prettyName.matches(it) } &&
+            positivePatterns.any { testCase.prettyName.matches(it) } &&
             negativePatterns.none { testCase.prettyName.matches(it) }
         }
     }
