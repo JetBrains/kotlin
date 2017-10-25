@@ -53,7 +53,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
                 val lineNumber = element.getLineNumber()
                 if (lineNumber !in markedLineNumbers && isRecursiveCall(element)) {
                     markedLineNumbers.add(lineNumber)
-                    result.add(RecursiveMethodCallMarkerInfo(element))
+                    result.add(RecursiveMethodCallMarkerInfo(getElementForLineMark(element)))
                 }
             }
         }
@@ -111,8 +111,8 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         return true
     }
 
-    private class RecursiveMethodCallMarkerInfo(callElement: KtElement)
-            : LineMarkerInfo<KtElement>(
+    private class RecursiveMethodCallMarkerInfo(callElement: PsiElement)
+        : LineMarkerInfo<PsiElement>(
             callElement,
             callElement.textRange,
             AllIcons.Gutter.RecursiveMethod,
@@ -123,13 +123,22 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
     ) {
 
         override fun createGutterRenderer(): GutterIconRenderer? {
-            return object : LineMarkerInfo.LineMarkerGutterIconRenderer<KtElement>(this) {
+            return object : LineMarkerInfo.LineMarkerGutterIconRenderer<PsiElement>(this) {
                 override fun getClickAction() = null // to place breakpoint on mouse click
             }
         }
     }
 
 }
+
+internal fun getElementForLineMark(callElement: PsiElement): PsiElement =
+        when (callElement) {
+            is KtSimpleNameExpression -> callElement.getReferencedNameElement()
+            else ->
+                // a fallback,
+                //but who knows what to reference in KtArrayAccessExpression ?
+                generateSequence(callElement, { it.firstChild }).last()
+        }
 
 private fun PsiElement.getLineNumber(): Int {
     return PsiDocumentManager.getInstance(project).getDocument(containingFile)!!.getLineNumber(textOffset)
