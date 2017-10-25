@@ -164,7 +164,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
                     ?: project.name
             val suffix = if (sourceSetName == "main") "" else "_$sourceSetName"
-            return "$baseName$suffix"
+            return filterModuleName("${baseName}_$suffix")
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -537,6 +537,11 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         throwGradleExceptionIfError(exitCode)
     }
 }
+
+private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
+
+private fun filterModuleName(moduleName: String): String =
+    moduleName.replace(invalidModuleNameCharactersRegex, "_")
 
 private fun Task.getGradleVersion(): ParsedGradleVersion? {
     val gradleVersion = project.gradle.gradleVersion

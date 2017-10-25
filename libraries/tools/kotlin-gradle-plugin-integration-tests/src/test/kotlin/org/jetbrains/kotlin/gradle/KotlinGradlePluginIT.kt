@@ -771,4 +771,18 @@ class KotlinGradleIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testModuleNameFiltering() = with(Project("typeAlias")) { // Use a Project with a top-level typealias
+        setupWorkingDir()
+
+        gradleBuildScript().appendText("\n" + """archivesBaseName = 'a/really\\tricky\n\rmodule\tname'""")
+        build("classes") {
+            assertSuccessful()
+
+            val metaInfDir = File(projectDir, kotlinClassesDir() + "META-INF")
+            assertNotNull(metaInfDir.listFiles().singleOrNull { it.name.endsWith(".kotlin_module") })
+        }
+    }
+
 }
