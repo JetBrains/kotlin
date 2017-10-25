@@ -124,6 +124,9 @@ public class SpecialFiles {
         excludedFiles.add("closureWithSelfInstantiation.kt");
         excludedFiles.add("quotedClassName.kt");
 
+        //wrong function resolution after package renaming
+        excludedFiles.add("apiVersionAtLeast1.kt");
+
         //special flags
         excludedFiles.add("inlineFunInConstructorCallWithEnabledNormalization.kt");
         excludedFiles.add("kt9532_lv10.kt");
