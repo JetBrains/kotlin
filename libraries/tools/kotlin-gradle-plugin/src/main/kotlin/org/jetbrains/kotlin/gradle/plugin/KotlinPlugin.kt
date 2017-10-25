@@ -4,6 +4,9 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
+import com.intellij.util.ReflectionUtil
 import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
@@ -22,15 +25,11 @@ import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
-import com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.gradle.utils.checkedReflection
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
 import java.io.File
 import java.net.URL
@@ -285,7 +284,7 @@ internal class Kotlin2JsSourceSetProcessor(
             tasksProvider.createKotlinJSTask(project, taskName, sourceSet.name)
 
     override fun doTargetSpecificProcessing() {
-        project.tasks.findByName(sourceSet.classesTaskName).dependsOn(kotlinTask)
+        project.tasks.findByName(sourceSet.classesTaskName)!!.dependsOn(kotlinTask)
         kotlinTask.source(kotlinSourceSet.kotlin)
         createCleanSourceMapTask()
 
@@ -310,7 +309,7 @@ internal class Kotlin2JsSourceSetProcessor(
             kotlinTask.destinationDir = outputDir
 
             if (!isSeparateClassesDirSupported) {
-                sourceSet.output.setClassesDir(kotlinTask.destinationDir)
+                sourceSet.output.setClassesDirCompatible(kotlinTask.destinationDir)
             }
 
             appliedPlugins
@@ -352,7 +351,7 @@ internal class KotlinCommonSourceSetProcessor(
             val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                     project, kotlinTask, kotlinTask, null, null, sourceSet)
 
-            project.tasks.findByName(sourceSet.classesTaskName).dependsOn(kotlinTask)
+            project.tasks.findByName(sourceSet.classesTaskName)!!.dependsOn(kotlinTask)
             // can be missing (e.g. in case of tests)
             project.tasks.findByName(sourceSet.jarTaskName)?.dependsOn(kotlinTask)
             val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
@@ -677,9 +676,9 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
     }
 
     // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
-    javaTask.inputs.dir(kotlinTask.destinationDir)
+    javaTask.inputsCompatible.dirCompatible(kotlinTask.destinationDir)
     // Also, use kapt1 annotations file for up-to-date check since annotation processing is done with javac
-    kotlinTask.kaptOptions.annotationsFile?.let { javaTask.inputs.file(it) }
+    kotlinTask.kaptOptions.annotationsFile?.let { javaTask.inputsCompatible.fileCompatible(it) }
 
     javaTask.dependsOn(kotlinTask)
     /*

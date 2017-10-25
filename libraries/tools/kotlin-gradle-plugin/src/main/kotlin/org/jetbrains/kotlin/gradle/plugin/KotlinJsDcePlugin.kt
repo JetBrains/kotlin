@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileTree
 import org.gradle.api.internal.file.UnionFileCollection
-import org.gradle.api.internal.file.UnionFileTree
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSet
@@ -53,7 +53,7 @@ class KotlinJsDcePlugin : Plugin<Project> {
             copyDependencies(project, sourceSet, dependenciesDir, dependenciesTemporaryDir, dceTask)
 
             val dceInputTrees = listOf(project.fileTree(kotlinTask.outputFile), project.fileTree(dependenciesDir))
-            val dceInputFiles = UnionFileTree("dce-input", dceInputTrees)
+            val dceInputFiles = dceInputTrees.reduce { acc: FileTree, tree -> acc + tree }
 
             with (dceTask) {
                 classpath = sourceSet.compileClasspath
