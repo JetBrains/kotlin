@@ -253,7 +253,7 @@ class KotlinFieldBreakpoint(
     }
 
     fun matchesEvent(event: LocatableEvent): Boolean {
-        val method = event.location().method()
+        val method = event.location()?.method()
         // TODO check property type
         return method != null && method.name() in getMethodsName()
     }
@@ -264,7 +264,7 @@ class KotlinFieldBreakpoint(
     }
 
     override fun getEventMessage(event: LocatableEvent): String {
-        val location = event.location()
+        val location = event.location()!!
         val locationQName = location.declaringType().name() + "." + location.method().name()
         val locationFileName = try {
             location.sourceName()
