@@ -123,6 +123,10 @@ public class SpecialFiles {
         excludedFiles.add("closureOfInnerLocalClass.kt");
         excludedFiles.add("closureWithSelfInstantiation.kt");
         excludedFiles.add("quotedClassName.kt");
+
+        //special flags
+        excludedFiles.add("inlineFunInConstructorCallWithEnabledNormalization.kt");
+        excludedFiles.add("kt9532_lv10.kt");
     }
 
     private SpecialFiles() {
