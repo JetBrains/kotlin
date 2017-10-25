@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -463,17 +465,30 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     /**
      * The scope of parameter visibility.
      */
-    private open inner class ParameterScope(private val functionGenerationContext: FunctionGenerationContext,
-            parameters: Map<ParameterDescriptor, LLVMValueRef>): InnerScopeImpl() {
+    private open inner class ParameterScope(
+            function: IrFunction?,
+            private val functionGenerationContext: FunctionGenerationContext): InnerScopeImpl() {
 
-        // Note: it is possible to generate access to a parameter without any variables,
-        // however variables are named and thus the resulting bitcode can be more readable.
+        val parameters = bindParameters(function?.descriptor)
 
         init {
-            parameters.map { (descriptor, value) ->
-                functionGenerationContext.vars.createImmutable(descriptor, value)
-            }
+            if (function != null) {
+                parameters.forEach{
+                    val descriptor = it.key
+                    val ir = when {
+                        descriptor is ValueParameterDescriptor -> function.getIrValueParameter(descriptor)
+                        descriptor is ReceiverParameterDescriptor && function.extensionReceiverParameter?.descriptor == descriptor -> function.extensionReceiverParameter!!
+                        descriptor is ReceiverParameterDescriptor && function.dispatchReceiverParameter?.descriptor == descriptor-> function.dispatchReceiverParameter!!
+                        function.descriptor is ClassConstructorDescriptor && (function.descriptor as ClassConstructorDescriptor).constructedClass.thisAsReceiverParameter == descriptor-> IrValueParameterImpl(function.startOffset, function.startOffset, object: IrDeclarationOriginImpl("THIS"){}, descriptor)
+                        else -> TODO()
+                    }
 
+                    val local = functionGenerationContext.vars.createParameter(descriptor,
+                            it.value, debugInfoIfNeeded(function, ir))
+                    functionGenerationContext.mapParameterForDebug(local, it.value)
+
+                }
+            }
         }
 
         override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
@@ -489,10 +504,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     /**
      * The [CodeContext] enclosing the entire function body.
      */
-    private inner class FunctionScope (val declaration: IrFunction?, val functionGenerationContext: FunctionGenerationContext) :
-            ParameterScope(functionGenerationContext, bindParameters(declaration?.descriptor)) {
+    private inner class FunctionScope (val declaration: IrFunction?, val functionGenerationContext: FunctionGenerationContext) : InnerScopeImpl() {
+
+
         constructor(llvmFunction:LLVMValueRef, functionGenerationContext: FunctionGenerationContext):this(null, functionGenerationContext) {
             this.llvmFunction = llvmFunction
+
         }
 
         var llvmFunction:LLVMValueRef? = declaration?.let{
@@ -531,7 +548,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     /**
      * Binds LLVM function parameters to IR parameter descriptors.
      */
-    private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
+   private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
         if (descriptor == null) return emptyMap()
         val parameterDescriptors = descriptor.allParameters
         return parameterDescriptors.mapIndexed { i, parameterDescriptor ->
@@ -549,22 +566,27 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (declaration.descriptor.isExternal)                    return
         if (body == null)                                         return
 
+        val scope = declaration.scope()
+        val startLine = declaration.startLine()
         val startLocationInfo = LocationInfo(
-                scope  = declaration.scope(),
-                line   = declaration.startLine(),
+                scope  = scope,
+                line   = startLine,
                 column = declaration.startColumn())
         val endLocationInfo = LocationInfo(
-                scope  = declaration.scope(),
+                scope  = scope,
                 line   = declaration.endLine(),
                 column = declaration.endColumn())
         generateFunction(codegen, declaration.descriptor, startLocationInfo, endLocationInfo) {
             using(FunctionScope(declaration, it)) {
-                using(VariableScope()) {
-                    when (body) {
-                        is IrBlockBody -> body.statements.forEach { generateStatement(it) }
-                        is IrExpressionBody -> generateStatement(body.expression)
-                        is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
-                        else -> TODO(ir2string(body))
+                val parameterScope = ParameterScope(declaration, functionGenerationContext)
+                using(parameterScope) {
+                    using(VariableScope()) {
+                        when (body) {
+                            is IrBlockBody -> body.statements.forEach { generateStatement(it) }
+                            is IrExpressionBody -> generateStatement(body.expression)
+                            is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
+                            else -> TODO(ir2string(body))
+                        }
                     }
                 }
             }
@@ -1070,25 +1092,41 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-
-    private fun generateVariable(value: IrVariable) {
-        context.log{"generateVariable               : ${ir2string(value)}"}
-        val result = value.initializer?.let { evaluateExpression(it) }
-        val variableDescriptor = value.descriptor
-        val functionScope = (currentCodeContext.functionScope() as FunctionScope).declaration?.scope()
-        val variableLocation = if (context.shouldContainDebugInfo() && functionScope != null && variableDescriptor.isVar) {
-            val location = debugLocation(value)
-            val file = (currentCodeContext.fileScope() as FileScope).file.file()
-            val line = value.startLine()
-            functionGenerationContext.vars.debugInfoLocalVariableLocation(
+    private fun debugInfoIfNeeded(function: IrFunction?, element: IrElement): VariableDebugLocation? {
+        if (function == null || !context.shouldContainDebugInfo()) return null
+        val functionScope = function?.scope()
+        if (functionScope == null || !element.needDebugInfo(context)) return null
+        val location = debugLocation(element)
+        val file = (currentCodeContext.fileScope() as FileScope).file.file()
+        val line = element.startLine()
+        return when (element) {
+            is IrVariable -> debugInfoLocalVariableLocation(
+                    builder       = context.debugInfo.builder,
                     functionScope = functionScope,
-                    diType        = variableDescriptor.type.diType(context, functionGenerationContext.llvmTargetData),
-                    name          = variableDescriptor.name,
+                    diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
+                    name          = element.descriptor.name,
                     file          = file,
                     line          = line,
                     location      = location)
-        } else null
-        currentCodeContext.genDeclareVariable(variableDescriptor, result, variableLocation)
+            is IrValueParameter -> debugInfoParameterLocation(
+                    builder       = context.debugInfo.builder,
+                    functionScope = functionScope,
+                    diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
+                    name          = element.descriptor.name,
+                    argNo         = (element.descriptor as? ValueParameterDescriptor)?.index ?: 0,
+                    file          = file,
+                    line          = line,
+                    location      = location)
+            else -> throw Error("Unsupported element type: ${ir2string(element)}")
+        }
+    }
+
+    private fun generateVariable(variable: IrVariable) {
+        context.log{"generateVariable               : ${ir2string(variable)}"}
+        val value = variable.initializer?.let { evaluateExpression(it) }
+        currentCodeContext.genDeclareVariable(
+                variable.descriptor, value, debugInfoIfNeeded(
+                (currentCodeContext.functionScope() as FunctionScope)?.declaration, variable))
     }
 
     //-------------------------------------------------------------------------//
@@ -2414,3 +2452,4 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
 internal data class LocationInfo(val scope:DIScopeOpaqueRef?, val line:Int, val column:Int)
 
+private fun IrFunction.hasNotReceiver() = this.extensionReceiverParameter == null && this.dispatchReceiverParameter == null

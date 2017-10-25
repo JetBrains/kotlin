@@ -214,6 +214,16 @@ DILocalVariableRef DICreateAutoVariable(DIBuilderRef builder, DIScopeOpaqueRef s
     llvm::unwrap(type)));
 }
 
+DILocalVariableRef DICreateParameterVariable(DIBuilderRef builder, DIScopeOpaqueRef scope, const char *name, unsigned argNo, DIFileRef file, unsigned line, DITypeOpaqueRef type) {
+  return llvm::wrap(llvm::unwrap(builder)->createParameterVariable(
+    llvm::unwrap(scope),
+    name,
+    argNo,
+    llvm::unwrap(file),
+    line,
+    llvm::unwrap(type)));
+}
+
 DIExpressionRef DICreateEmptyExpression(DIBuilderRef builder) {
   return llvm::wrap(llvm::unwrap(builder)->createExpression());
 }

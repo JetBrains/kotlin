@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -478,6 +479,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private fun position() = basicBlockToLastLocation[currentBlock]
 
 
+    internal fun mapParameterForDebug(index: Int, value: LLVMValueRef) {
+        appendingTo(localsInitBb) {
+            LLVMBuildStore(builder, value, vars.addressOf(index))
+        }
+    }
+
     internal fun prologue() {
         assert(returns.isEmpty())
         if (isObjectType(returnType!!)) {
@@ -505,7 +512,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                                 Int32(slotCount * codegen.runtime.pointerSize).llvm,
                                 Int32(codegen.runtime.pointerAlignment).llvm,
                                 Int1(0).llvm))
-                call(context.llvm.enterFrameFunction, listOf(slots, Int32(slotCount).llvm))
+                call(context.llvm.enterFrameFunction, listOf(slots, Int32(vars.skip).llvm, Int32(slotCount).llvm))
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
             memScoped {
@@ -669,7 +676,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private fun releaseVars() {
         if (needSlots) {
             call(context.llvm.leaveFrameFunction,
-                    listOf(slotsPhi!!, Int32(slotCount).llvm))
+                    listOf(slotsPhi!!, Int32(vars.skip).llvm, Int32(slotCount).llvm))
         }
     }
 }

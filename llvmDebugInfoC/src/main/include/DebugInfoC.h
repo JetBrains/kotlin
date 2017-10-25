@@ -93,6 +93,7 @@ DISubroutineTypeRef DICreateSubroutineType(DIBuilderRef builder,
                                            unsigned typesCount);
 
 DILocalVariableRef DICreateAutoVariable(DIBuilderRef builder, DIScopeOpaqueRef scope, const char *name, DIFileRef file, unsigned line, DITypeOpaqueRef type);
+DILocalVariableRef DICreateParameterVariable(DIBuilderRef builder, DIScopeOpaqueRef scope, const char *name, unsigned argNo, DIFileRef file, unsigned line, DITypeOpaqueRef type);
 void DIInsertDeclaration(DIBuilderRef builder, LLVMValueRef value, DILocalVariableRef localVariable, DILocationRef location, LLVMBasicBlockRef bb, int64_t *expr, uint64_t exprCount);
 DIExpressionRef DICreateEmptyExpression(DIBuilderRef builder);
 void DIFunctionAddSubprogram(LLVMValueRef fn, DISubprogramRef sp);

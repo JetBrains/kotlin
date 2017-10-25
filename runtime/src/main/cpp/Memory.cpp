@@ -1080,13 +1080,13 @@ void UpdateRef(ObjHeader** location, const ObjHeader* object) {
   }
 }
 
-void EnterFrame(ObjHeader** start, int count) {
-  MEMORY_LOG("EnterFrame %p .. %p\n", start, start + count)
+void EnterFrame(ObjHeader** start, int parameters, int count) {
+  MEMORY_LOG("EnterFrame %p .. %p\n", start, start + count + parameters)
 }
 
-void LeaveFrame(ObjHeader** start, int count) {
-  MEMORY_LOG("LeaveFrame %p .. %p\n", start, start + count)
-  ReleaseRefs(start + kFrameOverlaySlots, count - kFrameOverlaySlots);
+void LeaveFrame(ObjHeader** start, int parameters, int count) {
+  MEMORY_LOG("LeaveFrame %p .. %p\n", start, start + count + parameters)
+  ReleaseRefs(start + parameters + kFrameOverlaySlots, count - kFrameOverlaySlots - parameters);
   if (*start != nullptr) {
     auto arena = initedArena(start);
     MEMORY_LOG("LeaveFrame: free arena %p\n", arena)
