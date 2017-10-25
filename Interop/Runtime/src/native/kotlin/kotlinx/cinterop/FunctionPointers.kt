@@ -67,7 +67,7 @@ import konan.internal.ExportForCompiler
 
 @ExportForCompiler
 private fun invokeImplUnitRet(ptr: COpaquePointer, vararg args: Any?): Unit = memScoped {
-    callWithVarargs(ptr.rawValue, nativeNullPtr, FFI_TYPE_KIND_VOID, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, nativeNullPtr, FFI_TYPE_KIND_VOID, args, null, memScope)
 }
 
 @ExportForCompiler
@@ -77,48 +77,48 @@ private fun invokeImplBooleanRet(ptr: COpaquePointer, vararg args: Any?): Boolea
 @ExportForCompiler
 private fun invokeImplByteRet(ptr: COpaquePointer, vararg args: Any?): Byte = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<ByteVar>(ByteVar)
-    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT8, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT8, args, null, memScope)
     resultBuffer.value
 }
 
 @ExportForCompiler
 private fun invokeImplShortRet(ptr: COpaquePointer, vararg args: Any?): Short = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<ShortVar>(ShortVar)
-    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT16, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT16, args, null, memScope)
     resultBuffer.value
 }
 
 @ExportForCompiler
 private fun invokeImplIntRet(ptr: COpaquePointer, vararg args: Any?): Int = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<IntVar>(IntVar)
-    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT32, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT32, args, null, memScope)
     resultBuffer.value
 }
 
 @ExportForCompiler
 private fun invokeImplLongRet(ptr: COpaquePointer, vararg args: Any?): Long = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<LongVar>(LongVar)
-    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT64, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_SINT64, args, null, memScope)
     resultBuffer.value
 }
 
 @ExportForCompiler
 private fun invokeImplFloatRet(ptr: COpaquePointer, vararg args: Any?): Float = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<FloatVar>(FloatVar)
-    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_FLOAT, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_FLOAT, args, null, memScope)
     resultBuffer.value
 }
 
 @ExportForCompiler
 private fun invokeImplDoubleRet(ptr: COpaquePointer, vararg args: Any?): Double = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<DoubleVar>(DoubleVar)
-    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_DOUBLE, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_DOUBLE, args, null, memScope)
     resultBuffer.value
 }
 
 @ExportForCompiler
 private fun invokeImplPointerRet(ptr: COpaquePointer, vararg args: Any?): COpaquePointer? = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<COpaquePointerVar>(COpaquePointerVar)
-    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_POINTER, args, emptyArray(), memScope)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_POINTER, args, null, memScope)
     resultBuffer.value
 }

@@ -61,9 +61,9 @@ ffi_type* convertFfiTypeKindToType(FfiTypeKind typeKind) {
 
 extern "C" {
 
-void Kotlin_Interop_callWithVarargs(void* codePtr, void* returnValuePtr, FfiTypeKind returnTypeKind,
+void Kotlin_Interop_callFunctionPointer(void* codePtr, void* returnValuePtr, FfiTypeKind returnTypeKind,
                      void** arguments, intptr_t* argumentTypeKinds,
-                     int fixedArgumentsNumber, int totalArgumentsNumber) {
+                     int totalArgumentsNumber, int variadicArgumentsNumber) {
 #ifdef KONAN_NO_FFI
     RuntimeAssert(false, "Vararg calls are not supported on this platform");
 #else
@@ -72,11 +72,18 @@ void Kotlin_Interop_callWithVarargs(void* codePtr, void* returnValuePtr, FfiType
     for (int i = 0; i < totalArgumentsNumber; ++i) {
         argumentTypes[i] = convertFfiTypeKindToType((FfiTypeKind) argumentTypeKinds[i]);
     }
+    ffi_type* returnType = convertFfiTypeKindToType(returnTypeKind);
 
     ffi_cif cif;
-    ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI,
-                     fixedArgumentsNumber, totalArgumentsNumber,
-                     convertFfiTypeKindToType(returnTypeKind), argumentTypes);
+    if (variadicArgumentsNumber < 0) {
+        // Non-variadic.
+        ffi_prep_cif(&cif, FFI_DEFAULT_ABI, totalArgumentsNumber, returnType, argumentTypes);
+    } else {
+        int fixedArgumentsNumber = totalArgumentsNumber - variadicArgumentsNumber;
+        ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI,
+                fixedArgumentsNumber, totalArgumentsNumber,
+                returnType, argumentTypes);
+    }
 
     ffi_call(&cif, (void (*)())codePtr, returnValuePtr, arguments);
 #endif
