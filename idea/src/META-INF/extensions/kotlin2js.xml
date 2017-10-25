@@ -2,6 +2,5 @@
     <id>org.jetbrains.kotlin</id>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <diagnosticSuppressor implementation="org.jetbrains.kotlin.js.analyze.SuppressUninitializedErrorsForNativeDeclarations"/>
     </extensions>
 </idea-plugin>

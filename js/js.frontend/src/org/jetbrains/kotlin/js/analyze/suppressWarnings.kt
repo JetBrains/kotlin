@@ -19,14 +19,8 @@ package org.jetbrains.kotlin.js.analyze
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.js.PredefinedAnnotation.*
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
-import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 
 private val NATIVE_ANNOTATIONS = arrayOf(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
 
@@ -45,17 +39,3 @@ object JsNativeDiagnosticSuppressor : PlatformDiagnosticSuppressor {
 
     override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = !descriptor.isLexicallyInsideJsNative()
 }
-
-class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticSuppressor {
-    override fun isSuppressed(diagnostic: Diagnostic): Boolean {
-        if (diagnostic.factory != Errors.UNINITIALIZED_VARIABLE) return false
-
-        @Suppress("UNCHECKED_CAST")
-        val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<KtSimpleNameExpression, VariableDescriptor>
-
-        val variableDescriptor = diagnosticWithParameters.a
-
-        return AnnotationsUtils.isNativeObject(variableDescriptor)
-    }
-}
-
