@@ -1,7 +1,7 @@
 <idea-plugin>
     <name>Kotlin-serialization</name>
     <id>org.jetbrains.kotlinx.serialization</id>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2</version>
 
     <depends>org.jetbrains.kotlin</depends>
     <idea-version since-build="172"/>
@@ -11,4 +11,9 @@
         <syntheticResolveExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationResolveExtension"/>
         <jsSyntheticTranslateExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationJsExtension"/>
     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <compileServer.plugin classpath="kotlinx-serialization-compiler-plugin.jar"/>
+    </extensions>
+
 </idea-plugin>

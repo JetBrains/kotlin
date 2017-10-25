@@ -31,16 +31,17 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.serialInfoFqName
 import java.util.*
 
 class SerializationResolveExtension : SyntheticResolveExtension {
-    override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> {
-        if (thisDescriptor.annotations.hasAnnotation(serialInfoFqName))
-            return listOf(KSerializerDescriptorResolver.IMPL_NAME)
-        else
-            return listOf()
+    override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
+        thisDescriptor.annotations.hasAnnotation(serialInfoFqName) -> listOf(KSerializerDescriptorResolver.IMPL_NAME)
+        thisDescriptor.isInternalSerializable -> listOf(KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME)
+        else -> listOf()
     }
 
     override fun generateSyntheticClasses(thisDescriptor: ClassDescriptor, name: Name, ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider, result: MutableSet<ClassDescriptor>) {
         if (thisDescriptor.annotations.hasAnnotation(serialInfoFqName) && name == KSerializerDescriptorResolver.IMPL_NAME)
             result.add(KSerializerDescriptorResolver.addSerialInfoImplClass(thisDescriptor, declarationProvider, ctx))
+        else if (thisDescriptor.isInternalSerializable && name == KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME)
+            result.add(KSerializerDescriptorResolver.addSerializerImplClass(thisDescriptor, declarationProvider, ctx))
         return
     }
 
@@ -50,12 +51,12 @@ class SerializationResolveExtension : SyntheticResolveExtension {
 
     override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         KSerializerDescriptorResolver.addSerialInfoSuperType(thisDescriptor, supertypes)
-        KSerializerDescriptorResolver.addSerializableSupertypes(thisDescriptor, supertypes)
         KSerializerDescriptorResolver.addSerializerSupertypes(thisDescriptor, supertypes)
     }
 
     override fun generateSyntheticMethods(thisDescriptor: ClassDescriptor, name: Name, fromSupertypes: List<SimpleFunctionDescriptor>, result: MutableCollection<SimpleFunctionDescriptor>) {
         KSerializerDescriptorResolver.generateSerializerMethods(thisDescriptor, fromSupertypes, name, result)
+        KSerializerDescriptorResolver.generateCompanionObjectMethods(thisDescriptor, fromSupertypes, name, result)
     }
 
     override fun generateSyntheticProperties(thisDescriptor: ClassDescriptor, name: Name, fromSupertypes: ArrayList<PropertyDescriptor>, result: MutableSet<PropertyDescriptor>) {

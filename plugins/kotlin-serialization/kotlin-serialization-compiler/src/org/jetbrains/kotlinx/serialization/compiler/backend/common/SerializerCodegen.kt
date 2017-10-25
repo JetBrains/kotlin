@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
 
 abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContext: BindingContext) {
@@ -43,11 +43,16 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
         val load = generateLoadIfNeeded()
         if (save || load || prop)
             generateSerialDesc()
+        if (serializableDescriptor.declaredTypeParameters.isNotEmpty()) {
+            generateGenericFieldsAndConstructor(createTypedSerializerConstructorDescriptor(serializerDescriptor, serializableDescriptor))
+        }
     }
 
     protected val serialDescPropertyDescriptor = getPropertyToGenerate(serializerDescriptor, KSerializerDescriptorResolver.SERIAL_DESC_FIELD,
                                                                        serializerDescriptor::checkSerializableClassPropertyResult)
     protected abstract fun generateSerialDesc()
+
+    protected abstract fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor)
 
     protected abstract fun generateSerializableClassProperty(property: PropertyDescriptor)
 

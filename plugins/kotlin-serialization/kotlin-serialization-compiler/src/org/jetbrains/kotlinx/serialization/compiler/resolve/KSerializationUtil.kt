@@ -17,17 +17,16 @@
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME
 
 internal val packageFqName = FqName("kotlinx.serialization")
 internal val internalPackageFqName = FqName("kotlinx.serialization.internal")
@@ -123,7 +122,9 @@ internal val ClassDescriptor?.classSerializer: KotlinType?
         // serializer annotation on class?
         annotations.serializableWith?.let { return it }
         // default serializable?
-        if (isInternalSerializable) return companionObjectDescriptor?.defaultType
+        if (isInternalSerializable) return this.unsubstitutedMemberScope
+                .getDescriptorsFiltered(nameFilter = {it == SERIALIZER_CLASS_NAME})
+                .filterIsInstance<ClassDescriptor>().singleOrNull()?.defaultType
         return null
     }
 
@@ -131,11 +132,20 @@ internal val ClassDescriptor?.classSerializer: KotlinType?
 val KotlinType.typeSerializer: KotlinType?
     get() = this.annotations.serializableWith ?: (this.toClassDescriptor).classSerializer
 
+val KotlinType.genericIndex: Int?
+    get() = (this.constructor.declarationDescriptor as? TypeParameterDescriptor)?.index
+
+fun getSerializableClassDescriptorByCompanion(thisDescriptor: ClassDescriptor): ClassDescriptor? {
+    if (!thisDescriptor.isCompanionObject) return null
+    val classDescriptor = (thisDescriptor.containingDeclaration as? ClassDescriptor) ?: return null
+    if (!classDescriptor.isInternalSerializable) return null
+    return classDescriptor
+}
 
 fun getSerializableClassDescriptorBySerializer(serializerDescriptor: ClassDescriptor): ClassDescriptor? {
     val serializerForClass = serializerDescriptor.annotations.serializerForClass
     if (serializerForClass != null) return serializerForClass.toClassDescriptor
-    if (!serializerDescriptor.isCompanionObject) return null
+    if (serializerDescriptor.name != SERIALIZER_CLASS_NAME) return null
     val classDescriptor = (serializerDescriptor.containingDeclaration as? ClassDescriptor) ?: return null
     if (!classDescriptor.isInternalSerializable) return null
     return classDescriptor
