@@ -5,6 +5,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     compileOnly(ideaSdkCoreDeps("intellij-core"))
+    compileOnly(project(":jps-plugin"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:backend"))
