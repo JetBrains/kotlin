@@ -879,6 +879,7 @@
         </exec>
 
         <exec executable="chmod" if:set="android.studio.linux">
+            <arg value="-R"/>
             <arg value="a+x"/>
             <arg path="${android.destination.dir}/bin/fsnotifier"/>
             <arg path="${android.destination.dir}/bin/fsnotifier64"/>
