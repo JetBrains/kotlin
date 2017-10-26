@@ -45,8 +45,9 @@
             <sourceRoot path="stdlib/src" platforms="JVM"/>
             <sourceRoot path="stdlib/jdk7/src" platforms="JVM,JRE7"/>
             <sourceRoot path="stdlib/jdk8/src" platforms="JVM,JRE8"/>
-            <sourceRoot path="../core/builtins" platforms="JVM"/>
-            <sourceRoot path="../core/reflection.jvm" platforms="JVM"/>
+            <sourceRoot path="../core/builtins/native" platforms="JVM"/>
+            <sourceRoot path="../core/builtins/src" platforms="JVM"/>
+            <sourceRoot path="../core/reflection.jvm/src" platforms="JVM"/>
             <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/annotations" platforms="JVM"/>
             <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt" platforms="JVM"/>
             <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/PurelyImplements.kt" platforms="JVM"/>
@@ -54,7 +55,8 @@
             <sourceRoot path="../core/runtime.jvm/src/kotlin/text/TypeAliases.kt" platforms="JVM"/>
 
 
-            <sourceRoot path="../core/builtins" platforms="JS"/>
+            <sourceRoot path="../core/builtins/native" platforms="JS"/>
+            <sourceRoot path="../core/builtins/src" platforms="JS"/>
 
             <sourceRoot path="../js/js.libraries/src/browser" platforms="JS"/>
             <sourceRoot path="../js/js.libraries/src/core" platforms="JS"/>
