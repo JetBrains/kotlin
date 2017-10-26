@@ -24,7 +24,7 @@ class Iterables {
 
     @Sample
     fun iterable() {
-        val iterator = buildIterator { yieldAll(listOf(1, 2, 3)) }
+        val iterator = Iterable { buildIterator { yieldAll(listOf(1, 2, 3)) } }.iterator()
         assertPrints(iterator.next(), "1")
         assertPrints(iterator.next(), "2")
         assertPrints(iterator.next(), "3")
