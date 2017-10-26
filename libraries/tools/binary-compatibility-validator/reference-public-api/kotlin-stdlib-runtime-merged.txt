@@ -1909,8 +1909,8 @@ public final class kotlin/collections/SetsKt {
 	public static final fun plus (Ljava/util/Set;[Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun setOf (Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun setOf ([Ljava/lang/Object;)Ljava/util/Set;
-	public static final fun sortedSetOf (Ljava/util/Comparator;[Ljava/lang/Object;)Ljava/util/TreeSet;
-	public static final fun sortedSetOf ([Ljava/lang/Object;)Ljava/util/TreeSet;
+	public static final fun sortedSetOf (Ljava/util/Comparator;[Ljava/lang/Object;)Ljava/util/SortedSet;
+	public static final fun sortedSetOf ([Ljava/lang/Object;)Ljava/util/SortedSet;
 }
 
 public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
