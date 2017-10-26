@@ -70,6 +70,13 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    private fun getPathAccordingToPackage(name: String, text: String): String {
+        val packagePath = text.lines().let { it.find { it.trim().startsWith("package") } }
+                                  ?.removePrefix("package")
+                                  ?.trim()?.replace(".", "/") ?: ""
+        return packagePath + "/" + name
+    }
+
     private fun doKotlinQuickFixTest(beforeFileName: String) {
         val testFile = File(beforeFileName)
         CommandProcessor.getInstance().executeCommand(project, {
@@ -87,13 +94,22 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
                 val contents = StringUtil.convertLineSeparators(fileText)
-                myFixture.configureByText(testFile.canonicalFile.name, contents)
+                var filePath = testFile.canonicalFile.name
+                val putIntoPackageFolder = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FORCE_PACKAGE_FOLDER") != null
+                if (putIntoPackageFolder) {
+                    filePath = getPathAccordingToPackage(filePath, contents)
+                    myFixture.addFileToProject(filePath, contents)
+                    myFixture.configureByFile(filePath)
+                }
+                else {
+                    myFixture.configureByText(filePath, contents)
+                }
 
                 checkForUnexpectedActions()
 
                 configExtra(fileText)
 
-                applyAction(contents, testFile.canonicalPath)
+                applyAction(contents, filePath)
 
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
             }
