@@ -93,6 +93,24 @@ class Sequences {
         }
 
         @Sample
+        fun sequenceFromEnumeration() {
+            val numbers = java.util.Hashtable<String, Int>()
+            numbers.put("one", 1)
+            numbers.put("two", 2)
+            numbers.put("three", 3)
+
+            // when you have an Enumeration from some old code
+            val enumeration: java.util.Enumeration<String> = numbers.keys()
+
+            // you can wrap it in a sequence and transform further with sequence operations
+            val sequence = enumeration.asSequence().sorted()
+            assertPrints(sequence.toList(), "[one, three, two]")
+
+            // the resulting sequence is one-shot
+            assertFails { sequence.toList() }
+        }
+
+        @Sample
         fun buildFibonacciSequence() {
             fun fibonacci() = buildSequence {
                 var terms = Pair(0, 1)
