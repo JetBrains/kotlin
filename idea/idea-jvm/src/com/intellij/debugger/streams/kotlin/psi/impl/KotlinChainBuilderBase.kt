@@ -6,6 +6,7 @@ import com.intellij.debugger.streams.psi.PsiUtil
 import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 
 /**
@@ -15,7 +16,8 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
   protected abstract val existenceChecker: ExistenceChecker
 
   override fun isChainExists(startElement: PsiElement): Boolean {
-    var element: PsiElement? = getLatestElementInScope(PsiUtil.ignoreWhiteSpaces(startElement))
+    val start = if (startElement is PsiWhiteSpace) PsiUtil.ignoreWhiteSpaces(startElement) else startElement
+    var element = getLatestElementInScope(start)
     existenceChecker.reset()
     while (element != null && !existenceChecker.isFound()) {
       existenceChecker.reset()
@@ -28,7 +30,8 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
 
   override fun build(startElement: PsiElement): List<StreamChain> {
     val visitor = createChainsBuilder()
-    var element = getLatestElementInScope(PsiUtil.ignoreWhiteSpaces(startElement))
+    val start = if (startElement is PsiWhiteSpace) PsiUtil.ignoreWhiteSpaces(startElement) else startElement
+    var element = getLatestElementInScope(start)
     while (element != null) {
       element.accept(visitor)
       element = getLatestElementInScope(toUpperLevel(element))
@@ -53,7 +56,7 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
     var current = element
     while (current != null) {
       val parent = current.parent
-      if (parent is KtBlockExpression || parent is KtLambdaExpression || parent is KtStatementExpression) {
+      if (parent is KtBlockExpression || parent is KtLambdaExpression) {
         break
       }
 
