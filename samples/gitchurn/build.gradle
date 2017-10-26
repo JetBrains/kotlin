@@ -2,7 +2,12 @@ apply plugin: 'konan'
 
 konanArtifacts {
     interop('libgit2') {
-        includeDirs '/opt/local/include', '/usr/include', '/usr/local/include'
+	target('linux') {
+	    includeDirs '/usr/include'
+	}
+        target('macbook') {
+            includeDirs '/opt/local/include', '/usr/local/include'
+        }
     }
 
     program('GitChurn') {

@@ -3,7 +3,7 @@
 DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
 PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 
-CFLAGS_macbook="-I/opt/local/include -compilerOpts -I/usr/local/include"
+CFLAGS_macbook="-I/opt/local/include -I/usr/local/include"
 CFLAGS_linux=-I/usr/include
 
 if [ x$TARGET == x ]; then
@@ -24,7 +24,7 @@ COMPILER_ARGS=${!var} # add -opt for an optimized build.
 mkdir -p $DIR/build/c_interop/
 mkdir -p $DIR/build/bin/
 
-cinterop -compilerOpts $CFLAGS -def $DIR/src/main/c_interop/libgit2.def -target $TARGET \
+cinterop -compilerOpts "$CFLAGS" -def $DIR/src/main/c_interop/libgit2.def -target $TARGET \
 	 -o $DIR/build/c_interop/libgit2 || exit 1
 
 konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libgit2 \
