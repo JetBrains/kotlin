@@ -25,7 +25,7 @@ public class KotlinCompilerVersion {
     // Binaries produced by this compiler with that language version (or any future language version) are going to be marked
     // as "pre-release" and will not be loaded by release versions of the compiler.
     // Change this value before and after every major release
-    private static final boolean IS_PRE_RELEASE = true;
+    private static final boolean IS_PRE_RELEASE = false;
 
     public static final String TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY = "kotlin.test.is.pre.release";
 
