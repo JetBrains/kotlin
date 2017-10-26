@@ -23,11 +23,15 @@ package kotlin.collections
 import java.nio.charset.Charset
 
 
-/** Returns the array if it's not `null`, or an empty array otherwise. */
+/**
+ * Returns the array if it's not `null`, or an empty array otherwise.
+ * @sample samples.collections.Arrays.Usage.arrayOrEmpty
+ */
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
 /**
  * Converts the contents of this byte array to a string using the specified [charset].
+ * @sample samples.text.Strings.stringToByteArray
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.toString(charset: Charset): String = String(this, charset)
@@ -37,6 +41,7 @@ public inline fun ByteArray.toString(charset: Charset): String = String(this, ch
  *
  * Allocates an array of runtime type `T` having its size equal to the size of this collection
  * and populates the array with the elements of this collection.
+ * @sample samples.collections.Collections.Collections.collectionToTypedArray
  */
 @Suppress("UNCHECKED_CAST")
 public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
