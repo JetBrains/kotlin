@@ -73,12 +73,14 @@ class Collections {
 
         @Sample
         fun emptyReadOnlyList() {
-            val list = emptyList<Int>()
+            val list = listOf<String>()
             assertTrue(list.isEmpty())
 
-            val other = listOf<String>()
-            assertTrue(list == other, "Empty lists are equal")
+            // another way to create an empty list,
+            // type parameter is inferred from the expected type
+            val other: List<Int> = emptyList()
 
+            assertTrue(list == other, "Empty lists are equal")
             assertPrints(list, "[]")
             assertFails { list[0] }
         }
@@ -86,7 +88,7 @@ class Collections {
         @Sample
         fun readOnlyList() {
             val list = listOf('a', 'b', 'c')
-            assertPrints(list.count(), "3")
+            assertPrints(list.size, "3")
             assertTrue(list.contains('a'))
             assertPrints(list.indexOf('b'), "1")
             assertPrints(list[2], "c")
@@ -96,7 +98,7 @@ class Collections {
         fun singletonReadOnlyList() {
             val list = listOf('a')
             assertPrints(list, "[a]")
-            assertPrints(list.count(), "1")
+            assertPrints(list.size, "1")
         }
 
         @Sample
@@ -122,7 +124,7 @@ class Collections {
             val list = mutableListOf(1, 2, 3)
             assertPrints(list, "[1, 2, 3]")
 
-            list.addAll(listOf(4, 5))
+            list += listOf(4, 5)
             assertPrints(list, "[1, 2, 3, 4, 5]")
         }
 
@@ -131,17 +133,8 @@ class Collections {
             val list = arrayListOf(1, 2, 3)
             assertPrints(list, "[1, 2, 3]")
 
-            list.addAll(listOf(4, 5))
+            list += listOf(4, 5)
             assertPrints(list, "[1, 2, 3, 4, 5]")
-        }
-
-        @Sample
-        fun singletonListOfNotNull() {
-            val empty = listOfNotNull<Any>(null)
-            assertPrints(empty, "[]")
-
-            val singleton = listOfNotNull(42)
-            assertPrints(singleton, "[42]")
         }
 
         @Sample
@@ -149,28 +142,26 @@ class Collections {
             val empty = listOfNotNull<Any>(null)
             assertPrints(empty, "[]")
 
+            val singleton = listOfNotNull(42)
+            assertPrints(singleton, "[42]")
+
             val list = listOfNotNull(1, null, 2, null, 3)
             assertPrints(list, "[1, 2, 3]")
         }
 
         @Sample
         fun readOnlyListFromInitializer() {
-            val empty = List(0) {}
-            assertPrints(empty, "[]")
-
             val squares = List(5) { (it + 1) * (it + 1) }
             assertPrints(squares, "[1, 4, 9, 16, 25]")
         }
 
         @Sample
         fun mutableListFromInitializer() {
-            val chars = listOf('a', 'b', 'c', 'd')
+            val list = MutableList(3) { index -> 'A' + index }
+            assertPrints(list, "[A, B, C]")
 
-            val list = MutableList(3) { chars[it] }
-            assertPrints(list, "[a, b, c]")
-
-            list.add(chars[3])
-            assertTrue(list == chars)
+            list.clear()
+            assertPrints(list, "[]")
         }
 
         @Sample
@@ -191,13 +182,16 @@ class Collections {
         }
 
         @Sample
-        fun enumerationToList() {
+        fun listFromEnumeration() {
             val numbers = java.util.Hashtable<String, Int>()
             numbers.put("one", 1)
             numbers.put("two", 2)
             numbers.put("three", 3)
 
-            val enumeration = numbers.elements()
+            // when you have an Enumeration from some old code
+            val enumeration: java.util.Enumeration<Int> = numbers.elements()
+
+            // you can convert it to list and transform further with list operations
             val list = enumeration.toList().sorted()
             assertPrints(list, "[1, 2, 3]")
         }
@@ -246,13 +240,20 @@ class Collections {
 
         @Sample
         fun binarySearchWithComparisonFunction() {
-            data class Box(val value: Int)
+            data class Box(val value: String)
 
-            val numbers = listOf(12, 10, 7, 3, 1)
-            val boxes = numbers.map { Box(it) }
+            val values = listOf("A", "ant", "binding", "Box", "cell")
+            val boxes = values.map { Box(it) }
 
-            // `boxes` is sorted according to the comparison function
-            assertPrints(boxes.binarySearch { 10 - it.value }, "1")
+            val valueToFind = "box"
+            // `boxes` list is sorted according to the following comparison function
+            val index = boxes.binarySearch { String.CASE_INSENSITIVE_ORDER.compare(it.value, valueToFind) }
+
+            if (index >= 0) {
+                assertPrints("Value at $index is ${boxes[index]}", "Value at 3 is Box(value=Box)")
+            } else {
+                println("Box with value=$valueToFind was not found")
+            }
         }
     }
 

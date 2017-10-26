@@ -132,7 +132,7 @@ public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
 
 /**
  * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
- * @sample samples.collections.Collections.Lists.singletonListOfNotNull
+ * @sample samples.collections.Collections.Lists.listOfNotNull
  */
 public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) listOf(element) else emptyList()
 
