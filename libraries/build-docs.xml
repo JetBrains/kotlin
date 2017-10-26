@@ -26,13 +26,12 @@
     <target name="preprocess-js-common">
         <java classname="org.gradle.wrapper.GradleWrapperMain"
               fork="true"
-              dir="${basedir}"
+              dir="${basedir}/.."
               failonerror="true"
               timeout="4000000"
-              maxmemory="400m"
               taskname="gradle">
             <classpath>
-                <pathelement location="${basedir}/gradle/wrapper/gradle-wrapper.jar"/>
+                <pathelement location="${basedir}/../gradle/wrapper/gradle-wrapper.jar"/>
             </classpath>
             <arg line="--no-daemon"/>
             <arg line=":kotlin-stdlib-js:preprocessSourcesMain"/>
@@ -44,8 +43,8 @@
                include="stdlib/src/Module.md" noStdlibLink="true">
 
             <sourceRoot path="stdlib/src" platforms="JVM"/>
-            <sourceRoot path="stdlib/jre7/src" platforms="JVM,JRE7"/>
-            <sourceRoot path="stdlib/jre8/src" platforms="JVM,JRE8"/>
+            <sourceRoot path="stdlib/jdk7/src" platforms="JVM,JRE7"/>
+            <sourceRoot path="stdlib/jdk8/src" platforms="JVM,JRE8"/>
             <sourceRoot path="../core/builtins" platforms="JVM"/>
             <sourceRoot path="../core/reflection.jvm" platforms="JVM"/>
             <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/annotations" platforms="JVM"/>
