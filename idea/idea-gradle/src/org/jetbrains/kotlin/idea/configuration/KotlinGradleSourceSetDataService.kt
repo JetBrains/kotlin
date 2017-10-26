@@ -33,7 +33,9 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -205,9 +207,18 @@ private fun configureFacetByGradleModule(
         adjustClasspath(kotlinFacet, dependencyClasspath)
     }
 
-    kotlinFacet.configuration.settings.implementedModuleName = getImplementedModuleName(moduleNode, sourceSetName)
+    with(kotlinFacet.configuration.settings) {
+        implementedModuleName = getImplementedModuleName(moduleNode, sourceSetName)
+        testOutputPath = getExplicitTestOutputPath(moduleNode, platformKind)
+    }
 
     return kotlinFacet
+}
+
+private fun getExplicitTestOutputPath(moduleNode: DataNode<ModuleData>, platformKind: TargetPlatformKind<*>?): String? {
+    if (platformKind !is TargetPlatformKind.JavaScript) return null
+    val k2jsArgumentList = moduleNode.compilerArgumentsBySourceSet?.get("test")?.currentArguments ?: return null
+    return K2JSCompilerArguments().apply { parseCommandLineArguments(k2jsArgumentList, this) }.outputFile
 }
 
 private fun getImplementedModuleName(moduleNode: DataNode<ModuleData>, sourceSetName: String?): String? {
