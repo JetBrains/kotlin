@@ -2,6 +2,7 @@
 package com.intellij.debugger.streams.kotlin.psi.impl
 
 import com.intellij.debugger.streams.kotlin.psi.StreamCallChecker
+import com.intellij.debugger.streams.kotlin.psi.previousCall
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import java.util.*
@@ -40,8 +41,7 @@ class KotlinJavaStreamChainBuilder(private val callChecker: StreamCallChecker) :
         myTerminationCalls.add(expression)
       }
 
-      val parent = expression.parent as? KtDotQualifiedExpression ?: return
-      val parentCall = (parent.receiverExpression as? KtDotQualifiedExpression)?.selectorExpression
+      val parentCall = expression.previousCall()
       if (parentCall is KtCallExpression && callChecker.isStreamCall(parentCall)) {
         myPreviousCalls.put(expression, parentCall)
         updateCallTree(parentCall)
