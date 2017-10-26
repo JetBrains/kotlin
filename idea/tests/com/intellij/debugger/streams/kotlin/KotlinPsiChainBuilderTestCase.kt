@@ -94,6 +94,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
     override fun doTest() {
       val elementAtCaret = configureAndGetElementAtCaret()
       TestCase.assertFalse(chainBuilder.isChainExists(elementAtCaret))
+      TestCase.assertTrue(chainBuilder.build(elementAtCaret).isEmpty())
     }
   }
 }
