@@ -207,7 +207,7 @@ abstract class DeserializedMemberScope protected constructor(
             }
         }
 
-        subResult.sortWith(MemberComparator.INSTANCE)
+        subResult.sortWith(MemberComparator.NameAndTypeMemberComparator.INSTANCE)
         result.addAll(subResult)
     }
 
