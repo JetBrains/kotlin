@@ -203,7 +203,7 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 /**
  * Returns a list containing the elements returned by this enumeration
  * in the order they are returned by the enumeration.
- * @sample samples.collections.Collections.Lists.enumerationToList
+ * @sample samples.collections.Collections.Lists.listFromEnumeration
  */
 @JvmVersion
 @kotlin.internal.InlineOnly
