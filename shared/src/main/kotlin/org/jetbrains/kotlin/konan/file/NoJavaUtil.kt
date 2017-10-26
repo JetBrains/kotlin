@@ -22,7 +22,6 @@ import java.io.InputStreamReader
 import java.net.URI
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.StandardOpenOption
 
 data class File constructor(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
@@ -50,14 +49,7 @@ data class File constructor(internal val javaPath: Path) {
     val isAbsolute 
         get() = javaPath.isAbsolute()
     val listFiles: List<File>
-        get() {
-            val stream = Files.newDirectoryStream(javaPath)
-            val result = mutableListOf<File>()
-            for (entry in stream) {
-                result.add(File(entry))
-            }
-            return result
-        }
+        get() = Files.newDirectoryStream(javaPath).use { stream -> stream.map { File(it) } }
 
     fun child(name: String) = File(this, name)
 
