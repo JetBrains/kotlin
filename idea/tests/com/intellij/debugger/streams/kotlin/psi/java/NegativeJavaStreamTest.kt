@@ -11,7 +11,59 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 class NegativeJavaStreamTest : KotlinPsiChainBuilderTestCase.Negative("streams/negative") {
   override val kotlinChainBuilder: StreamChainBuilder = JavaStandardLibrarySupportProvider().chainBuilder
 
-  fun testSimple() {
+  fun testFakeStream() {
+    doTest()
+  }
+
+  fun testWithoutTerminalOperation() {
+    doTest()
+  }
+
+  fun testNoBreakpoint() {
+    doTest()
+  }
+
+  fun testBreakpointOnMethod() {
+    doTest()
+  }
+
+  fun testBreakpointOnIfCondition() {
+    doTest()
+  }
+
+  fun testBreakpointOnNewScope() {
+    doTest()
+  }
+
+  fun testBreakpointOnElseBranch() {
+    doTest()
+  }
+
+  fun testInLambda() {
+    doTest()
+  }
+
+  fun testInLambdaWithBody() {
+    doTest()
+  }
+
+  fun testInAnonymous() {
+    doTest()
+  }
+
+  fun testAfterStatement() {
+    doTest()
+  }
+
+  fun testInPreviousStatement() {
+    doTest()
+  }
+
+  fun testInNextStatement() {
+    doTest()
+  }
+
+  fun testIdea173415() {
     doTest()
   }
 }
