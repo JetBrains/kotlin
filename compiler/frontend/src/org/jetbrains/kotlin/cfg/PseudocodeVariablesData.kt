@@ -190,7 +190,10 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     }
 
     private fun WriteValueInstruction.isTrivialInitializer() =
-            element is KtVariableDeclaration || element is KtParameter
+            // WriteValueInstruction having KtDeclaration as an element means
+            // it must be a write happened at the same time when
+            // the variable (common variable/parameter/object) has been declared
+            element is KtDeclaration
 
     private inner class ReadOnlyInitControlFlowInfoImpl(
             val declaredSet: ImmutableSet<VariableDescriptor>,

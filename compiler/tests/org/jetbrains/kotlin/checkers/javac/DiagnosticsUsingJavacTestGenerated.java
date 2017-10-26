@@ -7681,6 +7681,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("wrongUnitializedEnumCompanion.kt")
+            public void testWrongUnitializedEnumCompanion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/wrongUnitializedEnumCompanion.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/enum/inner")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
