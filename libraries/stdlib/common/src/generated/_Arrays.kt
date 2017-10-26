@@ -4609,12 +4609,140 @@ public expect inline fun <R> CharArray.mapIndexed(transform: (index: Int, Char) 
 public expect inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R>
 
 /**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> ByteArray.mapIndexedNotNull(transform: (index: Int, Byte) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> ShortArray.mapIndexedNotNull(transform: (index: Int, Short) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> IntArray.mapIndexedNotNull(transform: (index: Int, Int) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> LongArray.mapIndexedNotNull(transform: (index: Int, Long) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> FloatArray.mapIndexedNotNull(transform: (index: Int, Float) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> DoubleArray.mapIndexedNotNull(transform: (index: Int, Double) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> BooleanArray.mapIndexedNotNull(transform: (index: Int, Boolean) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any> CharArray.mapIndexedNotNull(transform: (index: Int, Char) -> R?): List<R>
+
+/**
  * Applies the given [transform] function to each element and its index in the original array
  * and appends only the non-null results to the given [destination].
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
 public expect inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> ByteArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Byte) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> ShortArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Short) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> IntArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Int) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> LongArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Long) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> FloatArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Float) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> DoubleArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Double) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> BooleanArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Boolean) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> CharArray.mapIndexedNotNullTo(destination: C, transform: (index: Int, Char) -> R?): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4695,10 +4823,106 @@ public expect inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo
 public expect inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R>
 
 /**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> ByteArray.mapNotNull(transform: (Byte) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> ShortArray.mapNotNull(transform: (Short) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> IntArray.mapNotNull(transform: (Int) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> LongArray.mapNotNull(transform: (Long) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> FloatArray.mapNotNull(transform: (Float) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> DoubleArray.mapNotNull(transform: (Double) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> BooleanArray.mapNotNull(transform: (Boolean) -> R?): List<R>
+
+/**
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public expect inline fun <R : Any> CharArray.mapNotNull(transform: (Char) -> R?): List<R>
+
+/**
  * Applies the given [transform] function to each element in the original array
  * and appends only the non-null results to the given [destination].
  */
 public expect inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotNullTo(destination: C, transform: (T) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> ByteArray.mapNotNullTo(destination: C, transform: (Byte) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> ShortArray.mapNotNullTo(destination: C, transform: (Short) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> IntArray.mapNotNullTo(destination: C, transform: (Int) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> LongArray.mapNotNullTo(destination: C, transform: (Long) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> FloatArray.mapNotNullTo(destination: C, transform: (Float) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> DoubleArray.mapNotNullTo(destination: C, transform: (Double) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> BooleanArray.mapNotNullTo(destination: C, transform: (Boolean) -> R?): C
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public expect inline fun <R : Any, C : MutableCollection<in R>> CharArray.mapNotNullTo(destination: C, transform: (Char) -> R?): C
 
 /**
  * Applies the given [transform] function to each element of the original array

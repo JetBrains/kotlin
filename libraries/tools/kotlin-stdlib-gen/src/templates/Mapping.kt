@@ -85,7 +85,6 @@ fun mapping(): List<GenericFunction> {
     templates add f("mapNotNull(transform: (T) -> R?)") {
         inline(true)
         include(Maps, CharSequences)
-        exclude(ArraysOfPrimitives)
         typeParam("R : Any")
         returns("List<R>")
         doc { f ->
@@ -109,7 +108,6 @@ fun mapping(): List<GenericFunction> {
     templates add f("mapIndexedNotNull(transform: (index: Int, T) -> R?)") {
         inline(true)
         include(CharSequences)
-        exclude(ArraysOfPrimitives)
         typeParam("R : Any")
         returns("List<R>")
         doc { f ->
@@ -183,7 +181,6 @@ fun mapping(): List<GenericFunction> {
     templates add f("mapNotNullTo(destination: C, transform: (T) -> R?)") {
         inline(true)
         include(Maps, CharSequences)
-        exclude(ArraysOfPrimitives)
         typeParam("R : Any")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -204,7 +201,6 @@ fun mapping(): List<GenericFunction> {
     templates add f("mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?)") {
         inline(true)
         include(CharSequences)
-        exclude(ArraysOfPrimitives)
         typeParam("R : Any")
         typeParam("C : MutableCollection<in R>")
         returns("C")

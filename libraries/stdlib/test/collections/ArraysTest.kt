@@ -106,7 +106,7 @@ class ArraysTest {
         assertEquals(0.toShort(), arr[0])
         assertEquals(1.toShort(), arr[1])
     }
-    
+
     @Test fun intArray() {
         val arr = IntArray(2)
 
@@ -114,7 +114,7 @@ class ArraysTest {
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
-    
+
     @Test fun intArrayInit() {
         val arr = IntArray(2) { it.toInt() }
 
@@ -122,7 +122,7 @@ class ArraysTest {
         assertEquals(0.toInt(), arr[0])
         assertEquals(1.toInt(), arr[1])
     }
-    
+
     @Test fun longArray() {
         val arr = LongArray(2)
 
@@ -148,7 +148,7 @@ class ArraysTest {
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
-    
+
     @Test fun floatArrayInit() {
         val arr = FloatArray(2) { it.toFloat() }
 
@@ -1050,8 +1050,27 @@ class ArraysTest {
         assertEquals(listOf(2, 3), arrayOf("", "bc", "def").mapNotNull { if (it.isEmpty()) null else it.length })
     }
 
+    @Test fun mapNotNullInPrimitiveArrays() {
+        assertEquals(listOf(2, 4), intArrayOf(0, 1, 2).mapNotNull { if (it == 0) null else it * 2 })
+        assertEquals(listOf(2, 4), shortArrayOf(0, 1, 2).mapNotNull { if (it == 0.toShort()) null else it * 2 })
+        assertEquals(listOf(0x0, 0x4), byteArrayOf(0x0, 0x1, 0x2).mapNotNull { if (it == 0x1.toByte()) null else it * 2 })
+//        this following does not pass on PhantomJS due to incorrectly generated JS (the result is not wrapped with toBoxedChar)
+//        assertEquals(listOf('c', 'c'), charArrayOf('a', 'a', 'c', 'c').mapNotNull { if (it == 'a') null else it })
+        assertEquals(listOf(2.0, 4.0), doubleArrayOf(0.0, 1.0, 2.0).mapNotNull { if (it == 0.0) null else it * 2 })
+        assertEquals(listOf(2.0f, 4.0f), floatArrayOf(0.0f, 1.0f, 2.0f).mapNotNull { if (it == 0f) null else it * 2 })
+        assertEquals(listOf(2L, 4L), longArrayOf(0L, 1L, 2L).mapNotNull { if (it == 0L) null else it * 2 })
+    }
+
     @Test fun mapIndexedNotNull() {
         assertEquals(listOf(2), arrayOf("a", null, "test").mapIndexedNotNull { index, it -> it?.run { if (index != 0) length / index else null  } })
+    }
+
+    @Test fun mapIndexedNotNullInPrimitiveArrays() {
+        assertEquals(listOf("0;1", "2;3"), intArrayOf(1, 2, 3).mapIndexedNotNull { index, it -> if (it % 2 == 0) null else "$index;$it" })
+        assertEquals(listOf("0;1", "2;3"), shortArrayOf(1, 2, 3).mapIndexedNotNull { index, it -> if (it == 2.toShort()) null else "$index;$it" })
+        assertEquals(listOf("0;1", "2;3"), byteArrayOf(0x1, 0x2, 0x3).mapIndexedNotNull { index, it -> if (it == 0x2.toByte()) null else "$index;$it" })
+        assertEquals(listOf("0;a", "2;c"), charArrayOf('a', 'b', 'c').mapIndexedNotNull { index, it -> if (it == 'b') null else "$index;$it" })
+        assertEquals(listOf("0;0", "2;2"), longArrayOf(0L, 1L, 2L).mapIndexedNotNull { index, it -> if (it == 1L) null else "$index;$it" })
     }
 
     @Test fun flattenArray() {
