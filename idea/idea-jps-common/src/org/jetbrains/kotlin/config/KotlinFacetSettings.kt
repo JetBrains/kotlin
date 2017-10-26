@@ -151,6 +151,8 @@ class KotlinFacetSettings {
         }
 
     var implementedModuleName: String? = null
+
+    var testOutputPath: String? = null
 }
 
 fun TargetPlatformKind<*>.createCompilerArguments(init: CommonCompilerArguments.() -> Unit = {}): CommonCompilerArguments {

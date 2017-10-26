@@ -108,6 +108,9 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
             compilerArguments = platformKind.createCompilerArguments()
             XmlSerializer.deserializeInto(compilerArguments!!, it)
         }
+        testOutputPath = element.getChild("testOutputPath")?.let {
+            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+        } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
     }
 }
 
@@ -231,6 +234,11 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     implementedModuleName?.let {
         element.addContent(Element("implements").apply { addContent(it) })
+    }
+    testOutputPath?.let {
+        if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
+            element.addContent(Element("testOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+        }
     }
     compilerSettings?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
