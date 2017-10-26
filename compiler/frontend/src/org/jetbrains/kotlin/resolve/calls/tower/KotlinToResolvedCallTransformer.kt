@@ -87,7 +87,13 @@ class KotlinToResolvedCallTransformer(
         val candidate = baseResolvedCall.resultCallAtom!!
         when (baseResolvedCall.type) {
             CallResolutionResult.Type.PARTIAL -> {
-                context.trace.record(BindingContext.ONLY_RESOLVED_CALL, candidate.atom.psiKotlinCall.psiCall, baseResolvedCall)
+                val psiKotlinCall = candidate.atom.psiKotlinCall
+                val psiCall = if (psiKotlinCall is PSIKotlinCallForInvoke)
+                    psiKotlinCall.baseCall.psiCall
+                else
+                    psiKotlinCall.psiCall
+
+                context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, baseResolvedCall)
 
                 return createStubResolvedCallAndWriteItToTrace(candidate, context.trace)
             }
