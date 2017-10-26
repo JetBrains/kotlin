@@ -34,7 +34,7 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
     var element = getLatestElementInScope(start)
     while (element != null) {
       element.accept(visitor)
-      element = getLatestElementInScope(toUpperLevel(element))
+      element = toUpperLevel(element)
     }
 
     return visitor.chains().map { transformer.transform(it, startElement) }
@@ -47,7 +47,7 @@ abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<
       current = current.parent
     }
 
-    return current
+    return getLatestElementInScope(current)
   }
 
   protected abstract fun createChainsBuilder(): ChainBuilder
