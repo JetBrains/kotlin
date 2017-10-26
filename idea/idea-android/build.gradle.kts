@@ -33,6 +33,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
+    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
     testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
