@@ -7,6 +7,5 @@ import com.intellij.debugger.streams.lib.impl.LibrarySupportBase
  */
 class KotlinCollectionLibrarySupport : LibrarySupportBase() {
   init {
-    TODO("add supported operations")
   }
 }
