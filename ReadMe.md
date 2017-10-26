@@ -73,7 +73,7 @@ on Windows.
 - `install` - build and install all public artifacts into local maven repository
 - `runIde` - build IDEA plugin and run IDEA with it
 - `coreLibsTest` - build and run stdlib, reflect and kotlin-test tests
-- `gradlePluginsTest` - build and run gradle plugin tests
+- `gradlePluginTest` - build and run gradle plugin tests
 - `compilerTest` - build and run all compiler tests
 - `ideaPluginTest` - build and run all IDEA plugin tests
 
