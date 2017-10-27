@@ -46,7 +46,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testAbstract() {
-        doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
+        doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
     }
 
     @Test
@@ -96,7 +96,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testEnum() {
-        doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
+        doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
     }
 
     @Test
@@ -161,7 +161,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testSealed() {
-        doMultiPlatformTest(impls = "js" to TargetPlatformKind.JavaScript)
+        doMultiPlatformTest(impls = *arrayOf("js" to TargetPlatformKind.JavaScript))
     }
 
     @Test
