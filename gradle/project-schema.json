@@ -3002,6 +3002,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3022,7 +3024,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":core:builtins": {

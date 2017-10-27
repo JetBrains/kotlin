@@ -80,7 +80,7 @@ fun DependencyHandler.protobufFull(): ProjectDependency =
         project(protobufLiteProject, configuration = "relocated").apply { isTransitive = false }
 val protobufFullTask = "$protobufLiteProject:prepare-relocated-protobuf"
 
-private fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
+fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 
 private val wildcardsRe = """[^*?]+|(\*)|(\?)""".toRegex()
 

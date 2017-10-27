@@ -104,6 +104,7 @@ extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
 extra["JDK_9"] = jdkPathIfFound("9")
 
+extra["versions.intellij"] = "IC-172.4343.14"
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
@@ -116,6 +117,21 @@ extra["versions.android"] = "2.3.1"
 
 extra["ideaCoreSdkJars"] = arrayOf("annotations", "asm-all", "guava", "intellij-core", "jdom", "jna", "log4j", "picocontainer",
                                    "snappy-in-java", "streamex", "trove4j", "xpp3-1.1.4-min", "xstream")
+
+// the former "ideaSdk/core" dir contents without intellij-core.jar
+extra["ideaSdkIntellijCoreDependencies"] =
+        listOf("annotations.jar",
+               "asm-all.jar",
+               "guava-*.jar",
+               "jdom.jar",
+               "jna.jar",
+               "log4j.jar",
+               "picocontainer.jar",
+               "snappy-in-java-*.jar",
+               "streamex-*.jar",
+               "trove4j.jar",
+               "xpp3-1.1.4-min.jar",
+               "xstream-*.jar")
 
 extra["compilerModules"] = arrayOf(
         ":compiler:util",
