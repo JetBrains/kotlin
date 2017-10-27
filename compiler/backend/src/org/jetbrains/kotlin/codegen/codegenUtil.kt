@@ -17,9 +17,9 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.Maps
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
@@ -424,3 +423,12 @@ fun ExpressionCodegen.generateCallSingleArgument(rangeCall: ResolvedCall<out Cal
 fun ClassDescriptor.isPossiblyUninitializedSingleton() =
         DescriptorUtils.isEnumEntry(this) ||
         DescriptorUtils.isCompanionObject(this) && DescriptorUtils.isInterface(this.containingDeclaration)
+
+val CodegenContext<*>.parentContextsWithSelf
+    get() = generateSequence(this) { it.parentContext }
+
+val CodegenContext<*>.parentContexts
+    get() = parentContext?.parentContextsWithSelf ?: emptySequence()
+
+val CodegenContext<*>.contextStackText
+    get() = parentContextsWithSelf.joinToString(separator = "\n") { it.toString() }
