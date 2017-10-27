@@ -156,6 +156,12 @@ object AbstractSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
     }
 }
 
+class SuperAsExtensionReceiver(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallReceiver(receiver, this)
+    }
+}
+
 class SpreadArgumentToNonVarargParameter(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(argument, this)
