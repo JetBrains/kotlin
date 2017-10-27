@@ -26,7 +26,7 @@ ext {
     konanPropertiesFile = project(':backend.native').file('konan.properties')
     konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
 
-    dependenciesDir = rootProject.file("dist/dependencies")
+    dependenciesDir = DependencyProcessor.defaultDependenciesRoot
     clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdLibVersion}"

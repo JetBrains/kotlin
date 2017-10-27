@@ -19,6 +19,7 @@ package  org.jetbrains.kotlin.native.interop.tool
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import kotlin.reflect.KFunction
 
 class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: String?, runnerProvidedKonanHome: String) {
@@ -31,7 +32,7 @@ class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: S
     private val konanPropertiesFile = userProvidedKonanProperties ?. File() ?: File(konanHome, "konan/konan.properties")
     private val properties = konanPropertiesFile.loadProperties()
 
-    private val dependencies = File(konanHome, "dependencies")
+    private val dependencies = DependencyProcessor.defaultDependenciesRoot
 
     private val targetProperties = KonanProperties(target, properties, dependencies.path)
 

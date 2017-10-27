@@ -20,6 +20,7 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.plugin.tasks.host
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 internal interface KonanToolRunner: Named {
     val mainClass: String
@@ -79,7 +80,7 @@ internal class KonanInteropRunner(project: Project)
 {
     init {
         if (project.host == "mingw") {
-            environment.put("PATH", "${project.konanHome}\\dependencies" +
+            environment.put("PATH", DependencyProcessor.defaultDependenciesRoot.absolutePath +
                     "\\msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-windows-x86-64" +
                     "\\bin;${System.getenv("PATH")}")
         }

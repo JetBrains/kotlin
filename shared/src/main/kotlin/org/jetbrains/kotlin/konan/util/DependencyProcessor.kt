@@ -160,9 +160,13 @@ class DependencyProcessor(dependenciesRoot: File,
     }
 
     companion object {
-        val lock = ReentrantLock()
+        private val lock = ReentrantLock()
 
         const val DEFAULT_HOME_DEPENDENCY_CACHE = ".konan/cache"
+
+        @JvmStatic
+        val defaultDependenciesRoot
+            get() = Paths.get(System.getProperty("user.home")).resolve(".konan/dependencies").toFile()
     }
 
     fun run() = lock.withLock {

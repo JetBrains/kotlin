@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 class Distribution(val targetManager: TargetManager,
     val propertyFileOverride: String? = null,
@@ -47,7 +48,7 @@ class Distribution(val targetManager: TargetManager,
     val stdlib = "$klib/common/stdlib"
     val runtime = runtimeFileOverride ?: "$stdlib/targets/${targetName}/native/runtime.bc"
 
-    val dependenciesDir = "$konanHome/dependencies"
+    val dependenciesDir = DependencyProcessor.defaultDependenciesRoot.absolutePath
 
     val targetProperties = KonanProperties(target, properties, dependenciesDir)
     val hostProperties = if (target == host) {
