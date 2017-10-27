@@ -4,14 +4,18 @@ package com.intellij.debugger.streams.kotlin
 import com.intellij.debugger.streams.test.StreamChainBuilderTestCase
 import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.file.impl.FileManagerImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
@@ -27,8 +31,8 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
   override fun getTestDataPath(): String = Paths.get(File("").absolutePath, "/testData/psi/$relativeTestPath/").toString()
   override fun getFileExtension(): String = ".kt"
   abstract val kotlinChainBuilder: StreamChainBuilder
-
   override final fun getChainBuilder(): StreamChainBuilder = kotlinChainBuilder
+  private val stdLibName = "kotlin-stdlib"
 
   protected abstract fun doTest()
 
@@ -40,8 +44,16 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
 
   override fun setUp() {
     super.setUp()
+    ApplicationManager.getApplication().runWriteAction {
+      if (ProjectLibraryTable.getInstance(LightPlatformTestCase.getProject()).getLibraryByName(stdLibName) == null) {
+        VfsRootAccess.allowRootAccess(LibraryUtil.LIBRARIES_DIRECTORY)
+        PsiTestUtil.addLibrary(testRootDisposable, LightPlatformTestCase.getModule(), stdLibName,
+            LibraryUtil.LIBRARIES_DIRECTORY, LibraryUtil.KOTLIN_STD_LIBRARY_JAR_NAME)
+      }
+    }
     LibraryModificationTracker.getInstance(LightPlatformTestCase.getProject()).incModificationCount()
   }
+
 
   override fun getProjectJDK(): Sdk {
     return JdkManager.mockJdk18

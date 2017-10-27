@@ -9,5 +9,5 @@ import java.io.File
 object LibraryUtil {
   val LIBRARIES_DIRECTORY: String = File("lib").absolutePath
 
-  val KOTLIN_STD_LIBRARY = "kotlin-stdlib.jar"
+  val KOTLIN_STD_LIBRARY_JAR_NAME = "kotlin-stdlib.jar"
 }
