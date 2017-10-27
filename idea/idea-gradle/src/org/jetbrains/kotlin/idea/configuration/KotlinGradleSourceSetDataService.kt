@@ -210,12 +210,10 @@ private fun configureFacetByGradleModule(
     return kotlinFacet
 }
 
-private fun isQualifiedModuleNamesEnabled() = Registry.`is`("project.qualified.module.names")
-
 private fun getImplementedModuleName(moduleNode: DataNode<ModuleData>, sourceSetName: String?): String? {
     val baseModuleName = moduleNode.implementedModule?.data?.internalName
     if (baseModuleName == null || sourceSetName == null) return baseModuleName
-    val delimiter = if(isQualifiedModuleNamesEnabled()) "." else "_"
+    val delimiter = "_"
     return "$baseModuleName$delimiter$sourceSetName"
 }
 
