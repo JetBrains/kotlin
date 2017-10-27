@@ -4,9 +4,6 @@ import konan.internal.ExportForCppRuntime
 
 fun main(args: Array<String>) {
 
-    //val html5 = Html5()
-    val document = html5.document
-
     val canvas = document.getElementById("myCanvas").asCanvas
     val ctx = canvas.getContext("2d")
     val rect = canvas.getBoundingClientRect()
@@ -35,7 +32,7 @@ fun main(args: Array<String>) {
         draw = false
     }
 
-    html5.setInterval(10) {
+    setInterval(10) {
         if (draw) {
             ctx.setter("strokeStyle", "#222222")
             ctx.lineTo(mouseX, mouseY)
