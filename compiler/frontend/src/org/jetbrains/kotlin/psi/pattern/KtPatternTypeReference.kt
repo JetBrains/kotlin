@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
+import org.jetbrains.kotlin.types.expressions.errorIfNull
 
 class KtPatternTypeReference(node: ASTNode) : KtPatternEntry(node) {
 
@@ -34,7 +36,10 @@ class KtPatternTypeReference(node: ASTNode) : KtPatternEntry(node) {
     }
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        typeReference?.let { resolver.getTypeInfo(it, state) }
+        typeReference?.let {
+            resolver.getTypeInfo(it, state)
+                    .errorIfNull(it, state, Errors.UNSPECIFIED_TYPE)
+        }
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {

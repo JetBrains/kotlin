@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
@@ -100,42 +102,33 @@ class PatternResolver(
     }
 
     fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): KotlinTypeInfo {
-        val context = state.context
-        val typeResolutionContext = TypeResolutionContext(context.scope, context.trace, true, true, context.isDebuggerContext)
+        val trace = state.context.trace
+        val scope = state.context.scope
+        val subjectType = state.expectedType
+        val isDebuggerContext = state.context.isDebuggerContext
+        val typeResolutionContext = TypeResolutionContext(scope, trace, true, true, isDebuggerContext)
         val possiblyBareTarget = typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReference)
-        return KotlinTypeInfo(possiblyBareTarget.actualType, context.dataFlowInfo)
+        val type = TypeReconstructionUtil.reconstructBareType(typeReference, possiblyBareTarget, subjectType, trace, builtIns)
+        return KotlinTypeInfo(type, DataFlowInfo.EMPTY)
     }
 
     fun getTypeInfo(expression: KtExpression, state: PatternResolveState): KotlinTypeInfo {
         return facade.getTypeInfo(expression, state.context)
     }
 
-    private fun KotlinTypeInfo?.errorIfNull(reportErrorOn: KtElement, state: PatternResolveState): KotlinTypeInfo {
-        val error = Errors.UNSPECIFIED_TYPE.on(reportErrorOn, reportErrorOn)
-        val emptyInfo = KotlinTypeInfo(null, DataFlowInfo.EMPTY)
-        if (this == null) state.context.trace.report(error)
-        return this ?: emptyInfo
-    }
-
-    private fun KotlinTypeInfo.replaceIfNull(subjectType: KotlinType): KotlinTypeInfo {
-        if (type == null)
-            return KotlinTypeInfo(subjectType, dataFlowInfo)
-        return this
-    }
-
     fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: PatternResolver.() -> KotlinTypeInfo?): KotlinTypeInfo {
-        val cachedTypeInfo = state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)
-        cachedTypeInfo?.let { return it }
-        val typeInfo = this.creator().errorIfNull(element, state)
-        state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, typeInfo)
-        return typeInfo
+        val cachedInfo = state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)
+        if (cachedInfo != null) return cachedInfo
+        val info = this.creator().errorAndReplaceIfNull(element, state, Errors.UNSPECIFIED_TYPE, KotlinTypeInfo(null, DataFlowInfo.EMPTY))
+        state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, info)
+        return info
     }
 
     fun resolveType(element: KtPatternElement, state: PatternResolveState): KotlinTypeInfo {
-        val info = element.getTypeInfo(this, state).errorIfNull(element, state)
-        val notNullInfo = info.replaceIfNull(state.expectedType)
-        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, notNullInfo.type!!, state.expectedType, element)
-        return notNullInfo
+        val info = element.getTypeInfo(this, state)
+        val type = info.type ?: state.expectedType
+        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, type, state.expectedType, element)
+        return KotlinTypeInfo(type, info.dataFlowInfo)
     }
 
     fun checkExpression(expression: KtExpression?, state: PatternResolveState): DataFlowInfo {
@@ -151,11 +144,22 @@ class PatternResolver(
             return
         }
         val scope = state.scope
-        val componentType = declaration.getTypeInfo(this, state.expectedType).type
+        val componentType = declaration.getTypeInfo(this, state).type
         val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(scope, declaration, componentType, trace)
         ExpressionTypingUtils.checkVariableShadowing(scope.flatten(), trace, variableDescriptor)
         scope.add(variableDescriptor)
     }
+}
+
+fun <T> T?.errorAndReplaceIfNull(
+        element: KtElement,
+        state: PatternResolveState,
+        error: DiagnosticFactory1<KtElement, KtElement>,
+        patch: T
+) = this.errorIfNull(element, state, error) ?: patch
+
+fun <T, E : PsiElement> T?.errorIfNull(element: E, state: PatternResolveState, error: DiagnosticFactory1<E, E>) = this.also {
+    it ?: state.context.trace.report(error.on(element, element))
 }
 
 fun KotlinTypeInfo.and(vararg children: KotlinTypeInfo?): KotlinTypeInfo {
