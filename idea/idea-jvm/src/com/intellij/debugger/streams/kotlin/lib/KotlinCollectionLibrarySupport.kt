@@ -1,5 +1,9 @@
 package com.intellij.debugger.streams.kotlin.lib
 
+import com.intellij.debugger.streams.kotlin.resolve.FilterOrderResolver
+import com.intellij.debugger.streams.kotlin.trace.impl.handler.collections.FilterIntermediateHandler
+import com.intellij.debugger.streams.kotlin.trace.impl.handler.collections.FilterTerminatorHandler
+import com.intellij.debugger.streams.kotlin.trace.impl.interpret.FilterTraceInterpreter
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.TerminalOperation
 import com.intellij.debugger.streams.lib.impl.LibrarySupportBase
@@ -16,8 +20,9 @@ import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
  */
 class KotlinCollectionLibrarySupport : LibrarySupportBase() {
   init {
-    addIntermediateOperationsSupport()
-    addTerminationOperationsSupport()
+    addOperation(FilterOperation("filter",
+        { num, call, dsl -> FilterIntermediateHandler(num, call, dsl) },
+        { call, resultExpression, dsl -> FilterTerminatorHandler(call, resultExpression, dsl)}))
   }
 
   private fun addOperation(operation: CollectionOperation) {
@@ -25,20 +30,24 @@ class KotlinCollectionLibrarySupport : LibrarySupportBase() {
     addTerminationOperationsSupport(operation)
   }
 
-  private class CollectionOperation : IntermediateOperation, TerminalOperation {
-    override val name: String
-      get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val traceInterpreter: CallTraceInterpreter
-      get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val valuesOrderResolver: ValuesOrderResolver
-      get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+  private abstract class CollectionOperation(override val name: String,
+                                             private val intermediateHandlerProvider: IntermediateHandlerProvider,
+                                             private val terminatorCallProvider: TerminatorHandlerProvider)
+    : IntermediateOperation, TerminalOperation {
+    override fun getTraceHandler(callOrder: Int, call: IntermediateStreamCall, dsl: Dsl): IntermediateCallHandler =
+        intermediateHandlerProvider(callOrder, call, dsl)
 
-    override fun getTraceHandler(callOrder: Int, call: IntermediateStreamCall, dsl: Dsl): IntermediateCallHandler {
-      TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getTraceHandler(call: TerminatorStreamCall, resultExpression: String, dsl: Dsl): TerminatorCallHandler =
+        terminatorCallProvider(call, resultExpression, dsl)
+  }
 
-    override fun getTraceHandler(call: TerminatorStreamCall, resultExpression: String, dsl: Dsl): TerminatorCallHandler {
-      TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+  private class FilterOperation(name: String, intermediateHandlerProvider: IntermediateHandlerProvider,
+                                terminatorHandlerProvider: TerminatorHandlerProvider)
+    : CollectionOperation(name, intermediateHandlerProvider, terminatorHandlerProvider) {
+    override val traceInterpreter: CallTraceInterpreter = FilterTraceInterpreter()
+    override val valuesOrderResolver: ValuesOrderResolver = FilterOrderResolver()
   }
 }
+
+private typealias IntermediateHandlerProvider = (Int, IntermediateStreamCall, Dsl) -> IntermediateCallHandler
+private typealias TerminatorHandlerProvider = (TerminatorStreamCall, String, Dsl) -> TerminatorCallHandler
