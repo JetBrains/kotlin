@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -532,18 +533,26 @@ class DelegatedPropertyResolver(
 
             val traceToResolveConventionMethods = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods")
 
-            val delegateType = expressionTypingServices.getTypeInfo(scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE, dataFlowInfo,
+            val delegateTypeInfo = expressionTypingServices.getTypeInfo(scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE, dataFlowInfo,
                                                                     traceToResolveConventionMethods, false, delegateExpression, ContextDependency.DEPENDENT)
 
-            val contextForProvideDelegate = ExpressionTypingContext.newContext(traceToResolveConventionMethods, scopeForDelegate, delegateType.dataFlowInfo,
+            val contextForProvideDelegate = ExpressionTypingContext.newContext(traceToResolveConventionMethods, scopeForDelegate, delegateTypeInfo.dataFlowInfo,
                                                                                NO_EXPECTED_TYPE, ContextDependency.DEPENDENT, StatementFilter.NONE,
                                                                                languageVersionSettings)
 
+            val delegateTypeConstructor = delegateTypeInfo.type?.constructor
+
+//          This is a temporary hack, probably we should complete call if it doesn't contain unfixed type variables
+            val delegateType = if (delegateTypeConstructor is IntegerValueTypeConstructor)
+                TypeUtils.getDefaultPrimitiveNumberType(delegateTypeConstructor)
+            else
+                delegateTypeInfo.type
+
             val provideDelegateResults = getProvideDelegateMethod(
-                    variableDescriptor, delegateExpression, delegateType.type ?: return null, contextForProvideDelegate
+                    variableDescriptor, delegateExpression, delegateType ?: return null, contextForProvideDelegate
             )
 
-            var typeInfoForGetValueReceiver = delegateType
+            var typeInfoForGetValueReceiver = KotlinTypeInfo(delegateType, delegateTypeInfo.dataFlowInfo)
             if (conventionMethodFound(provideDelegateResults)) {
                 val provideDelegateDescriptor = provideDelegateResults.resultingDescriptor
                 if (provideDelegateDescriptor.isOperator) {
