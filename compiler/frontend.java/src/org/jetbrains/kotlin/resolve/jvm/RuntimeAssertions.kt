@@ -43,12 +43,10 @@ class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: Strin
     interface DataFlowExtras {
         class OnlyMessage(message: String) : DataFlowExtras {
             override val canBeNull: Boolean get() = true
-            override val possibleTypes: Set<KotlinType> get() = setOf()
             override val presentableText: String = message
         }
 
         val canBeNull: Boolean
-        val possibleTypes: Set<KotlinType>
         val presentableText: String
     }
 
@@ -96,8 +94,6 @@ class RuntimeAssertionsDataFlowExtras(
 ) : RuntimeAssertionInfo.DataFlowExtras {
     override val canBeNull: Boolean
         get() = c.dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()
-    override val possibleTypes: Set<KotlinType>
-        get() = c.dataFlowInfo.getCollectedTypes(dataFlowValue)
     override val presentableText: String
         get() = expression.textForRuntimeAssertionInfo
 }
