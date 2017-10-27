@@ -170,7 +170,26 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testWithFakeJvm() {
+        val commonModule = module("header")
+        commonModule.createFacet(TargetPlatformKind.Common, false)
+        val jvmKind = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        arrayOf("fake_jvm" to jvmKind, "jvm" to jvmKind).forEach { (implName, implKind) ->
+            val implModule = module(implName)
+            implModule.createFacet(implKind, implementedModuleName = "header".takeIf { implName == "jvm" })
+            implModule.enableMultiPlatform()
+            implModule.addDependency(commonModule)
+        }
+        doQuickFixTest()
+    }
+
+    @Test
     fun testWithTest() {
+        doMultiPlatformTest(expectName = "common", withTests = true)
+    }
+
+    @Test
+    fun testWithTestDummy() {
         doMultiPlatformTest(expectName = "common", withTests = true)
     }
 
