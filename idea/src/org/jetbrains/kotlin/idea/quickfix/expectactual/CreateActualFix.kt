@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -32,13 +31,13 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.facet.implementingModules
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -62,7 +61,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val element = element ?: return
         val factory = KtPsiFactory(project)
 
-        val actualFile = getOrCreateImplementationFile(project) ?: return
+        val actualFile = getOrCreateImplementationFile() ?: return
         val generated = factory.generateIt(project, element) ?: return
 
         runWriteAction {
@@ -87,16 +86,13 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         }
     }
 
-    private fun Project.implementationModuleOf(expectedModule: Module) =
-            allModules().firstOrNull {
+    private fun implementationModuleOf(expectedModule: Module) =
+            expectedModule.implementingModules.firstOrNull {
                 PackageUtil.checkSourceRootsConfigured(it, false) &&
-                TargetPlatformDetector.getPlatform(it).multiTargetPlatform == actualPlatform &&
-                expectedModule in ModuleRootManager.getInstance(it).dependencies
+                TargetPlatformDetector.getPlatform(it).multiTargetPlatform == actualPlatform
             }
 
-    private fun getOrCreateImplementationFile(
-            project: Project
-    ): KtFile? {
+    private fun getOrCreateImplementationFile(): KtFile? {
         val declaration = element as? KtNamedDeclaration ?: return null
         val name = declaration.name ?: return null
 
@@ -104,7 +100,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val expectedPackage = JavaDirectoryService.getInstance().getPackage(expectedDir)
 
         val expectedModule = ModuleUtilCore.findModuleForPsiElement(declaration) ?: return null
-        val actualModule = project.implementationModuleOf(expectedModule) ?: return null
+        val actualModule = implementationModuleOf(expectedModule) ?: return null
         val actualDirectory = PackageUtil.findOrCreateDirectoryForPackage(
                 actualModule, expectedPackage?.qualifiedName ?: "", null, false
         ) ?: return null
