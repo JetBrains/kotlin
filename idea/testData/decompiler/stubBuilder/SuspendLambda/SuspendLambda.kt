@@ -17,6 +17,9 @@ class SuspendLambda {
     var nullableSuspendWithNullableReceiver: (suspend RS?.(P) -> Unit)? = null
 
     var nullableSuspendWithAnnotation: (@A() suspend (P) -> Unit)? = null
+
+    fun override(p: String, b: (suspend (P) -> Unit)) = null
+    fun override(b: (suspend (P) -> Unit)) = null
 }
 
 interface P
