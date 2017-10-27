@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettin
 @State(name = KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION,
        storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
                           Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)))
-class Kotlin2JvmCompilerArgumentsHolder : BaseKotlinCompilerSettings<K2JVMCompilerArguments>() {
+class Kotlin2JvmCompilerArgumentsHolder(project: Project) : BaseKotlinCompilerSettings<K2JVMCompilerArguments>(project) {
     override fun createSettings() = K2JVMCompilerArguments()
 
     override fun validateNewSettings(settings: K2JVMCompilerArguments) {

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.compiler.configuration
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
+import com.intellij.openapi.project.Project
+import com.intellij.util.messages.Topic
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.SettingConstants
 import kotlin.reflect.KClass
 
-abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor() : PersistentStateComponent<Element>, Cloneable {
+abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(private val project: Project) : PersistentStateComponent<Element>, Cloneable {
     @Suppress("LeakingThis", "UNCHECKED_CAST")
     private var _settings: T = createSettings().frozen() as T
         private set(value) {
@@ -37,8 +39,8 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor()
         get() = _settings
         set(value) {
             validateNewSettings(value)
-            @Suppress("UNCHECKED_CAST")
             _settings = value
+            project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
         }
 
     fun update(changer: T.() -> Unit) {
@@ -71,6 +73,7 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor()
             }
             XmlSerializer.deserializeInto(this, state)
         }
+        project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
     }
 
     public override fun clone(): Any = super.clone()
@@ -86,5 +89,13 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor()
                     sourceMapEmbedSources = K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
                 }
         )
+    }
+}
+
+interface KotlinCompilerSettingsListener {
+    fun <T> settingsChanged(newSettings: T)
+
+    companion object {
+        val TOPIC = Topic.create("KotlinCompilerSettingsListener", KotlinCompilerSettingsListener::class.java)
     }
 }
