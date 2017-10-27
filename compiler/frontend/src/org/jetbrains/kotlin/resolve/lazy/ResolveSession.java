@@ -137,7 +137,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
 
     @Inject
-    public void setDelegationFilter(@NotNull  DelegationFilter delegationFilter) {
+    public void setDelegationFilter(@NotNull DelegationFilter delegationFilter) {
         this.delegationFilter = delegationFilter;
     }
 
@@ -211,6 +211,18 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Nullable
     public LazyPackageDescriptor getPackageFragment(@NotNull FqName fqName) {
         return packages.invoke(fqName);
+    }
+
+
+    @NotNull
+    @Override
+    public LazyPackageDescriptor getPackageFragmentOrDiagnoseFailure(@NotNull FqName fqName, @Nullable KtFile from) {
+        LazyPackageDescriptor packageDescriptor = getPackageFragment(fqName);
+        if (packageDescriptor == null) {
+            declarationProviderFactory.diagnoseMissingPackageFragment(fqName, from);
+            assert false : "diagnoseMissingPackageFragment should throw!";
+        }
+        return packageDescriptor;
     }
 
     @Nullable
@@ -350,8 +362,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     ) {
         result.add(current);
         for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), MemberScope.Companion.getALL_NAME_FILTER())) {
-            LazyPackageDescriptor fragment = getPackageFragment(subPackage);
-            assert fragment != null : "Couldn't find fragment for " + subPackage;
+            LazyPackageDescriptor fragment = getPackageFragmentOrDiagnoseFailure(subPackage, null);
             collectAllPackages(result, fragment);
         }
         return result;

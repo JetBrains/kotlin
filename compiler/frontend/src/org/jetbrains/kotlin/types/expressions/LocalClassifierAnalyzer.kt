@@ -155,7 +155,7 @@ class LocalClassDescriptorHolder(
                                 throw UnsupportedOperationException("Should not be called for top-level declarations")
                             }
 
-                            override fun diagnoseMissingPackageFragment(file: KtFile?) {
+                            override fun diagnoseMissingPackageFragment(fqName: FqName, file: KtFile?) {
                                 throw UnsupportedOperationException()
                             }
                         }
