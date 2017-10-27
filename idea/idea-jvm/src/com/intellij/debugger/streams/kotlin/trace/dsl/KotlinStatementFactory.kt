@@ -5,14 +5,13 @@ import com.intellij.debugger.streams.trace.dsl.*
 import com.intellij.debugger.streams.trace.dsl.impl.AssignmentStatement
 import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.trace.dsl.impl.VariableImpl
-import com.intellij.debugger.streams.trace.impl.handler.PeekCall
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinStatementFactory : StatementFactory {
+class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : StatementFactory {
   override fun createNewListExpression(elementType: GenericType, vararg args: Expression): Expression =
     TextExpression("kotlin.collections.mutableListOf<${elementType.genericTypeName}>(${StatementFactory.commaSeparate(*args)})")
 
@@ -95,5 +94,6 @@ class KotlinStatementFactory : StatementFactory {
   override fun createNewSizedArray(elementType: GenericType, size: Expression): Expression =
     TextExpression("arrayOfNulls<${elementType.genericTypeName}>(${size.toCode()})")
 
-  override fun createPeekCall(elementsType: GenericType, lambda: String): IntermediateStreamCall = PeekCall(lambda, elementsType)
+  override fun createPeekCall(elementsType: GenericType, lambda: String): IntermediateStreamCall =
+      peekCallFactory.createPeekCall(elementsType, lambda)
 }
