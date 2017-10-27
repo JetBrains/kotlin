@@ -6,6 +6,8 @@ import java.io.File
 /**
  * @author Vitaliy.Bibaev
  */
-object LibraryManager {
+object LibraryUtil {
   val LIBRARIES_DIRECTORY: String = File("lib").absolutePath
+
+  val KOTLIN_STD_LIBRARY = "kotlin-stdlib.jar"
 }
