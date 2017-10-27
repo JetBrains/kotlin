@@ -361,7 +361,16 @@ public class ArgumentTypeResolver {
         MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
         Call call = context.call;
 
-        for (ValueArgument argument : call.getValueArguments()) {
+        List<? extends ValueArgument> valueArguments = call.getValueArguments();
+        List<LexicalScope> scopeArguments = call.getScopeArguments();
+
+        assert scopeArguments == null || valueArguments.size() == scopeArguments.size() :
+                "Lists valueArguments and scopeArguments must have a same length";
+
+        for (int i = 0; i < valueArguments.size(); ++i) {
+            ValueArgument argument = valueArguments.get(i);
+            LexicalScope scope = scopeArguments != null ? scopeArguments.get(i) : null;
+
             KtExpression expression = argument.getArgumentExpression();
             if (expression == null) continue;
 
@@ -370,6 +379,9 @@ public class ArgumentTypeResolver {
             }
 
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
+            if (scope != null) {
+                newContext = context.replaceScope(scope);
+            }
             // Here we go inside arguments and determine additional data flow information for them
             KotlinTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, resolveArgumentsMode);
             infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());

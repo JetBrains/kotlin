@@ -1,22 +1,24 @@
-fun main(args: Array<String>) {
-    val a: Int = 1
-    val k: Int = 2
-    val e = 3
+data class A(val a: Int, val b: Int)
 
-    when (Pair(g + k + d, a + b + c + e)) {
+fun main(args: Array<String>) {
+    val (g, k, d) = listOf(1, 2, 3)
+    val (a, b, c, e) = listOf(4, 5, 6, 7)
+    val n = 10
+    val p = A(g + k + d, a + b + c + e)
+    when (p) {
         match (5, 7) -> {
 
         }
         match (m, #a) -> {
 
         }
-        match (n, #(k + e)) -> {
+        match (n, #(k + n)) -> {
 
         }
         match p @ Pair(:Int, :Int) -> {
 
         }
-        match (a, b) if (a > b) -> {
+        match (x, (i, x)) if (a > b) -> {
 
         }
         match ("some string ${e} with parameter", _) -> {

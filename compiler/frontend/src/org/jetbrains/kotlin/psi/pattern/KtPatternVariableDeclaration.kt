@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
@@ -191,12 +190,13 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVari
         return visitor.visitPatternVariableDeclaration(this, data)
     }
 
-    override fun getTypeInfo(resolver: PatternResolver, expectedType: KotlinType?) = resolver.restoreOrCreate(this) {
-        typeReference?.getTypeInfo(resolver, expectedType) ?: KotlinTypeInfo(expectedType ?: resolver.builtIns.anyType, DataFlowInfo.EMPTY)
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
+        val type = state.expectedType
+        typeReference?.getTypeInfo(resolver, state) ?: KotlinTypeInfo(type, DataFlowInfo.EMPTY)
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
-        val info = resolver.resolveType(this, state.expectedType)
+        val info = resolver.resolveType(this, state)
         resolver.defineVariable(this, state)
         return info
     }

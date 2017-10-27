@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
@@ -51,6 +52,12 @@ public interface Call {
     @ReadOnly
     @NotNull
     List<? extends ValueArgument> getValueArguments();
+
+    @ReadOnly
+    @Nullable
+    default List<LexicalScope> getScopeArguments() {
+        return null;
+    }
 
     @ReadOnly
     @NotNull

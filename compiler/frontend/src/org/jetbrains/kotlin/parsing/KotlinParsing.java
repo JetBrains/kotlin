@@ -2057,7 +2057,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else if (at(OPEN_QUOTE)) {
             PsiBuilder.Marker patternStringMarker = mark();
             myExpressionParsing.parseStringTemplate();
-            patternStringMarker.done(PATTERN_CONSTANT_EXPRESSION);
+            patternStringMarker.done(PATTERN_STRING_EXPRESSION);
         }
         else if (at(HASH)) {
             parseHashExpression();
@@ -2068,12 +2068,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else {
             PsiBuilder.Marker patternConstantMarker = mark();
             if (myExpressionParsing.parseLiteralConstant()) {
-                patternConstantMarker.done(PATTERN_STRING_EXPRESSION);
+                patternConstantMarker.done(PATTERN_CONSTANT_EXPRESSION);
             }
             else {
                 patternConstantMarker.rollbackTo();
+                parseTypeConstraintOrTypedTuple();
             }
-            parseTypeConstraintOrTypedTuple();
         }
         if (at(IF_KEYWORD)) {
             parseGuard();
@@ -2093,12 +2093,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker patternTypedTupleMarker = mark();
         advance(); // LPAR
         parseTypeRef();
-        if (!at(RPAR) && !at(1, LPAR)) {
-            patternTypedTupleMarker.rollbackTo();
-            patternTypedTupleMarker = mark();
+        if (at(RPAR) && at(1, LPAR)) {
+            advance(); // RPAR
         }
         else {
-            advance(); // RPAR
+            patternTypedTupleMarker.rollbackTo();
+            patternTypedTupleMarker = mark();
         }
         parseTuple();
         patternTypedTupleMarker.done(PATTERN_TYPED_TUPLE);

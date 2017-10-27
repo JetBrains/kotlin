@@ -1,9 +1,4 @@
 fun main(args: Array<String>) {
-    //    when (5) {
-//        match String -> {}
-// //       match :String -> {}
-//        match x -> {}
-//    }
     data class TContainer(val a: Int, val b: Int, val c: Int)
 
     class A(val a: Int, val b: Int, val c: Int, d: Int) {
@@ -16,9 +11,9 @@ fun main(args: Array<String>) {
     }
 
 
-    val a = A(1, 2, 3, 4)
-    when (a) {
-        match e @ A(a, (b, c) if (b > c), 3) -> {
+    val k = A(1, 2, 3, 4)
+    when (k) {
+        match e @ A(a, (b, c) if (b > c), a) -> {
             println("$a $b $c")
         }
     }

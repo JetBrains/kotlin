@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
-import org.jetbrains.kotlin.resolve.scopes.LocalRedeclarationChecker
+import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -42,22 +42,22 @@ class PatternResolver(
         private val fakeCallResolver: FakeCallResolver,
         private val typeResolver: TypeResolver,
         private val localVariableResolver: LocalVariableResolver,
-        private val facade: ExpressionTypingInternals,
-        private val context: ExpressionTypingContext
+        private val overloadChecker: OverloadChecker,
+        private val facade: ExpressionTypingInternals
 ) {
     companion object {
         fun getDeconstructName() = Name.identifier("deconstruct")
         fun getComponentName(index: Int) = DataClassDescriptorResolver.createComponentName(index + 1)
     }
 
-    fun resolve(pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean): KotlinTypeInfo {
-        val scope = PatternScope(context.scope)
-        val context = context.replaceExpectedType(expectedType)
-        val state = PatternResolveState(scope, context, allowDefinition)
-        return pattern.resolve(this, state).also {
-            state.scope.printStructure(Printer(System.out))
-            println(it.type)
-        }
+    fun resolve(context: ExpressionTypingContext, pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean): Pair<KotlinTypeInfo, LexicalScope> {
+        val redeclarationChecker = TraceBasedLocalRedeclarationChecker(context.trace, overloadChecker)
+        val scope = PatternScope(context.scope, redeclarationChecker)
+        val newContext = context.replaceExpectedType(expectedType)
+        val state = PatternResolveState(scope, newContext, allowDefinition, redeclarationChecker)
+        val typeInfo = pattern.resolve(this, state)
+        state.scope.printStructure(Printer(System.out))
+        return typeInfo to scope.flatten()
     }
 
     fun getComponentsTypeInfoReceiver(tuple: KtPatternTypedTuple, state: PatternResolveState): KotlinType? {
@@ -99,21 +99,21 @@ class PatternResolver(
         }
     }
 
-    fun getTypeInfo(typeReference: KtTypeReference): KotlinTypeInfo {
+    fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): KotlinTypeInfo {
+        val context = state.context
         val typeResolutionContext = TypeResolutionContext(context.scope, context.trace, true, true, context.isDebuggerContext)
         val possiblyBareTarget = typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReference)
         return KotlinTypeInfo(possiblyBareTarget.actualType, context.dataFlowInfo)
     }
 
-    fun getTypeInfo(expression: KtExpression): KotlinTypeInfo {
-        val visitor = BasicExpressionTypingVisitor(facade)
-        return visitor.visitExpression(expression, context)
+    fun getTypeInfo(expression: KtExpression, state: PatternResolveState): KotlinTypeInfo {
+        return facade.getTypeInfo(expression, state.context)
     }
 
-    private fun KotlinTypeInfo?.errorIfNull(reportErrorOn: KtElement): KotlinTypeInfo {
+    private fun KotlinTypeInfo?.errorIfNull(reportErrorOn: KtElement, state: PatternResolveState): KotlinTypeInfo {
         val error = Errors.UNSPECIFIED_TYPE.on(reportErrorOn, reportErrorOn)
         val emptyInfo = KotlinTypeInfo(null, DataFlowInfo.EMPTY)
-        if (this == null) context.trace.report(error)
+        if (this == null) state.context.trace.report(error)
         return this ?: emptyInfo
     }
 
@@ -123,29 +123,29 @@ class PatternResolver(
         return this
     }
 
-    fun restoreOrCreate(element: KtPatternElement, creator: PatternResolver.() -> KotlinTypeInfo?): KotlinTypeInfo {
-        val cachedTypeInfo = context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)
+    fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: PatternResolver.() -> KotlinTypeInfo?): KotlinTypeInfo {
+        val cachedTypeInfo = state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)
         cachedTypeInfo?.let { return it }
-        val typeInfo = this.creator().errorIfNull(element)
-        context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, typeInfo)
+        val typeInfo = this.creator().errorIfNull(element, state)
+        state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, typeInfo)
         return typeInfo
     }
 
-    fun resolveType(element: KtPatternElement, subjectType: KotlinType): KotlinTypeInfo {
-        val info = element.getTypeInfo(this, subjectType).errorIfNull(element)
-        val notNullInfo = info.replaceIfNull(subjectType)
-        PatternMatchingTypingVisitor.checkTypeCompatibility(context, notNullInfo.type!!, subjectType, element)
+    fun resolveType(element: KtPatternElement, state: PatternResolveState): KotlinTypeInfo {
+        val info = element.getTypeInfo(this, state).errorIfNull(element, state)
+        val notNullInfo = info.replaceIfNull(state.expectedType)
+        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, notNullInfo.type!!, state.expectedType, element)
         return notNullInfo
     }
 
-    fun checkExpression(expression: KtExpression?, scope: LexicalScope): DataFlowInfo {
-        val context = this.context.replaceScope(scope)
+    fun checkExpression(expression: KtExpression?, state: PatternResolveState): DataFlowInfo {
+        val context = state.context.replaceScope(state.scope)
         val visitor = ControlStructureTypingVisitor(facade)
         return visitor.checkCondition(expression, context)
     }
 
     fun defineVariable(declaration: KtPatternVariableDeclaration, state: PatternResolveState) {
-        val trace = context.trace
+        val trace = state.context.trace
         if (!state.allowDefinition) {
             trace.report(Errors.NOT_ALLOW_PROPERTY_DEFINITION.on(declaration, declaration))
             return
@@ -153,8 +153,8 @@ class PatternResolver(
         val scope = state.scope
         val componentType = declaration.getTypeInfo(this, state.expectedType).type
         val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(scope, declaration, componentType, trace)
-        ExpressionTypingUtils.checkVariableShadowing(scope, trace, variableDescriptor)
-        scope.addDescriptor(variableDescriptor)
+        ExpressionTypingUtils.checkVariableShadowing(scope.flatten(), trace, variableDescriptor)
+        scope.add(variableDescriptor)
     }
 }
 
@@ -184,51 +184,73 @@ fun DataFlowInfo.and(dataFlowInfo: Sequence<DataFlowInfo?>): DataFlowInfo {
 }
 
 class PatternScope private constructor(
-        private val outerScope: LexicalScope,
-        private val parentScope: PatternScope?
+        private val outer: LexicalScope,
+        private val owner: PatternScope?,
+        redeclarationChecker: TraceBasedLocalRedeclarationChecker
 ) : LexicalWritableScope(
-        outerScope,
-        outerScope.ownerDescriptor,
-        outerScope.isOwnerDescriptorAccessibleByLabel,
-        LocalRedeclarationChecker.DO_NOTHING,
-        outerScope.kind
+        outer,
+        outer.ownerDescriptor,
+        outer.isOwnerDescriptorAccessibleByLabel,
+        redeclarationChecker,
+        outer.kind
 ) {
-    constructor(outerScope: LexicalScope) : this(outerScope, null)
-    constructor(parent: PatternScope) : this(parent.outerScope, parent)
+    constructor(outerScope: LexicalScope, redeclarationChecker: TraceBasedLocalRedeclarationChecker) : this(outerScope, null, redeclarationChecker)
+    constructor(parent: PatternScope, redeclarationChecker: TraceBasedLocalRedeclarationChecker) : this(parent.outer, parent, redeclarationChecker)
 
     private val children = mutableListOf<PatternScope>()
 
-    fun addDescriptor(descriptor: DeclarationDescriptor) {
-        addedDescriptors.add(descriptor)
-        parentScope?.addDescriptor(descriptor)
+    fun add(descriptor: VariableDescriptor) {
+        addVariableDescriptor(descriptor)
+        owner?.add(descriptor)
     }
 
-    fun child(): PatternScope {
-        val child = PatternScope(this)
+    fun child(redeclarationChecker: TraceBasedLocalRedeclarationChecker): PatternScope {
+        val child = PatternScope(this, redeclarationChecker)
         children.add(child)
         return child
     }
 
+    fun flatten(): LexicalScope {
+        var scope = this
+        while (scope.owner != null) {
+            scope = scope.owner as PatternScope
+        }
+        return scope
+    }
+
     override fun printStructure(p: Printer) {
         p.println("{")
+        p.pushIndent()
         addedDescriptors.forEach {
-            p.println("    ", it.toString())
+            p.println(it.toString())
         }
-        p.println("}")
         children.forEach { it.printStructure(p) }
+        p.popIndent()
+        p.println("}")
     }
 }
 
 class PatternResolveState(
         val scope: PatternScope,
         val context: ExpressionTypingContext,
-        val allowDefinition: Boolean
+        val allowDefinition: Boolean,
+        private val redeclarationChecker: TraceBasedLocalRedeclarationChecker
 ) {
     val expectedType
         get() = context.expectedType
 
+    fun replaceScope(scope: PatternScope): PatternResolveState {
+        val context = context.replaceScope(scope)
+        return PatternResolveState(scope, context, allowDefinition, redeclarationChecker)
+    }
+
+    fun replaceType(expectedType: KotlinType): PatternResolveState {
+        val context = context.replaceExpectedType(expectedType)
+        return PatternResolveState(scope, context, allowDefinition, redeclarationChecker)
+    }
+
     fun next(expectedType: KotlinType): PatternResolveState {
         val context = context.replaceExpectedType(expectedType)
-        return PatternResolveState(scope.child(), context, allowDefinition)
+        return PatternResolveState(scope.child(redeclarationChecker), context, allowDefinition, redeclarationChecker)
     }
 }

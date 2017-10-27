@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
@@ -37,14 +36,14 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
         return visitor.visitPatternConstraint(this, data)
     }
 
-    override fun getTypeInfo(resolver: PatternResolver, expectedType: KotlinType?) = resolver.restoreOrCreate(this) {
-        entry?.getTypeInfo(resolver, expectedType)
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
+        entry?.getTypeInfo(resolver, state)
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
         val entryInfo = entry?.resolve(resolver, state)
         val dataFlowInfo = guard?.resolve(resolver, state)
-        val thisInfo = resolver.resolveType(this, state.expectedType)
+        val thisInfo = resolver.resolveType(this, state)
         val info = thisInfo.and(entryInfo)
         return KotlinTypeInfo(info.type, info.dataFlowInfo.and(dataFlowInfo))
     }

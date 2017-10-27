@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveKt;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
@@ -258,6 +259,20 @@ public class ControlStructureTypingUtils {
             @NotNull KtExpression calleeExpression,
             @NotNull List<? extends KtExpression> arguments
     ) {
+        List<LexicalScope> scopes = new ArrayList<>();
+        for (int i = 0; i < arguments.size(); ++i) {
+            scopes.add(null);
+        }
+        return createCallForSpecialConstruction(expression, calleeExpression, arguments, scopes);
+    }
+
+    /*package*/
+    static Call createCallForSpecialConstruction(
+            @NotNull KtExpression expression,
+            @NotNull KtExpression calleeExpression,
+            @NotNull List<? extends KtExpression> arguments,
+            @NotNull List<LexicalScope> scopeArguments
+    ) {
         List<ValueArgument> valueArguments = Lists.newArrayList();
         for (KtExpression argument : arguments) {
             valueArguments.add(CallMaker.makeValueArgument(argument));
@@ -285,6 +300,12 @@ public class ControlStructureTypingUtils {
             @Override
             public KtExpression getCalleeExpression() {
                 return calleeExpression;
+            }
+
+            @Nullable
+            @Override
+            public List<LexicalScope> getScopeArguments() {
+                return scopeArguments;
             }
 
             @Nullable

@@ -35,6 +35,6 @@ class KtPatternGuard(node: ASTNode) : KtExpressionImpl(node) {
     }
 
     fun resolve(resolver: PatternResolver, state: PatternResolveState): DataFlowInfo {
-        return resolver.checkExpression(this.condition, state.scope)
+        return resolver.checkExpression(this.condition, state)
     }
 }
