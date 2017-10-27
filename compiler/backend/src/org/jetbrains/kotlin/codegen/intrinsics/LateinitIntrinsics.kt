@@ -37,9 +37,7 @@ private fun getStackValue(resolvedCall: ResolvedCall<*>, codegen: ExpressionCode
     val expression =
             (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression as? KtCallableReferenceExpression ?: return null
     val referenceResolvedCall = expression.callableReference.getResolvedCallWithAssert(codegen.bindingContext)
-
     val receiver = codegen.generateCallableReferenceReceiver(referenceResolvedCall) ?: StackValue.none()
-
-    val target = expression.callableReference.getResolvedCallWithAssert(codegen.bindingContext).resultingDescriptor
-    return codegen.intermediateValueForProperty(target as PropertyDescriptor, true, false, null, false, receiver, null, true)
+    val target = referenceResolvedCall.resultingDescriptor as PropertyDescriptor
+    return codegen.intermediateValueForProperty(target, true, false, null, false, receiver, null, true)
 }
