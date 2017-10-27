@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android.tests;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestSuite;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.junit.runner.RunWith;
 import org.junit.runners.AllTests;
@@ -65,10 +66,11 @@ public class AndroidRunner {
     }
 
     private static void writeAndroidSkdToLocalProperties() throws IOException {
-        System.out.println("Writing android sdk to local.properties: " + pathManager.getAndroidSdkRoot());
+        String sdkRoot = FilesKt.getInvariantSeparatorsPath(new File(pathManager.getAndroidSdkRoot()));
+        System.out.println("Writing android sdk to local.properties: " + sdkRoot);
         File file = new File(pathManager.getTmpFolder() + "/local.properties");
         try (FileWriter fw = new FileWriter(file)) {
-            fw.write("sdk.dir=" + pathManager.getAndroidSdkRoot());
+            fw.write("sdk.dir=" + sdkRoot);
         }
     }
 }
