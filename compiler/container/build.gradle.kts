@@ -3,16 +3,25 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
-    compile(ideaSdkCoreDeps("intellij-core"))
     compileOnly(project(":kotlin-stdlib"))
     testCompile(project(":kotlin-stdlib"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
-    testRuntime(ideaSdkCoreDeps("trove4j", "intellij-core"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijCoreJar())
+        testRuntime(intellij { include("trove4j.jar") })
+    }
 }
 
 sourceSets {

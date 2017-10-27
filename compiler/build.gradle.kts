@@ -6,6 +6,10 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
@@ -54,16 +58,21 @@ dependencies {
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
-    testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-daemon-client"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
-    testRuntime(ideaSdkCoreDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
+}
+
+afterEvaluate {
+    dependencies {
+        testCompile(intellij { include("openapi.jar", "idea.jar", "util.jar", "asm-all.jar", "commons-httpclient-3.1-patched.jar") })
+        testRuntime(intellijCoreJar())
+        testRuntime(intellij())
+    }
 }
 
 sourceSets {
