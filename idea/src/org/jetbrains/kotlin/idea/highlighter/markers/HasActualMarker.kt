@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -62,7 +63,9 @@ fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration?) {
     val actualDeclarations = declaration?.actualsForExpected() ?: return
     if (actualDeclarations.isEmpty()) return
 
-    val renderer = DefaultPsiElementCellRenderer()
+    val renderer = object : DefaultPsiElementCellRenderer() {
+        override fun getContainerText(element: PsiElement?, name: String?) = ""
+    }
     PsiElementListNavigator.openTargets(e,
                                         actualDeclarations.toTypedArray(),
                                         "Choose actual for ${declaration.name}",
