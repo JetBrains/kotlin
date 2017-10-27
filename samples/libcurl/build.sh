@@ -22,7 +22,7 @@ COMPILER_ARGS=${!var} # add -opt for an optimized build.
 mkdir -p $DIR/build/c_interop/
 mkdir -p $DIR/build/bin/
 
-cinterop -compilerOpts "$CFLAGS" -compilerOpts -I$DIR -compilerOpts -I/usr/include -def $DIR/src/main/c_interop/libcurl.def -target $TARGET \
+cinterop -compilerOpts "$CFLAGS" -compilerOpts -I$DIR -def $DIR/src/main/c_interop/libcurl.def -target $TARGET \
 	 -o $DIR/build/c_interop/libcurl || exit 1
 
 konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libcurl \

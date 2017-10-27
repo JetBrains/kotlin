@@ -2,7 +2,12 @@ apply plugin: 'konan'
 
 konanArtifacts {
     interop('libcurl') {
-        includeDirs '/usr/include', '/opt/local/include', '/usr/local/opt/curl/include', '.'
+        target('linux') {
+            includeDirs '/usr/include'
+        }
+        target('macbook') {
+            includeDirs '/opt/local/include', '/usr/local/include'
+        }
     }
 
     program('Curl') {
