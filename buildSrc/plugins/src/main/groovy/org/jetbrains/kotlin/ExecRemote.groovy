@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin
 
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
@@ -59,7 +58,15 @@ class ExecRemote {
         }
     }
 
+    private cleanup(String fileName) {
+        println "Remove ${remote}:${fileName}"
+        project.exec {
+            commandLine('ssh', remote, 'rm', fileName )
+        }
+    }
+
     public ExecResult execRemote(Action<? super ExecSpec> action) {
+        String execFile
         Action<? super ExecSpec> extendedAction = new Action<ExecSpec>() {
             @Override
             void execute(ExecSpec execSpec) {
@@ -70,13 +77,16 @@ class ExecRemote {
                 execSpec.with {
                     upload(getExecutable())
                     executable = "$remoteDir/${new File(executable).name}"
+                    execFile = executable
                     if (project.hasProperty('remote')) {
                         commandLine = ['/usr/bin/ssh', remote] + commandLine
                     }
                 }
             }
         }
-        return project.exec(extendedAction)
+        def execResult = project.exec(extendedAction)
+        if (execFile != null) cleanup(execFile)
+        return execResult
     }
 
     public ExecResult execRemote(Closure closure) {
