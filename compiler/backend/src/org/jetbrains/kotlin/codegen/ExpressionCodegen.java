@@ -2615,40 +2615,40 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {
-        if (!calleeContainingClass.getKind().isSingleton()) {
-            return generateThisOrOuterFromContext(calleeContainingClass, isSuper, forceOuter);
+    public StackValue generateThisOrOuter(@NotNull ClassDescriptor thisOrOuterClass, boolean isSuper, boolean forceOuter) {
+        if (!thisOrOuterClass.getKind().isSingleton()) {
+            return generateThisOrOuterFromContext(thisOrOuterClass, isSuper, forceOuter);
         }
 
-        if (calleeContainingClass.equals(context.getThisDescriptor()) &&
+        if (thisOrOuterClass.equals(context.getThisDescriptor()) &&
             !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getFunctionDescriptor())) {
-            return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
+            return StackValue.local(0, typeMapper.mapType(thisOrOuterClass));
         }
-        else if (shouldGenerateSingletonAsThisOrOuterFromContext(calleeContainingClass)) {
-            return generateThisOrOuterFromContext(calleeContainingClass, isSuper, forceOuter);
+        else if (shouldGenerateSingletonAsThisOrOuterFromContext(thisOrOuterClass)) {
+            return generateThisOrOuterFromContext(thisOrOuterClass, isSuper, forceOuter);
         }
-        else if (isEnumEntry(calleeContainingClass)) {
-            return StackValue.enumEntry(calleeContainingClass, typeMapper);
+        else if (isEnumEntry(thisOrOuterClass)) {
+            return StackValue.enumEntry(thisOrOuterClass, typeMapper);
         }
         else {
-            return StackValue.singleton(calleeContainingClass, typeMapper);
+            return StackValue.singleton(thisOrOuterClass, typeMapper);
         }
     }
 
-    private StackValue generateThisOrOuterFromContext(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {
+    private StackValue generateThisOrOuterFromContext(@NotNull ClassDescriptor thisOrOuterClass, boolean isSuper, boolean forceOuter) {
         CodegenContext cur = context;
-        Type type = asmType(calleeContainingClass.getDefaultType());
+        Type type = asmType(thisOrOuterClass.getDefaultType());
         StackValue result = StackValue.local(0, type);
         boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
             ClassDescriptor thisDescriptor = cur.getThisDescriptor();
 
-            if (!isSuper && thisDescriptor == calleeContainingClass) {
+            if (!isSuper && thisDescriptor == thisOrOuterClass) {
                 return result;
             }
 
-            if (!forceOuter && isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
-                return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
+            if (!forceOuter && isSuper && DescriptorUtils.isSubclass(thisDescriptor, thisOrOuterClass)) {
+                return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, thisOrOuterClass);
             }
 
             forceOuter = false;
