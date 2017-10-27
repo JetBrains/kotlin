@@ -291,7 +291,7 @@ internal object CheckOperatorResolutionPart : ResolutionPart() {
     }
 }
 
-internal object CheckAbstractSuperCallPart : ResolutionPart() {
+internal object CheckSuperExpressionCallPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
 
@@ -299,6 +299,11 @@ internal object CheckAbstractSuperCallPart : ResolutionPart() {
             if (candidateDescriptor is MemberDescriptor && candidateDescriptor.modality == Modality.ABSTRACT) {
                 addDiagnostic(AbstractSuperCall)
             }
+        }
+
+        val extensionReceiver = resolvedCall.extensionReceiverArgument
+        if (extensionReceiver != null && callComponents.statelessCallbacks.isSuperExpression(extensionReceiver)) {
+            addDiagnostic(SuperAsExtensionReceiver(extensionReceiver))
         }
     }
 }

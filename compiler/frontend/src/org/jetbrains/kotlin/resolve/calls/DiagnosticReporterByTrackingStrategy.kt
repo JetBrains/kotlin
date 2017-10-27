@@ -89,6 +89,13 @@ class DiagnosticReporterByTrackingStrategy(
                 val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isVariableReceiverForInvoke ?: false
                 tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, implicitInvokeCheck)
             }
+
+            SuperAsExtensionReceiver::class.java -> {
+                val psiExpression = callReceiver.psiExpression
+                if (psiExpression is KtSuperExpression) {
+                    trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(psiExpression, psiExpression.text))
+                }
+            }
         }
     }
 
