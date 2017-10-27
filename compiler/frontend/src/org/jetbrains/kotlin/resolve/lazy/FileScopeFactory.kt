@@ -55,12 +55,7 @@ class FileScopeFactory(
 
     fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null): FileScopes {
         val packageView = moduleDescriptor.getPackage(file.packageFqName)
-        val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
-        if (packageFragment == null) {
-            // TODO J2K and change return type of diagnoseMissingPackageFragment() to Nothing
-            (topLevelDescriptorProvider as? LazyClassContext)?.declarationProviderFactory?.diagnoseMissingPackageFragment(file)
-            error("Could not find fragment ${file.packageFqName} for file ${file.name}")
-        }
+        val packageFragment = topLevelDescriptorProvider.getPackageFragmentOrDiagnoseFailure(file.packageFqName, file)
 
         return FilesScopesBuilder(file, existingImports, packageFragment, packageView).result
     }
@@ -119,7 +114,7 @@ class FileScopeFactory(
             }
         }
 
-        val lexicalScope = LexicalScope.Base(lazyImportingScope, topLevelDescriptorProvider.getPackageFragment(file.packageFqName)!!)
+        val lexicalScope = LexicalScope.Base(lazyImportingScope, topLevelDescriptorProvider.getPackageFragmentOrDiagnoseFailure(file.packageFqName, file))
 
         val importResolver = object : ImportResolver {
             override fun forceResolveAllImports() {

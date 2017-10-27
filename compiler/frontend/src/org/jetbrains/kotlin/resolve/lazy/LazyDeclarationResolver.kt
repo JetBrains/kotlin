@@ -216,16 +216,8 @@ open class LazyDeclarationResolver @Deprecated("") constructor(
             val ktFile = declaration.containingFile as KtFile
             val fqName = ktFile.packageFqName
             topLevelDescriptorProvider.assertValid()
-            val packageDescriptor = topLevelDescriptorProvider.getPackageFragment(fqName)
-            if (packageDescriptor == null) {
-                if (topLevelDescriptorProvider is LazyClassContext) {
-                    topLevelDescriptorProvider.declarationProviderFactory.diagnoseMissingPackageFragment(ktFile)
-                }
-                else {
-                    throw IllegalStateException("Cannot find package fragment for file " + ktFile.name + " with package " + fqName)
-                }
-            }
-            return packageDescriptor!!.getMemberScope()
+            val packageDescriptor = topLevelDescriptorProvider.getPackageFragmentOrDiagnoseFailure(fqName, ktFile)
+            return packageDescriptor.getMemberScope()
         }
         else {
             return when (parentDeclaration) {
