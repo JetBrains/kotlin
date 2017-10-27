@@ -21,13 +21,14 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
-import org.jetbrains.kotlin.idea.nodejs.TestElementPath
+import org.jetbrains.kotlin.idea.js.getJsOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
-import org.jetbrains.kotlin.idea.run.addBuildTask
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 
 class KotlinProtractorRunConfigurationProducer :
         CompatibleRunConfigurationProducer<KotlinProtractorRunConfiguration>(KotlinProtractorConfigurationType.getInstance()) {
@@ -36,8 +37,8 @@ class KotlinProtractorRunConfigurationProducer :
             context: ConfigurationContext
     ): Boolean {
         val contextPsi = context.psiLocation ?: return false
-        val jsModule = contextPsi.module?.jsOrJsImpl() ?: return false
-        val testFilePath = jsModule.jsTestOutputFilePath ?: return false
+        val module = contextPsi.module ?: return false
+        val testFilePath = getJsOutputFilePath(module, isTests = true, isMeta = false) ?: return false
         return configuration.runSettings.testFileSystemDependentPath == FileUtil.toSystemDependentName(testFilePath)
     }
 
@@ -48,17 +49,16 @@ class KotlinProtractorRunConfigurationProducer :
     ): Boolean {
         val element = context.psiLocation ?: return false
         val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return false
-        if (!TestElementPath.isModuleAssociatedDir(element, module)) return false
-        val jsModule = module.jsOrJsImpl() ?: return false
-        val testFilePath = jsModule.jsTestOutputFilePath ?: return false
+        if (element !is PsiDirectory || module.getModuleDir() != element.virtualFile.path) return false
+        if (TargetPlatformDetector.getPlatform(module) !is JsPlatform) return false
+        val testFilePath = getJsOutputFilePath(module, true, false) ?: return false
 
         sourceElement.set(element)
         configuration.runSettings = configuration.runSettings.copy(
                 testFilePath = testFilePath,
-                envData = jsModule.getNodeJsEnvironmentVars()
+                envData = module.getNodeJsEnvironmentVars()
         )
         configuration.name = configuration.suggestedName()
-        configuration.addBuildTask()
         return true
     }
 }
