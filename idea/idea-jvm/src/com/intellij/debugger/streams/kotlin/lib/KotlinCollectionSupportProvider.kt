@@ -2,6 +2,7 @@
 package com.intellij.debugger.streams.kotlin.lib
 
 import com.intellij.debugger.streams.kotlin.psi.impl.KotlinCollectionChainBuilder
+import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinCollectionsPeekCallFactory
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinStatementFactory
 import com.intellij.debugger.streams.kotlin.trace.impl.KotlinTraceExpressionBuilder
 import com.intellij.debugger.streams.lib.LibrarySupport
@@ -18,7 +19,7 @@ class KotlinCollectionSupportProvider : LibrarySupportProvider {
   private companion object {
     val builder: StreamChainBuilder = KotlinCollectionChainBuilder()
     val support: LibrarySupport = KotlinCollectionLibrarySupport()
-    val dsl = DslImpl(KotlinStatementFactory())
+    val dsl = DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))
   }
 
   override fun getLanguageId(): String = LibraryUtil.KOTLIN_LANGUAGE_ID
