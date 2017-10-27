@@ -7,7 +7,7 @@
     <property name="ideaVersion" value="171-SNAPSHOT"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.major.version" value="3.0"/>
+    <property name="android.studio.major.version" value="3.1"/>
 
     <!-- Uncomment this to download fixed version of Android Studio-->
     <!--<property name="android.studio.version" value="3.0.0.7"/>-->
