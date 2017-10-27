@@ -24,16 +24,9 @@ class Iterables {
 
     @Sample
     fun iterable() {
-        val iterator = buildIterator {
-            val list = intArrayOf(1, 2, 3).asIterable().zip((4..6), { a, b ->
-                if (a < b) a else b
-            })
-            yieldAll(list)
-        }
-
-        assertPrints(iterator.next(), "1")
-        assertPrints(iterator.next(), "2")
-        assertPrints(iterator.next(), "3")
+        val iterable = Iterable { buildIterator { yieldAll(1..3) } }
+        val result = iterable.mapIndexed { index, i -> index + i }
+        assertPrints(result, "[1, 3, 5]")
     }
 
     @Sample
