@@ -30,8 +30,6 @@ class KotlinCollectionChainBuilder : KotlinChainBuilderBase(KotlinChainTransform
         super.visitCallExpression(expression)
       }
     }
-
-
   }
 
   override fun createChainsBuilder(): ChainBuilder = object : ChainBuilder() {
@@ -63,7 +61,6 @@ class KotlinCollectionChainBuilder : KotlinChainBuilderBase(KotlinChainTransform
       }
 
       result.reverse()
-
       return result
     }
   }
