@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -67,14 +69,21 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
                     val testDirectory = File(testDataPath)
                     val projectDirectory = File("$testDataPath${getTestName(true)}")
                     for (moduleDirectory in projectDirectory.listFiles()) {
+                        val dirName = moduleDirectory.name
                         for (file in moduleDirectory.walkTopDown()) {
                             if (!file.path.endsWith(".after")) continue
                             try {
                                 val packageName = file.readLines().find { it.startsWith("package") }?.substringAfter(" ") ?: "<root>"
                                 val editedFile = allFilesInProject.mapNotNull {
                                     val candidate = it.containingDirectory?.findFile(file.name.removeSuffix(".after")) as? KtFile
-                                    if (candidate?.packageFqName?.toString() == packageName) candidate else null
-                                }.single()
+                                    val isUnderTestRoot = candidate != null && "// TEST" in candidate.text
+                                    candidate?.takeIf {
+                                        it.packageFqName.toString() == packageName &&
+                                        it.module?.let { module ->
+                                            module.name + ("Test".takeIf { isUnderTestRoot } ?: "") == dirName
+                                        } == true
+                                    }
+                                }.singleOrNull() ?: error("Cannot find suitable candidate for file ${file.name} from directory $dirName")
                                 setActiveEditor(editedFile.findExistingEditor() ?: createEditor(editedFile.virtualFile))
                                 checkResultByFile(file.relativeTo(testDirectory).path)
                             }
