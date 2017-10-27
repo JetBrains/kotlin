@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.types.expressions.PatternResolveState
-import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.and
+import org.jetbrains.kotlin.types.expressions.*
 
 class KtPatternTypedTuple(node: ASTNode) : KtPatternEntry(node) {
 
@@ -39,7 +37,11 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternEntry(node) {
     }
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        typeReference?.let { resolver.getTypeInfo(it, state) } ?: KotlinTypeInfo(state.expectedType, DataFlowInfo.EMPTY)
+        typeReference?.let { typeReference ->
+            resolver.getTypeInfo(typeReference, state).also {
+                it.type.errorIfNull(typeReference, state, Errors.UNSPECIFIED_TYPE)
+            }
+        } ?: KotlinTypeInfo(state.expectedType, DataFlowInfo.EMPTY)
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
