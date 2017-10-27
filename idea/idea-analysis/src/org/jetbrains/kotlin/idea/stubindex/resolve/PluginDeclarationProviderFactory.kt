@@ -72,14 +72,14 @@ class PluginDeclarationProviderFactory(
 
     private fun diagnoseMissingPackageFragmentExactPackageIndexCorruption(message: String): Nothing {
         throw IllegalStateException(
-                "KotlinExactPackageIndex seems corrupted. See https://youtrack.jetbrains.com/issue/KT-20988 for more info.\n" +
+                "KotlinExactPackageIndex seems corrupted.\n" +
                 message
         )
     }
 
     private fun diagnoseMissingPackageFragmentPerModulePackageCacheMiss(message: String): Nothing {
         throw IllegalStateException(
-                "PerModulePackageCache miss. See https://youtrack.jetbrains.com/issue/KT-20987 for more info.\n" +
+                "PerModulePackageCache miss.\n" +
                 message
         )
     }
@@ -94,45 +94,47 @@ class PluginDeclarationProviderFactory(
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo
         val packageExists = PackageIndexUtil.packageExists(fqName, indexedFilesScope, project)
         val spiPackageExists = subpackagesIndex.packageExists(fqName)
-        val oldPackageExists = oldPackageExists(fqName) ?: "threw exception"
+        val oldPackageExists = oldPackageExists(fqName)
         val cachedPackageExists = moduleSourceInfo?.let { project.service<PerModulePackageCacheService>().packageExists(fqName, it) }
         val moduleModificationCount = moduleSourceInfo?.createModificationTracker()?.modificationCount
+
+        val common = """
+                packageExists = $packageExists, cachedPackageExists = $cachedPackageExists,
+                oldPackageExists = $oldPackageExists,
+                SPI.packageExists = $spiPackageExists, SPI = $subpackagesIndex,
+                OOCB count = ${PsiManager.getInstance(project).modificationTracker.outOfCodeBlockModificationCount}
+                moduleModificationCount = $moduleModificationCount
+            """.trimIndent()
 
         val message = if (file != null) {
             val virtualFile = file.virtualFile
             val inScope = virtualFile in indexedFilesScope
             val packageFqName = file.packageFqName
             """
-                Cannot find package fragment '$fqName' for file ${file.name}, file package = '$packageFqName':
-                vFile: $virtualFile,
-                nonIndexedFiles = $nonIndexedFiles, isNonIndexed = ${file in nonIndexedFiles},
-                scope = $indexedFilesScope, isInScope = $inScope,
-                packageExists = $packageExists, cachedPackageExists = $cachedPackageExists,
-                oldPackageExists = $oldPackageExists,
-                SPI.packageExists = $spiPackageExists, SPI = $subpackagesIndex,
-                OOCB count = ${file.manager.modificationTracker.outOfCodeBlockModificationCount},
-                moduleModificationCount = $moduleModificationCount,
-                packageFqNameByTree = '${file.packageFqNameByTree}', packageDirectiveText = '${file.packageDirective?.text}'
-            """.trimIndent()
+                |Cannot find package fragment '$fqName' for file ${file.name}, file package = '$packageFqName':
+                |vFile: $virtualFile,
+                |nonIndexedFiles = $nonIndexedFiles, isNonIndexed = ${file in nonIndexedFiles},
+                |scope = $indexedFilesScope, isInScope = $inScope,
+                |$common,
+                |packageFqNameByTree = '${file.packageFqNameByTree}', packageDirectiveText = '${file.packageDirective?.text}'
+            """.trimMargin()
         }
         else {
             """
-                Cannot find package fragment '$fqName' for unspecified file:
-                nonIndexedFiles = $nonIndexedFiles,
-                scope = $indexedFilesScope,
-                packageExists = $packageExists, cachedPackageExists = $cachedPackageExists,
-                oldPackageExists = $oldPackageExists,
-                SPI.packageExists = $spiPackageExists, SPI = $subpackagesIndex,
-                OOCB count = ${PsiManager.getInstance(project).modificationTracker.outOfCodeBlockModificationCount}
-                moduleModificationCount = $moduleModificationCount,
-            """.trimIndent()
+                |Cannot find package fragment '$fqName' for unspecified file:
+                |nonIndexedFiles = $nonIndexedFiles,
+                |scope = $indexedFilesScope,
+                |$common
+            """.trimMargin()
         }
 
+        val scopeNotEmptyAndContainsFile =
+                indexedFilesScope != GlobalSearchScope.EMPTY_SCOPE && (file == null || file.virtualFile in indexedFilesScope)
         when {
-            indexedFilesScope != GlobalSearchScope.EMPTY_SCOPE && (file == null || file.virtualFile in indexedFilesScope)
-            && !packageExists && oldPackageExists == "false" -> diagnoseMissingPackageFragmentExactPackageIndexCorruption(message)
+            scopeNotEmptyAndContainsFile
+            && !packageExists && oldPackageExists == false -> diagnoseMissingPackageFragmentExactPackageIndexCorruption(message)
 
-            indexedFilesScope != GlobalSearchScope.EMPTY_SCOPE && (file == null || file.virtualFile in indexedFilesScope)
+            scopeNotEmptyAndContainsFile
             && packageExists && cachedPackageExists == false -> diagnoseMissingPackageFragmentPerModulePackageCacheMiss(message)
 
             else -> diagnoseMissingPackageFragmentUnknownReason(message)

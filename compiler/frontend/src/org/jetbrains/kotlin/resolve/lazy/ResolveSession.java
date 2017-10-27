@@ -216,8 +216,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @NotNull
     @Override
-    public LazyPackageDescriptor getPackageFragmentOrDiagnoseFailure(@NotNull FqName fqName, KtFile from) {
-
+    public LazyPackageDescriptor getPackageFragmentOrDiagnoseFailure(@NotNull FqName fqName, @Nullable KtFile from) {
         LazyPackageDescriptor packageDescriptor = getPackageFragment(fqName);
         if (packageDescriptor == null) {
             declarationProviderFactory.diagnoseMissingPackageFragment(fqName, from);
