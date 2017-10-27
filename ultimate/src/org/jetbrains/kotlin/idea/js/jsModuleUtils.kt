@@ -18,15 +18,21 @@ package org.jetbrains.kotlin.idea.js
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
-import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
+import com.intellij.openapi.roots.ModuleRootManager
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
-fun getJsOutputFilePath(module: Module, isTests: Boolean, isMeta: Boolean): String? {
-    val compilerExtension = CompilerModuleExtension.getInstance(module)
-    val outputDir = (if (isTests) compilerExtension?.compilerOutputUrlForTests else compilerExtension?.compilerOutputUrl)
-                    ?: return null
-    val extension = if (isMeta) KotlinJavascriptMetadataUtils.META_JS_SUFFIX else KotlinJavascriptMetadataUtils.JS_EXT
-    return JpsPathUtil.urlToPath("$outputDir/${module.name}${suffix(isTests)}$extension")
+private fun addSingleModulePaths(target: Module, result: MutableList<String>) {
+    val compilerExtension = CompilerModuleExtension.getInstance(target) ?: return
+    result.addIfNotNull(compilerExtension.compilerOutputPath?.path)
+    result.addIfNotNull(compilerExtension.compilerOutputPathForTests?.let { "${it.path}/lib" })
 }
 
-private fun suffix(isTests: Boolean) = if (isTests) "_test" else ""
+fun getJsClasspath(module: Module): List<String> {
+    val result = ArrayList<String>()
+    ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule {
+        addSingleModulePaths(it, result)
+        true
+    }
+    return result
+}

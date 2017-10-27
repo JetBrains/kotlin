@@ -33,12 +33,10 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.jetbrains.nodejs.mocha.MochaUtil
 import com.jetbrains.nodejs.mocha.execution.*
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
+import org.jetbrains.kotlin.idea.js.getJsOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
-import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -76,21 +74,12 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
 
     // Copied from MochaRunConfigurationProducer.isActiveFor()
     private fun isActiveFor(element: PsiElement, context: ConfigurationContext): Boolean {
-        val module = element.module
-        val jsModule = module?.jsOrJsImpl() ?: return false
-        val file = if (jsModule != module) {
-            jsModule.moduleFile
-        }
-        else {
-            PsiUtilCore.getVirtualFile(element)
-        } ?: return false
-        val project = module.project
-
-        if (isTestRunnerPackageAvailableFor(project, file)) return true
+        val file = PsiUtilCore.getVirtualFile(element) ?: return false
+        if (isTestRunnerPackageAvailableFor(element.project, file)) return true
 
         if (context.getOriginalConfiguration(MochaConfigurationType.getInstance()) is MochaRunConfiguration) return true
 
-        val roots = collectMochaTestRoots(project)
+        val roots = collectMochaTestRoots(element.project)
         if (roots.isEmpty()) return false
 
         val dirs = SmartHashSet<VirtualFile>()
@@ -124,9 +113,10 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
     }
 
     private fun createTestElementRunInfo(element: PsiElement, originalSettings: MochaRunSettings): TestElementInfo? {
-        val module = element.module?.jsOrJsImpl() ?: return null
+        val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
+        if (TargetPlatformDetector.getPlatform(module) !is JsPlatform) return null
         val project = module.project
-        val testFilePath = module.jsTestOutputFilePath ?: return null
+        val testFilePath = getJsOutputFilePath(module, true, false) ?: return null
         val settings = if (originalSettings.workingDir.isBlank()) {
             val workingDir = FileUtil.toSystemDependentName(project.baseDir.path)
             originalSettings.builder().setWorkingDir(workingDir).build()

@@ -23,6 +23,7 @@ import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.execution.testframework.TestIconMapper
 import com.intellij.execution.testframework.sm.runner.states.TestStateInfo
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
@@ -33,10 +34,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
+import org.jetbrains.kotlin.idea.js.getJsOutputFilePath
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.util.string.joinWithEscape
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.TargetPlatform.Common
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import javax.swing.Icon
 
@@ -110,8 +108,8 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     private fun getJavaScriptTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
         if (!descriptor.isTest()) return null
 
-        val module = declaration.module?.jsOrJsImpl() ?: return null
-        val testFilePath = module.jsTestOutputFilePath ?: return null
+        val module = ModuleUtilCore.findModuleForPsiElement(declaration) ?: return null
+        val testFilePath = getJsOutputFilePath(module, true, false) ?: return null
 
         val locations = ArrayList<String>()
 
@@ -148,7 +146,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         val platform = TargetPlatformDetector.getPlatform(declaration.containingKtFile)
         val icon = when (platform) {
             is JvmPlatform -> getJavaTestIcon(declaration)
-            is JsPlatform, is Common -> getJavaScriptTestIcon(declaration, descriptor)
+            is JsPlatform -> getJavaScriptTestIcon(declaration, descriptor)
             else -> return null
         } ?: return null
         return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions())

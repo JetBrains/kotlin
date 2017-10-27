@@ -23,12 +23,9 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.facet.implementingModules
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
+import org.jetbrains.kotlin.idea.js.getJsOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.resolve.TargetPlatform.Common
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -40,8 +37,8 @@ class KotlinProtractorRunConfigurationProducer :
             context: ConfigurationContext
     ): Boolean {
         val contextPsi = context.psiLocation ?: return false
-        val jsModule = contextPsi.module?.jsOrJsImpl() ?: return false
-        val testFilePath = jsModule.jsTestOutputFilePath ?: return false
+        val module = contextPsi.module ?: return false
+        val testFilePath = getJsOutputFilePath(module, isTests = true, isMeta = false) ?: return false
         return configuration.runSettings.testFileSystemDependentPath == FileUtil.toSystemDependentName(testFilePath)
     }
 
@@ -53,13 +50,13 @@ class KotlinProtractorRunConfigurationProducer :
         val element = context.psiLocation ?: return false
         val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return false
         if (element !is PsiDirectory || module.getModuleDir() != element.virtualFile.path) return false
-        val jsModule = module.jsOrJsImpl() ?: return false
-        val testFilePath = jsModule.jsTestOutputFilePath ?: return false
+        if (TargetPlatformDetector.getPlatform(module) !is JsPlatform) return false
+        val testFilePath = getJsOutputFilePath(module, true, false) ?: return false
 
         sourceElement.set(element)
         configuration.runSettings = configuration.runSettings.copy(
                 testFilePath = testFilePath,
-                envData = jsModule.getNodeJsEnvironmentVars()
+                envData = module.getNodeJsEnvironmentVars()
         )
         configuration.name = configuration.suggestedName()
         return true
