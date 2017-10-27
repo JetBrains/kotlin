@@ -352,7 +352,16 @@ open class OverloadingConflictResolver<C : Any>(
 
         val fSignature = FlatSignature.createFromCallableDescriptor(f)
         val gSignature = FlatSignature.createFromCallableDescriptor(g)
-        return createEmptyConstraintSystem().isSignatureNotLessSpecific(fSignature, gSignature, SpecificityComparisonWithNumerics, specificityComparator)
+        if (!createEmptyConstraintSystem().isSignatureNotLessSpecific(fSignature, gSignature, SpecificityComparisonWithNumerics, specificityComparator)) {
+            return false
+        }
+
+        if (f is CallableMemberDescriptor && g is CallableMemberDescriptor) {
+            if (!f.isExpect && g.isExpect) return true
+            if (f.isExpect && !g.isExpect) return false
+        }
+
+        return true
     }
 
     private fun isNotLessSpecificCallableReference(f: CallableDescriptor, g: CallableDescriptor): Boolean =

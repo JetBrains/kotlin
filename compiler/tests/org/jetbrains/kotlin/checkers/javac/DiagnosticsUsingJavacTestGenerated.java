@@ -14355,6 +14355,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("callableReferenceOnExpectFun.kt")
+                public void testCallableReferenceOnExpectFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/callableReferenceOnExpectFun.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("conflictingHeaderDeclarations.kt")
                 public void testConflictingHeaderDeclarations() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingHeaderDeclarations.kt");
