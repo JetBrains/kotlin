@@ -77,7 +77,6 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
@@ -101,7 +100,7 @@ public class FunctionCodegen {
     private final Function1<DeclarationDescriptor, Boolean> IS_PURE_INTERFACE_CHECKER = new Function1<DeclarationDescriptor, Boolean>() {
         @Override
         public Boolean invoke(DeclarationDescriptor descriptor) {
-            return JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state);
+            return JvmCodegenUtil.isInterfaceWithoutDefaults(descriptor, state);
         }
     };
 
@@ -866,7 +865,7 @@ public class FunctionCodegen {
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (isAnnotationOrJvmInterfaceWithoutDefaults(descriptor.getContainingDeclaration(), state)) return;
+        if (IS_PURE_INTERFACE_CHECKER.invoke(descriptor.getContainingDeclaration())) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;

@@ -1,0 +1,9 @@
+package
+
+public final class Foo : kotlin.annotation.Target {
+    public constructor Foo()
+    public final override /*1*/ /*fake_override*/ val allowedTargets: kotlin.Array<out kotlin.annotation.AnnotationTarget>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
