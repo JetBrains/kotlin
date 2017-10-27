@@ -23,8 +23,8 @@ import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.processBareContinuationResume
 
 /**
- * Obtains the current continuation instance inside suspend functions and either suspend
- * currently running coroutine or return result immediately without suspension.
+ * Obtains the current continuation instance inside suspend functions and either suspends
+ * currently running coroutine or returns result immediately without suspension.
  *
  * If the [block] returns the special [COROUTINE_SUSPENDED] value, it means that suspend function did suspend the execution and will
  * not return any result immediately. In this case, the [Continuation] provided to the [block] shall be invoked at some moment in the
@@ -42,8 +42,28 @@ import kotlin.coroutines.experimental.processBareContinuationResume
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 @Suppress("UNUSED_PARAMETER")
+// todo: this shall be ordinary function, but, unfortunately, bootstrap compiler does not have suspendCoroutineUninterceptedOrReturn and intercepted intrinsics
 public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
         throw NotImplementedError("Implementation is intrinsic")
+
+/**
+ * Obtains the current continuation instance inside suspend functions and either suspends
+ * currently running coroutine or returns result immediately without suspension.
+ *
+ * Unlike [suspendCoroutineOrReturn] it does not intercept continuation.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+        throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
+
+/**
+ * Intercept continuation with [ContinuationInterceptor].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
+        throw NotImplementedError("Implementation of intercepted is intrinsic")
 
 /**
  * Continuation context of current coroutine.
