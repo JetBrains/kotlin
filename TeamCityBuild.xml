@@ -75,14 +75,7 @@
     </macrodef>
 
     <target name="writeCompilerVersionToTemplateFile">
-        <mkdir dir="${version_substitute_dir}"/>
-
-        <substituteVersionInFile
-            target.file="${compiler.version.java}"
-            target.file.bk="${compiler.version.java.bk}"
-            target.file.versioned="${compiler.version.java.versioned}"
-            test.string="public static final String VERSION = &quot;@snapshot@&quot;;"
-            version="${compiler.version.number}"/>
+        <!-- empty, version is written in gradle build -->
     </target>
 
     <target name="writePluginVersionToTemplateFile">
