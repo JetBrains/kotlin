@@ -1857,6 +1857,63 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/selfAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SelfAssignment extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInSelfAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/selfAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/localVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notSelf.kt")
+        public void testNotSelf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/notSelf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property1.kt")
+        public void testProperty1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/property1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property2.kt")
+        public void testProperty2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/property2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property3.kt")
+        public void testProperty3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/property3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyHasDelegate.kt")
+        public void testPropertyHasDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/propertyHasDelegate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyHasGetter.kt")
+        public void testPropertyHasGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/propertyHasGetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyHasSetter.kt")
+        public void testPropertyHasSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/selfAssignment/propertyHasSetter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/unnecessaryVariable")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
