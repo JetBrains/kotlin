@@ -128,6 +128,7 @@ compileBuiltinsKotlin {
     }
 }
 compileKotlin {
+    dependsOn(":prepare:build.version:writeStdlibVersion")
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",
