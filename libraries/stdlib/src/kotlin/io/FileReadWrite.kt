@@ -50,7 +50,7 @@ public inline fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWrit
  *
  * @return the entire content of this file as a byte array.
  */
-public fun File.readBytes(): ByteArray = FileInputStream(this).use { input ->
+public fun File.readBytes(): ByteArray = inputStream().use { input ->
     var offset = 0
     var remaining = this.length().let {
         if (it > Int.MAX_VALUE) throw OutOfMemoryError("File $this is too big ($it bytes) to fit in memory.") else it
@@ -129,19 +129,16 @@ public fun File.forEachBlock(action: (buffer: ByteArray, bytesRead: Int) -> Unit
  */
 public fun File.forEachBlock(blockSize: Int, action: (buffer: ByteArray, bytesRead: Int) -> Unit): Unit {
     val arr = ByteArray(blockSize.coerceAtLeast(MINIMUM_BLOCK_SIZE))
-    val fis = FileInputStream(this)
 
-    try {
+    inputStream().use { input ->
         do {
-            val size = fis.read(arr)
+            val size = input.read(arr)
             if (size <= 0) {
                 break
             } else {
                 action(arr, size)
             }
         } while (true)
-    } finally {
-        fis.close()
     }
 }
 
