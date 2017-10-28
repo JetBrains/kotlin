@@ -3,8 +3,10 @@ public final class StringTemplateKt {
     private static final var bar: java.lang.String = "ipsum"
     private static final var baz: java.lang.String = "dolor"
     private static final var foobarbaz: java.lang.String = foo + " " + bar + " " + baz
+    private static final var case4: java.lang.String = "a " + "literal" + " z"
     public static final fun getFoo() : java.lang.String = UastEmptyExpression
     public static final fun getBar() : java.lang.String = UastEmptyExpression
     public static final fun getBaz() : java.lang.String = UastEmptyExpression
     public static final fun getFoobarbaz() : java.lang.String = UastEmptyExpression
+    public static final fun getCase4() : java.lang.String = UastEmptyExpression
 }
