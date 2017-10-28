@@ -262,7 +262,7 @@ fun elements(): List<GenericFunction> {
         inline(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
         body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+            return this.getOrElse(index, defaultValue)
             """
         }
     }

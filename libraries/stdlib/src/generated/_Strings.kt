@@ -24,7 +24,7 @@ public inline fun CharSequence.elementAt(index: Int): Char {
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
