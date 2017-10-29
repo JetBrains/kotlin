@@ -19,7 +19,7 @@ package samples.comparisons
 import samples.*
 import kotlin.test.*
 
-class ComparisonsTest {
+class Comparisons {
     @Sample
     fun compareValuesByWithSingleSelector() {
         val list = listOf("aa", "b", "", "bb", "a")
@@ -69,7 +69,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleCompareValues() {
+    fun compareValues() {
         val list = listOf(4, null, 1, -2, 3)
 
         val sorted = list.sortedWith(
@@ -130,7 +130,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleThenBy() {
+    fun thenBy() {
         val list = listOf("aa", "b", "bb", "a")
 
         val comparator = compareBy<String> { it.length }.thenBy { it }
@@ -141,7 +141,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleThenByWithComparator() {
+    fun thenByWithComparator() {
         val list = listOf("aa", "b", "bb", "a")
 
         val comparator = compareBy<String> { it.length }
@@ -153,7 +153,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleThenByDescending() {
+    fun thenByDescending() {
         val map = mapOf("a" to 1, "b" to 2, "c" to 1, "d" to 0)
 
         val comparator = compareBy<Map.Entry<String, Int>> { it.value }
@@ -167,7 +167,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleThenByDescendingWithComparator() {
+    fun thenByDescendingWithComparator() {
         val map = mapOf("a" to 1, "b" to 2, "c" to 1, "d" to 0)
 
         val comparator = compareBy<Map.Entry<String, Int>> { it.value }
@@ -181,7 +181,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleThenComparator() {
+    fun thenComparator() {
         val map = mapOf("a" to 1, "b" to 2, "c" to 1, "d" to 0)
 
         val comparator = compareBy<Map.Entry<String, Int>> { it.value }
@@ -195,7 +195,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleThen() {
+    fun then() {
         val map = mapOf("a" to 1, "b" to 2, "c" to 1, "d" to 0)
 
         val comparator = compareBy<Map.Entry<String, Int>> { it.value }
@@ -209,7 +209,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleThenDescending() {
+    fun thenDescending() {
         val map = mapOf("a" to 1, "b" to 2, "c" to 1, "d" to 0)
 
         val comparator = compareBy<Map.Entry<String, Int>> { it.value }
@@ -223,7 +223,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleNullsFirst() {
+    fun nullsFirstComparator() {
         val list = listOf(4, null, -1, 1)
 
         val sortedList = list.sortedWith(nullsFirst())
@@ -232,7 +232,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleNullsFirstWithComparator() {
+    fun nullsFirstWithComparator() {
         val list = listOf(4, null, 1, -2, 3)
 
         val evenFirstComparator = Comparator { a: Int, b: Int ->
@@ -245,7 +245,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleNullsLast() {
+    fun nullsLastComparator() {
         val list = listOf(4, null, -1, 1)
 
         val sortedList = list.sortedWith(nullsLast())
@@ -254,7 +254,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun sampleNullsLastWithComparator() {
+    fun nullsLastWithComparator() {
         val list = listOf(4, null, 1, -2, 3)
 
         val evenFirstComparator = Comparator { a: Int, b: Int ->
@@ -267,7 +267,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun naturalOrder() {
+    fun naturalOrderComparator() {
         val list = listOf(4, 1, -2, 1, 3)
 
         val sortedList = list.sortedWith(naturalOrder<Int>())
@@ -276,7 +276,7 @@ class ComparisonsTest {
     }
 
     @Sample
-    fun reverseOrder() {
+    fun reverseOrderComparator() {
         val list = listOf(4, 1, -2, 1, 3)
 
         val sortedList = list.sortedWith(reverseOrder<Int>())
