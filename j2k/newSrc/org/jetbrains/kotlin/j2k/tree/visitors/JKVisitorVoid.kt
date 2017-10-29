@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
-    fun visitElement(element: JKElement) 
+    fun visitElement(element: JKElement)
     override fun visitElement(element: JKElement, data: Nothing?) = visitElement(element)
     fun visitClass(klass: JKClass) = visitDeclaration(klass, null)
     override fun visitClass(klass: JKClass, data: Nothing?) = visitClass(klass)
@@ -33,6 +33,10 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitModifier(modifier: JKModifier, data: Nothing?) = visitModifier(modifier)
     fun visitAccessModifier(accessModifier: JKAccessModifier) = visitModifier(accessModifier, null)
     override fun visitAccessModifier(accessModifier: JKAccessModifier, data: Nothing?) = visitAccessModifier(accessModifier)
+    fun visitValueArgument(valueArgument: JKValueArgument) = visitElement(valueArgument, null)
+    override fun visitValueArgument(valueArgument: JKValueArgument, data: Nothing?) = visitValueArgument(valueArgument)
+    fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression) = visitLiteralExpression(stringLiteralExpression, null)
+    override fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: Nothing?) = visitStringLiteralExpression(stringLiteralExpression)
     fun visitJavaField(javaField: JKJavaField) = visitDeclaration(javaField, null)
     override fun visitJavaField(javaField: JKJavaField, data: Nothing?) = visitJavaField(javaField)
     fun visitJavaMethod(javaMethod: JKJavaMethod) = visitDeclaration(javaMethod, null)

@@ -51,3 +51,11 @@ class JKJavaStringLiteralExpressionImpl(override val text: String) : JKJavaStrin
 class JKJavaAccessModifierImpl(override val type: JKJavaAccessModifier.AccessModifierType) : JKJavaAccessModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAccessModifier(this, data)
 }
+
+class JKJavaMethodImpl(override var modifierList: JKModifierList,
+                       override var name: JKNameIdentifier,
+                       override var valueArguments: List<JKValueArgument>,
+                       override var block: JKBlock?) : JKJavaMethod, JKElementBase() {
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
+}

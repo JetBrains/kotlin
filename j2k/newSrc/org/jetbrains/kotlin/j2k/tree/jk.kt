@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 interface JKElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
-    fun <R: JKElement, D> transform(transformer: JKTransformer<D>, data: D): R
+    fun <R : JKElement, D> transform(transformer: JKTransformer<D>, data: D): R
 
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
     fun <D> transformChildren(transformer: JKTransformer<D>, data: D)
@@ -64,3 +64,12 @@ interface JKModifierList : JKElement {
 interface JKModifier : JKElement
 
 interface JKAccessModifier : JKModifier
+
+interface JKValueArgument : JKElement {
+    val type: JKTypeIdentifier
+    val name: String
+}
+
+interface JKStringLiteralExpression : JKLiteralExpression {
+    val text: String
+}

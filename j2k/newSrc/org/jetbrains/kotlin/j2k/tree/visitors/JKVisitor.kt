@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKVisitor<out R, in D> {
-    fun visitElement(element: JKElement, data: D): R 
+    fun visitElement(element: JKElement, data: D): R
     fun visitClass(klass: JKClass, data: D): R = visitDeclaration(klass, data)
     fun visitStatement(statement: JKStatement, data: D): R = visitElement(statement, data)
     fun visitExpression(expression: JKExpression, data: D): R = visitStatement(expression, data)
@@ -18,6 +18,8 @@ interface JKVisitor<out R, in D> {
     fun visitModifierList(modifierList: JKModifierList, data: D): R = visitElement(modifierList, data)
     fun visitModifier(modifier: JKModifier, data: D): R = visitElement(modifier, data)
     fun visitAccessModifier(accessModifier: JKAccessModifier, data: D): R = visitModifier(accessModifier, data)
+    fun visitValueArgument(valueArgument: JKValueArgument, data: D): R = visitElement(valueArgument, data)
+    fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): R = visitLiteralExpression(stringLiteralExpression, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitDeclaration(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitDeclaration(javaMethod, data)
     fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): R = visitLoop(javaForLoop, data)

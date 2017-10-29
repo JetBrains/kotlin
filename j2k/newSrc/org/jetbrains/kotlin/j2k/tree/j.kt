@@ -22,7 +22,12 @@ interface JKJavaField : JKDeclaration, JKModifierListOwner {
     var initializer: JKExpression?
 }
 
-interface JKJavaMethod : JKDeclaration
+interface JKJavaMethod : JKDeclaration{
+    var modifierList: JKModifierList
+    var name: JKNameIdentifier
+    var valueArguments: List<JKValueArgument>
+    var block: JKBlock?
+}
 
 interface JKJavaForLoop : JKLoop
 

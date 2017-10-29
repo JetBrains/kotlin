@@ -19,9 +19,6 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
-import org.jetbrains.kotlin.j2k.ast.CommentsAndSpacesInheritance
-import org.jetbrains.kotlin.j2k.ast.Modifiers
-import org.jetbrains.kotlin.j2k.ast.assignPrototype
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
@@ -44,10 +41,53 @@ class JavaToJKTreeBuilder {
         fun result(): JKExpression = resultExpression!!
     }
 
-    private object ClassTreeMapper {
-        fun PsiClass.toJK(): JKClass{
-            return JKClassImpl(with(ModifierMapper){modifierList.toJK()}, JKNameIdentifierImpl(this.name!!))
+    private object DeclarationMapper {
+
+        fun PsiClass.toJK(): JKClass {
+            val modifierList = with(ModifierMapper) { modifierList.toJK() }
+            val declarations = this.children.filterIsInstance<PsiMember>().mapNotNull { it.toJK() }
+            return JKClassImpl(modifierList, JKNameIdentifierImpl(this.name!!)).also { it.declarations = declarations }
         }
+
+
+        fun PsiField.toJK(): JKJavaField {
+            val initializer = this.initializer?.buildTreeForExpression()
+
+            val type = JKJavaTypeIdentifierImpl(this.type.canonicalText)
+            val name = JKNameIdentifierImpl(this.name!!)
+
+            val modifierList = with(ModifierMapper) {
+                modifierList.toJK()
+            }
+
+            return JKJavaFieldImpl(modifierList, type, name, initializer)
+        }
+
+        fun PsiMethod.toJK(): JKJavaMethod {
+            val modifierList = with(ModifierMapper) { modifierList.toJK() }
+            val name = JKNameIdentifierImpl(name)
+            val valueArgumentList = this.parameterList.parameters.map { it -> it.toJK() }
+            val block = body?.toJK()
+            return JKJavaMethodImpl(modifierList, name, valueArgumentList, block)
+        }
+
+        fun PsiMember.toJK(): JKDeclaration? = when (this) {
+            is PsiField -> this.toJK()
+            is PsiMethod -> this.toJK()
+            else -> null
+        }
+
+        fun PsiParameter.toJK(): JKValueArgumentImpl {
+            //TODO implement PsiType mapping for type name
+            return JKValueArgumentImpl(JKJavaTypeIdentifierImpl("this.type.getCanonicalText()"), this.name!!)
+        }
+
+        fun PsiCodeBlock.toJK(): JKBlock {
+            //TODO block mapping
+            return JKBlockImpl(listOf(JKStringLiteralExpressionImpl("")))
+        }
+
+
     }
 
     private object ModifierMapper {
@@ -77,31 +117,14 @@ class JavaToJKTreeBuilder {
             element.acceptChildren(this)
         }
 
-        var currentClass: JKClass? = null
+        var resultElement: JKElement? = null
 
         override fun visitClass(aClass: PsiClass) {
-
-            val name = JKNameIdentifierImpl(aClass.name!!)
-            val modifierList = with(ModifierMapper) {
-                aClass.modifierList.toJK()
-            }
-
-            currentClass = JKClassImpl(modifierList, name)
-            super.visitClass(aClass)
+            resultElement = with(DeclarationMapper) { aClass.toJK() }
         }
 
         override fun visitField(field: PsiField) {
-            val initializer = field.initializer?.buildTreeForExpression()
-
-            val type = JKJavaTypeIdentifierImpl(field.type.canonicalText)
-            val name = JKNameIdentifierImpl(field.name!!)
-
-            val modifierList = with(ModifierMapper) {
-                field.modifierList.toJK()
-            }
-
-            currentClass!!.declarations += JKJavaFieldImpl(modifierList, type, name, initializer)
-            super.visitField(field)
+            resultElement = with(DeclarationMapper) { field.toJK() }
         }
 
     }
@@ -111,7 +134,7 @@ class JavaToJKTreeBuilder {
         assert(psi.language.`is`(JavaLanguage.INSTANCE)) { "Unable to build JK Tree using Java Visitor for language ${psi.language}" }
         val elementVisitor = ElementVisitor()
         psi.accept(elementVisitor)
-        return elementVisitor.currentClass
+        return elementVisitor.resultElement
     }
 
     companion object {
