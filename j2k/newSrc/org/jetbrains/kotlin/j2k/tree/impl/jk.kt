@@ -63,3 +63,16 @@ class JKModifierListImpl : JKModifierList, JKElementBase() {
         modifiers.forEach { it.accept(visitor, data) }
     }
 }
+
+class JKValueArgumentImpl(override val type: JKTypeIdentifier,
+                          override val name: String) : JKValueArgument, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitValueArgument(this, data)
+}
+
+class JKBlockImpl(override var statements: List<JKStatement>) : JKBlock, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
+}
+
+class JKStringLiteralExpressionImpl(override val text: String) : JKStringLiteralExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitStringLiteralExpression(this, data)
+}
