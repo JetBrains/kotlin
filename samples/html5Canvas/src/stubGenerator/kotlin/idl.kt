@@ -7,6 +7,8 @@ val all = listOf(
     Interface("Context", 
         Attribute("lineWidth", Integer, hasSetter = true),
         Attribute("fillStyle", idlString, hasSetter = true),
+        Attribute("strokeStyle", idlString, hasSetter = true),
+
         Operation("lineTo", Void, Arg("x", Integer), Arg("y", Integer)),
         Operation("moveTo", Void, Arg("x", Integer), Arg("y", Integer)),
         Operation("beginPath", Void),
@@ -16,13 +18,22 @@ val all = listOf(
         Operation("fill", Void),
         Operation("closePath", Void)
     ),
-    Interface("DOMRect"),
+    Interface("DOMRect",
+        Attribute("left", Integer, hasGetter = true),
+        Attribute("right", Integer, hasGetter = true),
+        Attribute("top", Integer, hasGetter = true),
+        Attribute("bottom", Integer, hasGetter = true)
+    ),
     Interface("Canvas",
         Operation("getContext", InterfaceRef("Context"), Arg("context", idlString)),
         Operation("getBoundingClientRect", InterfaceRef("DOMRect"))
     ),
     Interface("Document",
         Operation("getElementById", Object, Arg("id", idlString))
+    ),
+    Interface("MouseEvent",
+        Attribute("clientX", Integer, hasGetter = true),
+        Attribute("clientY", Integer, hasGetter = true)
     ),
     Interface("Response",
         Operation("json", Object)
@@ -32,6 +43,7 @@ val all = listOf(
     ),
     Interface("__Global",
         Attribute("document", InterfaceRef("Document"), hasGetter = true),
+
         Operation("fetch", InterfaceRef("Promise"), Arg("url", idlString)),
         Operation("setInterval", Void, Arg("lambda", Function), Arg("interval", Integer))
     )

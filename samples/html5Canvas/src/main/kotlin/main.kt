@@ -7,17 +7,18 @@ fun main(args: Array<String>) {
     val canvas = document.getElementById("myCanvas").asCanvas
     val ctx = canvas.getContext("2d")
     val rect = canvas.getBoundingClientRect()
-    val rectLeft = rect.getInt("left")
-    val rectTop = rect.getInt("top")
+    val rectLeft = rect.left
+    val rectTop = rect.top
 
     var mouseX: Int = 0
     var mouseY: Int = 0
     var draw: Boolean = false
 
     document.setter("onmousemove") { args: ArrayList<JsValue> ->
-        val event = args[0]
+        val event = MouseEvent(args[0])
         mouseX = event.getInt("clientX") - rectLeft
         mouseY = event.getInt("clientY") - rectTop
+
         if (mouseX < 0) mouseX = 0
         if (mouseX > 639) mouseX = 639
         if (mouseY < 0) mouseY = 0
@@ -34,7 +35,7 @@ fun main(args: Array<String>) {
 
     setInterval(10) {
         if (draw) {
-            ctx.setter("strokeStyle", "#222222")
+            ctx.strokeStyle = "#222222"
             ctx.lineTo(mouseX, mouseY)
             ctx.stroke()
         } else {

@@ -24,7 +24,7 @@ konanc $DIR/src/jsinterop/kotlin \
         -includeBinary $DIR/src/jsinterop/js/jsinterop.js \
         -p library -o $DIR/build/klib/jsinterop -target wasm32 || exit 1
 
-konanc $DIR/src/jsinterop_tool/kotlin \
+konanc $DIR/src/stubGenerator/kotlin \
         -e org.jetbrains.kotlin.konan.jsinterop.tool.main \
         -o $DIR/build/bin/generator || exit 1
        
