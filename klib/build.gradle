@@ -25,7 +25,7 @@ dependencies {
     compile project(path: ':backend.native', configuration: 'cli_bc')
 }
 
-def dist = rootProject.file('dist').absolutePath
+def dist = distDir.absolutePath
 def suffix = isWindows() ? ".bat" : ""
 
 // TODO: Ideally we want to write just konanArtifacts{} clause here,

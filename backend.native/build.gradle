@@ -168,7 +168,7 @@ task start(dependsOn: "${hostName}Start")
 
 targetList.each { target ->
     def konanJvmArgs = ["-ea",
-    "-Dkonan.home=${project.parent.file('dist')}",
+    "-Dkonan.home=$distDir",
     "-Djava.library.path=${project.buildDir}/nativelibs",
     "-Dfile.encoding=UTF-8"]
 

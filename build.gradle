@@ -26,6 +26,7 @@ ext {
     konanPropertiesFile = project(':backend.native').file('konan.properties')
     konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
 
+    distDir = file('dist')
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
     clangManager = new ClangManager(konanProperties, dependenciesDir.absolutePath)
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
@@ -152,7 +153,7 @@ task distCompiler(type: Copy) {
     dependsOn ':klib:jar'
     dependsOn ':shared:jar'
 
-    destinationDir file('dist')
+    destinationDir distDir
 
     from(project(':backend.native').file('build/libs')) {
         into('konan/lib')
@@ -223,7 +224,7 @@ task distCompiler(type: Copy) {
 }
 
 task listDist(type: Exec) {
-    commandLine 'find', 'dist'
+    commandLine 'find', distDir
 }
 
 task distRuntime(type: Copy) {
@@ -234,7 +235,7 @@ task distRuntime(type: Copy) {
 def stdlib = 'klib/common/stdlib'
 
 task commonDistRuntime(type: Copy) {
-    destinationDir file('dist')
+    destinationDir distDir
 
     // Target independant common part.
     from(project(':runtime').file("build/${hostName}Stdlib")) {
@@ -258,7 +259,7 @@ targetList.each { target ->
         dependsOn ":backend.native:${target}Stdlib"
         dependsOn ":backend.native:${target}Start"
 
-        destinationDir file('dist')
+        destinationDir distDir
 
         from(project(':runtime').file("build/$target")) {
             include("*.bc")
@@ -298,7 +299,7 @@ targetList.each { target ->
                         'kotlin_version' : kotlin_version,
                         'name'           : defFile.name,
                         'defFile'        : defFile.file.absolutePath,
-                        'konan.home'     : project.file('dist'),
+                        'konan.home'     : distDir,
                         'target'         : target,
                         'suffix'         : suffix,
                         'libraries'      : defFile.config.depends.join(" ")
@@ -399,9 +400,7 @@ task performance(type: GradleBuild) {
 
 task clean {
     doLast {
-        file('dist').traverse(type: FileType.ANY, excludeNameFilter: "dependencies", maxDepth: 0) {
-            delete it
-        }
+        delete distDir
         delete bundle.outputs.files
     }
 }

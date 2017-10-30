@@ -94,7 +94,7 @@ dependencies {
 test {
     dependsOn ':dist'
     //testLogging.showStandardStreams = true
-    systemProperty("konan.home", rootProject.file('dist').canonicalPath)
+    systemProperty("konan.home", distDir.absolutePath)
 }
 
 jar {
