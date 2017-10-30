@@ -81,6 +81,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     private final Stack<ClassDescriptor> classStack = new Stack<>();
     private final Stack<String> nameStack = new Stack<>();
+    private final Set<ClassDescriptor> uninitializedClasses = new HashSet<>();
 
     private final BindingTrace bindingTrace;
     private final BindingContext bindingContext;
@@ -394,7 +395,18 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @NotNull
     private MutableClosure recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        return CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name));
+        return CodegenBinding.recordClosure(bindingTrace, classDescriptor, getProperEnclosingClass(), Type.getObjectType(name));
+    }
+
+    @Nullable
+    private ClassDescriptor getProperEnclosingClass() {
+        for (int i = classStack.size() - 1; i >= 0; i--) {
+            ClassDescriptor fromStack = classStack.get(i);
+            if (!uninitializedClasses.contains(fromStack)) {
+                return fromStack;
+            }
+        }
+        return null;
     }
 
     private void recordLocalVariablePropertyMetadata(LocalVariableDescriptor variableDescriptor) {
@@ -627,8 +639,40 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @Override
     public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
-        super.visitSuperTypeCallEntry(call);
+        // Closures in super type constructor calls for anonymous objects are created in outer context
+        if (!isSuperTypeCallForAnonymousObject(call)) {
+            withinUninitializedClass(call, () -> super.visitSuperTypeCallEntry(call));
+        }
+        else {
+            super.visitSuperTypeCallEntry(call);
+        }
+
         checkSamCall(call);
+    }
+
+    private static boolean isSuperTypeCallForAnonymousObject(@NotNull KtSuperTypeCallEntry call) {
+        PsiElement parent = call.getParent();
+        if (!(parent instanceof KtSuperTypeList)) return false;
+        parent = parent.getParent();
+        if (!(parent instanceof KtObjectDeclaration)) return false;
+        parent = parent.getParent();
+        if (!(parent instanceof KtObjectLiteralExpression)) return false;
+        return true;
+    }
+
+    @Override
+    public void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call) {
+        withinUninitializedClass(call, () -> super.visitConstructorDelegationCall(call));
+    }
+
+    private void withinUninitializedClass(@NotNull KtElement element, @NotNull Runnable operation) {
+        ClassDescriptor currentClass = peekFromStack(classStack);
+        assert currentClass != null : element.getClass().getSimpleName() + " should be inside a class: " + element.getText();
+        assert !uninitializedClasses.contains(currentClass) : "Class entered twice: " + currentClass;
+        uninitializedClasses.add(currentClass);
+        operation.run();
+        boolean removed = uninitializedClasses.remove(currentClass);
+        assert removed : "Inconsistent uninitialized class stack: " + currentClass;
     }
 
     private void recordSamConstructorIfNeeded(@NotNull KtCallElement expression, @NotNull ResolvedCall<?> call) {
