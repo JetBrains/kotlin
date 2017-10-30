@@ -431,6 +431,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "distJar",
             "implementation",
@@ -439,6 +440,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "signatures",
             "testCompile",
@@ -508,6 +510,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "implementation",
             "kapt",
@@ -625,6 +628,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "implementation",
             "kapt",
@@ -656,7 +660,8 @@
     ":kotlin-annotations-android": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
             "apiElements",
@@ -674,6 +679,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "signatures",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -687,7 +693,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
     ":kotlin-annotations-jvm": {
@@ -902,6 +909,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "compilerJar",
             "default",
             "implementation",
@@ -938,6 +946,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "implementation",
             "kapt",
@@ -1024,6 +1033,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "distJar",
             "implementation",
@@ -1033,6 +1043,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "signatures",
             "testCompile",
@@ -1193,6 +1204,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "distJar",
             "implementation",
@@ -1201,6 +1213,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "signatures",
             "testCompile",
@@ -1427,6 +1440,7 @@
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "distJar",
             "implementation",
@@ -1435,6 +1449,7 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
             "signatures",
             "testCompile",
