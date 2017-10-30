@@ -20,6 +20,8 @@ import clang.*
 import kotlinx.cinterop.*
 import java.io.Closeable
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
@@ -541,4 +543,59 @@ internal fun CValue<CXSourceLocation>.getContainingFile(): CXFile? = memScoped {
     val fileVar = alloc<CXFileVar>()
     clang_getFileLocation(this@getContainingFile, fileVar.ptr, null, null, null)
     fileVar.value
+}
+
+private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
+    val overlay = clang_VirtualFileOverlay_create(0)
+
+    try {
+        fun addFileMapping(realPath: Path, virtualPath: Path) {
+            clang_VirtualFileOverlay_addFileMapping(
+                    overlay,
+                    virtualPath = virtualPath.toAbsolutePath().toString(),
+                    realPath = realPath.toAbsolutePath().toString()
+            )
+        }
+
+        virtualPathToReal.forEach { virtualPath, realPath ->
+            if (Files.isDirectory(realPath)) {
+                realPath.toFile().walkTopDown().forEach {
+                    if (!it.isDirectory) {
+                        addFileMapping(
+                                realPath = it.toPath(),
+                                virtualPath = virtualPath.resolve(realPath.relativize(it.toPath()))
+                        )
+                    }
+                }
+            } else {
+                addFileMapping(realPath = realPath, virtualPath = virtualPath)
+            }
+        }
+
+        memScoped {
+            val bufferVar = alloc<CPointerVar<ByteVar>>().apply { value = null }
+            val bufferSizeVar = alloc<IntVar>()
+
+            val res = clang_VirtualFileOverlay_writeToBuffer(overlay, 0, bufferVar.ptr, bufferSizeVar.ptr)
+            if (res != CXErrorCode.CXError_Success) {
+                // TODO: shall we free the buffer in this case?
+                error(res)
+            }
+
+            return bufferVar.value!!.readBytes(bufferSizeVar.value)
+        }
+    } finally {
+        clang_VirtualFileOverlay_dispose(overlay)
+    }
+}
+
+fun createVfsOverlayFile(virtualPathToReal: Map<Path, Path>): Path {
+    val bytes = createVfsOverlayFileContents(virtualPathToReal)
+
+    return createTempFile(prefix = "konan", suffix = ".vfsoverlay").apply {
+        bufferedWriter().use {
+            writeBytes(bytes)
+        }
+        deleteOnExit()
+    }.toPath()
 }

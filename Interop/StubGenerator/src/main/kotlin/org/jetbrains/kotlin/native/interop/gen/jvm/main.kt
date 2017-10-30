@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.native.interop.gen.ImportsImpl
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
 import java.lang.IllegalArgumentException
+import java.nio.file.*
 import java.util.*
-import kotlin.reflect.KFunction
 
 fun main(args: Array<String>) = interop(args, null)
 
@@ -211,6 +211,55 @@ private fun parseImports(args: Map<String, List<String>>): ImportsImpl {
     return ImportsImpl(headerIdToPackage)
 }
 
+fun getCompilerFlagsForVfsOverlay(args: Map<String, List<String>>, def: DefFile): List<String> {
+    val relativeToRoot = mutableMapOf<Path, Path>() // TODO: handle clashes
+
+    val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "-headerFilterAdditionalSearchPrefix"
+
+    val filteredIncludeDirs = args[HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX]?.map { Paths.get(it) }
+    if (filteredIncludeDirs != null) {
+        val headerFilterGlobs = def.config.headerFilter
+        if (headerFilterGlobs.isEmpty()) {
+            error("'$HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX' option requires " +
+                    "'headerFilter' to be specified in .def file")
+        }
+
+        relativeToRoot += findFilesByGlobs(roots = filteredIncludeDirs, globs = headerFilterGlobs)
+    }
+
+    if (relativeToRoot.isEmpty()) {
+        return emptyList()
+    }
+
+    val virtualRoot = Paths.get(System.getProperty("java.io.tmpdir")).resolve("konanSystemInclude")
+
+    val virtualPathToReal = relativeToRoot.map { (relativePath, realRoot) ->
+        virtualRoot.resolve(relativePath) to realRoot.resolve(relativePath)
+    }.toMap()
+
+    val vfsOverlayFile = createVfsOverlayFile(virtualPathToReal)
+
+    return listOf("-I${virtualRoot.toAbsolutePath()}", "-ivfsoverlay", vfsOverlayFile.toAbsolutePath().toString())
+}
+
+private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, Path> {
+    val relativeToRoot = mutableMapOf<Path, Path>()
+
+    val pathMatchers = globs.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
+
+    roots.reversed().forEach { root ->
+        // TODO: don't scan the entire tree, skip subdirectories according to globs.
+        Files.walk(root, FileVisitOption.FOLLOW_LINKS).forEach { path ->
+            val relativePath = root.relativize(path)
+            if (!Files.isDirectory(path) && pathMatchers.any { it.matches(relativePath) }) {
+                relativeToRoot[relativePath] = root
+            }
+        }
+    }
+    return relativeToRoot
+}
+
+
 private fun processLib(args: Map<String, List<String>>, 
                        argsToCompiler: MutableList<String>?) {
 
@@ -250,6 +299,7 @@ private fun processLib(args: Map<String, List<String>>,
         addAll(def.config.compilerOpts)
         addAll(tool.defaultCompilerOpts)
         addAll(additionalCompilerOpts)
+        addAll(getCompilerFlagsForVfsOverlay(args, def))
         addAll(when (language) {
             Language.C -> emptyList()
             Language.OBJECTIVE_C -> {
