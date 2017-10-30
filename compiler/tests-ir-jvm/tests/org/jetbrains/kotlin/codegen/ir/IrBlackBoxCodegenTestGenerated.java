@@ -8591,6 +8591,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("nonAbstractInInterface.kt")
+        public void testNonAbstractInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/nonAbstractInInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/topLevel.kt");
