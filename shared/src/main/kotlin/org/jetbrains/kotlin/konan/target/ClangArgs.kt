@@ -92,7 +92,7 @@ class ClangTarget(val target: KonanTarget, konanProperties: KonanProperties) {
                         "-Xclang", "-isystem$sysRoot/include/libcxx", "-Xclang", "-isystem$sysRoot/lib/libcxxabi/include",
                         "-Xclang", "-isystem$sysRoot/include/compat", "-Xclang", "-isystem$sysRoot/include/libc")
         }
-        return result + (if (target != KonanTarget.WASM32) listOf("-g") else emptyList())
+        return result
     }
 }
 
