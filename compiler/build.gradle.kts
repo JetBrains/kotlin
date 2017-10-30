@@ -111,8 +111,7 @@ fun Project.codegenTest(target: Int, jvm: Int,
 codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     dependsOn(":compiler:tests-common-jvm6:build")
 
-    //TODO make port flexible
-    val port = "5100"
+    val port = project.property("kotlin.compiler.codegen.tests.port")?.toString() ?: "5100"
     var jdkProcess: Process? = null
 
     doFirst {
