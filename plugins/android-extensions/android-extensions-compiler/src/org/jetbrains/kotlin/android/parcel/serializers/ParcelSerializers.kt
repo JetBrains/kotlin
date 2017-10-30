@@ -676,6 +676,7 @@ internal open class PrimitiveTypeParcelSerializer private constructor(final over
             it to when (it) {
                 Type.CHAR_TYPE -> CharParcelSerializer
                 Type.SHORT_TYPE -> ShortParcelSerializer
+                Type.BOOLEAN_TYPE -> BooleanParcelSerializer
                 else -> PrimitiveTypeParcelSerializer(it)
             }
         }.toMap()
@@ -704,6 +705,28 @@ internal open class PrimitiveTypeParcelSerializer private constructor(final over
         override fun readValue(v: InstructionAdapter) {
             super.readValue(v)
             v.cast(Type.INT_TYPE, Type.SHORT_TYPE)
+        }
+    }
+
+    object BooleanParcelSerializer : PrimitiveTypeParcelSerializer(Type.BOOLEAN_TYPE) {
+        override fun writeValue(v: InstructionAdapter) {
+            super.writeValue(v)
+        }
+
+        override fun readValue(v: InstructionAdapter) {
+            super.readValue(v)
+
+            val falseLabel = Label()
+            val conditionIsOver = Label()
+
+            v.ifeq(falseLabel)
+            v.iconst(1)
+            v.goTo(conditionIsOver)
+
+            v.visitLabel(falseLabel)
+            v.iconst(0)
+
+            v.visitLabel(conditionIsOver)
         }
     }
 
