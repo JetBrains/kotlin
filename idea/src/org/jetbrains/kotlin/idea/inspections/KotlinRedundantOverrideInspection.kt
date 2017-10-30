@@ -22,13 +22,9 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -41,6 +37,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
                     if (!modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
                     if (MODIFIER_EXCLUDE_OVERRIDE.any { modifierList.hasModifier(it) }) return
                     if (function.annotationEntries.isNotEmpty()) return
+                    if (function.containingClass()?.isData() == true) return
 
                     val bodyExpression = function.bodyExpression ?: return
                     val qualifiedExpression = when (bodyExpression) {
