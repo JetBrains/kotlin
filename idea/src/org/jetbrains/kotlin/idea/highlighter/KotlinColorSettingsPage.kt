@@ -45,8 +45,9 @@ class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
  */
 <ANNOTATION>@Deprecated</ANNOTATION>("Deprecated class")
 <BUILTIN_ANNOTATION>private</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <PARAMETER><MUTABLE_VARIABLE><INSTANCE_PROPERTY>prop1</INSTANCE_PROPERTY></MUTABLE_VARIABLE></PARAMETER> : Int) {
-    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>, dyn: <KEYWORD>dynamic</KEYWORD>) {
+    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String<QUEST>?</QUEST>, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>, dyn: <KEYWORD>dynamic</KEYWORD>) {
         <PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL>("length\nis ${"$"}{<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <STRING_ESCAPE><INVALID_STRING_ESCAPE>\e</INVALID_STRING_ESCAPE></STRING_ESCAPE>")
+        <PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL>(<PARAMETER>nullable</PARAMETER><EXCLEXCL>!!</EXCLEXCL>.<INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>)
         val <LOCAL_VARIABLE>ints</LOCAL_VARIABLE> = java.util.<CONSTRUCTOR_CALL>ArrayList</CONSTRUCTOR_CALL><Int?>(2)
         <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER><VARIABLE_AS_FUNCTION_CALL>f</VARIABLE_AS_FUNCTION_CALL></PARAMETER>() + <PARAMETER><VARIABLE_AS_FUNCTION_LIKE_CALL>fl</VARIABLE_AS_FUNCTION_LIKE_CALL></PARAMETER>()
         val <LOCAL_VARIABLE>myFun</LOCAL_VARIABLE> = <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW> <FUNCTION_LITERAL_BRACES_AND_ARROW>-></FUNCTION_LITERAL_BRACES_AND_ARROW> "" <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>;
@@ -128,6 +129,8 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
                        KotlinBundle.message("options.kotlin.attribute.descriptor.double.colon") to KotlinHighlightingColors.DOUBLE_COLON,
                        OptionsBundle.message("options.java.attribute.descriptor.dot") to KotlinHighlightingColors.DOT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.safe.access") to KotlinHighlightingColors.SAFE_ACCESS,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.quest") to KotlinHighlightingColors.QUEST,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.exclexcl") to KotlinHighlightingColors.EXCLEXCL,
                        OptionsBundle.message("options.java.attribute.descriptor.line.comment") to KotlinHighlightingColors.LINE_COMMENT,
                        OptionsBundle.message("options.java.attribute.descriptor.block.comment") to KotlinHighlightingColors.BLOCK_COMMENT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.kdoc.comment") to KotlinHighlightingColors.DOC_COMMENT,

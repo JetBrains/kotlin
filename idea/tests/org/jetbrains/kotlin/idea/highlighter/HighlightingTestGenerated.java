@@ -102,6 +102,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("NonNullAssertion.kt")
+    public void testNonNullAssertion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/NonNullAssertion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Object.kt")
     public void testObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Object.kt");
