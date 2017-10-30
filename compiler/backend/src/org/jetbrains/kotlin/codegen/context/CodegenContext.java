@@ -215,13 +215,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter, boolean captureThis) {
         if (outerExpression.invoke() == null) {
             if (!ignoreNoOuter) {
-                throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor());
+                throw new UnsupportedOperationException("Don't know how to generate outer expression: " + this);
             }
             return null;
         }
         if (captureThis) {
             if (closure == null) {
-                throw new IllegalStateException("Can't capture this for context without closure: " + getContextDescriptor());
+                throw new IllegalStateException("Can't capture this for context without closure: " + this);
             }
             closure.setCaptureThis();
         }
@@ -348,13 +348,34 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return parentContext;
     }
 
-    public ClassDescriptor getEnclosingClass() {
+    @Nullable
+    public CodegenContext getEnclosingClassContext() {
         CodegenContext cur = getParentContext();
-        while (cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor)) {
+        while (cur != null) {
+            if (cur instanceof ConstructorContext && !(((ConstructorContext) cur).isThisInitialized())) {
+                // If the current context is a constructor with uninitialized 'this',
+                // skip it and the corresponding class context
+                CodegenContext parent = cur.getParentContext();
+                assert parent != null : "Context " + cur + " should have a parent";
+                cur = parent;
+            }
+            else {
+                DeclarationDescriptor curDescriptor = cur.getContextDescriptor();
+                if (curDescriptor instanceof ClassDescriptor) {
+                    return cur;
+                }
+            }
             cur = cur.getParentContext();
         }
+        return null;
+    }
 
-        return cur == null ? null : (ClassDescriptor) cur.getContextDescriptor();
+    @Nullable
+    public ClassDescriptor getEnclosingClass() {
+        // TODO store enclosing context class in the context itself
+        CodegenContext enclosingClassContext = getEnclosingClassContext();
+        if (enclosingClassContext == null) return null;
+        return (ClassDescriptor) enclosingClassContext.getContextDescriptor();
     }
 
     @Nullable
@@ -474,7 +495,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             );
         }
         else {
-            throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor);
+            throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor +
+                                                    " in context " + this);
         }
 
         accessors.put(key, accessor);

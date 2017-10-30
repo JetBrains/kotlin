@@ -4649,6 +4649,117 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CapturingOuterClassInstanceInSuperCall extends AbstractJsCodegenBoxTest {
+            public void testAllFilesPresentInCapturingOuterClassInstanceInSuperCall() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("kt13454.kt")
+            public void testKt13454() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/kt13454.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt14148.kt")
+            public void testKt14148() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/kt14148.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt4174.kt")
+            public void testKt4174() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/kt4174.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt4174a.kt")
+            public void testKt4174a() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/kt4174a.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedAsImplicitThisInBoundReference.kt")
+            public void testOuterCapturedAsImplicitThisInBoundReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedAsImplicitThisInBoundReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInFunctionLiteral.kt")
+            public void testOuterCapturedInFunctionLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInFunctionLiteral.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInInlineLambda.kt")
+            public void testOuterCapturedInInlineLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInInlineLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInLambda.kt")
+            public void testOuterCapturedInLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInLambda2.kt")
+            public void testOuterCapturedInLambda2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInLambda2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInLambdaInSecondaryConstructor.kt")
+            public void testOuterCapturedInLambdaInSecondaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInLambdaInSecondaryConstructor.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("outerCapturedInLocalClass.kt")
+            public void testOuterCapturedInLocalClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInLocalClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInNestedLambda.kt")
+            public void testOuterCapturedInNestedLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInNestedLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInNestedObject.kt")
+            public void testOuterCapturedInNestedObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInNestedObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInObject.kt")
+            public void testOuterCapturedInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerCapturedInObject2.kt")
+            public void testOuterCapturedInObject2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerCapturedInObject2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outerEnumEntryCapturedInLambdaInInnerClass.kt")
+            public void testOuterEnumEntryCapturedInLambdaInInnerClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturingOuterClassInstanceInSuperCall/outerEnumEntryCapturedInLambdaInInnerClass.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
