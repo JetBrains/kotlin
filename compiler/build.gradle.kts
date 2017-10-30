@@ -101,7 +101,7 @@ fun Project.codegenTest(target: Int, jvm: Int,
     }
     body()
     doFirst {
-        val jdkPath = project.property(jdk) ?: error("$jdk is not optional to run this test")
+        val jdkPath = project.findProperty(jdk) ?: error("$jdk is not optional to run this test")
         executable = "$jdkPath/bin/java"
         println("Running test with $executable")
     }
@@ -111,12 +111,12 @@ fun Project.codegenTest(target: Int, jvm: Int,
 codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     dependsOn(":compiler:tests-common-jvm6:build")
 
-    val port = project.property("kotlin.compiler.codegen.tests.port")?.toString() ?: "5100"
+    val port = project.findProperty("kotlin.compiler.codegen.tests.port")?.toString() ?: "5100"
     var jdkProcess: Process? = null
 
     doFirst {
         logger.info("Configuring JDK 6 server...")
-        val jdkPath = project.property("JDK_16") ?: error("JDK_16 is not optional to run this test")
+        val jdkPath = project.findProperty("JDK_16") ?: error("JDK_16 is not optional to run this test")
         val executable = "$jdkPath/bin/java"
         val main = "org.jetbrains.kotlin.test.clientserver.TestProcessServer"
 
