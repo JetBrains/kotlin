@@ -19,6 +19,7 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleLibraryDataService"/>
+        <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.core.script.ReloadGradleTemplatesOnSync"/>
 
         <localInspection
             implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
@@ -57,14 +58,7 @@
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
         <gradleModelFacade implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultGradleModelFacade"/>
 
-        <scriptTemplatesProvider
-            implementation="org.jetbrains.kotlin.idea.core.script.GradleSettingsKotlinDSLTemplateProvider"/>
-
-        <scriptTemplatesProvider
-            implementation="org.jetbrains.kotlin.idea.core.script.GradleKotlinDSLTemplateProvider"/>
-
-        <scriptTemplatesProvider
-            implementation="org.jetbrains.kotlin.idea.core.script.LegacyGradleScriptKotlinTemplateProvider"/>
+        <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor"/>
 
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
 
