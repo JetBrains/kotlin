@@ -75,8 +75,11 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
 
     protected void doTest(@NotNull String beforeFileName) throws Exception {
+        QuickFixTestCase quickFixTestCase = createWrapper();
+        String fileText = FileUtil.loadFile(new File(quickFixTestCase.getTestDataPath(), beforeFileName), true);
+        boolean isJS = InTextDirectivesUtils.isDirectiveDefined(fileText, "JS");
         try {
-            configureRuntimeIfNeeded(beforeFileName);
+            configureRuntimeIfNeeded(beforeFileName, isJS);
 
             enableInspections(beforeFileName);
 
@@ -84,7 +87,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             checkForUnexpectedErrors();
         }
         finally {
-            unConfigureRuntimeIfNeeded(beforeFileName);
+            unConfigureRuntimeIfNeeded(beforeFileName, isJS);
         }
     }
 
@@ -223,8 +226,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
     //endregion
 
-    private static void configureRuntimeIfNeeded(@NotNull String beforeFileName) throws IOException {
-        if (beforeFileName.endsWith("JsRuntime.kt")) {
+    private static void configureRuntimeIfNeeded(@NotNull String beforeFileName, boolean isJS) throws IOException {
+        if (beforeFileName.endsWith("JsRuntime.kt") || isJS) {
             // Without the following line of code subsequent tests with js-runtime will be prone to failure due "outdated stub in index" error.
             FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
 
@@ -245,8 +248,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(new File(beforeFileName)), "WITH_RUNTIME");
     }
 
-    private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) throws IOException {
-        if (beforeFileName.endsWith("JsRuntime.kt")) {
+    private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName, boolean isJS) throws IOException {
+        if (beforeFileName.endsWith("JsRuntime.kt") || isJS) {
             ConfigLibraryUtil.INSTANCE.unConfigureKotlinJsRuntimeAndSdk(getModule(), getProjectJDK());
         }
         else if (isRuntimeNeeded(beforeFileName)) {
