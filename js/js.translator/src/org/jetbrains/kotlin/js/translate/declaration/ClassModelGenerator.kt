@@ -23,16 +23,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.prototypeOf
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
-import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.identity
@@ -118,13 +113,7 @@ class ClassModelGenerator(val context: TranslationContext) {
         val classToCopyFrom = memberToCopy.containingDeclaration as ClassDescriptor
         if (classToCopyFrom.kind != ClassKind.INTERFACE || AnnotationsUtils.isNativeObject(classToCopyFrom)) return
 
-        val name = context.getNameForDescriptor(member).ident
-        when (member) {
-            is FunctionDescriptor -> {
-                copyMethod(name, name, classToCopyFrom, descriptor, model.postDeclarationBlock)
-            }
-            is PropertyDescriptor -> copyProperty(name, classToCopyFrom, descriptor, model.postDeclarationBlock)
-        }
+        copyMember(member, classToCopyFrom, descriptor, model)
     }
 
     private fun copyInvisibleFakeMember(descriptor: ClassDescriptor, member: CallableMemberDescriptor, model: JsClassModel) {
@@ -133,12 +122,26 @@ class ClassModelGenerator(val context: TranslationContext) {
             val classToCopyFrom = memberToCopy.containingDeclaration as ClassDescriptor
             if (classToCopyFrom.kind != ClassKind.INTERFACE) continue
 
-            val name = context.getNameForDescriptor(memberToCopy).ident
-            when (member) {
-                is FunctionDescriptor -> {
-                    copyMethod(name, name, classToCopyFrom, descriptor, model.postDeclarationBlock)
+            copyMember(memberToCopy, classToCopyFrom, descriptor, model)
+        }
+    }
+
+    private fun copyMember(member: CallableMemberDescriptor, from: ClassDescriptor, to: ClassDescriptor, model: JsClassModel) {
+        val name = context.getNameForDescriptor(member).ident
+        when (member) {
+            is FunctionDescriptor -> {
+                copyMethod(name, name, from, to, model.postDeclarationBlock)
+            }
+            is PropertyDescriptor -> {
+                if (TranslationUtils.shouldAccessViaFunctions(member) || member.isExtension) {
+                    for (accessor in member.accessors) {
+                        val accessorName = context.getNameForDescriptor(accessor).ident
+                        copyMethod(accessorName, accessorName, from, to, model.postDeclarationBlock)
+                    }
                 }
-                is PropertyDescriptor -> copyProperty(name, classToCopyFrom, descriptor, model.postDeclarationBlock)
+                else {
+                    copyProperty(name, from, to, model.postDeclarationBlock)
+                }
             }
         }
     }
