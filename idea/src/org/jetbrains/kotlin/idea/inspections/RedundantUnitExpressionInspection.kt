@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -35,6 +36,9 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
 
                 val parent = expression.parent
                 if (parent !is KtReturnExpression && parent !is KtBlockExpression) return
+
+                // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)
+                if (parent is KtBlockExpression && parent.getParentOfType<KtFunctionLiteral>(strict = true) != null) return
 
                 holder.registerProblem(expression,
                                        "Redundant 'Unit'",
