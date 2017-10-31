@@ -189,15 +189,21 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
     ): List<JsStatement> {
         val indexOfGlobalCatch = blocks.indexOf(context.globalCatchBlock)
         val stateRef = JsNameRef(context.metadata.stateName, JsThisRef())
+        val exceptionStateRef = JsNameRef(context.metadata.exceptionStateName, JsThisRef())
 
         val isFromGlobalCatch = JsAstUtils.equality(stateRef, JsIntLiteral(indexOfGlobalCatch))
         val catch = JsCatch(functionWithBody.scope, "e")
         val continueWithException = JsBlock(
-                JsAstUtils.assignment(stateRef.deepCopy(), JsNameRef(context.metadata.exceptionStateName, JsThisRef())).makeStmt(),
+                JsAstUtils.assignment(stateRef.deepCopy(), exceptionStateRef.deepCopy()).makeStmt(),
                 JsAstUtils.assignment(JsNameRef(context.metadata.exceptionName, JsThisRef()),
                                       catch.parameter.name.makeRef()).makeStmt()
         )
-        catch.body = JsBlock(JsIf(isFromGlobalCatch, JsThrow(catch.parameter.name.makeRef()), continueWithException))
+        val adjustExceptionState = JsAstUtils.assignment(exceptionStateRef.deepCopy(), stateRef.deepCopy()).makeStmt()
+        catch.body = JsBlock(JsIf(
+                isFromGlobalCatch,
+                JsBlock(adjustExceptionState, JsThrow(catch.parameter.name.makeRef())),
+                continueWithException
+        ))
 
         val throwResultRef = JsNameRef(context.metadata.exceptionName, JsThisRef())
         context.globalCatchBlock.statements += JsThrow(throwResultRef)
