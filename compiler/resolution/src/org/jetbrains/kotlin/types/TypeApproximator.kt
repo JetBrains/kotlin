@@ -127,7 +127,8 @@ class TypeApproximator {
                     return if (conf.rawType) null else type.bound()
                 }
 
-                assert(type is FlexibleTypeImpl) {
+                // TODO: currently we can lose information about enhancement, should be fixed later
+                assert(type is FlexibleTypeImpl || type is FlexibleTypeWithEnhancement) {
                     "Unexpected subclass of FlexibleType: ${type::class.java.canonicalName}, type = $type"
                 }
 
@@ -154,7 +155,7 @@ class TypeApproximator {
                      * If U_1 <: U_2.lower .. U_2.upper, then we know only that U_1 <: U_2.upper.
                      */
                     return KotlinTypeFactory.flexibleType(lowerResult?.lowerIfFlexible() ?: type.lowerBound,
-                                            upperResult?.upperIfFlexible() ?: type.upperBound)
+                                                          upperResult?.upperIfFlexible() ?: type.upperBound)
                 }
                 else {
                     return type.bound().let { approximateTo(it, conf, depth) ?: it }
