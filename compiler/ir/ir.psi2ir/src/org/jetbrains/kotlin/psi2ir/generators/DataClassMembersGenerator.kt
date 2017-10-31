@@ -121,7 +121,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                                        throw AssertionError("Data class should have a primary constructor: $classDescriptor")
             val constructorSymbol = context.symbolTable.referenceConstructor(dataClassConstructor)
 
-            buildMember(function) { irFunction ->
+            buildMember(function, declaration) { irFunction ->
                 function.valueParameters.forEach { parameter ->
                     putDefault(parameter, irGet(irThis(), getPropertyGetterSymbol(parameter)))
                 }
@@ -132,7 +132,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         }
 
         override fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
-            buildMember(function) {
+            buildMember(function, declaration) {
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
                 +irIfThenReturnFalse(irNotIs(irOther(), classDescriptor.defaultType))
                 val otherWithCast = irTemporary(irAs(irOther(), classDescriptor.defaultType), "other_with_cast")
@@ -178,7 +178,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         }
 
         override fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
-            buildMember(function) {
+            buildMember(function, declaration) {
                 val result = irTemporaryVar(irInt(0), "result").symbol
                 var first = true
                 for (property in properties) {
@@ -216,7 +216,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 }
 
         override fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
-            buildMember(function) {
+            buildMember(function, declaration) {
                 val irConcat = irConcat()
                 irConcat.addArgument(irString(classDescriptor.name.asString() + "("))
                 var first = true
