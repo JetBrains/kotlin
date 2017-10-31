@@ -25,6 +25,7 @@ import com.intellij.codeInsight.daemon.impl.MarkerType
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
 import com.intellij.icons.AllIcons
+import com.intellij.ide.util.PsiClassOrFunctionalExpressionListCellRenderer
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
@@ -49,11 +50,9 @@ import org.jetbrains.kotlin.idea.facet.implementedDescriptor
 import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.Icon
@@ -141,12 +140,20 @@ interface TestableLineMarkerNavigator {
     fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor?
 }
 
+private class SubclassRenderer: PsiClassOrFunctionalExpressionListCellRenderer() {
+    override fun getComparingObject(element: NavigatablePsiElement?): Comparable<Nothing> {
+        val baseText = super.getComparingObject(element)
+        val moduleName = element?.module?.name ?: return baseText
+        return "$baseText [$moduleName]"
+    }
+}
+
 private val SUBCLASSED_CLASS = MarkerType(
         "SUBCLASSED_CLASS",
         { getPsiClass(it)?.let { MarkerType.getSubclassedClassTooltip(it) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                getPsiClass(element)?.let { MarkerType.navigateToSubclassedClass(e, it) }
+                getPsiClass(element)?.let { MarkerType.navigateToSubclassedClass(e, it, SubclassRenderer()) }
             }
         })
 
