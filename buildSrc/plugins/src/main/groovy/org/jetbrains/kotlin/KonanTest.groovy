@@ -29,7 +29,7 @@ abstract class KonanTest extends JavaExec {
     def target = targetManager.target
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")
-    def dist = project.rootProject.file("dist")
+    def dist = project.rootProject.file(project.findProperty("konan.home") ?: "dist")
     def dependenciesDir = project.rootProject.dependenciesDir
     def konancDriver = project.isWindows() ? "konanc.bat" : "konanc"
     def konanc = new File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
@@ -72,9 +72,10 @@ abstract class KonanTest extends JavaExec {
     }
 
     KonanTest(){
-        // TODO: that's a long reach up the project tree.
-        // May be we should reorganize a little.
-        dependsOn(project.rootProject.tasks['dist'])
+        // We don't build the compiler if a custom konan.home path is specified.
+        if (!project.hasProperty("konan.home")) {
+            dependsOn(project.rootProject.tasks['dist'])
+        }
     }
 
     @Override
@@ -90,7 +91,9 @@ abstract class KonanTest extends JavaExec {
         def log = new ByteArrayOutputStream()
         try {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-            classpath = project.configurations.cli_bc
+            classpath = project.fileTree("$dist.canonicalPath/konan/lib/") {
+                include '*.jar'
+            }
             jvmArgs "-Dkonan.home=${dist.canonicalPath}",
                     "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
             enableAssertions = true
@@ -419,7 +422,10 @@ class RunDriverKonanTest extends KonanTest {
 
     RunDriverKonanTest() {
         super()
-        dependsOn(project.rootProject.tasks['cross_dist'])
+        // We don't build the compiler if a custom konan.home path is specified.
+        if (!project.hasProperty("konan.home")) {
+            dependsOn(project.rootProject.tasks['cross_dist'])
+        }
     }
 
     void compileTest(List<String> filesToCompile, String exe) {
