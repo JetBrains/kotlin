@@ -4825,6 +4825,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("objectInheritsNested.kt")
+            public void testObjectInheritsNested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/objectInheritsNested.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("twoClassesWithNestedCycle.kt")
             public void testTwoClassesWithNestedCycle() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/twoClassesWithNestedCycle.kt");
