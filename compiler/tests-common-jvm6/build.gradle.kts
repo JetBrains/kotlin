@@ -5,7 +5,7 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(project(":kotlin-stdlib"))
-    compile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
 }
 
 sourceSets {
