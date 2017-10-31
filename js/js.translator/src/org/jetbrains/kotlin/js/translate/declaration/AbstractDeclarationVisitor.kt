@@ -121,9 +121,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
         val innerContext = context.newDeclaration(descriptor).translateAndAliasParameters(descriptor, function.parameters)
 
         if (descriptor.isSuspend) {
-            if (descriptor.requiresStateMachineTransformation(context)) {
-                function.fillCoroutineMetadata(context, descriptor, hasController = false)
-            }
+            function.fillCoroutineMetadata(context, descriptor, hasController = false)
         }
 
         if (!descriptor.isOverridable) {
