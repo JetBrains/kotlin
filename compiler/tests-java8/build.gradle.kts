@@ -20,7 +20,6 @@ dependencies {
     testCompile(projectDist(":kotlin-reflect"))
     testCompile(projectTests(":compiler"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:tests-common-jvm6"))
     testRuntime(projectRuntimeJar(":kotlin-preloader"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
