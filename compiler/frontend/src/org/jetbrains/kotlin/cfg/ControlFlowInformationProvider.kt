@@ -873,48 +873,6 @@ class ControlFlowInformationProvider private constructor(
         val subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine) as? FunctionDescriptor ?: return
 
         markAndCheckRecursiveTailCalls(subroutineDescriptor)
-        checkSuspendCalls(subroutineDescriptor)
-    }
-
-    private fun checkSuspendCalls(currentFunction: FunctionDescriptor) {
-        if (!currentFunction.isSuspend) return
-        var containsNonTailCalls = false
-
-        traverseCalls { instruction, resolvedCall ->
-            val calleeDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return@traverseCalls
-            if (!calleeDescriptor.isSuspend) return@traverseCalls
-
-            // Suspend functions are allowed to be called only within coroutines (may be non-tail calls of course)
-            // or another suspend function (here they must be called only in tail position)
-            val enclosingSuspendFunction =
-                    trace.get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call)
-                    ?.let(DescriptorToSourceUtils::descriptorToDeclaration) as? KtElement
-                    ?: return@traverseCalls
-
-            val element = instruction.element
-            val isUsedAsExpression = instruction.owner.getUsages(instruction.outputValue).isNotEmpty()
-
-            if (!isUsedAsExpression || !instruction.isTailCall(enclosingSuspendFunction) || isInsideTry(element)) {
-                containsNonTailCalls = true
-            }
-        }
-
-        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
-            if (instruction !is VariableDeclarationInstruction || instruction.element !is KtProperty || !instruction.element.hasDelegate()) return@traverse
-
-            val variableDescriptor =
-                    trace[BindingContext.DECLARATION_TO_DESCRIPTOR, instruction.element] as? VariableDescriptorWithAccessors
-                    ?: return@traverse
-
-            containsNonTailCalls =
-                    containsNonTailCalls || variableDescriptor.accessors.any {
-                        trace[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it]?.candidateDescriptor?.isSuspend == true
-                    }
-        }
-
-        if (containsNonTailCalls) {
-            trace.record(BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, currentFunction.original)
-        }
     }
 
     private fun markAndCheckRecursiveTailCalls(subroutineDescriptor: FunctionDescriptor) {
