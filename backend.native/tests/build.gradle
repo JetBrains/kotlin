@@ -62,6 +62,36 @@ allprojects {
     }
 }
 
+def konanHome = rootProject.file(project.findProperty("konan.home") ?: distDir).absolutePath
+def suffix = isWindows() ? ".bat" : ""
+
+// TODO: Ideally we want to write just konanArtifacts{} clause here,
+// but we need to make Kotlin/Native Gradle Plugin a dependence
+// of our buildScripts first.
+task compileKonanTestLibrary(type: Exec) {
+    if (!project.hasProperty("konan.home")) {
+        dependsOn ':dist'
+    }
+
+    def compiler = "$konanHome/bin/konanc$suffix"
+    def source = 'testLibrary'
+    def artifact = 'build/konan/bin/testLibrary'
+
+    executable compiler
+    args source, '-o', artifact, '-p', 'library'
+}
+
+task installTestLibrary(type: Exec) {
+    dependsOn 'compileKonanTestLibrary'
+
+    def tool = "$konanHome/bin/klib$suffix"
+    def repo = "$konanHome/klib/common"
+    def library = 'build/konan/bin/testLibrary.klib'
+
+    executable tool
+    args 'install', library, '-repository', repo
+}
+
 // TODO: use lastSuccessful teamcity build.
 task update_external_tests() {
     doLast {
@@ -1247,7 +1277,7 @@ task link_testLib_explicitly(type: RunStandaloneKonanTest) {
     // there are no testLibrary for cross targets yet.
     disabled = (project.testTarget != null && project.testTarget != project.hostName) 
 
-    dependsOn ':klib:installTestLibrary'
+    dependsOn 'installTestLibrary'
     goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
