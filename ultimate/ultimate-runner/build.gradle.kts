@@ -13,7 +13,7 @@ dependencies {
 
 
 val runUltimate by task<JavaExec> {
-    dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ultimate:idea-ultimate-plugin")
+    dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin", ":ultimate:idea-ultimate-plugin")
 
     classpath = the<JavaPluginConvention>().sourceSets["main"].runtimeClasspath
 
