@@ -30,4 +30,14 @@ interface CommandLineProcessor {
         paths.add(value)
         put(option, paths)
     }
+
+    fun CompilerConfiguration.applyOptionsFrom(map: Map<String, List<String>>, pluginOptions: Collection<CliOption>) {
+        for ((key, values) in map) {
+            val option = pluginOptions.firstOrNull { it.name == key } ?: continue
+
+            for (value in values) {
+                processOption(option, value, this)
+            }
+        }
+    }
 }

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.utils.decodePluginOptions
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.ObjectInputStream
@@ -92,6 +93,8 @@ object Kapt3ConfigurationKeys {
 class Kapt3CommandLineProcessor : CommandLineProcessor {
     companion object {
         val ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt3"
+
+        val CONFIGURATION = CliOption("configuration", "<encoded>", "Encoded configuration", required = false)
 
         val SOURCE_OUTPUT_DIR_OPTION: CliOption =
                 CliOption("sources", "<path>", "Output path for the generated files", required = false)
@@ -145,7 +148,8 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginOptions: Collection<CliOption> =
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION, JAVAC_CLI_OPTIONS_OPTION,
                    CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, APT_MODE_OPTION,
-                   USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION, INCREMENTAL_DATA_OUTPUT_DIR_OPTION)
+                   USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION, INCREMENTAL_DATA_OUTPUT_DIR_OPTION,
+                   CONFIGURATION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -162,6 +166,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             APT_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_MODE, value)
             USE_LIGHT_ANALYSIS_OPTION -> configuration.put(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS, value)
             CORRECT_ERROR_TYPES_OPTION -> configuration.put(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES, value)
+            CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -172,7 +177,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
     }
 
-    fun decodeOptions(options: String): Map<String, String> {
+    private fun decodeList(options: String): Map<String, String> {
         val map = LinkedHashMap<String, String>()
 
         val decodedBytes = Base64.getDecoder().decode(options)
@@ -232,8 +237,8 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             return
         }
 
-        val apOptions = configuration.get(APT_OPTIONS)?.let { decodeOptions(it) } ?: emptyMap()
-        val javacCliOptions = configuration.get(JAVAC_CLI_OPTIONS)?.let { decodeOptions(it) } ?: emptyMap()
+        val apOptions = configuration.get(APT_OPTIONS)?.let { decodeList(it) } ?: emptyMap()
+        val javacCliOptions = configuration.get(JAVAC_CLI_OPTIONS)?.let { decodeList(it) } ?: emptyMap()
 
         sourcesOutputDir.mkdirs()
 
