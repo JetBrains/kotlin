@@ -208,7 +208,7 @@ private fun configureFacetByGradleModule(
     }
 
     with(kotlinFacet.configuration.settings) {
-        implementedModuleName = getImplementedModuleName(moduleNode, sourceSetName)
+        implementedModuleName = (sourceSetNode ?: moduleNode).implementedModuleName
         testOutputPath = getExplicitTestOutputPath(moduleNode, platformKind)
     }
 
@@ -219,13 +219,6 @@ private fun getExplicitTestOutputPath(moduleNode: DataNode<ModuleData>, platform
     if (platformKind !is TargetPlatformKind.JavaScript) return null
     val k2jsArgumentList = moduleNode.compilerArgumentsBySourceSet?.get("test")?.currentArguments ?: return null
     return K2JSCompilerArguments().apply { parseCommandLineArguments(k2jsArgumentList, this) }.outputFile
-}
-
-private fun getImplementedModuleName(moduleNode: DataNode<ModuleData>, sourceSetName: String?): String? {
-    val baseModuleName = moduleNode.implementedModule?.data?.internalName
-    if (baseModuleName == null || sourceSetName == null) return baseModuleName
-    val delimiter = if(isQualifiedModuleNamesEnabled()) "." else "_"
-    return "$baseModuleName$delimiter$sourceSetName"
 }
 
 private fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List<String>) {

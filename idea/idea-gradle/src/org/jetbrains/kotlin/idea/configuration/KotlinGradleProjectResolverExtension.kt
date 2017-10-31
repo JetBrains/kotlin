@@ -49,8 +49,8 @@ var DataNode<ModuleData>.coroutines
         by UserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
 var DataNode<ModuleData>.platformPluginId
         by UserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
-var DataNode<ModuleData>.implementedModule
-        by UserDataProperty(Key.create<DataNode<ModuleData>>("IMPLEMENTS"))
+var DataNode<out ModuleData>.implementedModuleName
+        by UserDataProperty(Key.create<String>("IMPLEMENTED_MODULE_NAME"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
@@ -167,10 +167,32 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
-        ideModule.implementedModule = gradleModel.implements?.let { findModule(ideProject, it) }
+        addImplementedModuleNames(ideModule, ideProject, gradleModel)
 
         super.populateModuleDependencies(gradleModule, ideModule, ideProject)
     }
+
+    private fun addImplementedModuleNames(
+            dependentModule: DataNode<ModuleData>,
+            ideProject: DataNode<ProjectData>,
+            gradleModel: KotlinGradleModel
+    ) {
+        val implementedModule = gradleModel.implements?.let { findModule(ideProject, it) } ?: return
+        if (resolverCtx.isResolveModulePerSourceSet) {
+            val dependentSourceSets = dependentModule.getSourceSetsMap()
+            val implementedSourceSets = implementedModule.getSourceSetsMap()
+            for ((sourceSetName, dependentSourceSet) in dependentSourceSets) {
+                val implementedSourceSet = implementedSourceSets[sourceSetName] ?: continue
+                dependentSourceSet.implementedModuleName = implementedSourceSet.data.internalName
+            }
+        }
+        else {
+            dependentModule.implementedModuleName = implementedModule.data.internalName
+        }
+    }
+
+    private fun DataNode<ModuleData>.getSourceSetsMap() =
+            ExternalSystemApiUtil.getChildren(this, GradleSourceSetData.KEY).associateBy { it.sourceSetName }
 
     private val DataNode<out ModuleData>.sourceSetName
         get() = (data as? GradleSourceSetData)?.id?.substringAfterLast(':')
