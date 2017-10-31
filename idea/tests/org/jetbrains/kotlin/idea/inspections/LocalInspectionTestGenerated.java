@@ -1637,6 +1637,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantUnitExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantUnitExpression/lambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notRedundant1.kt")
         public void testNotRedundant1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant1.kt");
@@ -1658,18 +1664,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("redundant1.kt")
         public void testRedundant1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantUnitExpression/redundant1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("redundant2.kt")
-        public void testRedundant2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantUnitExpression/redundant2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("redundant3.kt")
-        public void testRedundant3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantUnitExpression/redundant3.kt");
             doTest(fileName);
         }
 
