@@ -69,7 +69,7 @@ public class GeneratorsFileUtil {
     private static boolean checkFileIgnoringLineSeparators(File file, String content) {
         String currentContent;
         try {
-            currentContent = FilesKt.readText(file, Charsets.UTF_8);
+            currentContent = StringUtil.convertLineSeparators(FilesKt.readText(file, Charsets.UTF_8));
         }
         catch (Throwable ignored) {
             return false;
