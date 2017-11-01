@@ -24,4 +24,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+projectTest {
+    workingDir = rootDir
+}
+
 testsJar()
