@@ -39,7 +39,11 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
                 addExpressionAfterIfMissing("$GSK_KOTLIN_VERSION_PROPERTY_NAME = \"$version\"", it)
             }
 
-            getRepositoriesBlock()?.addRepositoryIfMissing(version)
+            getRepositoriesBlock()?.apply {
+                addRepositoryIfMissing(version)
+                addMavenCentralIfMissing()
+            }
+
             getDependenciesBlock()?.addPluginToClassPathIfMissing()
         }
 
@@ -57,7 +61,11 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
             script?.blockExpression?.addDeclarationIfMissing("val $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra", true)
             getApplyBlock()?.createPluginIfMissing(kotlinPluginName)
             getDependenciesBlock()?.addCompileStdlibIfMissing(stdlibArtifactName)
-            getRepositoriesBlock()?.addRepositoryIfMissing(version)
+            getRepositoriesBlock()?.apply {
+                addRepositoryIfMissing(version)
+                addMavenCentralIfMissing()
+            }
+
             jvmTarget?.let {
                 changeKotlinTaskParameter("jvmTarget", it, forTests = false)
                 changeKotlinTaskParameter("jvmTarget", it, forTests = true)
@@ -222,6 +230,9 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
 
         return addExpressionIfMissing(snippet) as? KtCallExpression
     }
+
+    private fun KtBlockExpression.addMavenCentralIfMissing(): KtCallExpression? =
+            if (!isRepositoryConfigured(text)) addExpressionIfMissing(MAVEN_CENTRAL) as? KtCallExpression else null
 
     private fun KtBlockExpression.addPluginToClassPathIfMissing(): KtCallExpression? =
             addExpressionIfMissing(getKotlinGradlePluginClassPathSnippet()) as? KtCallExpression
