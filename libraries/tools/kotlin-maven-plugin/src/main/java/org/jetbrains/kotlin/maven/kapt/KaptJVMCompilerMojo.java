@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.maven.K2JVMCompileMojo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
 import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
@@ -127,6 +128,28 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         recreateDirectorySafe(getStubsDirectory(project, sourceSetName));
 
         return super.execCompiler(compiler, messageCollector, arguments, sourceRoots);
+    }
+
+    @Override
+    protected List<String> getSourceFilePaths() {
+        File generatedSourcesDirectory = getGeneratedSourcesDirectory(project, getSourceSetName());
+
+        return super.getSourceFilePaths()
+                .stream()
+                .filter(path -> !new File(path).equals(generatedSourcesDirectory))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    protected List<String> getClasspath() {
+        File compileTargetDirectory = new File(this.output);
+
+        // TODO it seems for me that the target directory should not be in the compile classpath
+        // We filter out it here, but it's definitely a work-around.
+        return super.getClasspath()
+                .stream()
+                .filter(path -> !new File(path).equals(compileTargetDirectory))
+                .collect(Collectors.toList());
     }
 
     protected void addKaptSourcesDirectory(@NotNull String path) {
