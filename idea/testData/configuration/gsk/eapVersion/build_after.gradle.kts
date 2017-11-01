@@ -8,6 +8,7 @@ buildscript {
         maven {
             setUrl("http://dl.bintray.com/kotlin/kotlin-eap")
         }
+        mavenCentral()
     }
     dependencies {
         classpath(kotlinModule("gradle-plugin", kotlin_version))

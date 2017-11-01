@@ -67,6 +67,7 @@ class GroovyBuildScriptManipulator(private val groovyScript: GroovyFile) : Gradl
 
         groovyScript.getRepositoriesBlock().apply {
             addRepository(version)
+            addMavenCentralIfMissing()
         }
 
         groovyScript.getDependenciesBlock().apply {
@@ -90,6 +91,7 @@ class GroovyBuildScriptManipulator(private val groovyScript: GroovyFile) : Gradl
 
             getBuildScriptRepositoriesBlock().apply {
                 addRepository(version)
+                addMavenCentralIfMissing()
             }
 
             getBuildScriptDependenciesBlock().apply {
@@ -210,6 +212,9 @@ class GroovyBuildScriptManipulator(private val groovyScript: GroovyFile) : Gradl
         }
         return addLastExpressionInBlockIfNeeded(snippet)
     }
+
+    private fun GrClosableBlock.addMavenCentralIfMissing(): Boolean =
+            if (!isRepositoryConfigured(text)) addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL) else false
 
     private fun GrStatementOwner.getRepositoriesBlock() = getBlockOrCreate("repositories")
 
