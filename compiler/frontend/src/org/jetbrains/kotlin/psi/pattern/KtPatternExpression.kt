@@ -18,12 +18,11 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtVisitor
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeIntersector
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.types.expressions.PatternResolveState
-import org.jetbrains.kotlin.types.expressions.PatternResolver
-import org.jetbrains.kotlin.types.expressions.and
+import org.jetbrains.kotlin.types.expressions.*
 
 class KtPatternExpression(node: ASTNode) : KtPatternEntry(node) {
 
@@ -36,12 +35,16 @@ class KtPatternExpression(node: ASTNode) : KtPatternEntry(node) {
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
         val flowsInfo = constraints.map { it.getTypeInfo(resolver, state) }
-        val type = flowsInfo.mapNotNull { it.type }.let { TypeIntersector.intersectTypes(it) }
-        val dataFlowInfo = flowsInfo.asSequence().map { it.dataFlowInfo }.reduce { acc, info -> acc.and(info) }
-        KotlinTypeInfo(type, dataFlowInfo)
+        val type = flowsInfo.map { it.type }
+                .let { TypeIntersector.intersectTypes(it) }
+                .errorAndReplaceIfNull(this, state, Errors.UNSPECIFIED_TYPE, ErrorUtils.createErrorType("$this type"))
+        val dataFlowInfo = flowsInfo.asSequence()
+                .map { it.dataFlowInfo }
+                .reduce { acc, info -> acc.and(info) }
+        NotNullKotlinTypeInfo(type, dataFlowInfo)
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
         val constraintsTypeInfo = constraints.asSequence().map { it.resolve(resolver, state) }
         val thisTypeInfo = resolver.resolveType(this, state)
         return thisTypeInfo.and(constraintsTypeInfo)

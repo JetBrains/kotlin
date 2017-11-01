@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.expressions.*
 
 class KtPatternTypedTuple(node: ASTNode) : KtPatternEntry(node) {
@@ -36,22 +35,21 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternEntry(node) {
         return visitor.visitPatternTypedTuple(this, data)
     }
 
-    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo = resolver.restoreOrCreate(this, state) {
         typeReference?.let { typeReference ->
             resolver.getTypeInfo(typeReference, state).also {
                 it.type.errorIfNull(typeReference, state, Errors.UNSPECIFIED_TYPE)
             }
-        } ?: KotlinTypeInfo(state.expectedType, DataFlowInfo.EMPTY)
+        }
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
         val info = resolver.resolveType(this, state)
         val expressions = tuple?.expressions ?: return info
-        val type = info.type!!
-        val receiverType = resolver.getComponentsTypeInfoReceiver(this, state.replaceType(type)) ?: type
+        val receiverType = resolver.getComponentsTypeInfoReceiver(this, state.replaceType(info.type)) ?: info.type
         val typesInfo = resolver.getComponentsTypeInfo(this, state.replaceType(receiverType), expressions.size)
         return info.and(typesInfo.zip(expressions) { typeInfo, expression ->
-            expression.resolve(resolver, state.next(typeInfo.type!!))
+            expression.resolve(resolver, state.next(typeInfo.type))
         })
     }
 }

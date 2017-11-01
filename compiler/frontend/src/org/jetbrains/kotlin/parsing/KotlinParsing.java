@@ -2167,8 +2167,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             marker = mark();
             expect(IDENTIFIER, "Expected identifier");
             if (at(COLON)) {
-                advance(); // COLON
-                parseTypeRef();
+                parsePatternTypeReference();
             }
             marker.done(PATTERN_VARIABLE_DECLARATION);
         }

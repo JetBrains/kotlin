@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
@@ -34,10 +34,10 @@ class KtPatternStringExpression(node: ASTNode) : KtPatternEntry(node) {
     }
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        KotlinTypeInfo(resolver.builtIns.stringType, DataFlowInfo.EMPTY)
+        NotNullKotlinTypeInfo(resolver.builtIns.stringType, DataFlowInfo.EMPTY)
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
         return resolver.resolveType(this, state)
     }
 }

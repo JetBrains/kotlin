@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.types.CastDiagnosticsUtil
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
@@ -52,7 +53,7 @@ class PatternResolver(
         fun getComponentName(index: Int) = DataClassDescriptorResolver.createComponentName(index + 1)
     }
 
-    fun resolve(context: ExpressionTypingContext, pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean): Pair<KotlinTypeInfo, LexicalScope> {
+    fun resolve(context: ExpressionTypingContext, pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean): Pair<NotNullKotlinTypeInfo, LexicalScope> {
         val redeclarationChecker = TraceBasedLocalRedeclarationChecker(context.trace, overloadChecker)
         val scope = PatternScope(context.scope, redeclarationChecker)
         val newContext = context.replaceExpectedType(expectedType)
@@ -76,7 +77,7 @@ class PatternResolver(
         return if (results.isSuccess) results.resultingDescriptor.returnType else null
     }
 
-    fun getComponentsTypeInfo(tuple: KtPatternTypedTuple, state: PatternResolveState, length: Int): List<KotlinTypeInfo> {
+    fun getComponentsTypeInfo(tuple: KtPatternTypedTuple, state: PatternResolveState, length: Int): List<NotNullKotlinTypeInfo> {
         val receiver = TransientReceiver(state.expectedType)
         return (0 until length).map {
             getComponentName(it)
@@ -91,17 +92,17 @@ class PatternResolver(
                     valueArguments = emptyList()
             )
             if (results.isSuccess) {
-                results.resultingDescriptor.returnType
+                results.resultingDescriptor.returnType!!
             }
             else {
                 ErrorUtils.createErrorType("$componentName() return type")
             }
         }.map {
-            KotlinTypeInfo(it, DataFlowInfo.EMPTY)
+            NotNullKotlinTypeInfo(it, DataFlowInfo.EMPTY)
         }
     }
 
-    fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): KotlinTypeInfo {
+    fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): NotNullKotlinTypeInfo {
         val trace = state.context.trace
         val scope = state.context.scope
         val subjectType = state.expectedType
@@ -109,26 +110,29 @@ class PatternResolver(
         val typeResolutionContext = TypeResolutionContext(scope, trace, true, true, isDebuggerContext)
         val possiblyBareTarget = typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReference)
         val type = TypeReconstructionUtil.reconstructBareType(typeReference, possiblyBareTarget, subjectType, trace, builtIns)
-        return KotlinTypeInfo(type, DataFlowInfo.EMPTY)
+        return NotNullKotlinTypeInfo(type, DataFlowInfo.EMPTY)
     }
 
-    fun getTypeInfo(expression: KtExpression, state: PatternResolveState): KotlinTypeInfo {
-        return facade.getTypeInfo(expression, state.context)
+    fun getTypeInfo(expression: KtExpression, state: PatternResolveState): NotNullKotlinTypeInfo {
+        val info = facade.getTypeInfo(expression, state.context)
+        val patch = ErrorUtils.createErrorType("${expression.text} return type")
+        val type = info.type.errorAndReplaceIfNull(expression, state, Errors.UNSPECIFIED_TYPE, patch)
+        return info.kotlinTypeInfo(type)
     }
 
-    fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: PatternResolver.() -> KotlinTypeInfo?): KotlinTypeInfo {
-        val cachedInfo = state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)
-        if (cachedInfo != null) return cachedInfo
-        val info = this.creator().errorAndReplaceIfNull(element, state, Errors.UNSPECIFIED_TYPE, KotlinTypeInfo(null, DataFlowInfo.EMPTY))
-        state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, info)
-        return info
+    fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: () -> NotNullKotlinTypeInfo?): NotNullKotlinTypeInfo {
+        state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)?.let { return it }
+        val info = creator() ?: NotNullKotlinTypeInfo(state.expectedType, DataFlowInfo.EMPTY)
+        val reconstructed = CastDiagnosticsUtil.findStaticallyKnownSubtype(state.expectedType, info.type.constructor)
+        val newInfo = info.replaceType(reconstructed.resultingType ?: state.expectedType)
+        state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, newInfo)
+        return newInfo
     }
 
-    fun resolveType(element: KtPatternElement, state: PatternResolveState): KotlinTypeInfo {
+    fun resolveType(element: KtPatternElement, state: PatternResolveState): NotNullKotlinTypeInfo {
         val info = element.getTypeInfo(this, state)
-        val type = info.type ?: state.expectedType
-        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, type, state.expectedType, element)
-        return KotlinTypeInfo(type, info.dataFlowInfo)
+        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, info.type, state.expectedType, element)
+        return info
     }
 
     fun checkExpression(expression: KtExpression?, state: PatternResolveState): DataFlowInfo {
@@ -156,23 +160,23 @@ fun <T> T?.errorAndReplaceIfNull(
         state: PatternResolveState,
         error: DiagnosticFactory1<KtElement, KtElement>,
         patch: T
-) = this.errorIfNull(element, state, error) ?: patch
+): T = this.errorIfNull(element, state, error) ?: patch
 
 fun <T, E : PsiElement> T?.errorIfNull(element: E, state: PatternResolveState, error: DiagnosticFactory1<E, E>) = this.also {
     it ?: state.context.trace.report(error.on(element, element))
 }
 
-fun KotlinTypeInfo.and(vararg children: KotlinTypeInfo?): KotlinTypeInfo {
+fun NotNullKotlinTypeInfo.and(vararg children: NotNullKotlinTypeInfo?): NotNullKotlinTypeInfo {
     return this.and(children.asSequence())
 }
 
-fun KotlinTypeInfo.and(children: Iterable<KotlinTypeInfo?>): KotlinTypeInfo {
+fun NotNullKotlinTypeInfo.and(children: Iterable<NotNullKotlinTypeInfo?>): NotNullKotlinTypeInfo {
     return this.and(children.asSequence())
 }
 
-fun KotlinTypeInfo.and(children: Sequence<KotlinTypeInfo?>): KotlinTypeInfo {
+fun NotNullKotlinTypeInfo.and(children: Sequence<NotNullKotlinTypeInfo?>): NotNullKotlinTypeInfo {
     val dataFlowInfo = children.map { it?.dataFlowInfo }
-    return KotlinTypeInfo(type, this.dataFlowInfo.and(dataFlowInfo))
+    return this.replaceDataFlowInfo(this.dataFlowInfo.and(dataFlowInfo))
 }
 
 fun DataFlowInfo.and(vararg dataFlowInfo: DataFlowInfo?): DataFlowInfo {

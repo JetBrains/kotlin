@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
@@ -36,7 +36,7 @@ class KtPatternHashExpression(node: ASTNode) : KtPatternEntry(node) {
         expression?.let { resolver.getTypeInfo(it, state) }
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
         return resolver.resolveType(this, state)
     }
 }
