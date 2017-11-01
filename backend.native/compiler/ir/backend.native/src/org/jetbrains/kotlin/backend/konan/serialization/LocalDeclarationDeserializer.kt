@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.descriptors.allContainingDeclarations
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -23,14 +26,10 @@ import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirementTable
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.backend.common.peek
-import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.common.pop
 
 // This class knows how to construct contexts for 
 // MemberDeserializer to deserialize descriptors declared in IR.
@@ -75,7 +74,7 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
         if (descriptor is KonanPackageFragment) {
             val packageTypeTable = TypeTable(pkg.proto.getPackage().typeTable)
             return components.createContext(
-                pkg, nameResolver, packageTypeTable, SinceKotlinInfoTable.EMPTY, null)
+                pkg, nameResolver, packageTypeTable, VersionRequirementTable.EMPTY, null)
         }
 
         // Only packages and classes have their type tables.

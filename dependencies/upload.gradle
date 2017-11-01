@@ -65,7 +65,7 @@ bintray {
         def (groupId, artifactId, version) = gradle.startParameter.projectProperties.module.tokenize(':')
         def groupPath = groupId.replace('.', '/')
         def artifactPath = artifactId
-        def versionPath =  "${version.tokenize('-')[0]}-SNAPSHOT"
+        def versionPath =  "$version" //TODO: snapshots?
         from project.files(gradle.startParameter.projectProperties.jar)
         from project.files(gradle.startParameter.projectProperties.src)
         from project.files(gradle.startParameter.projectProperties.doc)

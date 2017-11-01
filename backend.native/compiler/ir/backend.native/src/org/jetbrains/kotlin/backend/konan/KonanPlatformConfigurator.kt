@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.resolve.IdentifierChecker
-import org.jetbrains.kotlin.resolve.OverloadFilter
-import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
@@ -39,11 +36,12 @@ object KonanPlatformConfigurator : PlatformConfigurator(
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),
-        identifierChecker = IdentifierChecker.DEFAULT,
-        overloadFilter = OverloadFilter.DEFAULT,
+        identifierChecker = IdentifierChecker.Default,
+        overloadFilter = OverloadFilter.Default,
         platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
-        delegationFilter = DelegationFilter.DEFAULT,
-        overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.DEFAULT
+        delegationFilter = DelegationFilter.Default,
+        overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.Default,
+        declarationReturnTypeSanitizer = DeclarationReturnTypeSanitizer.Default
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(SyntheticScopes.Empty)
