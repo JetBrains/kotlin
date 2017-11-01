@@ -8,6 +8,7 @@ buildscript {
         maven {
             url 'http://oss.sonatype.org/content/repositories/snapshots'
         }
+        mavenCentral()
     }
 }
 apply plugin: 'android'
