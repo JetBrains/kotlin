@@ -45,8 +45,12 @@ class TeamCityLogger : BaseTestLogger() {
 
     private fun report(msg: String) = println("##teamcity[$msg]")
 
-    override fun start(testCase: TestCase) = report("testStarted name='${testCase.tcName}'")
-    override fun startSuite(suite: TestSuite) = report("testSuiteStarted name='${suite.tcName}'")
+    override fun start(testCase: TestCase) = report("testStarted" +
+            " name='${testCase.tcName}'" +
+            " locationHint='ktest:test://${testCase.suite.tcName}.${testCase.tcName}'")
+    override fun startSuite(suite: TestSuite) = report("testSuiteStarted" +
+            " name='${suite.tcName}'" +
+            " locationHint='ktest:suite://${suite.tcName}'")
     override fun finishSuite(suite: TestSuite, timeMillis: Long) = report("testSuiteFinished name='${suite.tcName}'")
 
     override fun pass(testCase: TestCase, timeMillis: Long) = finish(testCase, timeMillis)
