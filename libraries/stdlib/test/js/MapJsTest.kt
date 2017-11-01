@@ -398,15 +398,15 @@ abstract class MapJsTest {
         assertEquals(100, map[entry2.key], "set value via entry")
     }
 
-//    @Test fun mapCollectionPropertiesDoNotSupportAdd() {
-//        val map = createTestMutableMap()
-//        val entry = map.entries.first()
-//        val (key, value) = entry
-//
-//        assertFailsWith<UnsupportedOperationException> { map.entries += entry }
-//        assertFailsWith<UnsupportedOperationException> { map.keys += key }
-//        assertFailsWith<UnsupportedOperationException> { map.values += value }
-//    }
+    @Test fun mapCollectionPropertiesDoNotSupportAdd() {
+        val map = createTestMutableMap()
+        val entry = map.entries.first()
+        val (key, value) = entry
+
+        assertFailsWith<UnsupportedOperationException> { map.entries += entry }
+        assertFailsWith<UnsupportedOperationException> { map.keys += key }
+        assertFailsWith<UnsupportedOperationException> { map.values += value }
+    }
 
     @Test fun specialNamesNotContainsInEmptyMap() {
         val map = emptyMap()

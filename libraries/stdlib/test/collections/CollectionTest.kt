@@ -886,17 +886,17 @@ class CollectionTest {
         compare(arrayListOf("value"), listOf("value")) { listBehavior() }
     }
 
-//    @Test fun specialSets() {
-//        compare(linkedSetOf<Int>(), setOf<Int>()) { setBehavior() }
-//        compare(hashSetOf<Double>(), emptySet<Double>()) { setBehavior() }
-//        compare(listOf("value").toMutableSet(), setOf("value")) { setBehavior() }
-//    }
-//
-//    @Test fun specialMaps() {
-//        compare(hashMapOf<String, Int>(), mapOf<String, Int>()) { mapBehavior() }
-//        compare(linkedMapOf<Int, String>(), emptyMap<Int, String>()) { mapBehavior() }
-//        compare(linkedMapOf(2 to 3), mapOf(2 to 3)) { mapBehavior() }
-//    }
+    @Test fun specialSets() {
+        compare(linkedSetOf<Int>(), setOf<Int>()) { setBehavior() }
+        compare(hashSetOf<Double>(), emptySet<Double>()) { setBehavior() }
+        compare(listOf("value").toMutableSet(), setOf("value")) { setBehavior() }
+    }
+
+    @Test fun specialMaps() {
+        compare(hashMapOf<String, Int>(), mapOf<String, Int>()) { mapBehavior() }
+        compare(linkedMapOf<Int, String>(), emptyMap<Int, String>()) { mapBehavior() }
+        compare(linkedMapOf(2 to 3), mapOf(2 to 3)) { mapBehavior() }
+    }
 
     @Test fun toStringTest() {
         // we need toString() inside pattern because of KT-8666
