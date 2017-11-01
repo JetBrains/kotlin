@@ -6514,6 +6514,24 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("suspendOperatorPlus.kt")
+            public void testSuspendOperatorPlus() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendOperatorPlusAssign.kt")
+            public void testSuspendOperatorPlusAssign() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusAssign.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendOperatorPlusCallFromLambda.kt")
+            public void testSuspendOperatorPlusCallFromLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusCallFromLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("tailrec.kt")
             public void testTailrec() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec.kt");
@@ -6701,12 +6719,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public static class SuspendFunctionAsCoroutine extends AbstractJsCodegenBoxTest {
             public void testAllFilesPresentInSuspendFunctionAsCoroutine() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("augmentedAssignment.kt")
-            public void testAugmentedAssignment() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/augmentedAssignment.kt");
-                doTest(fileName);
             }
 
             @TestMetadata("dispatchResume.kt")
