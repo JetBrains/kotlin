@@ -16,50 +16,19 @@
 
 package org.jetbrains.kotlin.idea.navigation
 
-import com.intellij.openapi.editor.EditorFactory
-import com.intellij.psi.PsiDocumentManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
-import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
-import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import java.io.File
 
-class KotlinGotoImplementationMultiModuleTest : AbstractMultiModuleTest() {
+class KotlinGotoImplementationMultiModuleTest : AbstractKotlinNavigationMultiModuleTest() {
     override fun getTestDataPath(): String {
         return File(PluginTestCaseBase.getTestDataPathBase(), "/navigation/implementations/multiModule").path + File.separator
     }
 
-    private fun doMultiPlatformTest(
-            testFileName: String,
-            commonModuleName: String = "common",
-            vararg actuals: Pair<String, TargetPlatformKind<*>> = arrayOf("jvm" to TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-    ) {
-        val commonModule = module(commonModuleName)
-        commonModule.createFacet(TargetPlatformKind.Common, false)
-
-        actuals.forEach { (actualName, actualKind) ->
-            val implModule = module(actualName)
-            implModule.createFacet(actualKind, implementedModuleName = commonModuleName)
-            implModule.enableMultiPlatform()
-            implModule.addDependency(commonModule)
-        }
-
-        val file = PluginJetFilesProvider.allFilesInProject(myProject).single { it.name == testFileName }
-        val doc = PsiDocumentManager.getInstance(myProject).getDocument(file)!!
-        val offset = doc.extractMarkerOffset(project, "<caret>")
-        val editor = EditorFactory.getInstance().createEditor(doc, myProject)
-        editor.caretModel.moveToOffset(offset)
-        try {
-            val gotoData = NavigationTestUtils.invokeGotoImplementations(editor, file)
-            NavigationTestUtils.assertGotoDataMatching(editor, gotoData, true)
-        }
-        finally {
-            EditorFactory.getInstance().releaseEditor(editor)
-        }
-    }
+    override fun doNavigate(editor: Editor, file: PsiFile) = NavigationTestUtils.invokeGotoImplementations(editor, file)
 
     fun testSuspendFunImpl() {
         doMultiPlatformTest(

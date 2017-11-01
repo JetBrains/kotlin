@@ -65,12 +65,6 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         return null
     }
 
-    private fun KtNamedDeclaration.isExpectDeclaration(): Boolean =
-            (toDescriptor() as? MemberDescriptor)?.isExpect == true
-
-    private fun KtNamedDeclaration.isActualDeclaration(): Boolean =
-            (toDescriptor() as? MemberDescriptor)?.isActual == true
-
     override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
         if (elements.isEmpty()) return
 
@@ -119,6 +113,12 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         }
     }
 }
+
+internal fun KtNamedDeclaration.isExpectDeclaration(): Boolean =
+        (toDescriptor() as? MemberDescriptor)?.isExpect == true
+
+internal fun KtNamedDeclaration.isActualDeclaration(): Boolean =
+        (toDescriptor() as? MemberDescriptor)?.isActual == true
 
 private val OVERRIDING_MARK: Icon = AllIcons.Gutter.OverridingMethod
 private val IMPLEMENTING_MARK: Icon = AllIcons.Gutter.ImplementingMethod

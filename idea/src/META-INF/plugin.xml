@@ -858,6 +858,8 @@
     <library.type implementation="org.jetbrains.kotlin.idea.framework.JSLibraryType"/>
     <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
 
+    <gotoRelatedProvider implementation="org.jetbrains.kotlin.idea.goto.KotlinExpectOrActualGotoRelatedProvider"/>
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
       <category>Kotlin</category>
