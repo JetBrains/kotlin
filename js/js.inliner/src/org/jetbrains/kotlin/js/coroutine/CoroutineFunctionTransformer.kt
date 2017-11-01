@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.js.coroutine
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
+import org.jetbrains.kotlin.js.backend.ast.metadata.forceStateMachine
+import org.jetbrains.kotlin.js.backend.ast.metadata.isSuspend
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.finalElement
 
 class CoroutineFunctionTransformer(private val function: JsFunction, name: String?) {
@@ -35,6 +38,11 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
     private val className = JsScope.declareTemporaryName("Coroutine\$${name ?: "anonymous"}")
 
     fun transform(): List<JsStatement> {
+        if (isTailCall() && !function.forceStateMachine) {
+            transformSimple()
+            return emptyList()
+        }
+
         val context = CoroutineTransformationContext(function.scope, function)
         val bodyTransformer = CoroutineBodyTransformer(context)
         bodyTransformer.preProcess(body)
@@ -55,6 +63,64 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
         generateCoroutineInstantiation(context)
 
         return additionalStatements
+    }
+
+    private fun isTailCall(): Boolean {
+        val suspendCalls = hashSetOf<JsExpression>()
+        body.accept(object : RecursiveJsVisitor() {
+            override fun visitElement(node: JsNode) {
+                if (node is JsExpression && node.isSuspend) {
+                    suspendCalls += node
+                }
+                super.visitElement(node)
+            }
+        })
+
+        if (suspendCalls.isEmpty()) return true
+
+        body.accept(object : RecursiveJsVisitor() {
+            override fun visitBlock(x: JsBlock) {
+                super.visitBlock(x)
+
+                if (body.statements.size < 2) return
+
+                val lastStatement = body.statements.last() as? JsReturn ?: return
+                if (!lastStatement.expression.isStateMachineResult()) return
+
+                val statementBeforeLast = body.statements[body.statements.lastIndex - 1] as? JsExpressionStatement ?: return
+                val suspendExpression = statementBeforeLast.expression
+                if (suspendExpression in suspendCalls) {
+                    suspendCalls -= suspendExpression
+                }
+                else {
+                    decomposeAssignment(suspendExpression)?.let { (lhs, rhs) ->
+                        if (rhs in suspendCalls && lhs.isStateMachineResult()) {
+                            suspendCalls -= rhs
+                        }
+                    }
+                }
+            }
+        })
+
+        return suspendCalls.isEmpty()
+    }
+
+    private fun transformSimple() {
+        val continuationParam = function.parameters.last()
+        val resultVar = JsScope.declareTemporaryName("\$result")
+        body.replaceSpecialReferencesInSimpleFunction(continuationParam, resultVar)
+        body.statements.add(0, newVar(resultVar, null).apply { synthetic = true })
+
+        object : JsVisitorWithContextImpl() {
+            override fun endVisit(x: JsExpressionStatement, ctx: JsContext<in JsStatement>) {
+                if (x.expression.isSuspend) {
+                    ctx.replaceMe(assignment(pureFqn(resultVar, null), x.expression).source(x.source).makeStmt())
+                }
+                super.endVisit(x, ctx)
+            }
+        }.accept(body)
+
+        FunctionPostProcessor(functionWithBody).apply()
     }
 
     private fun generateContinuationConstructor(
@@ -108,11 +174,11 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
     }
 
     private fun generateCoroutinePrototype(constructorName: JsName): List<JsStatement> {
-        val prototype = JsAstUtils.prototypeOf(JsNameRef(constructorName))
+        val prototype = prototypeOf(JsNameRef(constructorName))
 
         val baseClass = Namer.createObjectWithPrototypeFrom(function.coroutineMetadata!!.baseClassRef.deepCopy())
-        val assignPrototype = JsAstUtils.assignment(prototype, baseClass)
-        val assignConstructor = JsAstUtils.assignment(JsNameRef("constructor", prototype.deepCopy()), JsNameRef(constructorName))
+        val assignPrototype = assignment(prototype, baseClass)
+        val assignConstructor = assignment(JsNameRef("constructor", prototype.deepCopy()), JsNameRef(constructorName))
         return listOf(assignPrototype.makeStmt(), assignConstructor.makeStmt())
     }
 
@@ -127,7 +193,7 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
             propertyInitializers += JsPropertyInitializer(JsNameRef(Namer.METADATA_SUPERTYPES), JsArrayLiteral(listOf(baseClassRefRef)))
         }
 
-        return JsAstUtils.assignment(JsNameRef(Namer.METADATA, constructorName.makeRef()), metadataObject).makeStmt()
+        return assignment(JsNameRef(Namer.METADATA, constructorName.makeRef()), metadataObject).makeStmt()
     }
 
     private fun generateDoResume(
@@ -172,7 +238,7 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
         functionWithBody.parameters += JsParameter(suspendedName)
 
         val instanceName = JsScope.declareTemporaryName("instance")
-        functionWithBody.body.statements += JsAstUtils.newVar(instanceName, instantiation)
+        functionWithBody.body.statements += newVar(instanceName, instantiation)
 
         val invokeResume = JsReturn(JsInvocation(JsNameRef(context.metadata.doResumeName, instanceName.makeRef()), JsNullLiteral())
                                             .source(psiElement))
@@ -191,14 +257,14 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
         val stateRef = JsNameRef(context.metadata.stateName, JsThisRef())
         val exceptionStateRef = JsNameRef(context.metadata.exceptionStateName, JsThisRef())
 
-        val isFromGlobalCatch = JsAstUtils.equality(stateRef, JsIntLiteral(indexOfGlobalCatch))
+        val isFromGlobalCatch = equality(stateRef, JsIntLiteral(indexOfGlobalCatch))
         val catch = JsCatch(functionWithBody.scope, "e")
         val continueWithException = JsBlock(
-                JsAstUtils.assignment(stateRef.deepCopy(), exceptionStateRef.deepCopy()).makeStmt(),
-                JsAstUtils.assignment(JsNameRef(context.metadata.exceptionName, JsThisRef()),
+                assignment(stateRef.deepCopy(), exceptionStateRef.deepCopy()).makeStmt(),
+                assignment(JsNameRef(context.metadata.exceptionName, JsThisRef()),
                                       catch.parameter.name.makeRef()).makeStmt()
         )
-        val adjustExceptionState = JsAstUtils.assignment(exceptionStateRef.deepCopy(), stateRef.deepCopy()).makeStmt()
+        val adjustExceptionState = assignment(exceptionStateRef.deepCopy(), stateRef.deepCopy()).makeStmt()
         catch.body = JsBlock(JsIf(
                 isFromGlobalCatch,
                 JsBlock(adjustExceptionState, JsThrow(catch.parameter.name.makeRef())),
@@ -230,10 +296,10 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
     }
 
     private fun MutableList<JsStatement>.assignToField(fieldName: JsName, value: JsExpression, psiElement: PsiElement?) {
-        this += JsAstUtils.assignment(JsNameRef(fieldName, JsThisRef()), value).source(psiElement).makeStmt()
+        this += assignment(JsNameRef(fieldName, JsThisRef()), value).source(psiElement).makeStmt()
     }
 
     private fun MutableList<JsStatement>.assignToPrototype(fieldName: JsName, value: JsExpression) {
-        this += JsAstUtils.assignment(JsNameRef(fieldName, JsAstUtils.prototypeOf(className.makeRef())), value).makeStmt()
+        this += assignment(JsNameRef(fieldName, prototypeOf(className.makeRef())), value).makeStmt()
     }
 }
