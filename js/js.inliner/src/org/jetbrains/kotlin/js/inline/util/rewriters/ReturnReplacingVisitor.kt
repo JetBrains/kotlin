@@ -75,7 +75,6 @@ class ReturnReplacingVisitor(
 
     private fun processCoroutineResult(expression: JsExpression?): JsExpression? {
         if (!isSuspend) return expression
-        if (expression != null && expression.isTailCallSuspend) return expression
         val lhs = JsNameRef("\$\$coroutineResult\$\$", JsAstUtils.stateMachineReceiver()).apply { coroutineResult = true }
         return JsAstUtils.assignment(lhs, expression ?: Namer.getUndefinedExpression())
     }

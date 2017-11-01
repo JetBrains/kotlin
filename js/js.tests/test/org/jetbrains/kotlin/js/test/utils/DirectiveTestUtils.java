@@ -205,6 +205,8 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<>("CHECK_NULLS_COUNT", JsNullLiteral.class);
 
+    private static final DirectiveHandler COUNT_NEW = new CountNodesDirective<>("CHECK_NEW_COUNT", JsNew.class);
+
     private static final DirectiveHandler COUNT_CASES = new CountNodesDirective<>("CHECK_CASES_COUNT", JsCase.class);
 
     private static final DirectiveHandler COUNT_IF = new CountNodesDirective<>("CHECK_IF_COUNT", JsIf.class);
@@ -343,6 +345,7 @@ public class DirectiveTestUtils {
             COUNT_VARS,
             COUNT_BREAKS,
             COUNT_NULLS,
+            COUNT_NEW,
             COUNT_CASES,
             COUNT_IF,
             COUNT_DEBUGGER,
