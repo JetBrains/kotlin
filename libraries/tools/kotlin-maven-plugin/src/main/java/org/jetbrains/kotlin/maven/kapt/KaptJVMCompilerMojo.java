@@ -24,7 +24,10 @@ import org.apache.maven.plugin.compiler.DependencyCoordinate;
 import org.apache.maven.plugins.annotations.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.CLICompiler;
+import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.maven.K2JVMCompileMojo;
 
 import java.io.File;
@@ -99,7 +102,6 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
         addKaptSourcesDirectory(sourcesDirectory.getPath());
 
-        mkdirsSafe(sourcesDirectory);
         mkdirsSafe(classesDirectory);
         mkdirsSafe(stubsDirectory);
 
@@ -110,14 +112,25 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         return options;
     }
 
-    protected void addKaptSourcesDirectory(@NotNull String path) {
-        project.addCompileSourceRoot(path);
+    @NotNull
+    @Override
+    protected ExitCode execCompiler(
+            CLICompiler<K2JVMCompilerArguments> compiler,
+            MessageCollector messageCollector,
+            K2JVMCompilerArguments arguments,
+            List<File> sourceRoots
+    ) throws MojoExecutionException {
+        // Annotation processing can't run incrementally so we need to clear the directory for our stubs and generated sources
+        // TODO separate directories for the generated class files, and recreate the generated classfile dir also
+        String sourceSetName = getSourceSetName();
+        recreateDirectorySafe(getGeneratedSourcesDirectory(project, sourceSetName));
+        recreateDirectorySafe(getStubsDirectory(project, sourceSetName));
+
+        return super.execCompiler(compiler, messageCollector, arguments, sourceRoots);
     }
 
-    private void mkdirsSafe(@NotNull File directory) {
-        if (!directory.mkdirs()) {
-            getLog().warn("Unable to create directory " + directory);
-        }
+    protected void addKaptSourcesDirectory(@NotNull String path) {
+        project.addCompileSourceRoot(path);
     }
 
     @Override
@@ -186,5 +199,38 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Override
     protected boolean isIncremental() {
         return false;
+    }
+
+    private void mkdirsSafe(@NotNull File directory) {
+        if (!directory.isDirectory() && !directory.mkdirs()) {
+            getLog().warn("Unable to create directory " + directory);
+        }
+    }
+
+    private void deleteRecursivelySafe(@NotNull File file) {
+        if (!file.exists()) {
+            return;
+        }
+
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursivelySafe(child);
+                }
+            }
+        }
+
+        if (!file.delete()) {
+            getLog().warn("Unable to delete file " + file);
+        }
+    }
+
+    private void recreateDirectorySafe(@NotNull File file) {
+        if (file.exists()) {
+            deleteRecursivelySafe(file);
+        }
+        mkdirsSafe(file);
     }
 }
