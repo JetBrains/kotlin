@@ -21,6 +21,9 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.PROPERTY_NAME
 
+internal val CacheImplementation.hasCache: Boolean
+    get() = this != CacheImplementation.NO_CACHE
+
 interface CacheMechanism {
     /** Push the cache object onto the stack. */
     fun loadCache()
