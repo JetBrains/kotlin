@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1099
+// EXPECTED_REACHABLE_NODES: 1253
 external class A
 
 external object O

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1125
+// EXPECTED_REACHABLE_NODES: 1250
 // FILE: a.kt
 fun foo(n: Int): String = js("""
     var result = "";

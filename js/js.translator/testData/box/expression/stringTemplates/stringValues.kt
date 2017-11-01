@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1112
+// EXPECTED_REACHABLE_NODES: 1253
 package foo
 
 // test String template must have one or more entries.

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1110
+// EXPECTED_REACHABLE_NODES: 1251
 // This test was adapted from compiler/testData/codegen/box/callableReference/function/.
 package foo
 

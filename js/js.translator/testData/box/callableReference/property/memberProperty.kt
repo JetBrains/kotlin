@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1127
+// EXPECTED_REACHABLE_NODES: 1266
 package foo
 
 open class A(var msg:String) {

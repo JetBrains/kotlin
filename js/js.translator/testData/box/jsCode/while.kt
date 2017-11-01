@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1113
+// EXPECTED_REACHABLE_NODES: 1252
 package foo
 
 fun factorial(n: Int): Int = js("""

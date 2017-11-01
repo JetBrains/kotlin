@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1128
+// EXPECTED_REACHABLE_NODES: 1267
 package foo
 
 var log = ""

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1125
+// EXPECTED_REACHABLE_NODES: 1264
 package foo
 
 fun castWithReturn(): Int {

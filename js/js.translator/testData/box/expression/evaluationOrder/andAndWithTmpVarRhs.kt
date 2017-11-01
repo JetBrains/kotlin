@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1377
+// EXPECTED_REACHABLE_NODES: 1525
 fun foo(arg: Any): Boolean {
     return arg == "x"
 }

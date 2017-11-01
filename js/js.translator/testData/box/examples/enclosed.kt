@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1146
+// EXPECTED_REACHABLE_NODES: 1287
 interface BK {
     fun x(): Int = 50
 }

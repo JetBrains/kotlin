@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1413
+// EXPECTED_REACHABLE_NODES: 1577
 package foo
 
 enum class EmptyEnum

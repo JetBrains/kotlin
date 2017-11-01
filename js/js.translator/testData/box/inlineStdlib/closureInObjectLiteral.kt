@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1400
+// EXPECTED_REACHABLE_NODES: 1542
 package foo
 
 import kotlin.comparisons.*

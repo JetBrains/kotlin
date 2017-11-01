@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1108
+// EXPECTED_REACHABLE_NODES: 1249
 // PROPERTY_WRITE_COUNT: name=publishedTopLevel_61zpoe$ count=1
 // PROPERTY_WRITE_COUNT: name=published_61zpoe$ count=1
 // PROPERTY_WRITE_COUNT: name=B count=1

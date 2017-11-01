@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1128
+// EXPECTED_REACHABLE_NODES: 1269
 open class M() {
     open var b: Int = 0
 }

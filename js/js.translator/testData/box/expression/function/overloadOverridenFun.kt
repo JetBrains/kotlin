@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1120
+// EXPECTED_REACHABLE_NODES: 1259
 // KT-2219 if function overload overridden function its name doesn't translated correctly
 
 package foo

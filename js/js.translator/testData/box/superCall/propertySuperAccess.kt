@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1140
+// EXPECTED_REACHABLE_NODES: 1265
 open class A {
     val foo = "foo"
     var bar = "bar"

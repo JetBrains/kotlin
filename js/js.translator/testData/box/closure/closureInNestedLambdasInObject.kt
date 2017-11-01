@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1114
+// EXPECTED_REACHABLE_NODES: 1255
 // KT-4218 Nested function literal on singleton object fails
 
 package foo

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1167
+// EXPECTED_REACHABLE_NODES: 1309
 package foo
 
 enum class B(open val bar: Int) {

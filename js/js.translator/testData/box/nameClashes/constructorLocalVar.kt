@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1117
+// EXPECTED_REACHABLE_NODES: 1254
 var log = ""
 
 inline fun f(x: Int): Int {

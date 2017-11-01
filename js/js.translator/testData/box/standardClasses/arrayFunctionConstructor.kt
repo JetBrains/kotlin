@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1112
+// EXPECTED_REACHABLE_NODES: 1254
 package foo
 
 val f = { i: Int -> i + 1 }

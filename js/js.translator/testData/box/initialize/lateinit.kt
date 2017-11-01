@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1120
+// EXPECTED_REACHABLE_NODES: 1261
 class Greeting {
     val noon = xrun {
         verb = "Hello"

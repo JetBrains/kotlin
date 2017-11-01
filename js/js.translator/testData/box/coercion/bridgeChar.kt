@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1039
+// EXPECTED_REACHABLE_NODES: 1262
 open class A {
     fun foo(): Char = 'X'
 }

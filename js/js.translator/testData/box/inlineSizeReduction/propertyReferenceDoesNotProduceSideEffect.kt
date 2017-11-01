@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1117
+// EXPECTED_REACHABLE_NODES: 1256
 // CHECK_VARS_COUNT: function=box count=1
 
 package foo

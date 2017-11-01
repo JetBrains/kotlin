@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1110
+// EXPECTED_REACHABLE_NODES: 1251
 var log = ""
 
 fun foo(s: String, a: Int, b: Int) {

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1110
+// EXPECTED_REACHABLE_NODES: 1251
 fun box(): String {
     val r1 = trueFun() > falseFun()
     if (!r1) return "fail1"
