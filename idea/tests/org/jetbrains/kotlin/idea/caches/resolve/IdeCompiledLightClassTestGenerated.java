@@ -185,6 +185,12 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("AllPrivate.kt")
+        public void testAllPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/AllPrivate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MultiFile.kt")
         public void testMultiFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/MultiFile.kt");
