@@ -58,8 +58,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
         }
 
-        val environment =
-                KotlinCoreEnvironment.createForProduction(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
         Assert.assertTrue(res)
