@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerialInfoCodegenImpl
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializableCodegenImpl
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializableCompanionCodegenImpl
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializerCodegenImpl
 
 class SerializationCodegenExtension : ExpressionCodegenExtension {
@@ -27,5 +28,6 @@ class SerializationCodegenExtension : ExpressionCodegenExtension {
         SerialInfoCodegenImpl.generateSerialInfoImplBody(codegen)
         SerializableCodegenImpl.generateSerializableExtensions(codegen)
         SerializerCodegenImpl.generateSerializerExtensions(codegen)
+        SerializableCompanionCodegenImpl.generateSerializableExtensions(codegen)
     }
 }

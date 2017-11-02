@@ -32,6 +32,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.findEnumTypeS
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findPolymorphicSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.requiresPolymorphism
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -71,10 +72,12 @@ internal fun InstructionAdapter.genExceptionThrow(exceptionClass: String, messag
     athrow()
 }
 
-fun InstructionAdapter.genKOutputMethodCall(property: SerializableProperty, classCodegen: ImplementationBodyCodegen, expressionCodegen: ExpressionCodegen, propertyOwnerType: Type, ownerVar: Int) {
+fun InstructionAdapter.genKOutputMethodCall(property: SerializableProperty, classCodegen: ImplementationBodyCodegen, expressionCodegen: ExpressionCodegen,
+                                            propertyOwnerType: Type, ownerVar: Int, fromClassStartVar: Int? = null) {
     val propertyType = classCodegen.typeMapper.mapType(property.type)
     val sti = getSerialTypeInfo(property, propertyType)
-    val useSerializer = stackValueSerializerInstance(classCodegen, sti)
+    val useSerializer = if (fromClassStartVar == null) stackValueSerializerInstanceFromSerializer(classCodegen, sti)
+    else stackValueSerializerInstanceFromClass(classCodegen, sti, fromClassStartVar)
     if (!sti.unit) classCodegen.genPropertyOnStack(this, expressionCodegen.context, property.descriptor, propertyOwnerType, ownerVar)
     invokevirtual(kOutputType.internalName,
                   "write" + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
@@ -114,16 +117,32 @@ internal val polymorphicSerializerId = ClassId(packageFqName, Name.identifier("P
 internal val referenceArraySerializerId = ClassId(internalPackageFqName, Name.identifier("ReferenceArraySerializer"))
 internal val contextSerializerId = ClassId(packageFqName, Name.identifier("ContextSerializer"))
 
-// returns false is property should not use serializer
-internal fun InstructionAdapter.stackValueSerializerInstance(codegen: ClassBodyCodegen, sti: JVMSerialTypeInfo): Boolean {
+
+internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(codegen: ClassBodyCodegen, sti: JVMSerialTypeInfo, varIndexStart: Int): Boolean {
     val serializer = sti.serializer ?: return false
-    return stackValueSerializerInstance(codegen, sti.property.module, sti.property.type, serializer, this)
+    return stackValueSerializerInstance(codegen, sti.property.module, sti.property.type, serializer, this, sti.property.genericIndex) { idx ->
+        load(varIndexStart + idx, kSerializerType)
+    }
+}
+
+internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codegen: ClassBodyCodegen, sti: JVMSerialTypeInfo): Boolean {
+    val serializer = sti.serializer ?: return false
+    return stackValueSerializerInstance(codegen, sti.property.module, sti.property.type, serializer, this, sti.property.genericIndex) { idx ->
+        load(0, kSerializerType)
+        getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
+    }
 }
 
 // returns false is cannot not use serializer
 // use iv == null to check only (do not emit serializer onto stack)
-internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, serializer: ClassDescriptor,
-                                          iv: InstructionAdapter?): Boolean {
+internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
+                                          iv: InstructionAdapter?, genericIndex: Int? = null, genericSerializerFieldGetter: (InstructionAdapter.(Int) -> Unit)? = null): Boolean {
+    if (genericIndex != null) {
+        // get field from serializer object
+        iv?.run { genericSerializerFieldGetter?.invoke(this, genericIndex) }
+        return true
+    }
+    val serializer = requireNotNull(maybeSerializer)
     if (serializer.kind == ClassKind.OBJECT) {
         // singleton serializer -- just get it
         if (iv != null)
@@ -133,11 +152,12 @@ internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: Mod
     // serializer is not singleton object and shall be instantiated
     val argSerializers = kType.arguments.map { projection ->
         // bail out from stackValueSerializerInstance if any type argument is not serializable
-        val argSerializer = findTypeSerializer(module, projection.type, codegen.typeMapper.mapType(projection.type)) ?: return false
+        val argType = projection.type
+        val argSerializer = findTypeSerializer(module, argType, codegen.typeMapper.mapType(argType)) ?: return false
         // check if it can be properly serialized with its args recursively
-        if (!stackValueSerializerInstance(codegen, module, projection.type, argSerializer, null))
+        if (!stackValueSerializerInstance(codegen, module, argType, argSerializer, null, argType.genericIndex, genericSerializerFieldGetter))
             return false
-        Pair(projection.type, argSerializer)
+        Pair(argType, argSerializer)
     }
     // new serializer if needed
     iv?.apply {
@@ -163,7 +183,7 @@ internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: Mod
         }
         // all serializers get arguments with serializers of their generic types
         argSerializers.forEach { (argType, argSerializer) ->
-            assert(stackValueSerializerInstance(codegen, module, argType, argSerializer, this))
+            assert(stackValueSerializerInstance(codegen, module, argType, argSerializer, this, argType.genericIndex, genericSerializerFieldGetter))
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) {
                 invokestatic("kotlinx/serialization/internal/BuiltinSerializersKt", "makeNullable",

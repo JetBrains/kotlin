@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 class SerializableProperty(val descriptor: PropertyDescriptor, val isConstructorParameterWithDefault: Boolean) {
     val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
     val type = descriptor.type
+    val genericIndex = type.genericIndex
     val module = descriptor.module
     val serializableWith = descriptor.annotations.serializableWith
     val optional = descriptor.annotations.serialOptional

@@ -26,14 +26,13 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperty
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -73,22 +72,29 @@ class SerializableCodegenImpl(
         val thisI = 0
         val outputI = 1
         val serialDescI = 2
-//        val offsetI = 3
+        val offsetI = 3
 
         val superClass = serializableDescriptor.getSuperClassOrAny()
         val myPropsStart: Int
         if (superClass.isInternalSerializable) {
             myPropsStart = SerializableProperties(superClass, classCodegen.bindingContext).serializableProperties.size
+            val superTypeArguments =  serializableDescriptor.typeConstructor.supertypes.single { it.toClassDescriptor?.isInternalSerializable == true }.arguments
             //super.writeSelf(output, serialDesc)
             load(thisI, thisAsmType)
             load(outputI, kOutputType)
             load(serialDescI, descType)
-            invokespecial(classCodegen.typeMapper.mapType(superClass).internalName, signature.asmMethod.name, signature.asmMethod.descriptor, false)
+            superTypeArguments.forEach {
+                val genericIdx = serializableDescriptor.defaultType.arguments.indexOf(it).let { if (it == -1) null else it }
+                val serial = findTypeSerializer(serializableDescriptor.module, it.type, classCodegen.typeMapper.mapType(it.type))
+                stackValueSerializerInstance(classCodegen, serializableDescriptor.module, it.type, serial, this, genericIdx) {
+                    load(offsetI + it, kSerializerType)
+                }
+            }
+            val superSignature = classCodegen.typeMapper.mapSignatureSkipGeneric(KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(superClass))
+            invokespecial(classCodegen.typeMapper.mapType(superClass).internalName, superSignature.asmMethod.name, superSignature.asmMethod.descriptor, false)
         }
         else {
             myPropsStart = 0
-            // offset = 0
-//            iconst(0)
         }
 
         for (i in myPropsStart until properties.serializableProperties.size) {
@@ -97,7 +103,7 @@ class SerializableCodegenImpl(
             load(outputI, kOutputType)
             load(serialDescI, descType)
             iconst(i)
-            genKOutputMethodCall(property, classCodegen, exprCodegen, thisAsmType, thisI)
+            genKOutputMethodCall(property, classCodegen, exprCodegen, thisAsmType, thisI, offsetI)
         }
 
         areturn(Type.VOID_TYPE)

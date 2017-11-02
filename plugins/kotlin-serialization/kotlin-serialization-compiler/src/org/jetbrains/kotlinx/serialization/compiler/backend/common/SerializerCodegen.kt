@@ -43,11 +43,18 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
         val load = generateLoadIfNeeded()
         if (save || load || prop)
             generateSerialDesc()
+        if (serializableDescriptor.declaredTypeParameters.isNotEmpty()) {
+            generateGenericFieldsAndConstructor()
+        }
     }
 
     protected val serialDescPropertyDescriptor = getPropertyToGenerate(serializerDescriptor, KSerializerDescriptorResolver.SERIAL_DESC_FIELD,
                                                                        serializerDescriptor::checkSerializableClassPropertyResult)
     protected abstract fun generateSerialDesc()
+
+    protected open fun generateGenericFieldsAndConstructor() { //todo: make abstract after JS impl
+        TODO("js")
+    }
 
     protected abstract fun generateSerializableClassProperty(property: PropertyDescriptor)
 

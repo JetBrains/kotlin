@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 import org.jetbrains.org.objectweb.asm.Label
@@ -48,6 +50,26 @@ class SerializerCodegenImpl(
             val serializableClass = getSerializableClassDescriptorBySerializer(codegen.descriptor) ?: return
             SerializerCodegenImpl(codegen, serializableClass).generate()
         }
+    }
+
+    override fun generateGenericFieldsAndConstructor() {
+        serializableDescriptor.declaredTypeParameters.forEachIndexed { i, _ ->
+            codegen.v.newField(OtherOrigin(codegen.myClass.psiOrParent), ACC_PRIVATE or ACC_SYNTHETIC,
+                              "$typeArgPrefix$i", kSerializerType.descriptor, null, null )
+        }
+
+        val descr = createTypedSerializerConstructorDescriptor(serializableDescriptor)
+        codegen.generateMethod(descr) { sig, exprCodegen ->
+            load(0, serializerAsmType)
+            invokespecial("java/lang/Object", "<init>", "()V", false)
+            serializableDescriptor.declaredTypeParameters.forEachIndexed { i, _ ->
+                load(0, serializerAsmType)
+                load(i+1, kSerializerType)
+                putfield(serializerAsmType.internalName, "$typeArgPrefix$i", kSerializerType.descriptor)
+            }
+            areturn(Type.VOID_TYPE)
+        }
+
     }
 
     override fun generateSerialDesc() {
@@ -126,12 +148,19 @@ class SerializerCodegenImpl(
                           ")" + kOutputType.descriptor, false)
             store(outputVar, kOutputType)
             if (serializableDescriptor.isInternalSerializable) {
+                val sig = StringBuilder("(${kOutputType.descriptor}${descType.descriptor}")
                 // call obj.write$Self(output, classDesc)
                 load(objVar, objType)
                 load(outputVar, kOutputType)
                 load(descVar, descType)
+                serializableDescriptor.declaredTypeParameters.forEachIndexed {i, _ ->
+                    load(0, kSerializerType)
+                    getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$i", kSerializerType.descriptor)
+                    sig.append(kSerializerType.descriptor)
+                }
+                sig.append(")V")
                 invokevirtual(objType.internalName, KSerializerDescriptorResolver.WRITE_SELF_NAME.asString(),
-                              "(${kOutputType.descriptor}${descType.descriptor})V", false)
+                              sig.toString(), false)
             }
             else {
                 // loop for all properties
@@ -235,7 +264,7 @@ class SerializerCodegenImpl(
                     iconst(labelNum)
 
                     val sti = getSerialTypeInfo(property, propertyType)
-                    val useSerializer = stackValueSerializerInstance(codegen, sti)
+                    val useSerializer = stackValueSerializerInstanceFromSerializer(codegen, sti)
                     val unknownSer = (!useSerializer && sti.elementMethodPrefix.isEmpty())
                     if (unknownSer) {
                         aconst(codegen.typeMapper.mapType(property.type))
