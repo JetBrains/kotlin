@@ -15,6 +15,8 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(ideaSdkDeps("idea", "idea_rt", "openapi"))
     testCompile(commonDep("junit:junit"))
+
+    compileOnly(project(":kotlin-annotation-processing-runtime"))
 }
 
 sourceSets {
@@ -22,10 +24,15 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+runtimeJar {
+    from(getSourceSetsFrom(":kotlin-annotation-processing-runtime")["main"].output.classesDirs)
+}
+
 testsJar {}
 
 projectTest {
     workingDir = rootDir
+    dependsOnTaskIfExistsRec("dist", project = rootProject)
 }
 
 runtimeJar()
