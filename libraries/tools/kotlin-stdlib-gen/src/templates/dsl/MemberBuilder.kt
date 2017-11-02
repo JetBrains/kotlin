@@ -45,7 +45,8 @@ class MemberBuilder(
 
     val f get() = family
 
-    var hasPlatformSpecializations: Boolean = false
+    private val legacyMode = true
+    var hasPlatformSpecializations: Boolean = legacyMode
         private set
 
     var doc: String? = null; private set
@@ -143,10 +144,19 @@ class MemberBuilder(
 
 
     fun build(builder: Appendable) {
-        // TODO: legacy mode when all is headerOnly + no_impl
-        // except functions with optional parameters - they are common + no_impl
-        val headerOnly: Boolean = platform == Platform.Common && hasPlatformSpecializations
-        val isImpl: Boolean = platform != Platform.Common && Platform.Common in allowedPlatforms
+        val headerOnly: Boolean
+        val isImpl: Boolean
+        if (!legacyMode) {
+            headerOnly = platform == Platform.Common && hasPlatformSpecializations
+            isImpl = platform != Platform.Common && Platform.Common in allowedPlatforms
+        }
+        else {
+            // legacy mode when all is headerOnly + no_impl
+            // except functions with optional parameters - they are common + no_impl
+            val hasOptionalParams = signature.contains("=")
+            headerOnly =  platform == Platform.Common && !hasOptionalParams
+            isImpl = false
+        }
 
         val returnType = returns ?: throw RuntimeException("No return type specified for $signature")
 
