@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.google.common.collect.ImmutableSet
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
@@ -53,8 +52,6 @@ interface DiagnosticSuppressor {
 }
 
 abstract class KotlinSuppressCache {
-    private val LOG = Logger.getInstance(DiagnosticsWithSuppression::class.java)
-
     private val ADDITIONAL_SUPPRESS_STRING_PROVIDERS = ExtensionProvider.create(SuppressStringProvider.EP_NAME)
     private val DIAGNOSTIC_SUPPRESSORS = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
 
@@ -121,12 +118,6 @@ abstract class KotlinSuppressCache {
        This way we need no more lookups than the number of suppress() annotations from here to the root.
      */
     protected fun isSuppressedByAnnotated(suppressionKey: String, severity: Severity, annotated: KtAnnotated, debugDepth: Int): Boolean {
-        if (LOG.isDebugEnabled) {
-            LOG.debug("Annotated: ", annotated.name)
-            LOG.debug("Depth: ", debugDepth)
-            LOG.debug("Cache size: ", suppressors.size, "\n")
-        }
-
         val suppressor = getOrCreateSuppressor(annotated)
         if (suppressor.isSuppressed(suppressionKey, severity)) return true
 
