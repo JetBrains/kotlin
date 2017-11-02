@@ -51,7 +51,7 @@ import javax.lang.model.element.TypeElement
 
 class JavaKaptContextTest {
     companion object {
-        private val TEST_DATA_DIR = File("plugins/kapt3/testData/runner")
+        private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/runner")
         val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
 
         fun simpleProcessor() = object : AbstractProcessor() {

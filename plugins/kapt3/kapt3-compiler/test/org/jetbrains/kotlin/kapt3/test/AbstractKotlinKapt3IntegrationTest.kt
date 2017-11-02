@@ -50,7 +50,7 @@ import com.sun.tools.javac.util.List as JavacList
 
 abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     private companion object {
-        val TEST_DATA_DIR = File("plugins/kapt3/testData/kotlinRunner")
+        val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
     }
 
     private var _processors: List<Processor>? = null

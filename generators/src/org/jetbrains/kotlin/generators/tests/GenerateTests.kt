@@ -946,7 +946,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/kapt3/test", "plugins/kapt3/testData") {
+    testGroup("plugins/kapt3/kapt3-compiler/test", "plugins/kapt3/kapt3-compiler/testData") {
         testClass<AbstractClassFileToSourceStubConverterTest> {
             model("converter")
         }
