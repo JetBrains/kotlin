@@ -1868,7 +1868,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
-    public boolean lookupLocal(DeclarationDescriptor descriptor) {
+    public boolean isLocal(DeclarationDescriptor descriptor) {
         return lookupLocalIndex(descriptor) != -1;
     }
 
