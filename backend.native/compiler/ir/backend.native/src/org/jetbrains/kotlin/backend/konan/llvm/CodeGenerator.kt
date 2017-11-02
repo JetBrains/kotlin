@@ -195,7 +195,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val value = LLVMBuildLoad(builder, address, name)!!
         if (isObjectRef(value) && isVar) {
             val slot = alloca(LLVMTypeOf(value), variableLocation = null)
-            storeAnyLocal(value, slot)
+            storeAny(value, slot)
         }
         return value
     }
@@ -206,15 +206,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         LLVMBuildStore(builder, value, ptr)
     }
 
-    fun storeAnyLocal(value: LLVMValueRef, ptr: LLVMValueRef) {
-        if (isObjectRef(value)) {
-            updateRef(value, ptr)
-        } else {
-            LLVMBuildStore(builder, value, ptr)
-        }
-    }
-
-    fun storeAnyGlobal(value: LLVMValueRef, ptr: LLVMValueRef) {
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef) {
         if (isObjectRef(value)) {
             updateRef(value, ptr)
         } else {

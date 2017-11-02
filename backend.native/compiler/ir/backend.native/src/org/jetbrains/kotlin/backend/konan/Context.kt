@@ -156,10 +156,14 @@ internal class SpecialDeclarationsFactory(val context: Context) {
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     lateinit var moduleDescriptor: ModuleDescriptor
 
-    override val builtIns: KonanBuiltIns by lazy(PUBLICATION) { moduleDescriptor.builtIns as KonanBuiltIns }
+    override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
+        moduleDescriptor.builtIns as KonanBuiltIns
+    }
 
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
-    override val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) { ReflectionTypes(moduleDescriptor, FqName("konan.internal")) }
+    override val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) {
+        ReflectionTypes(moduleDescriptor, FqName("konan.internal"))
+    }
     private val vtableBuilders = mutableMapOf<ClassDescriptor, ClassVtablesBuilder>()
 
     fun getVtableBuilder(classDescriptor: ClassDescriptor) = vtableBuilders.getOrPut(classDescriptor) {
@@ -182,9 +186,16 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         config.librariesWithDependencies(moduleDescriptor)
     }
 
+    fun needGlobalInit(field: IrField): Boolean {
+        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return false
+        // TODO: add some smartness here. Maybe if package of the field is in never accessed
+        // assume its global init can be actually omitted.
+        return true
+    }
+
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null
-        set(module: IrModuleFragment?) {
+        set(module) {
             if (field != null) {
                 throw Error("Another IrModule in the context.")
             }
@@ -203,7 +214,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     var llvmModule: LLVMModuleRef? = null
-        set(module: LLVMModuleRef?) {
+        set(module) {
             if (field != null) {
                 throw Error("Another LLVMModule in the context.")
             }

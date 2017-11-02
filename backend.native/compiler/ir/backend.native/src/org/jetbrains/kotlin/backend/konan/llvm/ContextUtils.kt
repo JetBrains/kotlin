@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -343,5 +343,5 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val usedFunctions = mutableListOf<LLVMValueRef>()
     val staticInitializers = mutableListOf<LLVMValueRef>()
-    val fileInitializers = mutableListOf<IrElement>()
+    val fileInitializers = mutableListOf<IrField>()
 }

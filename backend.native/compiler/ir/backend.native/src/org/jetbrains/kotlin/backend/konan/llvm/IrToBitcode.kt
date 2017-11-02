@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -286,7 +285,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     val kNodeInitType = LLVMGetTypeByName(context.llvmModule, "struct.InitNode")!!
     //-------------------------------------------------------------------------//
 
-    fun createInitBody(initName: String): LLVMValueRef {
+    private fun createInitBody(initName: String): LLVMValueRef {
         val initFunction = LLVMAddFunction(context.llvmModule, initName, kInitFuncType)!!    // create LLVM function
         generateFunction(codegen, initFunction) {
             using(FunctionScope(initFunction, it)) {
@@ -296,26 +295,24 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
                 appendingTo(bbDeinit) {
                     context.llvm.fileInitializers.forEach {
-                        val irField = it as IrField
-                        val descriptor = irField.descriptor
+                        val descriptor = it.descriptor
                         if (descriptor.type.isValueType())
                             return@forEach // Is not a subject for memory management.
-                        val globalPtr = context.llvmDeclarations.forStaticField(descriptor).storage
-                        storeAnyGlobal(codegen.kNullObjHeaderPtr, globalPtr)
+                        val address = context.llvmDeclarations.forStaticField(descriptor).storage
+                        storeAny(codegen.kNullObjHeaderPtr, address)
                     }
-                    objects.forEach { storeAnyGlobal(codegen.kNullObjHeaderPtr, it) }
+                    objects.forEach { storeAny(codegen.kNullObjHeaderPtr, it) }
                     ret(null)
                 }
 
                 appendingTo(bbInit) {
                     context.llvm.fileInitializers
-                            .map { it as IrField }
-                            .filterNot { it.initializer is IrConst<*> }
                             .forEach {
-                                val descriptor = it.descriptor
-                                val initialization = evaluateExpression(it.initializer!!.expression)
-                                val globalPtr = context.llvmDeclarations.forStaticField(descriptor).storage
-                                storeAnyGlobal(initialization, globalPtr)
+                                if (it.initializer?.expression !is IrConst<*>?) {
+                                    val initialization = evaluateExpression(it.initializer!!.expression)
+                                    val address = context.llvmDeclarations.forStaticField(it.descriptor).storage
+                                    storeAny(initialization, address)
+                                }
                             }
                     ret(null)
                 }
@@ -327,7 +324,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     // Creates static struct InitNode $nodeName = {$initName, NULL};
 
-    fun createInitNode(initFunction: LLVMValueRef, nodeName: String): LLVMValueRef {
+    private fun createInitNode(initFunction: LLVMValueRef, nodeName: String): LLVMValueRef {
         val nextInitNode = LLVMConstNull(pointerType(kNodeInitType))                    // Set InitNode.next = NULL.
         val argList      = cValuesOf(initFunction, nextInitNode)                        // Construct array of args.
         val initNode     = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!            // Create static object of class InitNode.
@@ -336,7 +333,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun createInitCtor(ctorName: String, initNodePtr: LLVMValueRef) {
+    private fun createInitCtor(ctorName: String, initNodePtr: LLVMValueRef) {
         val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!   // Create constructor function.
         generateFunction(codegen, ctorFunction) {
             call(context.llvm.appendToInitalizersTail, listOf(initNodePtr))             // Add node to the tail of initializers list.
@@ -348,8 +345,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     override fun visitFile(declaration: IrFile) {
-
+        // TODO: collect those two in one place.
         context.llvm.fileInitializers.clear()
+        objects.clear()
 
         using(FileScope(declaration)) {
             declaration.acceptChildrenVoid(this)
@@ -361,8 +359,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val fileName = declaration.name.takeLastWhile { it != '/' }.dropLastWhile { it != '.' }.dropLast(1)
             val initName = "${fileName}_init_${context.llvm.globalInitIndex}"
             val nodeName = "${fileName}_node_${context.llvm.globalInitIndex}"
-            // Make the name prefix easily parsable for the platforms lacking 
-            // llvm.global_ctors mechanism (such as wasm).
+            // Make the name prefix easily parsable for the platforms lacking
+            // llvm.global_ctors mechanism (such as WASM).
             val ctorName = "Konan_global_ctor_${fileName}_${context.llvm.globalInitIndex++}"
 
             val initFunction = createInitBody(initName)
@@ -630,7 +628,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.log{"visitField                     : ${ir2string(declaration)}"}
         debugFieldDeclaration(declaration)
         val descriptor = declaration.descriptor
-        if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
+        if (context.needGlobalInit(declaration)) {
             val type = codegen.getLLVMType(descriptor.type)
             val globalProperty = context.llvmDeclarations.forStaticField(descriptor).storage
             if (declaration.initializer!!.expression is IrConst<*>) {
@@ -640,10 +638,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
             context.llvm.fileInitializers.add(declaration)
 
-            LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
             // (Cannot do this before the global is initialized).
-
-            return
+            LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
         }
     }
 
@@ -1292,12 +1288,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = evaluateExpression(value.receiver!!)
-            functionGenerationContext.storeAnyGlobal(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
+            functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
         }
         else {
             assert (value.receiver == null)
             val globalValue = context.llvmDeclarations.forStaticField(value.descriptor).storage
-            functionGenerationContext.storeAnyGlobal(valueToAssign, globalValue)
+            functionGenerationContext.storeAny(valueToAssign, globalValue)
         }
 
         assert (value.type.isUnit())
@@ -1411,12 +1407,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-    fun getFileEntry(sourceFileName: String): SourceManager.FileEntry {
+    fun getFileEntry(sourceFileName: String): SourceManager.FileEntry =
         // We must cache file entries, otherwise we reparse same file many times.
-        return context.fileEntryCache.getOrPut(sourceFileName) {
-            NaiveSourceBasedFileEntryImpl(sourceFileName)
-        }
-    }
+            context.fileEntryCache.getOrPut(sourceFileName) {
+                NaiveSourceBasedFileEntryImpl(sourceFileName)
+            }
 
     private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlockImpl) :
             FileScope(IrFileImpl(getFileEntry(returnableBlock.sourceFileName))) {
@@ -2336,7 +2331,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun delegatingConstructorCall(descriptor: ClassConstructorDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
+    private fun delegatingConstructorCall(
+            descriptor: ClassConstructorDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
 
         val constructedClass = functionGenerationContext.constructedClass!!
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisAsReceiverParameter)
@@ -2359,7 +2355,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun appendLlvmUsed(args: List<LLVMValueRef>) {
+    private fun appendLlvmUsed(args: List<LLVMValueRef>) {
         if (args.isEmpty()) return
 
         memScoped {
@@ -2374,7 +2370,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun entryPointSelector(entryPoint: LLVMValueRef, 
+    private fun entryPointSelector(entryPoint: LLVMValueRef,
         entryPointType: LLVMTypeRef, selectorName: String): LLVMValueRef {
 
         assert(LLVMCountParams(entryPoint) == 1)
@@ -2395,7 +2391,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun appendEntryPointSelector(descriptor: FunctionDescriptor?) {
+    private fun appendEntryPointSelector(descriptor: FunctionDescriptor?) {
         if (descriptor == null) return
 
         val entryPoint = codegen.llvmFunction(descriptor)
