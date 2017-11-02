@@ -393,6 +393,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen(), /* isLocal = */ true).generate();
 
         if (declaration instanceof KtClass && ((KtClass) declaration).isInterface()) {
+            // TODO consider dropping this code
+            // It looks like this code generates DefaultImpl class for a local interface.
+            // Local interfaces are prohibited in Kotlin 1.0.
             Type traitImplType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder traitImplBuilder = state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(declaration, descriptor), traitImplType, declaration.getContainingFile());
             ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.DEFAULT_IMPLS);
@@ -1869,7 +1872,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public boolean isLocal(DeclarationDescriptor descriptor) {
-        return lookupLocalIndex(descriptor) != -1;
+        if (lookupLocalIndex(descriptor) != -1) return true;
+
+        if (context.isContextWithUninitializedThis()) {
+            LocalLookup outerLookup = context.getParentContext().getEnclosingLocalLookup();
+            if (outerLookup != null) {
+                return outerLookup.isLocal(descriptor);
+            }
+        }
+
+        return false;
     }
 
     public int lookupLocalIndex(DeclarationDescriptor descriptor) {
