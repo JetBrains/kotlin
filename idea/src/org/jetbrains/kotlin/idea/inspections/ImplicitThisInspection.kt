@@ -32,6 +32,7 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
             if (expression !is KtNameReferenceExpression) return
+            if (expression.parent is KtThisExpression) return
             if (expression.isSelectorOfDotQualifiedExpression()) return
             val parent = expression.parent
             if (parent is KtCallExpression && parent.isSelectorOfDotQualifiedExpression()) return
