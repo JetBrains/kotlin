@@ -3,6 +3,10 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.8"
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
@@ -17,7 +21,6 @@ dependencies {
     compile(project(":js:js.translator"))
     compile(project(":js:js.serializer"))
     compile(project(":js:js.dce"))
-    compile(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
@@ -27,6 +30,13 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijCoreJar())
+        compile(intellijCoreJarDependencies())
+    }
 }
 
 sourceSets {

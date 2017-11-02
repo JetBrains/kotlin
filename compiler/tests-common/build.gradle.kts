@@ -1,6 +1,10 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     testCompile(project(":core:descriptors"))
     testCompile(project(":core:descriptors.jvm"))
@@ -25,9 +29,14 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
-    testCompile(ideaSdkCoreDeps("intellij-core"))
-    testCompile(ideaSdkDeps("openapi", "idea", "idea_rt"))
     testCompile(preloadedDeps("dx", subdir = "android-5.0/lib"))
+}
+
+afterEvaluate {
+    dependencies {
+        testCompile(intellijCoreJar())
+        testCompile(intellij { include("openapi.jar", "idea.jar", "idea_rt.jar") })
+    }
 }
 
 sourceSets {

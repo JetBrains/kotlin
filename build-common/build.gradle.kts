@@ -3,6 +3,8 @@ description = "Kotlin Build Common"
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin()
+
 dependencies {
     compileOnly(project(":core:util.runtime"))
     compileOnly(project(":compiler:util"))
@@ -11,7 +13,6 @@ dependencies {
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(ideaSdkDeps("util"))
     testCompileOnly(project(":compiler:cli-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
@@ -19,6 +20,13 @@ dependencies {
     testCompile(projectDist(":kotlin-stdlib"))
     testCompileOnly(ideaSdkDeps("openapi"))
     testRuntime(projectDist(":kotlin-reflect"))
+}
+
+afterEvaluate {
+    dependencies {
+        compileOnly(intellij { include("util.jar") })
+        testCompileOnly(intellij { include("openapi.jar") })
+    }
 }
 
 sourceSets {

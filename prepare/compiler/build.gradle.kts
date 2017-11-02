@@ -30,6 +30,8 @@ val compilerManifestClassPath =
         "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
 val fatJarContents by configurations.creating
+val fatJarContentsStripMetadata by configurations.creating
+val fatJarContentsStripServices by configurations.creating
 val fatSourcesJarContents by configurations.creating
 val proguardLibraryJars by configurations.creating
 val fatJar by configurations.creating
@@ -43,13 +45,14 @@ val outputJar = File(buildDir, "libs", "$compilerBaseName.jar")
 
 val compilerModules: Array<String> by rootProject.extra
 
-val ideaCoreSdkJars: Array<String> by rootProject.extra
-val coreSdkJarsSimple = ideaCoreSdkJars.filterNot { it == "jdom" || it == "log4j" }.toTypedArray()
-
 compilerModules.forEach { evaluationDependsOn(it) }
 
 val compiledModulesSources = compilerModules.map {
     project(it).the<JavaPluginConvention>().sourceSets.getByName("main").allSource
+}
+
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core", "jps-standalone")
 }
 
 dependencies {
@@ -61,8 +64,6 @@ dependencies {
     }
 
     fatJarContents(project(":core:builtins", configuration = "builtins"))
-    fatJarContents(ideaSdkCoreDeps(*coreSdkJarsSimple))
-    fatJarContents(ideaSdkDeps("jna-platform"))
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(commonDep("org.fusesource.jansi", "jansi"))
@@ -83,6 +84,17 @@ dependencies {
     compile(project(":kotlin-reflect"))
 }
 
+afterEvaluate {
+    dependencies {
+        fatJarContents(intellijCoreJar())
+        fatJarContents(intellijCoreJarDependencies { exclude("jdom.jar", "log4j.jar") })
+        fatJarContents(intellij { include("jna-platform.jar") })
+        fatJarContentsStripServices(intellijExtra("jps-standalone") { include("jps-model.jar") })
+        fatJarContentsStripMetadata(intellij { include("oromatcher.jar", "jdom.jar", "log4j.jar") })
+    }
+}
+
+
 val packCompiler by task<ShadowJar> {
     configurations = listOf(fatJar)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -91,9 +103,10 @@ val packCompiler by task<ShadowJar> {
 
     setupPublicJar("before-proguard")
     from(fatJarContents)
-    ideaSdkDeps("jps-model.jar", subdir = "jps").forEach { from(zipTree(it)) { exclude("META-INF/services/**") } }
-    ideaSdkDeps("oromatcher").forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }
-    ideaSdkCoreDeps("jdom", "log4j").forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }
+    afterEvaluate {
+        fatJarContentsStripServices.files.forEach { from(zipTree(it)) { exclude("META-INF/services/**") } }
+        fatJarContentsStripMetadata.files.forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }
+    }
 
     manifest.attributes.put("Class-Path", compilerManifestClassPath)
     manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
@@ -119,8 +132,6 @@ val proguard by task<ProGuardTask> {
 }
 
 noDefaultJar()
-
-cleanArtifacts()
 
 val pack = if (shrink) proguard else packCompiler
 
