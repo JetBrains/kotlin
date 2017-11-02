@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
 //        Snapshots,
 //        Mapping,
 //        SetOps,
-//        Aggregates,
+        Aggregates,
 //        Guards,
 //        Generators,
 //        StringJoinOps,
