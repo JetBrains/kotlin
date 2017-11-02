@@ -590,15 +590,75 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/ImplicitNullableNothingType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("function.kt")
-        public void testFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/function.kt");
+        @TestMetadata("localFun.kt")
+        public void testLocalFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/localFun.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("variable.kt")
-        public void testVariable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/variable.kt");
+        @TestMetadata("localVal.kt")
+        public void testLocalVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/localVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/localVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOverridableFun.kt")
+        public void testNotOverridableFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/notOverridableFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOverridableVal.kt")
+        public void testNotOverridableVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/notOverridableVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOverridableVar.kt")
+        public void testNotOverridableVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/notOverridableVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overridableFun.kt")
+        public void testOverridableFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/overridableFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overridableVal.kt")
+        public void testOverridableVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/overridableVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overridableVar.kt")
+        public void testOverridableVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/overridableVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topFun.kt")
+        public void testTopFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/topFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topVal.kt")
+        public void testTopVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/topVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topVar.kt")
+        public void testTopVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType/topVar.kt");
             doTest(fileName);
         }
     }

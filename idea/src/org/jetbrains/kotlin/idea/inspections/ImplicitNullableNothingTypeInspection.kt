@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 
-class ImplicitNullableNothingTypeInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+class ImplicitNullableNothingTypeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
 
         return object : KtVisitorVoid() {
@@ -33,6 +34,12 @@ class ImplicitNullableNothingTypeInspection : AbstractKotlinInspection(), Cleanu
                 if (declaration !is KtCallableDeclaration) return
                 if (SpecifyTypeExplicitlyIntention().applicabilityRange(declaration) == null) return
                 if (!SpecifyTypeExplicitlyIntention.getTypeForDeclaration(declaration).isNullableNothing()) return
+
+                if (!when (declaration) {
+                    is KtProperty -> declaration.isVar || declaration.isOverridable()
+                    is KtNamedFunction -> declaration.isOverridable()
+                    else -> false
+                }) return
 
                 val nameIdentifier = declaration.nameIdentifier ?: return
                 val isFunction = declaration is KtFunction

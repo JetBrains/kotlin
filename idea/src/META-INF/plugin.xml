@@ -2638,8 +2638,7 @@
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
-                     cleanupTool="true"
-                     level="WEAK WARNING"
+                     level="WARNING"
                      language="kotlin"
     />
 
