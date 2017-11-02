@@ -4,10 +4,16 @@ konan.targets = ['macbook', 'linux']
 
 def tensorflowHome = "${System.getProperty("user.home")}/.konan/third-party/tensorflow"
 
+task downloadTensorflow(type: Exec) {
+    workingDir getProjectDir()
+    commandLine './downloadTensorflow.sh'
+}
+
 konanArtifacts {
     interop('TensorflowInterop') {
         defFile "src/main/c_interop/tensorflow.def"
         includeDirs "${tensorflowHome}/include"
+        dependsOn 'downloadTensorflow'
     }
 
     program('Tensorflow') {
@@ -25,13 +31,4 @@ task warning {
         println "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $tensorflowHome/lib if the TensorFlow dynamic library cannot be found."
 
     }
-}
-
-task downloadTensorflow(type: Exec) {
-    workingDir getProjectDir()
-    commandLine './downloadTensorflow.sh'
-}
-
-compileKonanTensorflowInterop {
-    dependsOn 'downloadTensorflow'
 }
