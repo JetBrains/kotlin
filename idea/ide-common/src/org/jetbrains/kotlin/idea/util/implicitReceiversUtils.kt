@@ -89,7 +89,7 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverPar
         val factory = if (expressionText != null)
             object : ReceiverExpressionFactory {
                 override val isImmediate = isImmediateThis
-                override val expressionText get() = expressionText!!
+                override val expressionText: String get() = expressionText
                 override fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean): KtExpression {
                     return psiFactory.createExpression(if (shortThis && isImmediateThis) "this" else expressionText)
                 }

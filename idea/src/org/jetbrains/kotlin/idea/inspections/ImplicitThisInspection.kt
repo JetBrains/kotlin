@@ -26,25 +26,20 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.util.getFactoryForImplicitReceiverWithSubtypeOf
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class ImplicitThisInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
-        override fun visitExpression(expression: KtExpression) {
+        override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
             if (expression !is KtNameReferenceExpression) return
             if (expression.isSelectorOfDotQualifiedExpression()) return
             val parent = expression.parent
             if (parent is KtCallExpression && parent.isSelectorOfDotQualifiedExpression()) return
 
-            val referenceExpression = expression as? KtNameReferenceExpression
-                                      ?: expression.getChildOfType()
-                                      ?: return
-
             val context = expression.analyzeFully()
             val scope = expression.getResolutionScope(context) ?: return
 
-            val descriptor = context[BindingContext.REFERENCE_TARGET, referenceExpression] as? CallableDescriptor ?: return
+            val descriptor = context[BindingContext.REFERENCE_TARGET, expression] as? CallableDescriptor ?: return
             val receiverDescriptor = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter ?: return
             val receiverType = receiverDescriptor.type
 
@@ -68,7 +63,7 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
             val factory = KtPsiFactory(project)
             val call = expression.parent as? KtCallExpression ?: expression
 
-            call.replace(factory.createExpressionByPattern("$0.$1", receiverText, call.text))
+            call.replace(factory.createExpressionByPattern("$0.$1", receiverText, call))
         }
     }
 }
