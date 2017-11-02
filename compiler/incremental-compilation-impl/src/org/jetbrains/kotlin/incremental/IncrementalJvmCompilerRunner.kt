@@ -233,15 +233,10 @@ class IncrementalJvmCompilerRunner(
         }
     }
 
-    private var outdatedClasses: Iterable<JvmClassName> = emptyList()
-    override fun markDirty(caches: IncrementalJvmCachesManager, dirtySources: List<File>) {
-        outdatedClasses = caches.platformCache.classesBySources(dirtySources)
-        super.markDirty(caches, dirtySources)
-    }
-
     override fun postCompilationHook(exitCode: ExitCode) {
         if (exitCode == ExitCode.OK) {
-            kaptAnnotationsFileUpdater?.updateAnnotations(outdatedClasses)
+            // TODO: Is it ok that argument always was an empty list?
+            kaptAnnotationsFileUpdater?.updateAnnotations(emptyList())
         }
         else {
             kaptAnnotationsFileUpdater?.revert()
