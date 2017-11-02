@@ -11,6 +11,7 @@
       <option name="taskNames">
         <list>
           <option value=":compiler:generateTests" />
+          <option value=":compiler:tests-java8:generateTests" />
           <option value=":js:js.tests:generateTests" />
         </list>
       </option>
