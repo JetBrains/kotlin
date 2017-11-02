@@ -170,20 +170,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    testGroup("compiler/tests-ir-jvm/tests", "compiler/testData") {
-        testClass<AbstractIrBlackBoxCodegenTest> {
-            model("codegen/box", targetBackend = TargetBackend.JVM)
-        }
-
-        testClass<AbstractIrBlackBoxInlineCodegenTest> {
-            model("codegen/boxInline")
-        }
-
-        testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
-            model("codegen/boxInline")
-        }
-    }
-
     testGroup("compiler/tests-java8/tests", "compiler/testData") {
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJava8CodegenTestGenerated") {
             model("codegen/java8/box")
