@@ -10,10 +10,10 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.0")
-class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.+")
+class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionAtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
+class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.1-rc-1", androidGradlePluginVersion = "3.0.0-beta1") {
+class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionAtLeast("4.1"), androidGradlePluginVersion = "3.0.0-beta1") {
 
     @Test
     fun testApplyWithFeaturePlugin() {
@@ -43,7 +43,7 @@ class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion =
 }
 
 abstract class AbstractKotlinAndroidGradleTests(
-        protected val gradleVersion: String,
+        protected val gradleVersion: GradleVersionRequirement,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
@@ -293,7 +293,6 @@ fun getSomething() = 10
 
 
 abstract class AbstractKotlinAndroidWithJackGradleTests(
-        private val gradleVersion: String,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
@@ -305,7 +304,7 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
 
     @Test
     fun testSimpleCompile() {
-        val project = Project("AndroidJackProject", gradleVersion)
+        val project = Project("AndroidJackProject", SpecificGradleVersion("3.4"))
 
         project.build("assemble") {
             assertFailed()

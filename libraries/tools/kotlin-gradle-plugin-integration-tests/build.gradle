@@ -28,6 +28,10 @@ dependencies {
     testCompile gradleApi()
 
     testRuntime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
+
+    // Workaround for missing transitive import of the common project `kotlin-test-common`
+    // for `kotlin-test-jvm` into the IDE:
+    testCompileOnly(project(':kotlin-test:kotlin-test-common')) { transitive = false }
 }
 
 // Include Gradle task properties validation into the testing procedure:
@@ -113,3 +117,10 @@ tasks.withType(Test) {
         }
     }
 }
+
+task testAdvanceGradleVersion(type: Test) {
+    systemProperty("advanceGradleVersion", "4.3-rc-1")
+    dependsOn = test.dependsOn
+}
+
+check.dependsOn(testAdvanceGradleVersion)

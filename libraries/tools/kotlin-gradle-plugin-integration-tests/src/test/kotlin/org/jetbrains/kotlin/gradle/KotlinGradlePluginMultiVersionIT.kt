@@ -69,7 +69,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
     @Test
     fun testJavaIcCompatibility() {
-        val version = gradleVersion.split(".").map(String::toInt)
+        val version = gradleVersionString.split(".").map(String::toInt)
         val expectIncrementalCompilation = version.let { (major, minor) -> major > 2 || major == 2 && minor >= 14 }
         val expectVerboseIncrementalLogs = version.let { (major, minor) -> major < 3 || major == 3 && minor < 4 }
 
@@ -130,7 +130,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     @Test
     fun testJavaLibraryCompatibility() {
         Assume.assumeTrue("The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
-                gradleVersion.split(".").map(String::toInt).let { (major, minor) ->
+                gradleVersionString.split(".").map(String::toInt).let { (major, minor) ->
                     major > 3 || major == 3 && minor >= 4
                 })
 

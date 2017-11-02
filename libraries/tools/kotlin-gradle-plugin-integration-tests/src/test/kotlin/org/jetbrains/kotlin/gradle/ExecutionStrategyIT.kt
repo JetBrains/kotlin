@@ -20,7 +20,7 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 
 open class ExecutionStrategyIT : BaseGradleIT() {
     companion object {
-        private const val GRADLE_VERSION = "2.10"
+        private val GRADLE_VERSION = GradleVersionAtLeast("4.0")
     }
 
     @Test
@@ -69,6 +69,6 @@ open class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     protected open fun CompiledProject.checkOutput() {
-        assertFileExists("app/build/classes/main/foo/MainKt.class")
+        assertFileExists("app/build/classes/kotlin/main/foo/MainKt.class")
     }
 }

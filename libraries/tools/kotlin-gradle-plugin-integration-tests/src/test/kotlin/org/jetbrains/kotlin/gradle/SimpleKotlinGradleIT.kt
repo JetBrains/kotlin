@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
     companion object {
-        private const val GRADLE_VERSION = "2.10"
+        private val GRADLE_VERSION = NoSpecificGradleVersion
     }
 
     @Test

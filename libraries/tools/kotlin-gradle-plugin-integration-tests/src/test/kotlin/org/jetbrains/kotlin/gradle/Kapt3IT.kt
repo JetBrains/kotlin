@@ -36,7 +36,7 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
 
 open class Kapt3IT : Kapt3BaseIT() {
     companion object {
-        private const val GRADLE_VERSION = "3.3"
+        private val GRADLE_VERSION = NoSpecificGradleVersion
     }
 
     @Test
@@ -244,7 +244,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testKaptClassesDirSync() {
-        val project = Project("autoService", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("autoService", SpecificGradleVersion("3.5"), directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()

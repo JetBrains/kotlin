@@ -23,7 +23,7 @@ import java.io.File
 
 class CoroutinesIT: BaseGradleIT() {
     companion object {
-        private const val GRADLE_VERSION = "2.14.1"
+        private val GRADLE_VERSION = NoSpecificGradleVersion
         private const val LOCAL_PROPERTIES = "local.properties"
         private const val GRADLE_PROPERTIES = "gradle.properties"
     }

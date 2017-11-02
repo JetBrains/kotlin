@@ -50,7 +50,7 @@ class PluginsDslIT : BaseGradleIT() {
     }
 
     companion object {
-        private const val GRADLE_VERSION = "4.0"
+        private val GRADLE_VERSION = GradleVersionAtLeast("4.0")
         private const val DIRECTORY_PREFIX = "pluginsDsl"
 
         private const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
@@ -62,7 +62,7 @@ class PluginsDslIT : BaseGradleIT() {
 
     private fun projectWithMavenLocalPlugins(
             projectName: String,
-            wrapperVersion: String = GRADLE_VERSION,
+            wrapperVersion: GradleVersionRequirement = GRADLE_VERSION,
             directoryPrefix: String? = DIRECTORY_PREFIX,
             minLogLevel: LogLevel = LogLevel.DEBUG
     ): Project {

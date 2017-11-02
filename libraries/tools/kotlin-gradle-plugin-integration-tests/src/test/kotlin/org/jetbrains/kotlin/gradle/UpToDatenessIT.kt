@@ -32,7 +32,7 @@ class UpToDateIT : BaseGradleIT() {
     }
 
     private fun testMutations(vararg mutations: ProjectMutation) {
-        val project = Project("simpleProject", "4.1")
+        val project = Project("simpleProject", NoSpecificGradleVersion)
         project.setupWorkingDir()
         mutations.forEach {
             it.initProject(project)

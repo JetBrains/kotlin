@@ -19,7 +19,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     }
 
     companion object {
-        private const val GRADLE_VERSION = "2.10"
+        private val GRADLE_VERSION = NoSpecificGradleVersion
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
         private const val GENERATE_STUBS_PLACEHOLDER = "GENERATE_STUBS_PLACEHOLDER"
 

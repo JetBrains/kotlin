@@ -27,12 +27,12 @@ import java.io.File
 
 class MultiplatformGradleIT : BaseGradleIT() {
     companion object {
-        private const val GRADLE_VERSION = "4.2"
+        private val GRADLE_VERSION = NoSpecificGradleVersion
     }
 
     @Test
     fun testMultiplatformCompile() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
+        val project = Project("multiplatformProject", GradleVersionAtLeast("4.0"))
 
         project.build("build") {
             assertSuccessful()
@@ -89,7 +89,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testSubprojectWithAnotherClassLoader() {
-        with(Project("multiplatformProject", GRADLE_VERSION)) {
+        with(Project("multiplatformProject", GradleVersionAtLeast("4.0"))) {
             setupWorkingDir()
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the

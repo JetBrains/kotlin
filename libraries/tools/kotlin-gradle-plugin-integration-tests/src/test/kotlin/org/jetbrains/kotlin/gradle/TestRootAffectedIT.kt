@@ -7,7 +7,7 @@ import org.junit.Test
 class TestRootAffectedIT : BaseGradleIT() {
     @Test
     fun testSourceRootClassIsModifiedIC() {
-        val project = Project("kotlinProject", "4.1")
+        val project = Project("kotlinProject", GradleVersionAtLeast("4.1"))
         val buildOptions = defaultBuildOptions().copy(incremental = true)
 
         project.build("build", options = buildOptions) {
@@ -37,7 +37,7 @@ class TestRootAffectedIT : BaseGradleIT() {
     @Test
     fun testSourceRootClassIsRemovedIC() {
         // todo: update Gradle after https://github.com/gradle/gradle/issues/3051 is resolved
-        val project = Project("kotlinProject", "3.0")
+        val project = Project("kotlinProject", SpecificGradleVersion("3.0"))
         val buildOptions = defaultBuildOptions().copy(incremental = true)
 
         project.build("build", options = buildOptions) {
@@ -55,7 +55,7 @@ class TestRootAffectedIT : BaseGradleIT() {
 
     @Test
     fun testTestRootClassIsRemovedIC() {
-        val project = Project("kotlinProject", "4.1")
+        val project = Project("kotlinProject", GradleVersionAtLeast("4.1"))
         val buildOptions = defaultBuildOptions().copy(incremental = true)
 
         project.build("build", options = buildOptions) {

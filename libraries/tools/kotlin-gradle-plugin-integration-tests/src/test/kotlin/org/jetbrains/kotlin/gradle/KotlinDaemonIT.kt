@@ -26,7 +26,7 @@ import java.io.File
 // todo: test daemon shutdown when gradle daemon dies
 class KotlinDaemonIT : BaseGradleIT() {
     companion object {
-        private const val GRADLE_VERSION = "2.10"
+        private val GRADLE_VERSION = NoSpecificGradleVersion
     }
 
     @Test

@@ -9,7 +9,7 @@ import java.io.File
 class KaptIT: BaseGradleIT() {
 
     companion object {
-        private const val GRADLE_VERSION = "2.14.1"
+        private val GRADLE_VERSION = NoSpecificGradleVersion
     }
 
     @Test
@@ -112,7 +112,7 @@ class KaptIT: BaseGradleIT() {
 
     private fun doTestIncrementalBuild(projectName: String, compileTasks: Array<String>) {
         val compileTasksUpToDate = compileTasks.map { it + " UP-TO-DATE" }.toTypedArray()
-        val project = Project(projectName, "2.10")
+        val project = Project(projectName, NoSpecificGradleVersion)
         project.allowOriginalKapt()
 
         project.build("build") {
