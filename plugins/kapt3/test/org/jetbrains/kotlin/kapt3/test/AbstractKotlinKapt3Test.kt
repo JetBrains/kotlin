@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.kapt3.test
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
+import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Files
+import java.util.*
 import com.sun.tools.javac.util.List as JavacList
 
 abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
@@ -96,9 +99,17 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
     override fun check(kaptContext: KaptContext<GenerationState>, txtFile: File, wholeFile: File) {
         fun isOptionSet(name: String) = wholeFile.useLines { lines -> lines.any { it.trim() == "// $name" } }
 
+        fun getOptionValues(name: String) = wholeFile.useLines { lines ->
+            lines.filter { it.startsWith("// $name") }
+                    .map { it.drop(name.length + 3).trim() }
+                    .filter { it.isNotEmpty() }
+                    .toList()
+        }
+
         val generateNonExistentClass = isOptionSet("NON_EXISTENT_CLASS")
         val correctErrorTypes = isOptionSet("CORRECT_ERROR_TYPES")
         val validate = !isOptionSet("NO_VALIDATION")
+        val expectedErrors = getOptionValues("EXPECTED_ERROR").sorted()
 
         val javaFiles = convert(kaptContext, generateNonExistentClass, correctErrorTypes)
 
@@ -111,8 +122,23 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
                 .let { removeMetadataAnnotationContents(it) }
 
         if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
-            Log.instance(kaptContext.context).flush()
-            error("There were errors during analysis. See errors above. Stubs:\n\n$actual")
+            val log = Log.instance(kaptContext.context) as KaptJavaLog
+
+            val actualErrors = log.reportedDiagnostics
+                    .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
+                    .map { it.getMessage(Locale.US).lines().first() }
+                    .sorted()
+
+            log.flush()
+
+            if (expectedErrors.isEmpty()) {
+                error("There were errors during analysis. See errors above. Stubs:\n\n$actual")
+            } else if (actualErrors != expectedErrors) {
+                error("Expected error matching assertion. Expected: \n"
+                      + expectedErrors.joinToString("\n") { "'$it'" }
+                      + "\n, found: \n"
+                      + actualErrors.joinToString("\n") { "'$it'" })
+            }
         }
         KotlinTestUtils.assertEqualsToFile(txtFile, actual)
     }

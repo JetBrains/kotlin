@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.kapt3.javac.kaptError
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -787,7 +788,11 @@ class ClassFileToSourceStubConverter(
             is Array<*> -> { // Two-element String array for enumerations ([desc, fieldName])
                 assert(value.size == 2)
                 val enumType = Type.getType(value[0] as String)
-                val valueName = (value[1] as String).takeIf { isValidIdentifier(it) } ?: "InvalidFieldName"
+                val valueName = (value[1] as String).takeIf { isValidIdentifier(it) } ?: run {
+                    kaptContext.compiler.log.report(kaptContext.kaptError("'${value[1]}' is an invalid Java enum value name"))
+                    "InvalidFieldName"
+                }
+
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
             }
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value) { convertLiteralExpression(it) })

@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.kapt3.javac
 
 import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.util.Context
-import com.sun.tools.javac.util.JCDiagnostic
-import com.sun.tools.javac.util.Log
+import com.sun.tools.javac.util.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
 import java.io.PrintWriter
 import javax.tools.JavaFileObject
@@ -36,6 +35,29 @@ class KaptJavaLog(
 ) : Log(context, errWriter, warnWriter, noticeWriter) {
     init {
         context.put(Log.outKey, noticeWriter)
+    }
+
+    val reportedDiagnostics: List<JCDiagnostic>
+        get() = _reportedDiagnostics
+
+    private val _reportedDiagnostics = mutableListOf<JCDiagnostic>()
+
+    override fun flush(kind: WriterKind?) {
+        super.flush(kind)
+
+        val diagnosticKind = when (kind) {
+            WriterKind.ERROR -> JCDiagnostic.DiagnosticType.ERROR
+            WriterKind.WARNING -> JCDiagnostic.DiagnosticType.WARNING
+            WriterKind.NOTICE -> JCDiagnostic.DiagnosticType.NOTE
+            else -> return
+        }
+
+        _reportedDiagnostics.removeAll { it.type == diagnosticKind }
+    }
+
+    override fun flush() {
+        super.flush()
+        _reportedDiagnostics.clear()
     }
 
     override fun report(diagnostic: JCDiagnostic) {
@@ -61,6 +83,7 @@ class KaptJavaLog(
             }
         }
 
+        _reportedDiagnostics += diagnostic
         super.report(diagnostic)
     }
 
@@ -114,4 +137,8 @@ class KaptJavaLog(
     class DiagnosticInterceptorData {
         var files: Map<JavaFileObject, JCTree.JCCompilationUnit> = emptyMap()
     }
+}
+
+fun KaptContext<*>.kaptError(text: String): JCDiagnostic {
+    return JCDiagnostic.Factory.instance(context).error(null, null, "proc.messager", text)
 }

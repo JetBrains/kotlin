@@ -1,3 +1,5 @@
+// EXPECTED_ERROR '60x60' is an invalid Java enum value name
+
 class `:)` {
     lateinit val f: String
 }
