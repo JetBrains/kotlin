@@ -516,9 +516,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
         StackValue myOuter = null;
         if (closure != null) {
-            EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
-            if (answer != null) {
-                return StackValue.changeReceiverForFieldAndSharedVar(answer.getInnerValue(), result);
+            EnclosedValueDescriptor capturedVariable = closure.getCaptureVariables().get(d);
+            if (capturedVariable != null) {
+                return StackValue.changeReceiverForFieldAndSharedVar(capturedVariable.getInnerValue(), result);
             }
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
