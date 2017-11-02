@@ -12,6 +12,8 @@ dependencies {
     testCompile(project(":js:js.dce"))
     testCompile(ideaSdkDeps("openapi", "idea", "idea_rt"))
     testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":kotlin-build-common"))
+    testCompile(projectTests(":generators:test-generator"))
     testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(projectDist(":kotlin-stdlib"))
     testRuntime(projectDist(":kotlin-stdlib-js"))
@@ -20,7 +22,6 @@ dependencies {
     testRuntime(projectDist(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
-    testCompile(projectTests(":kotlin-build-common"))
 }
 
 sourceSets {
@@ -49,3 +50,5 @@ projectTest("quickTest") {
     workingDir = rootDir
     systemProperty("kotlin.js.skipMinificationTest", "true")
 }
+
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")

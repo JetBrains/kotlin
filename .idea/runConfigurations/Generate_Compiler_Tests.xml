@@ -10,7 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="generateTests" />
+          <option value=":compiler:generateTests" />
+          <option value=":js:js.tests:generateTests" />
         </list>
       </option>
       <option name="vmOptions" value="" />
