@@ -222,7 +222,8 @@ class ClassFileToSourceStubConverter(
             return null
         }
 
-        val simpleName = getValidIdentifierName(getClassName(clazz, descriptor, isDefaultImpls, packageFqName)) ?: return null
+        val simpleName = getClassName(clazz, descriptor, isDefaultImpls, packageFqName)
+        if (!isValidIdentifier(simpleName)) return null
 
         val interfaces = mapJList(clazz.interfaces) {
             if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapJList null
@@ -368,11 +369,14 @@ class ClassFileToSourceStubConverter(
         val origin = kaptContext.origins[field]
         val descriptor = origin?.descriptor
 
-        val modifiers = convertModifiers(field.access, ElementKind.FIELD, packageFqName,
-                                         field.visibleAnnotations, field.invisibleAnnotations, descriptor?.annotations ?: Annotations.EMPTY)
-        val name = getValidIdentifierName(field.name) ?: return null
-        val type = Type.getType(field.desc)
+        val modifiers = convertModifiers(
+                field.access, ElementKind.FIELD, packageFqName,
+                field.visibleAnnotations, field.invisibleAnnotations, descriptor?.annotations ?: Annotations.EMPTY)
 
+        val name = field.name
+        if (!isValidIdentifier(name)) return null
+
+        val type = Type.getType(field.desc)
         if (checkIfShouldBeIgnored(type)) {
             return null
         }
@@ -412,7 +416,9 @@ class ClassFileToSourceStubConverter(
         }
 
         val isConstructor = method.name == "<init>"
-        val name = getValidIdentifierName(method.name, canBeConstructor = true) ?: return null
+
+        val name = method.name
+        if (!isValidIdentifier(name, canBeConstructor = isConstructor)) return null
 
         val modifiers = convertModifiers(
                 if (containingClass.isEnum() && isConstructor)
@@ -444,9 +450,9 @@ class ClassFileToSourceStubConverter(
                     info.invisibleAnnotations,
                     Annotations.EMPTY /* TODO */)
 
-            val name = treeMaker.name(getValidIdentifierName(info.name) ?: "p${index}_" + info.name.hashCode().ushr(1))
+            val name = info.name.takeIf { isValidIdentifier(it) } ?: "p${index}_" + info.name.hashCode().ushr(1)
             val type = treeMaker.Type(info.type)
-            treeMaker.VarDef(modifiers, name, type, null)
+            treeMaker.VarDef(modifiers, treeMaker.name(name), type, null)
         }
 
         val exceptionTypes = mapJList(method.exceptions) { treeMaker.FqName(it) }
@@ -545,7 +551,7 @@ class ClassFileToSourceStubConverter(
             return ifNonError()
         }
 
-        if (type?.containsErrorTypes() ?: false) {
+        if (type?.containsErrorTypes() == true) {
             val ktType = ktTypeProvider()
             if (ktType != null) {
                 @Suppress("UNCHECKED_CAST")
@@ -556,25 +562,23 @@ class ClassFileToSourceStubConverter(
         return ifNonError()
     }
 
-    private fun isValidQualifiedName(name: FqName): Boolean {
-        return name.pathSegments().all { getValidIdentifierName(it.asString(), false) != null }
-    }
+    private fun isValidQualifiedName(name: FqName) = name.pathSegments().all { isValidIdentifier(it.asString()) }
 
-    private fun getValidIdentifierName(name: String, canBeConstructor: Boolean = false): String? {
+    private fun isValidIdentifier(name: String, canBeConstructor: Boolean = false): Boolean {
         if (canBeConstructor && name == "<init>") {
-            return name
+            return true
         }
 
-        if (name in JAVA_KEYWORDS) return null
+        if (name in JAVA_KEYWORDS) return false
 
         if (name.isEmpty()
             || !Character.isJavaIdentifierStart(name[0])
             || name.drop(1).any { !Character.isJavaIdentifierPart(it) }
         ) {
-            return null
+            return false
         }
 
-        return name
+        return true
     }
 
     @Suppress("NOTHING_TO_INLINE")
@@ -661,9 +665,9 @@ class ClassFileToSourceStubConverter(
     }
 
     private fun convertAnnotationArgumentWithName(constantValue: Any?, value: ResolvedValueArgument?, name: String): JCExpression? {
-        val validName = getValidIdentifierName(name) ?: return null
+        if (!isValidIdentifier(name)) return null
         val expr = convertAnnotationArgument(constantValue, value) ?: return null
-        return treeMaker.Assign(treeMaker.SimpleName(validName), expr)
+        return treeMaker.Assign(treeMaker.SimpleName(name), expr)
     }
 
     private fun convertAnnotationArgument(constantValue: Any?, value: ResolvedValueArgument?): JCExpression? {
@@ -787,7 +791,7 @@ class ClassFileToSourceStubConverter(
             is Array<*> -> { // Two-element String array for enumerations ([desc, fieldName])
                 assert(value.size == 2)
                 val enumType = Type.getType(value[0] as String)
-                val valueName = getValidIdentifierName(value[1] as String) ?: "InvalidFieldName"
+                val valueName = (value[1] as String).takeIf { isValidIdentifier(it) } ?: "InvalidFieldName"
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
             }
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value) { convertLiteralExpression(it) })
