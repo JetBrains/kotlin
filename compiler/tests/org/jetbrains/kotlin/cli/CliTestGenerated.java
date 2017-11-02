@@ -818,4 +818,19 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsDceTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/cli/metadata")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Metadata extends AbstractCliTest {
+        public void testAllFilesPresentInMetadata() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("moduleName.args")
+        public void testModuleName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/metadata/moduleName.args");
+            doMetadataTest(fileName);
+        }
+    }
 }
