@@ -164,6 +164,12 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("AllInlineOnly.kt")
+        public void testAllInlineOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/AllInlineOnly.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AnnotationModifiers.kt")
         public void testAnnotationModifiers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/AnnotationModifiers.kt");
@@ -213,6 +219,12 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
     public static class Facades extends AbstractIdeLightClassTest {
         public void testAllFilesPresentInFacades() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("AllPrivate.kt")
+        public void testAllPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/AllPrivate.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("MultiFile.kt")
