@@ -110,6 +110,8 @@ import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.zip.ZipFile
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
 
 class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable,
@@ -155,7 +157,9 @@ class KotlinCoreEnvironment private constructor(
     val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
     init {
-        PersistentFSConstants.setMaxIntellisenseFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING)
+        PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
+                .apply { isAccessible = true }
+                .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
 
         val project = projectEnvironment.project
 
@@ -418,7 +422,12 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreEnvironment {
             // Tests are supposed to create a single project and dispose it right after use
             return KotlinCoreEnvironment(parentDisposable,
-                                         createApplicationEnvironment(parentDisposable, configuration, extensionConfigs.files),
+                                         createApplicationEnvironment(
+                                                 parentDisposable,
+                                                 configuration,
+                                                 extensionConfigs.files,
+                                                 unitTestMode = true
+                                         ),
                                          configuration,
                                          extensionConfigs)
         }
@@ -434,7 +443,7 @@ class KotlinCoreEnvironment private constructor(
                     return ourApplicationEnvironment!!
 
                 val parentDisposable = Disposer.newDisposable()
-                ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths)
+                ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths, unitTestMode = false)
                 ourProjectCount = 0
                 Disposer.register(parentDisposable, Disposable {
                     synchronized (APPLICATION_LOCK) {
@@ -455,11 +464,14 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun createApplicationEnvironment(
-                parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
+                parentDisposable: Disposable,
+                configuration: CompilerConfiguration,
+                configFilePaths: List<String>,
+                unitTestMode: Boolean
         ): JavaCoreApplicationEnvironment {
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
-            val applicationEnvironment = object : JavaCoreApplicationEnvironment(parentDisposable) {
+            val applicationEnvironment = object : JavaCoreApplicationEnvironment(parentDisposable, unitTestMode) {
                 override fun createJrtFileSystem(): VirtualFileSystem? = CoreJrtFileSystem()
             }
 
