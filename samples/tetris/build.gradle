@@ -20,11 +20,11 @@ konanArtifacts {
         }
 
         target 'iphone', {
-            includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
+            includeDirs "${System.getProperty("user.home")}/.konan/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
         }
 
         target 'raspberrypi', {
-            includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
+            includeDirs "${System.getProperty("user.home")}/.konan/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
         }
     }
 
