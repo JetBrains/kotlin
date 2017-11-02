@@ -132,10 +132,6 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
-    protected open fun markDirty(caches: CacheManager, dirtySources: List<File>) {
-        caches.platformCache.markDirty(dirtySources)
-    }
-
     protected abstract fun updateCaches(
             services: Services,
             caches: CacheManager,
