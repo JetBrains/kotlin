@@ -1,6 +1,6 @@
 apply plugin: 'konan'
 
-konan.targets = ['macbook', 'linux', 'raspberrypi']
+konan.targets = ['macbook', 'linux']
 
 def includePrefixes = [ '/opt/local/include', '/usr/include', '/usr/local/include' ]
 
