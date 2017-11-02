@@ -170,66 +170,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    testGroup("compiler/tests-java8/tests", "compiler/testData") {
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJava8CodegenTestGenerated") {
-            model("codegen/java8/box")
-        }
-
-        testClass<AbstractForeignJava8AnnotationsTest> {
-            model("foreignAnnotationsJava8/tests")
-        }
-
-        testClass<AbstractJavacForeignJava8AnnotationsTest> {
-            model("foreignAnnotationsJava8/tests")
-        }
-
-        testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest> {
-            model("foreignAnnotationsJava8/tests")
-        }
-
-        testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTest> {
-            model("foreignAnnotationsJava8/tests")
-        }
-
-        testClass<AbstractLoadJava8Test> {
-            model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
-            model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
-        }
-
-        testClass<AbstractLoadJava8UsingJavacTest> {
-            model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
-            model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
-        }
-
-        testClass<AbstractLoadJava8WithFastClassReadingTest> {
-            model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
-        }
-
-        testClass<AbstractEnhancedSignaturesResolvedCallsTest> {
-            model("resolvedCalls/enhancedSignatures")
-        }
-
-        testClass<AbstractJvm8RuntimeDescriptorLoaderTest> {
-            model("loadJava8/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))
-        }
-
-        testClass<AbstractCompileKotlinAgainstKotlinTest> {
-            model("codegen/java8/compileKotlinAgainstKotlin")
-        }
-
-        testClass<AbstractJava8WriteSignatureTest> {
-            model("codegen/java8/writeSignature")
-        }
-
-        testClass<AbstractWriteFlagsTest> {
-            model("codegen/java8/writeFlags")
-        }
-
-        testClass<AbstractBytecodeTextTest>("BytecodeTextJava8TestGenerated") {
-            model("codegen/java8/bytecodeText")
-        }
-    }
-
     testGroup("idea/tests", "idea/testData") {
         testClass<AbstractAdditionalResolveDescriptorRendererTest> {
             model("resolve/additionalLazyResolve")

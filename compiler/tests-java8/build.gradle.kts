@@ -20,6 +20,7 @@ dependencies {
     testCompile(projectDist(":kotlin-reflect"))
     testCompile(projectTests(":compiler"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":generators:test-generator"))
     testRuntime(projectRuntimeJar(":kotlin-preloader"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
@@ -46,3 +47,4 @@ projectTest {
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
 }
 
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
