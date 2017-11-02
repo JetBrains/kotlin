@@ -23,6 +23,8 @@ import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -53,6 +55,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
+        addAnnotationProcessingRuntimeLibrary(myEnvironment)
 
         // Use light analysis mode in tests
         AnalysisHandlerExtension.registerExtension(myEnvironment.project, PartialAnalysisHandlerExtension())
@@ -162,5 +165,12 @@ abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
         } finally {
             sourceOutputDir.deleteRecursively()
         }
+    }
+}
+
+private fun addAnnotationProcessingRuntimeLibrary(environment: KotlinCoreEnvironment) {
+    environment.apply {
+        val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "kotlin-annotation-processing-runtime.jar")
+        updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
     }
 }
