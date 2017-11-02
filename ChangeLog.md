@@ -59,7 +59,7 @@
 
 ### Libraries
 
-- [`KT-4900`](https://youtrack.jetbrains.com/issue/KT-4900) Support math operations in stdlib
+- [`KT-4900`](https://youtrack.jetbrains.com/issue/KT-4900) Finalize math operation parameter names
 
 ### Tools. JPS
 
