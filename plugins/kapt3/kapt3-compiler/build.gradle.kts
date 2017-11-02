@@ -14,9 +14,11 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(ideaSdkDeps("idea", "idea_rt", "openapi"))
-    testCompile(commonDep("junit:junit"))
-
+    
     compileOnly(project(":kotlin-annotation-processing-runtime"))
+
+    testCompile(commonDep("junit:junit"))
+    testCompile(project(":kotlin-annotation-processing-runtime"))
 }
 
 sourceSets {

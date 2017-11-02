@@ -102,6 +102,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("ignoredMembers.kt")
+    public void testIgnoredMembers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/ignoredMembers.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("importsForErrorTypes.kt")
     public void testImportsForErrorTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/importsForErrorTypes.kt");

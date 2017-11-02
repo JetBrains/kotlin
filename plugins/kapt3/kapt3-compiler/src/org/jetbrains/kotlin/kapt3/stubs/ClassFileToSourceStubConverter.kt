@@ -22,6 +22,7 @@ import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
+import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -361,7 +362,7 @@ class ClassFileToSourceStubConverter(
             packageFqName: String,
             explicitInitializer: JCExpression? = null
     ): JCVariableDecl? {
-        if (isSynthetic(field.access)) return null
+        if (isSynthetic(field.access) || isIgnored(field.invisibleAnnotations)) return null
         // not needed anymore
         val origin = kaptContext.origins[field]
         val descriptor = origin?.descriptor
@@ -398,6 +399,7 @@ class ClassFileToSourceStubConverter(
     }
 
     private fun convertMethod(method: MethodNode, containingClass: ClassNode, packageFqName: String): JCMethodDecl? {
+        if (isIgnored(method.invisibleAnnotations)) return null
         val descriptor = kaptContext.origins[method]?.descriptor as? CallableDescriptor ?: return null
 
         val isAnnotationHolderForProperty = descriptor is PropertyDescriptor && isSynthetic(method.access)
@@ -494,6 +496,11 @@ class ClassFileToSourceStubConverter(
                 modifiers, treeMaker.name(name), returnType, genericSignature.typeParameters,
                 genericSignature.parameterTypes, genericSignature.exceptionTypes,
                 body, defaultValue)
+    }
+
+    private fun isIgnored(annotations: List<AnnotationNode>?): Boolean {
+        val kaptIgnoredAnnotationFqName = KaptIgnored::class.java.name
+        return annotations?.any { Type.getType(it.desc).className == kaptIgnoredAnnotationFqName } ?: false
     }
 
     private fun extractMethodSignatureTypes(
