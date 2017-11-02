@@ -328,7 +328,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     val librariesToLink: List<KonanLibraryReader> get() = context.config.immediateLibraries
-            .filter { !it.isDefaultLibrary || it in usedLibraries }
+            .filter { (!it.isDefaultLibrary && !context.config.purgeUserLibs) || it in usedLibraries }
             .withResolvedDependencies()
 
     val librariesForLibraryManifest: List<KonanLibraryReader> get() {

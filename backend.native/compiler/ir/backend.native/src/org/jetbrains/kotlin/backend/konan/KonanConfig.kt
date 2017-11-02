@@ -73,6 +73,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val moduleId: String
         get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: File(outputName).name
 
+    internal val purgeUserLibs: Boolean
+        get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
+
     private val libraryNames: List<String>
         get() = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
@@ -95,7 +98,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibraryReader> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
 
-        return immediateLibraries.purgeUnneeded().withResolvedDependencies()
+        return immediateLibraries.purgeUnneeded(this).withResolvedDependencies()
     }
 
     private val loadedDescriptors = loadLibMetadata()

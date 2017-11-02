@@ -121,6 +121,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "--print_locations", description = "Print locations")
     var printLocations: Boolean = false
 
+    @Argument(value = "--purge_user_libs", description = "Don't link unused libraries even explicitly specified")
+    var purgeUserLibs: Boolean = false
+
     @Argument(value = "--time", description = "Report execution time for compiler phases")
     var timePhases: Boolean = false
 

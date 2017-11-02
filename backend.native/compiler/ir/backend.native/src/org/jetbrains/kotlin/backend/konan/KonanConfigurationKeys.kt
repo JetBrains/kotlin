@@ -85,6 +85,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("compiler output kind")
         val PROPERTY_FILE: CompilerConfigurationKey<String?> 
                 = CompilerConfigurationKey.create("override default property file path")
+        val PURGE_USER_LIBS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("purge user-specified libs too")
         val REPOSITORIES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("library search path repositories")
         val RUNTIME_FILE: CompilerConfigurationKey<String?> 

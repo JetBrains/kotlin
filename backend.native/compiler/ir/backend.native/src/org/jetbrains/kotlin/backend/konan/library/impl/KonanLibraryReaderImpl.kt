@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.library.impl
 
+import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.createInteropLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.emptyPackages
@@ -98,5 +99,6 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
 
 }
 
-internal fun <T: KonanLibraryReader> List<T>.purgeUnneeded(): List<T> = this.filter{ !it.isDefaultLibrary || it.isNeededForLink }
+internal fun <T: KonanLibraryReader> List<T>.purgeUnneeded(config: KonanConfig): List<T> =
+        this.filter{ (!it.isDefaultLibrary && !config.purgeUserLibs) || it.isNeededForLink }
 

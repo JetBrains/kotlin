@@ -120,6 +120,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(PRINT_LOCATIONS, arguments.printLocations)
                 put(PRINT_BITCODE, arguments.printBitCode)
 
+                put(PURGE_USER_LIBS, arguments.purgeUserLibs)
+
                 put(VERIFY_IR, arguments.verifyIr)
                 put(VERIFY_DESCRIPTORS, arguments.verifyDescriptors)
                 put(VERIFY_BITCODE, arguments.verifyBitCode)
