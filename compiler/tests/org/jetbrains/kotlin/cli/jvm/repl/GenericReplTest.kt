@@ -31,17 +31,15 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.resetApplicationToNull
-import org.junit.Test
 import java.io.Closeable
 import java.io.File
 import java.net.URLClassLoader
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
-class GenericReplTest : TestCase() {
-
-    @Test
+class GenericReplTest : KtUsefulTestCase() {
     fun testReplBasics() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -80,7 +78,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testReplErrors() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -94,7 +91,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testReplCodeFormat() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -106,7 +102,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testRepPackage() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -133,7 +128,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testCompilingReplEvaluator() {
         TestRepl().use { replBase ->
             val repl = GenericReplCompilingEvaluator(replBase.replCompiler, replBase.baseClasspath, fallbackScriptArgs = replBase.emptyScriptArgs)
@@ -148,7 +142,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun test256Evals() {
         TestRepl().use { repl ->
             val state = repl.createState()

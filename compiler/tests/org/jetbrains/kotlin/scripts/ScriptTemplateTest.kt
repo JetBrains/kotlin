@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
-import org.junit.Test
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
@@ -50,7 +50,6 @@ import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
-import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -58,8 +57,7 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 // TODO: the contetnts of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
 // as soon as the the latter is removed from the codebase
 
-class ScriptTemplateTest {
-    @Test
+class ScriptTemplateTest : KtUsefulTestCase() {
     fun testScriptWithParam() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
@@ -70,7 +68,6 @@ class ScriptTemplateTest {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testScriptWithClassParameter() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib_cp.kts", ScriptWithClassParam::class, null, runIsolated = false, messageCollector = messageCollector)
@@ -81,7 +78,6 @@ class ScriptTemplateTest {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testScriptWithBaseClassWithParam() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib_dsl.kts", ScriptWithBaseClass::class, null, runIsolated = false, messageCollector = messageCollector)
@@ -92,7 +88,6 @@ class ScriptTemplateTest {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testScriptWithDependsAnn() {
         Assert.assertNull(compileScript("fib_ext_ann.kts", ScriptWithIntParamAndDummyResolver::class, null, includeKotlinRuntime = false))
 
@@ -105,7 +100,6 @@ class ScriptTemplateTest {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testScriptWithDependsAnn2() {
         val savedErr = System.err
         try {
@@ -125,7 +119,6 @@ class ScriptTemplateTest {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testScriptWithoutParams() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("without_params.kts", ScriptWithoutParams::class, null, messageCollector = messageCollector)
@@ -136,7 +129,6 @@ class ScriptTemplateTest {
         assertEqualsTrimmed("10", out)
     }
 
-    @Test
     fun testScriptWithOverriddenParam() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("overridden_parameter.kts", ScriptBaseClassWithOverriddenProperty::class, null, messageCollector = messageCollector)
@@ -147,7 +139,6 @@ class ScriptTemplateTest {
         assertEqualsTrimmed("14", out)
     }
 
-    @Test
     fun testScriptWithArrayParam() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("array_parameter.kts", ScriptWithArrayParam::class, null, messageCollector = messageCollector)
@@ -159,7 +150,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptWithNullableParam() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("nullable_parameter.kts", ScriptWithNullableParam::class, null, messageCollector = messageCollector)
@@ -171,7 +161,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptVarianceParams() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("variance_parameters.kts", ScriptVarianceParams::class, null, messageCollector = messageCollector)
@@ -183,7 +172,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptWithNullableProjection() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("nullable_projection.kts", ScriptWithNullableProjection::class, null, messageCollector = messageCollector)
@@ -195,7 +183,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptWithArray2DParam() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("array2d_param.kts", ScriptWithArray2DParam::class, null, messageCollector = messageCollector)
@@ -207,7 +194,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptWithStandardTemplate() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib_std.kts", ScriptTemplateWithArgs::class, runIsolated = false, messageCollector = messageCollector)
@@ -219,7 +205,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptWithPackage() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.pkg.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
@@ -231,7 +216,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptWithScriptDefinition() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
@@ -243,7 +227,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptWithParamConversion() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
@@ -256,7 +239,6 @@ class ScriptTemplateTest {
         }
     }
 
-    @Test
     fun testScriptErrorReporting() {
         val messageCollector = TestMessageCollector()
         compileScript("fib.kts", ScriptReportingErrors::class, messageCollector = messageCollector)
@@ -267,7 +249,6 @@ class ScriptTemplateTest {
         messageCollector.assertHasMessage("debug", desiredSeverity = CompilerMessageSeverity.LOGGING)
     }
 
-    @Test
     fun testAsyncResolver() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.kts", ScriptWithAsyncResolver::class, null, messageCollector = messageCollector)
@@ -278,42 +259,36 @@ class ScriptTemplateTest {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    @Test
     fun testAcceptedAnnotationsSync() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsSyncResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
-    @Test
     fun testAcceptedAnnotationsAsync() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsAsyncResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
-    @Test
     fun testAcceptedAnnotationsLegacy() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsLegacyResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
-    @Test
     fun testSeveralConstructors() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.kts", ScriptWithSeveralConstructorsResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
-    @Test
     fun testConstructorWithDefaultArgs() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.kts", ScriptWithDefaultArgsResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
-    @Test
     fun testThrowing() {
         val messageCollector = TestMessageCollector()
         compileScript("fib.kts", ScriptWithThrowingResolver::class, null, messageCollector = messageCollector)
@@ -321,7 +296,6 @@ class ScriptTemplateTest {
         messageCollector.assertHasMessage("Exception from resolver", desiredSeverity = CompilerMessageSeverity.ERROR)
     }
 
-    @Test
     fun testSmokeScriptException() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("smoke_exception.kts", ScriptWithArrayParam::class, messageCollector = messageCollector)
@@ -337,7 +311,6 @@ class ScriptTemplateTest {
         Assert.assertTrue(exceptionThrown)
     }
 
-    @Test
     fun testScriptWithNoMatchingTemplate() {
         try {
             compileScript("fib.kts", ScriptWithDifferentFileNamePattern::class, null)
