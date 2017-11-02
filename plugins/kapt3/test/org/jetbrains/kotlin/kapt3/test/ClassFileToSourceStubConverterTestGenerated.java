@@ -120,6 +120,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("invalidFieldName.kt")
+    public void testInvalidFieldName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/invalidFieldName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("javaKeywords.kt")
     public void testJavaKeywords() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/javaKeywords.kt");
