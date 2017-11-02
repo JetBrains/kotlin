@@ -22,6 +22,7 @@ konanArtifacts {
         libraries {
             files libs.collect { "$konanHome/klib/platform/$targetName/$it" }
         }
+        extraOpts '--purge_user_libs'
     }
 }
 
