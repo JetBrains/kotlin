@@ -348,11 +348,15 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return parentContext;
     }
 
+    public boolean isContextWithUninitializedThis() {
+        return false;
+    }
+
     @Nullable
     public CodegenContext getEnclosingClassContext() {
         CodegenContext cur = getParentContext();
         while (cur != null) {
-            if (cur instanceof ConstructorContext && !(((ConstructorContext) cur).isThisInitialized())) {
+            if (cur.isContextWithUninitializedThis()) {
                 // If the current context is a constructor with uninitialized 'this',
                 // skip it and the corresponding class context
                 CodegenContext parent = cur.getParentContext();
