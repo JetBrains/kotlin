@@ -1,5 +1,7 @@
 apply plugin: 'konan'
 
+konan.targets = ['macbook', 'linux']
+
 def tensorflowHome = "${System.getProperty("user.home")}/.konan/third-party/tensorflow"
 
 konanArtifacts {

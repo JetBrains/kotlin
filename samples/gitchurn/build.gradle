@@ -1,5 +1,7 @@
 apply plugin: 'konan'
 
+konan.targets = ['macbook', 'linux']
+
 konanArtifacts {
     interop('libgit2') {
 	target('linux') {
