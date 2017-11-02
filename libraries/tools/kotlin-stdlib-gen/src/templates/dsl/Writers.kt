@@ -28,7 +28,7 @@ data class PlatformSourceFile(
 fun Sequence<MemberTemplate>.groupByFileAndWrite(
         fileNameBuilder: (PlatformSourceFile) -> File
 ) {
-    val groupedMembers = map { it.instantiate() }.flatten().groupBy {
+    val groupedMembers = map { it.instantiate(Platform.values - Platform.Native) }.flatten().groupBy {
         PlatformSourceFile(it.platform, it.sourceFile)
     }
 

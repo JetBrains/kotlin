@@ -16,7 +16,7 @@
 
 package templates
 
-import kotlin.coroutines.experimental.buildSequence
+import kotlin.coroutines.experimental.*
 
 @DslMarker
 annotation class TemplateDsl
@@ -37,26 +37,26 @@ private fun def(signature: String, memberKind: Keyword): MemberBuildAction = {
 
 fun fn(defaultSignature: String): MemberBuildAction = def(defaultSignature, Keyword.Function)
 
-fun fn(defaultSignature: String, setup: FamilyPrimitiveMemberDsl.() -> Unit): MemberTemplate =
-        FamilyPrimitiveMemberDsl().apply {
+fun fn(defaultSignature: String, setup: FamilyPrimitiveMemberDefinition.() -> Unit): FamilyPrimitiveMemberDefinition =
+        FamilyPrimitiveMemberDefinition().apply {
             builder(fn(defaultSignature))
             setup()
         }
 
-fun MemberBuildAction.byTwoPrimitives(setup: PairPrimitiveMemberDsl.() -> Unit): MemberTemplate =
-        PairPrimitiveMemberDsl().apply {
+fun MemberBuildAction.byTwoPrimitives(setup: PairPrimitiveMemberDefinition.() -> Unit): PairPrimitiveMemberDefinition =
+        PairPrimitiveMemberDefinition().apply {
             builder(this@byTwoPrimitives)
             setup()
         }
 
-fun pval(name: String, setup: FamilyPrimitiveMemberDsl.() -> Unit): MemberTemplate =
-        FamilyPrimitiveMemberDsl().apply {
+fun pval(name: String, setup: FamilyPrimitiveMemberDefinition.() -> Unit): FamilyPrimitiveMemberDefinition =
+        FamilyPrimitiveMemberDefinition().apply {
             builder(def(name, Keyword.Value))
             setup()
         }
 
-fun pvar(name: String, setup: FamilyPrimitiveMemberDsl.() -> Unit): MemberTemplate =
-        FamilyPrimitiveMemberDsl().apply {
+fun pvar(name: String, setup: FamilyPrimitiveMemberDefinition.() -> Unit): FamilyPrimitiveMemberDefinition =
+        FamilyPrimitiveMemberDefinition().apply {
             builder(def(name, Keyword.Variable))
             setup()
         }
@@ -66,14 +66,16 @@ interface MemberTemplate {
     /** Specifies which platforms this member template should be generated for */
     fun platforms(vararg platforms: Platform)
 
-    fun instantiate(): Sequence<MemberBuilder>
+    fun instantiate(platforms: List<Platform> = Platform.values): Sequence<MemberBuilder>
 
     /** Registers parameterless member builder function */
     fun builder(b: MemberBuildAction)
-
 }
 
-abstract class GenericMemberDsl<TParam> : MemberTemplate {
+infix fun <MT: MemberTemplate> MT.builder(b: MemberBuildAction): MT = apply { builder(b) }
+infix fun <TParam, MT : MemberTemplateDefinition<TParam>> MT.builderWith(b: MemberBuildActionP<TParam>): MT = apply { builderWith(b) }
+
+abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
     sealed class BuildAction {
         class Generic(val action: MemberBuildAction) : BuildAction() {
@@ -87,7 +89,7 @@ abstract class GenericMemberDsl<TParam> : MemberTemplate {
         }
     }
 
-    val buildActions = mutableListOf<BuildAction>()
+    private val buildActions = mutableListOf<BuildAction>()
 
     private var targetPlatforms = setOf(*Platform.values())
     override fun platforms(vararg platforms: Platform) {
@@ -116,13 +118,15 @@ abstract class GenericMemberDsl<TParam> : MemberTemplate {
             } ?: this
 
 
-    override fun instantiate(): Sequence<MemberBuilder> {
-        val specificPlatforms by lazy { targetPlatforms - Platform.Common }
+    override fun instantiate(platforms: List<Platform>): Sequence<MemberBuilder> {
+        val resultingPlatforms = platforms.intersect(targetPlatforms)
+        val specificPlatforms by lazy { resultingPlatforms - Platform.Common }
 
         fun platformMemberBuilders(family: Family, p: TParam) =
                 if (Platform.Common in targetPlatforms) {
                     val commonMemberBuilder = createMemberBuilder(Platform.Common, family, p)
-                    mutableListOf(commonMemberBuilder).also { builders ->
+                    mutableListOf<MemberBuilder>().also { builders ->
+                        if (Platform.Common in resultingPlatforms) builders.add(commonMemberBuilder)
                         if (commonMemberBuilder.hasPlatformSpecializations) {
                             specificPlatforms.mapTo(builders) {
                                 createMemberBuilder(it, family, p)
@@ -130,7 +134,7 @@ abstract class GenericMemberDsl<TParam> : MemberTemplate {
                         }
                     }
                 } else {
-                    targetPlatforms.map { createMemberBuilder(it, family, p) }
+                    resultingPlatforms.map { createMemberBuilder(it, family, p) }
                 }
 
         return parametrize()
@@ -152,17 +156,20 @@ abstract class GenericMemberDsl<TParam> : MemberTemplate {
 
 }
 
+
 private fun defaultPrimitives(f: Family): Set<PrimitiveType> =
         if (f.isPrimitiveSpecialization) PrimitiveType.defaultPrimitives else emptySet()
 
 @TemplateDsl
-class FamilyPrimitiveMemberDsl : GenericMemberDsl<PrimitiveType?>() {
+class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>() {
 
-    private val familyPrimitives = mutableMapOf<Family, Set<PrimitiveType>>()
+    private val familyPrimitives = mutableMapOf<Family, Set<PrimitiveType?>>()
 
     fun include(vararg fs: Family) {
         for (f in fs) familyPrimitives[f] = defaultPrimitives(f)
     }
+    @Deprecated("Use include()", ReplaceWith("include(*fs)"))
+    fun only(vararg fs: Family) = include(*fs)
 
     fun include(fs: Collection<Family>) {
         for (f in fs) familyPrimitives[f] = defaultPrimitives(f)
@@ -172,7 +179,7 @@ class FamilyPrimitiveMemberDsl : GenericMemberDsl<PrimitiveType?>() {
         include(Family.defaultFamilies)
     }
 
-    fun include(f: Family, primitives: Set<PrimitiveType>) {
+    fun include(f: Family, primitives: Set<PrimitiveType?>) {
         familyPrimitives[f] = primitives
     }
 
@@ -198,7 +205,7 @@ class FamilyPrimitiveMemberDsl : GenericMemberDsl<PrimitiveType?>() {
 }
 
 @TemplateDsl
-class PairPrimitiveMemberDsl : GenericMemberDsl<Pair<PrimitiveType, PrimitiveType>>() {
+class PairPrimitiveMemberDefinition : MemberTemplateDefinition<Pair<PrimitiveType, PrimitiveType>>() {
 
     private val familyPrimitives = mutableMapOf<Family, Set<Pair<PrimitiveType, PrimitiveType>>>()
 
@@ -217,77 +224,9 @@ class PairPrimitiveMemberDsl : GenericMemberDsl<Pair<PrimitiveType, PrimitiveTyp
     }
 }
 
-
 /*
-val t_copyOfResized = MemberTemplatePar<DefaultParametrization>().apply {
-    parametrization = buildSequence<DefaultParametrization> {
-        val allPlatforms = setOf(*Platform.values())
-        yield(DefaultParametrization(InvariantArraysOfObjects, platforms = allPlatforms))
-        yieldAll(PrimitiveType.defaultPrimitives.map { DefaultParametrization(ArraysOfPrimitives, it, platforms = allPlatforms) })
-    }
-    builder = { p, platform, builder ->
-        builder.family = if (p.family == InvariantArraysOfObjects && platform == Platform.JS)
-            ArraysOfObjects else p.family
-
-        if (platform == Platform.JVM)
-            builder.inline = Inline.Only
-
-        builder.doc = "Returns new array which is a copy of the original array."
-        builder.returns = "SELF"
-        if (platform == Platform.JS && p.family == ArraysOfObjects)
-            builder.returns = "Array<T>"
-
-        if (platform == Platform.JVM) {
-            builder.body = "return java.util.Arrays.copyOf(this, size)"
-        } else if (platform == Platform.JS) {
-            when (p.primitive) {
-                null ->
-                    builder.body = "return this.asDynamic().slice()"
-                PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
-                    builder.body = "return withType(\"${p.primitive}Array\", this.asDynamic().slice())"
-                else -> {
-                    builder.annotations += """@Suppress("NOTHING_TO_INLINE")"""
-                    builder.inline = Inline.Yes
-                    builder.body = "return this.asDynamic().slice()"
-                }
-            }
-        }
-
-
-    }
-}
-interface MemberTemplate {
-
-    fun instantiate(): Sequence<MemberInstance>
-}
-
-class MemberTemplatePar<TParametrization : Parametrization> : MemberTemplate {
-
-    val keyword: String = "fun"
-
-    lateinit var parametrization: Sequence<TParametrization>
-    lateinit var builder: (TParametrization, Platform, MemberBuilder) -> Unit
-
-    override fun instantiate(): Sequence<MemberInstance> =
-            parametrization.flatMap {
-                it.platforms.asSequence().map { p ->
-                    val memberBuilder = MemberBuilder().apply {
-                        builder(it, p, this)
-                    }
-                    MemberInstance(memberBuilder::build, PlatformSourceFile(p, memberBuilder.sourceFile))
-                }
-            }
-
-}
+Replacement pattern:
+    templates add f\(\"(\w+)(\(.*)
+    val f_$1 = fn("$1$2
 */
-
-
-
-/*
-
-class MemberInstance(
-        val textBuilder: (Appendable) -> Unit,
-        val platformSourceFile: PlatformSourceFile)
-*/
-
 

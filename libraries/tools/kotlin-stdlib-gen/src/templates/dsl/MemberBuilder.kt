@@ -62,8 +62,8 @@ class MemberBuilder(
     var operator: Boolean = false; private set
     val typeParams = mutableListOf<String>()
     var customReceiver: String? = null; private set
-    var receiverAsterisk: Boolean = false; private set
-    var toNullableT: Boolean = false; private set
+    var receiverAsterisk: Boolean = false // TODO: rename to genericStarProjection
+    var toNullableT: Boolean = false
 
     var returns: String? = null; private set
     var body: String? = null; private set
@@ -72,8 +72,8 @@ class MemberBuilder(
     fun sourceFile(file: SourceFile) { sourceFile = file }
 
     fun deprecate(value: Deprecation) { deprecate = value }
-    fun deprecate(value: String) { deprecate = Deprecation(value)
-    }
+    fun deprecate(value: String) { deprecate = Deprecation(value) }
+    fun since(value: String) { since = value }
     fun platformName(name: String) { platformName = name }
 
     fun visibility(value: String) { visibility = value }
@@ -87,10 +87,11 @@ class MemberBuilder(
             annotation("""@Suppress("NOTHING_TO_INLINE")""")
         }
     }
-    fun inlineOnly() { inline = Inline.Only
-    }
+    fun inlineOnly() { inline = Inline.Only }
 
     fun receiver(value: String) { customReceiver = value }
+    @Deprecated("Use receiver()", ReplaceWith("receiver(value)"))
+    fun customReceiver(value: String) = receiver(value)
     fun signature(value: String) { signature = value }
     fun returns(type: String) { returns = type }
 
@@ -113,6 +114,12 @@ class MemberBuilder(
     fun body(valueBuilder: () -> String) {
         body = valueBuilder()
     }
+    fun body(f: Family, valueBuilder: () -> String) {
+        specialFor(f) { body(valueBuilder) }
+    }
+    fun body(vararg families: Family, valueBuilder: () -> String) {
+        specialFor(*families) { body(valueBuilder) }
+    }
 
 
     fun on(platform: Platform, action: () -> Unit) {
@@ -126,6 +133,11 @@ class MemberBuilder(
 
     fun specialFor(f: Family, action: () -> Unit) {
         if (family == f)
+            action()
+    }
+    fun specialFor(vararg families: Family, action: () -> Unit) {
+        require(families.isNotEmpty())
+        if (family in families)
             action()
     }
 
@@ -296,8 +308,8 @@ class MemberBuilder(
 
         listOfNotNull(
                 visibility ?: "public",
-                "header".takeIf { headerOnly },
-                "impl".takeIf { isImpl },
+                "expect".takeIf { headerOnly },
+                "actual".takeIf { isImpl },
                 "external".takeIf { external },
                 "inline".takeIf { inline.isInline() },
                 "infix".takeIf { infix },
@@ -325,7 +337,7 @@ class MemberBuilder(
 
         val body = (body ?:
                 deprecate?.replaceWith?.let { "return $it" } ?:
-                throw RuntimeException("No body specified for $signature for ${family to primitive}")
+                throw RuntimeException("$signature for ${platform.fullName}: no body specified for ${family to primitive}")
                 ).trim('\n')
         val indent: Int = body.takeWhile { it == ' ' }.length
 

@@ -83,7 +83,14 @@ enum class Inline {
 enum class Platform {
     Common,
     JVM,
-    JS
+    JS,
+    Native;
+
+    val fullName get() = "Kotlin/$name"
+
+    companion object {
+        val values = values().toList()
+    }
 }
 
 enum class SequenceClass {
