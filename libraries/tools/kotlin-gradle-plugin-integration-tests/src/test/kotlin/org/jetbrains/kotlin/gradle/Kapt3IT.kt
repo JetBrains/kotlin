@@ -49,8 +49,9 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains(":compileKotlin")
             assertContains(":compileJava")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            val javaClassesDir = javaClassesDir()
+            assertFileExists(javaClassesDir + "example/TestClass.class")
+            assertFileExists(javaClassesDir + "example/TestClassGenerated.class")
         }
     }
 
@@ -64,11 +65,12 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains(":compileKotlin")
             assertContains(":compileJava")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            val javaClassesDir = javaClassesDir()
+            assertFileExists(javaClassesDir + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir + "example/SourceAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir + "example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir + "example/RuntimeAnnotatedTestClassGenerated.class")
             assertContains("example.JavaTest PASSED")
             assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
             assertNotContains("warning: The following options were not recognized by any processor")
@@ -85,14 +87,14 @@ open class Kapt3IT : Kapt3BaseIT() {
     fun testSimpleWithIC() {
         val options = defaultBuildOptions().copy(incremental = true)
         val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
-        val classesDir = File(project.projectDir, "build/classes")
+        val javaClassesDir = File(project.projectDir, project.classesDir(language = "java"))
 
         project.build("clean", "build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertContains(":compileKotlin")
             assertContains(":compileJava")
-            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+            assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
 
         project.projectDir.getFilesByNames("InternalDummy.kt", "test.kt").forEach { it.appendText(" ") }
@@ -101,18 +103,18 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertKaptSuccessful()
             assertContains(":compileKotlin")
             assertContains(":compileJava")
-            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+            assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
 
         // emulating wipe by android plugin's IncrementalSafeguardTask
-        classesDir.deleteRecursively()
+        javaClassesDir.deleteRecursively()
         project.build("build", options = options) {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE")
             assertContains(":kaptGenerateStubsKotlin UP-TO-DATE")
             assertContains(":kaptKotlin UP-TO-DATE")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
     }
 
@@ -136,8 +138,8 @@ open class Kapt3IT : Kapt3BaseIT() {
                     "endsWithEquals=a:, withSpace=a b c,")
             assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassCustomized.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
         }
     }
 
@@ -148,8 +150,8 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/AncestorClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/AncestorClassGenerated.class")
         }
     }
 
@@ -162,17 +164,17 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertKaptSuccessful()
             assertContains(":compileKotlin")
             assertContains(":compileJava")
-            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
 
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/SourceAnnotatedTestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/BinaryAnnotatedTestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/RuntimeAnnotatedTestClassGenerated.java")
 
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/SourceAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/RuntimeAnnotatedTestClassGenerated.class")
         }
 
         val testKt = project.projectDir.getFileByName("test.kt")
@@ -182,17 +184,17 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertSuccessful()
             assertContains(":compileKotlin")
             assertContains(":compileJava")
-            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
 
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/SourceAnnotatedTestClassGenerated.java")
             /*!*/   assertNoSuchFile("build/generated/source/kapt/main/example/BinaryAnnotatedTestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/RuntimeAnnotatedTestClassGenerated.java")
 
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
-            /*!*/   assertNoSuchFile("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/SourceAnnotatedTestClassGenerated.class")
+            /*!*/   assertNoSuchFile(javaClassesDir() + "example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/RuntimeAnnotatedTestClassGenerated.class")
         }
     }
 
@@ -296,8 +298,8 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/generated/source/kaptKotlin/main/TestClass.kt")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassCustomized.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
         }
     }
 

@@ -69,6 +69,6 @@ open class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     protected open fun CompiledProject.checkOutput() {
-        assertFileExists("app/build/classes/kotlin/main/foo/MainKt.class")
+        assertFileExists(kotlinClassesDir(subproject = "app") + "foo/MainKt.class")
     }
 }

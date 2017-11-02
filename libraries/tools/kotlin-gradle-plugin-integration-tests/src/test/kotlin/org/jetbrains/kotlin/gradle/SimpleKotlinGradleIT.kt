@@ -110,7 +110,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         Project("allOpenSimple", GRADLE_VERSION).build("build") {
             assertSuccessful()
 
-            val classesDir = File(project.projectDir, "build/classes/main")
+            val classesDir = File(project.projectDir, kotlinClassesDir())
             val openClass = File(classesDir, "test/OpenClass.class")
             val closedClass = File(classesDir, "test/ClosedClass.class")
             assertTrue(openClass.exists())
@@ -152,7 +152,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         Project("noArgJpa", GRADLE_VERSION).build("build") {
             assertSuccessful()
 
-            val classesDir = File(project.projectDir, "build/classes/main")
+            val classesDir = File(project.projectDir, kotlinClassesDir())
 
             fun checkClass(name: String) {
                 val testClass = File(classesDir, "test/$name.class")

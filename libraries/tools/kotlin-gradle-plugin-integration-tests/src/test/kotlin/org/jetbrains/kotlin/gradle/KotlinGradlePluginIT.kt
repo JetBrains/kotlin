@@ -75,7 +75,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertFileExists("build/classes/main/META-INF/kotlinProject.kotlin_module")
+            assertFileExists(kotlinClassesDir() + "META-INF/kotlinProject.kotlin_module")
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
             assertNotContains("Forcing System.gc")
@@ -395,7 +395,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertFileExists("build/classes/main/META-INF/$customModuleName.kotlin_module")
+            assertFileExists(kotlinClassesDir() + "META-INF/$customModuleName.kotlin_module")
         }
     }
 
@@ -557,8 +557,8 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
 
             // Check that the Kotlin classes are placed under directories following the guideline:
-            assertFileExists("build/classes/kotlin/main/demo/KotlinGreetingJoiner.class")
-            assertFileExists("build/classes/kotlin/deploy/demo/ExampleSource.class")
+            assertFileExists(kotlinClassesDir() + "demo/KotlinGreetingJoiner.class")
+            assertFileExists(kotlinClassesDir(sourceSet = "deploy") + "demo/ExampleSource.class")
 
             // Check that the resulting JAR contains the Kotlin classes, without duplicates:
             val jar = ZipFile(fileInWorkingDir("build/libs/${project.projectName}.jar"))
@@ -592,8 +592,8 @@ class KotlinGradleIT: BaseGradleIT() {
         project.build("build", "compileDeployKotlin") {
             assertSuccessful()
             // Main source set should have a *.kotlin_module file without '_main'
-            assertFileExists("build/classes/kotlin/main/META-INF/$archivesBaseName.kotlin_module")
-            assertFileExists("build/classes/kotlin/deploy/META-INF/${archivesBaseName}_deploy.kotlin_module")
+            assertFileExists(kotlinClassesDir() + "META-INF/$archivesBaseName.kotlin_module")
+            assertFileExists(kotlinClassesDir(sourceSet = "deploy") + "META-INF/${archivesBaseName}_deploy.kotlin_module")
         }
     }
 
@@ -612,12 +612,14 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testDisableSeparateClassesDirs() {
-        val separateDirPath = "build/classes/kotlin/main/demo/KotlinGreetingJoiner.class"
-        val singleDirPath = "build/classes/java/main/demo/KotlinGreetingJoiner.class"
 
         fun CompiledProject.check(copyClassesToJavaOutput: Boolean?,
                                   expectBuildCacheWarning: Boolean,
                                   expectGradleLowVersionWarning: Boolean) {
+
+            val separateDirPath = kotlinClassesDir() + "demo/KotlinGreetingJoiner.class"
+            val singleDirPath = javaClassesDir() + "demo/KotlinGreetingJoiner.class"
+
             assertSuccessful()
             when (copyClassesToJavaOutput) {
                 true -> {

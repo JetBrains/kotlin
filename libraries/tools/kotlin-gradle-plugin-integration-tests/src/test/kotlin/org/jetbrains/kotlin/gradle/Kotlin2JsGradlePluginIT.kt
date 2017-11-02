@@ -103,8 +103,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertFileExists("build/classes/main/kotlin2JsNoOutputFileProject.js")
-            assertFileExists("build/classes/test/kotlin2JsNoOutputFileProject_test.js")
+            assertFileExists(kotlinClassesDir() + "kotlin2JsNoOutputFileProject.js")
+            assertFileExists(kotlinClassesDir(sourceSet = "test") + "kotlin2JsNoOutputFileProject_test.js")
         }
     }
 

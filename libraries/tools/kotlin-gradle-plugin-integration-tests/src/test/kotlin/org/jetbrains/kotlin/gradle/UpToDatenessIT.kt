@@ -119,7 +119,7 @@ class UpToDateIT : BaseGradleIT() {
         lateinit var helloWorldKtClass: File
 
         override fun mutateProject(project: Project) = with(project) {
-            helloWorldKtClass = File(projectDir, "build/classes/kotlin/main/demo/KotlinGreetingJoiner.class")
+            helloWorldKtClass = File(projectDir, project.classesDir() + "demo/KotlinGreetingJoiner.class")
             Assume.assumeTrue(helloWorldKtClass.exists())
             helloWorldKtClass.delete(); Unit
         }
