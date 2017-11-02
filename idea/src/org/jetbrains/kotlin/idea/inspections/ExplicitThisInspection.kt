@@ -21,7 +21,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType.LIKE_UNUSED_SYMBOL
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -34,7 +34,7 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
         override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
             val thisExpression = expression.receiverExpression as? KtThisExpression ?: return
 
-            val context = expression.analyzeFully()
+            val context = expression.analyze()
             val scope = expression.getResolutionScope(context) ?: return
 
             val selectorExpression = expression.selectorExpression as? KtReferenceExpression ?: return
