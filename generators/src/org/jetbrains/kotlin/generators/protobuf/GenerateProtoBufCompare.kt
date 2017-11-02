@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.protobuf.Descriptors
 import org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf
 import org.jetbrains.kotlin.serialization.DebugProtoBuf
+import org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf
+import org.jetbrains.kotlin.serialization.java.DebugJavaClassProtoBuf
 import org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.rpc.requestToByteBuf
 import java.io.File
 import java.util.*
 
@@ -64,7 +65,9 @@ class GenerateProtoBufCompare {
 
     private val jvmExtensions = DebugJvmProtoBuf.getDescriptor().extensions
     private val jsExtensions = DebugJsProtoBuf.getDescriptor().extensions
-    private val extensionsMap = (jvmExtensions + jsExtensions).groupBy { it.containingType }
+    private val javaExtensions = DebugJavaClassProtoBuf.getDescriptor().extensions
+    private val builtInsExtensions = DebugBuiltInsProtoBuf.getDescriptor().extensions
+    private val extensionsMap = (jvmExtensions + jsExtensions + javaExtensions + builtInsExtensions).groupBy { it.containingType }
 
     private val allMessages: MutableSet<Descriptors.Descriptor> = linkedSetOf()
     private val messagesToProcess: Queue<Descriptors.Descriptor> = LinkedList()
@@ -80,8 +83,10 @@ class GenerateProtoBufCompare {
         p.println("import org.jetbrains.kotlin.name.ClassId")
         p.println("import org.jetbrains.kotlin.serialization.ProtoBuf")
         p.println("import org.jetbrains.kotlin.serialization.deserialization.NameResolver")
+        p.println("import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf")
         p.println("import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf")
         p.println("import org.jetbrains.kotlin.serialization.js.JsProtoBuf")
+        p.println("import org.jetbrains.kotlin.serialization.java.JavaClassProtoBuf")
         p.println("import org.jetbrains.kotlin.utils.Interner")
         p.println("import java.util.*")
         p.println()
@@ -449,6 +454,12 @@ class GenerateProtoBufCompare {
                     }
                     if (this in jsExtensions) {
                         extensionPrefix = "jsExt_"
+                    }
+                    if (this in javaExtensions) {
+                        extensionPrefix = "javaExt_"
+                    }
+                    if (this in builtInsExtensions) {
+                        extensionPrefix = "builtInsExt_"
                     }
                 }
                 return (extensionPrefix + name.javaName + (if (isRepeated) "List" else "")).replace("[A-Z]".toRegex()) { "_" + it.value }.toUpperCase()

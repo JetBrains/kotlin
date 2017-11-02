@@ -216,7 +216,7 @@ message Class {
 
   optional VersionRequirementTable version_requirement_table = 32;
 
-  extensions 100 to 199;
+  extensions 100 to 18999;
 }
 
 message Package {
@@ -252,7 +252,7 @@ message Constructor {
   // Index into the VersionRequirementTable
   optional int32 version_requirement = 31;
 
-  extensions 100 to 199;
+  extensions 100 to 18999;
 }
 
 message Function {
@@ -291,7 +291,7 @@ message Function {
 
   optional Contract contract = 32;
 
-  extensions 100 to 199;
+  extensions 100 to 18999;
 }
 
 message Property {
@@ -339,7 +339,7 @@ message Property {
   // Index into the VersionRequirementTable
   optional int32 version_requirement = 31;
 
-  extensions 100 to 199;
+  extensions 100 to 18999;
 }
 
 message ValueParameter {

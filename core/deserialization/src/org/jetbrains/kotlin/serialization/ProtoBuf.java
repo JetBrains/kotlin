@@ -9116,7 +9116,7 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeMessage(32, versionRequirementTable_);
       }
-      extensionWriter.writeUntil(200, output);
+      extensionWriter.writeUntil(19000, output);
       output.writeRawBytes(unknownFields);
     }
 
@@ -13137,7 +13137,7 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(31, versionRequirement_);
       }
-      extensionWriter.writeUntil(200, output);
+      extensionWriter.writeUntil(19000, output);
       output.writeRawBytes(unknownFields);
     }
 
@@ -14310,7 +14310,7 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         output.writeMessage(32, contract_);
       }
-      extensionWriter.writeUntil(200, output);
+      extensionWriter.writeUntil(19000, output);
       output.writeRawBytes(unknownFields);
     }
 
@@ -16160,7 +16160,7 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000400) == 0x00000400)) {
         output.writeInt32(31, versionRequirement_);
       }
-      extensionWriter.writeUntil(200, output);
+      extensionWriter.writeUntil(19000, output);
       output.writeRawBytes(unknownFields);
     }
 
