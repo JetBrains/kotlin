@@ -1,10 +1,11 @@
 
 apply { plugin("kotlin") }
 
-dependencies {
-    compileOnly(ideaSdkDeps("openapi", "idea", "gson"))
-    compileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
+configureIntellijPlugin {
+    setPlugins("android", "coverage", "gradle", "Groovy", "junit", "maven", "properties", "testng")
+}
 
+dependencies {
     compile(project(":core:util.runtime"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
@@ -21,8 +22,6 @@ dependencies {
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":idea:idea-test-framework"))
-    testCompileOnly(ideaSdkDeps("openapi", "idea", "gson", "idea_rt"))
-    testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -32,15 +31,23 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaPluginDeps("resources_en", plugin = "junit"))
-    testRuntime(ideaPluginDeps("jcommander", "resources_en", plugin = "testng"))
-    testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+}
+
+afterEvaluate {
+    dependencies {
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "gson-*.jar") })
+        compileOnly(intellijPlugin("maven") { include("maven.jar", "maven-server-api.jar") })
+        testCompileOnly(intellij { include("openapi.jar", "idea.jar", "gson-*.jar", "idea_rt.jar") })
+        testCompileOnly(intellijPlugin("maven") { include("maven.jar", "maven-server-api.jar") })
+        testRuntime(intellij())
+        // TODO: the order of the plugins matters here, consider avoiding order-dependency
+        testRuntime(intellijPlugins("junit"))
+        testRuntime(intellijPlugin("testng") { include("jcommander.jar", "resources_en.jar") })
+        testRuntime(intellijPlugin("properties") { include("resources_en.jar") })
+        testRuntime(intellijPlugins("gradle", "Groovy"))
+        testRuntime(intellijPlugin("coverage") { include("jacocoant*.jar") })
+        testRuntime(intellijPlugins("maven", "android"))
+    }
 }
 
 sourceSets {

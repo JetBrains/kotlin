@@ -5,6 +5,11 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
+configureIntellijPlugin {
+    setPlugins("android", "copyright", "coverage", "gradle", "Groovy", "IntelliLang",
+               "java-decompiler", "java-i18n", "junit", "maven", "properties", "testng")
+}
+
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
@@ -12,8 +17,6 @@ dependencies {
     compile(project(":idea"))
     compile(project(":idea:idea-gradle"))
     compile(project(":plugins:android-extensions-compiler"))
-    compile(ideaPluginDeps("android", "android-common", "sdk-tools", "sdk-common", plugin = "android"))
-    compile(ideaPluginDeps("Groovy", plugin = "Groovy"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
 
     testCompile(project(":compiler:tests-common"))
@@ -33,19 +36,16 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":plugins:lint"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
-    testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
-    testRuntime(ideaPluginDeps("jcommander", "testng", "testng-plugin", "resources_en", plugin = "testng"))
-    testRuntime(ideaPluginDeps("copyright", plugin = "copyright"))
-    testRuntime(ideaPluginDeps("properties", "resources_en", plugin = "properties"))
-    testRuntime(ideaPluginDeps("java-i18n", plugin = "java-i18n"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("coverage", "jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("java-decompiler", plugin = "java-decompiler"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdk-common.jar", "sdk-tools.jar") })
+        compile(intellijPlugin("Groovy") { include("Groovy.jar") })
+        testRuntime(intellij())
+        testRuntime(intellijPlugins("junit", "IntelliLang", "testng", "copyright", "properties", "java-i18n",
+                                    "gradle", "Groovy", "coverage", "java-decompiler", "maven", "android"))
+    }
 }
 
 sourceSets {

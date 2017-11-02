@@ -1,5 +1,10 @@
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setPlugins("gradle")
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
@@ -14,10 +19,15 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:android-extensions-compiler"))
-    compile(ideaSdkCoreDeps("intellij-core", "util"))
-    compile(ideaSdkDeps("openapi", "idea"))
-    compile(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
     compile(preloadedDeps("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijCoreJar())
+        compile(intellij { include("util.jar", "openapi.jar", "idea.jar") })
+        compile(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar") })
+    }
 }
 
 sourceSets {

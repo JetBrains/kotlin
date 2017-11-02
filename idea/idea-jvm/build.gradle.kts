@@ -1,20 +1,27 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setPlugins("junit", "testng", "coverage", "java-decompiler")
+}
+
 dependencies {
     compile(project(":idea"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend.java"))
-
-    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
-
-    compile(ideaPluginDeps("idea-junit", plugin = "junit"))
-    compile(ideaPluginDeps("testng", "testng-plugin", plugin = "testng"))
-
-    compile(ideaPluginDeps("coverage", plugin = "coverage"))
-
-    compile(ideaPluginDeps("java-decompiler", plugin = "java-decompiler"))
 }
+
+afterEvaluate {
+    dependencies {
+        compileOnly(intellij { include("openapi.jar", "idea.jar") })
+
+        compile(intellijPlugin("junit") { include("idea-junit.jar") })
+        compile(intellijPlugin("testng") { include("testng.jar", "testng-plugin.jar") })
+        compile(intellijPlugin("coverage") { include("coverage.jar") })
+        compile(intellijPlugin("java-decompiler") { include("java-decompiler.jar") })
+    }
+}
+
 
 sourceSets {
     "main" { projectDefault() }

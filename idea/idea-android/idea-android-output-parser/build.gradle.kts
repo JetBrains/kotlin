@@ -1,11 +1,21 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+    setPlugins("gradle", "android")
+}
+
 dependencies {
     compile(project(":compiler:util"))
-    compile(ideaSdkCoreDeps("intellij-core"))
-    compile(ideaPluginDeps("gradle-tooling-api", plugin = "gradle"))
-    compile(ideaPluginDeps("android", "android-common", "sdk-common", plugin = "android"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijCoreJar())
+        compile(intellijPlugin("gradle") { include("gradle-tooling-api.jar") })
+        compile(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdk-common.jar") })
+    }
 }
 
 sourceSets {

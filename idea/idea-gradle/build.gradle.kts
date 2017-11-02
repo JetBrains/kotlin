@@ -1,10 +1,10 @@
 apply { plugin("kotlin") }
 
-dependencies {
+configureIntellijPlugin {
+    setPlugins("android", "coverage", "gradle", "Groovy", "junit", "maven", "properties", "testng")
+}
 
-    compileOnly(ideaSdkDeps("openapi", "idea", "external-system-rt", "forms_rt"))
-    compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", "gradle-base-services", plugin = "gradle"))
-    compileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
+dependencies {
 
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
@@ -18,9 +18,6 @@ dependencies {
 
     testCompile(projectTests(":idea"))
     testCompile(project(":idea:idea-test-framework"))
-    testCompile(ideaPluginDeps("gradle-wrapper", "gradle-base-services", "gradle-tooling-extension-impl", "gradle-tooling-api", "gradle", plugin = "gradle"))
-    testCompile(ideaPluginDeps("Groovy", plugin = "Groovy"))
-    testCompileOnly(ideaSdkDeps("groovy-all", "idea_rt"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -31,17 +28,25 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+}
 
-    testRuntime(ideaSdkDeps("*.jar"))
-
-    testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
-    testRuntime(ideaPluginDeps("jcommander", "resources_en", plugin = "testng"))
-    testRuntime(ideaPluginDeps("resources_en", plugin = "properties"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+afterEvaluate {
+    dependencies {
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "external-system-rt.jar", "forms_rt.jar") })
+        compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar", "gradle-base-services-*.jar") })
+        compileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
+        testCompile(intellijPlugin("gradle") { include("gradle-wrapper-*.jar", "gradle-base-services-*.jar", "gradle-tooling-extension-impl.jar", "gradle-tooling-api-*.jar", "gradle.jar") })
+        testCompileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
+        testCompileOnly(intellij { include("groovy-all-*.jar", "idea_rt.jar") })
+        testRuntime(intellij())
+        // TODO: the order of the plugins matters here, consider avoiding order-dependency
+        testRuntime(intellijPlugins("junit"))
+        testRuntime(intellijPlugin("testng") { include("jcommander.jar", "resources_en.jar") })
+        testRuntime(intellijPlugin("properties") { include("resources_en.jar") })
+        testRuntime(intellijPlugins("gradle", "Groovy"))
+        testRuntime(intellijPlugin("coverage") { include("jacocoant*.jar") })
+        testRuntime(intellijPlugins("maven", "android"))
+    }
 }
 
 sourceSets {

@@ -2,6 +2,12 @@ import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setPlugins("android", "copyright", "coverage", "gradle", "Groovy", "IntelliLang",
+               "java-i18n", "junit", "maven", "properties", "testng")
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     compile(project(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
@@ -27,17 +33,7 @@ dependencies {
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
-//    compile(project(":kotlin-daemon-client")) { isTransitive = false }
     compile(project(":kotlin-script-util")) { isTransitive = false }
-
-    compile(ideaSdkCoreDeps("intellij-core", "util", "annotations"))
-
-    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
-
-    compile(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
-    compile(ideaPluginDeps("copyright", plugin = "copyright"))
-    compile(ideaPluginDeps("properties", plugin = "properties"))
-    compile(ideaPluginDeps("java-i18n", plugin = "java-i18n"))
 
     compile(preloadedDeps("markdown", "kotlinx-coroutines-core"))
 
@@ -86,6 +82,24 @@ dependencies {
 
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
         testCompile(project(it))
+    }
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijCoreJar())
+        compile(intellij { include("util.jar") })
+        compileOnly(intellij {
+            include("openapi.jar", "idea.jar", "velocity.jar", "boot.jar", "gson-*.jar",
+                    "swingx-core-*.jar", "jsr305.jar", "forms_rt.jar", "util.jar", "annotations.jar")
+        })
+        compile(intellijPlugins("IntelliLang", "copyright", "properties", "java-i18n"))
+        testCompileOnly(intellij { include("groovy-all-*.jar", "velocity.jar", "gson-*.jar", "jsr305.jar", "idea_rt.jar") })
+        testCompileOnly(intellijPlugin("gradle") { include("gradle-base-services-*.jar", "gradle-tooling-extension-impl.jar", "gradle-wrapper-*.jar") })
+        testCompileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
+        testCompileOnly(intellijPlugin("maven") { include("maven.jar", "maven-server-api.jar") })
+        testRuntime(intellij())
+        testRuntime(intellijPlugins("junit", "gradle", "Groovy", "coverage", "maven", "android", "testng"))
     }
 }
 

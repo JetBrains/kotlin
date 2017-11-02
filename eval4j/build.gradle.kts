@@ -1,14 +1,21 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin()
+
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:backend"))
-    compile(ideaSdkDeps("asm-all"))
 //    compile(files(PathUtil.getJdkClassesRootsFromCurrentJre())) // TODO: make this one work instead of the nex one, since it contains more universal logic
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellij { include("asm-all.jar") })
+    }
 }
 
 sourceSets {

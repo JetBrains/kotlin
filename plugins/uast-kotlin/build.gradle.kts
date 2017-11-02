@@ -1,6 +1,12 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setPlugins("junit", "gradle", "Groovy", "android",
+               "maven", // TODO: check whether it works in AS (it was marked optional before
+               "properties")
+}
+
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":core:util.runtime"))
@@ -8,22 +14,13 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
-    compileOnly(ideaSdkDeps("openapi", "idea"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":idea:idea-test-framework"))
-    testCompileOnly(ideaSdkDeps("idea_rt"))
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven", optional = true))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":idea:idea-gradle"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
@@ -31,6 +28,17 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":plugins:android-extensions-ide"))
+}
+
+afterEvaluate {
+    dependencies {
+        compileOnly(intellij { include("openapi.jar", "idea.jar") })
+        testCompileOnly(intellij { include("idea_rt.jar") })
+        testRuntime(intellij())
+        compile(intellijPlugins("junit", "gradle", "Groovy", "android",
+                                "maven", // TODO: check whether it works in AS (it was marked optional before
+                                "properties"))
+    }
 }
 
 sourceSets {
