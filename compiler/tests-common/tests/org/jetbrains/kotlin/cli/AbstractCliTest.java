@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.test.CompilerTestUtil;
@@ -193,6 +194,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     protected void doJsDceTest(@NotNull String fileName) {
         doTest(fileName, new K2JSDce());
+    }
+
+    protected void doMetadataTest(@NotNull String fileName) {
+        doTest(fileName, new K2MetadataCompiler());
     }
 
     public static String removePerfOutput(String output) {
