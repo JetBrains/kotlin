@@ -1876,6 +1876,30 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("kt20433.kt")
+            public void testKt20433() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_2.kt")
+            public void testKt20433_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_2_void.kt")
+            public void testKt20433_2_void() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2_void.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_void.kt")
+            public void testKt20433_void() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_void.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt6956.kt")
             public void testKt6956() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt6956.kt");
