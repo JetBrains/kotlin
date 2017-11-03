@@ -1,7 +1,20 @@
 package templates
 
-import templates.GenericFunction.TypeParameter
-import templates.GenericFunction.TypeParameter.*
+import templates.TypeParameter.*
+
+data class TypeParameter(val original: String, val name: String, val constraint: TypeRef? = null) {
+    constructor(simpleName: String) : this(simpleName, simpleName)
+
+    data class TypeRef(val name: String, val typeArguments: List<TypeArgument> = emptyList()) {
+        fun mentionedTypes(): List<TypeRef> =
+                if (typeArguments.isEmpty()) listOf(this) else typeArguments.flatMap { it.type.mentionedTypes() }
+    }
+
+    data class TypeArgument(val type: TypeRef)
+
+    fun mentionedTypeRefs(): List<TypeRef> = constraint?.mentionedTypes().orEmpty()
+}
+
 
 fun parseTypeParameter(typeString: String): TypeParameter =
     removeAnnotations(typeString.trim().removePrefix("reified ")).let { trimmed ->
