@@ -5,87 +5,6 @@ import templates.Family.Collections
 import java.io.StringReader
 import java.util.*
 
-enum class Family {
-    Iterables,
-    Collections,
-    Lists,
-    Sets,
-    Maps,
-    InvariantArraysOfObjects,
-    ArraysOfObjects,
-    ArraysOfPrimitives,
-    Sequences,
-    CharSequences,
-    Strings,
-    Ranges,
-    RangesOfPrimitives,
-    ProgressionsOfPrimitives,
-    Generic,
-    Primitives;
-
-    val isPrimitiveSpecialization: Boolean by lazy { this in primitiveSpecializations }
-
-    class DocExtension(val family: Family)
-    class CodeExtension(val family: Family)
-    val doc = DocExtension(this)
-    val code = CodeExtension(this)
-
-    companion object {
-        val primitiveSpecializations = setOf(ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives)
-        val defaultFamilies = setOf(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
-    }
-}
-
-enum class PrimitiveType {
-    Byte,
-    Short,
-    Int,
-    Long,
-    Float,
-    Double,
-    Boolean,
-    Char;
-
-    val capacity by lazy { descendingByDomainCapacity.indexOf(this).let { if (it < 0) it else descendingByDomainCapacity.size - it } }
-
-    companion object {
-        val defaultPrimitives = PrimitiveType.values().toSet()
-        val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
-        val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
-
-        val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
-
-        fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
-    }
-}
-
-fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
-fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
-
-enum class Inline {
-    No,
-    Yes,
-    Only;
-
-    fun isInline() = this != No
-}
-
-enum class Platform {
-    Common,
-    JVM,
-    JS
-}
-
-enum class SequenceClass {
-    terminal,
-    intermediate,
-    stateless,
-    stateful
-}
-
-data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
-val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-
 open class BaseSpecializedProperty<TKey: Any, TValue : Any> {
     protected open fun onKeySet(key: TKey) {}
 
@@ -171,18 +90,6 @@ class ConcreteFunction(val textBuilder: (Appendable) -> Unit, val sourceFile: So
 
 class GenericFunction(val signature: String, val keyword: String = "fun") {
 
-    data class TypeParameter(val original: String, val name: String, val constraint: TypeRef? = null) {
-        constructor(simpleName: String) : this(simpleName, simpleName)
-
-        data class TypeRef(val name: String, val typeArguments: List<TypeArgument> = emptyList()) {
-            fun mentionedTypes(): List<TypeRef> =
-                    if (typeArguments.isEmpty()) listOf(this) else typeArguments.flatMap { it.type.mentionedTypes() }
-        }
-
-        data class TypeArgument(val type: TypeRef)
-
-        fun mentionedTypeRefs(): List<TypeRef> = constraint?.mentionedTypes().orEmpty()
-    }
 
     val defaultFamilies = Family.defaultFamilies
     val defaultPrimitives = PrimitiveType.defaultPrimitives
