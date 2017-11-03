@@ -1877,18 +1877,6 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
     return minus(element)
 }
 
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
-@SinceKotlin("1.2")
-public fun <T> Iterable<T>.pairwise(): List<Pair<T, T>> {
-    return zipWithNext { a, b -> a to b }
-}
-
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
-@SinceKotlin("1.2")
-public inline fun <T, R> Iterable<T>.pairwise(transform: (a: T, b: T) -> R): List<R> {
-    return zipWithNext(transform)
-}
-
 /**
  * Splits the original collection into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
