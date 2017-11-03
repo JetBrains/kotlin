@@ -1,3 +1,5 @@
+// EXPECTED_ERROR class J$B is public, should be declared in a file named J$B.java
+
 // FILE: test/JavaClass.java
 package test;
 

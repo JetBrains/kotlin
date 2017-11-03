@@ -1,5 +1,83 @@
 package test;
 
+public class J$B {
+
+    public J$B() {
+        super();
+    }
+
+    public class C {
+
+        public C() {
+            super();
+        }
+    }
+
+    public class D$E {
+
+        public D$E() {
+            super();
+        }
+
+        class F {
+
+            F() {
+                super();
+            }
+        }
+
+        class F$G {
+
+            F$G() {
+                super();
+            }
+        }
+    }
+
+    public class D$$E {
+
+        public D$$E() {
+            super();
+        }
+    }
+
+    public class D$$$E {
+
+        public D$$$E() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+class JavaClass {
+
+    JavaClass() {
+        super();
+    }
+
+    class Foo {
+
+        Foo() {
+            super();
+        }
+
+        class Bar {
+
+            Bar() {
+                super();
+            }
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
 @kotlin.Metadata()
 public final class A$B {
     @org.jetbrains.annotations.NotNull()
