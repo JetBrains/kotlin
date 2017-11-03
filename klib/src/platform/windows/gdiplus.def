@@ -1,4 +1,4 @@
-depends = windows
+depends = windows posix
 package = platform.gdiplus
 headers = wtypes.h minwindef.h wtypes.h gdiplus/gdiplus.h
 headerFilter = gdiplus/**
