@@ -386,18 +386,11 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.getOutputForTask(taskName: String): String {
-        fun String.substringAfter(delimiter: String, missingDelimiterValue: () -> String): String {
-            val index = indexOf(delimiter)
-            return if (index == -1) missingDelimiterValue() else substring(index + delimiter.length, length)
-        }
+        val taskOutputRegex = ("\\[LIFECYCLE] \\[class org\\.gradle(?:\\.internal\\.buildevents)?\\.TaskExecutionLogger] :$taskName" +
+                               "([\\s\\S]+?)" +
+                               "Finished executing task ':$taskName'").toRegex()
 
-        fun String.substringBefore(delimiter: String, missingDelimiterValue: () -> String): String {
-            val index = indexOf(delimiter)
-            return if (index == -1) missingDelimiterValue() else substring(0, index)
-        }
-
-        return output.substringAfter("[LIFECYCLE] [class org.gradle.TaskExecutionLogger] :$taskName") { error("Can't find start for task $taskName") }
-              .substringBefore("Finished executing task ':$taskName'") { error("Can't find completion for task $taskName") }
+        return taskOutputRegex.find(output)?.run { groupValues[1] } ?: error("Cannot find output for task $taskName")
     }
 
     fun CompiledProject.assertCompiledKotlinSources(
