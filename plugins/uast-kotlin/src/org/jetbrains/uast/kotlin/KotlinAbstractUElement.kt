@@ -57,12 +57,11 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
             parent = parent.parent
         }
 
-        if (parent is KtStringTemplateExpression && parent.entries.size == 1) {
+        while (parent is KtStringTemplateEntryWithExpression ||
+               parent is KtStringTemplateExpression && parent.entries.size == 1) {
             parent = parent.parent
         }
-        if (parent is KtStringTemplateEntryWithExpression) {
-            parent = parent.parent
-        }
+
         if (parent is KtWhenConditionWithExpression) {
             parent = parent.parent
         }
