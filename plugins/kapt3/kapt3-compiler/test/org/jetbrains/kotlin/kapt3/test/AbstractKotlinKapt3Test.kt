@@ -69,24 +69,33 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
         val kaptContext = KaptContext(logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
                                       classBuilderFactory.origins, generationState, processorOptions = emptyMap())
+
+        val javaFiles = files
+                .filter { it.name.toLowerCase().endsWith(".java") }
+                .map { File.createTempFile(it.name.substringBeforeLast('.'), ".java").apply { writeText(it.content) } }
+
         try {
-            check(kaptContext, txtFile, wholeFile)
+            check(kaptContext, javaFiles, txtFile, wholeFile)
         } finally {
+            javaFiles.forEach { it.delete() }
             kaptContext.close()
         }
     }
 
     protected fun convert(
             kaptContext: KaptContext<GenerationState>,
+            javaFiles: List<File>,
             generateNonExistentClass: Boolean,
             correctErrorTypes: Boolean
     ): JavacList<JCCompilationUnit> {
         val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes)
-        return converter.convert()
+        val parsedJavaFiles = kaptContext.compiler.parseFiles(kaptContext.fileManager.getJavaFileObjectsFromFiles(javaFiles))
+        return converter.convert().appendList(parsedJavaFiles)
     }
 
     protected abstract fun check(
             kaptContext: KaptContext<GenerationState>,
+            javaFiles: List<File>,
             txtFile: File,
             wholeFile: File)
 }
@@ -99,7 +108,7 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
         fun removeMetadataAnnotationContents(s: String): String = s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
     }
 
-    override fun check(kaptContext: KaptContext<GenerationState>, txtFile: File, wholeFile: File) {
+    override fun check(kaptContext: KaptContext<GenerationState>, javaFiles: List<File>, txtFile: File, wholeFile: File) {
         fun isOptionSet(name: String) = wholeFile.useLines { lines -> lines.any { it.trim() == "// $name" } }
 
         fun getOptionValues(name: String) = wholeFile.useLines { lines ->
@@ -114,12 +123,12 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
         val validate = !isOptionSet("NO_VALIDATION")
         val expectedErrors = getOptionValues("EXPECTED_ERROR").sorted()
 
-        val javaFiles = convert(kaptContext, generateNonExistentClass, correctErrorTypes)
+        val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass, correctErrorTypes)
 
-        kaptContext.javaLog.interceptorData.files = javaFiles.map { it.sourceFile to it }.toMap()
-        if (validate) kaptContext.compiler.enterTrees(javaFiles)
+        kaptContext.javaLog.interceptorData.files = convertedFiles.map { it.sourceFile to it }.toMap()
+        if (validate) kaptContext.compiler.enterTrees(convertedFiles)
 
-        val actualRaw = javaFiles.sortedBy { it.sourceFile.name }.joinToString (FILE_SEPARATOR)
+        val actualRaw = convertedFiles.sortedBy { it.sourceFile.name }.joinToString (FILE_SEPARATOR)
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
                 .trimTrailingWhitespacesAndAddNewlineAtEOF()
                 .let { removeMetadataAnnotationContents(it) }
@@ -148,8 +157,8 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
 }
 
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
-    override fun check(kaptContext: KaptContext<GenerationState>, txtFile: File, wholeFile: File) {
-        val compilationUnits = convert(kaptContext, generateNonExistentClass = false, correctErrorTypes = true)
+    override fun check(kaptContext: KaptContext<GenerationState>, javaFiles: List<File>, txtFile: File, wholeFile: File) {
+        val compilationUnits = convert(kaptContext, javaFiles, generateNonExistentClass = false, correctErrorTypes = true)
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
             kaptContext.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),

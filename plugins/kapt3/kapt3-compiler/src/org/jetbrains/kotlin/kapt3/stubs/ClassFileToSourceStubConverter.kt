@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.kaptError
 import org.jetbrains.kotlin.kapt3.util.*
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -678,9 +679,9 @@ class ClassFileToSourceStubConverter(
         val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
         val singleArg by lazy { args.singleOrNull() }
 
-        if (constantValue is Int) {
-            // This may be a resource identifier, we should not inline the id int
-            tryParseReferenceToAndroidResource(singleArg)?.let { return it }
+        if (constantValue.isOfPrimiviteType()) {
+            // Do not inline primitive constants
+            tryParseReferenceToIntConstant(singleArg)?.let { return it }
         }
 
         fun tryParseTypeExpression(expression: KtExpression?): JCExpression? {
@@ -741,7 +742,7 @@ class ClassFileToSourceStubConverter(
         return convertLiteralExpression(constantValue)
     }
 
-    private fun tryParseReferenceToAndroidResource(expression: KtExpression?): JCExpression? {
+    private fun tryParseReferenceToIntConstant(expression: KtExpression?): JCExpression? {
         val bindingContext = kaptContext.bindingContext
 
         val expressionToResolve = when (expression) {
@@ -750,22 +751,10 @@ class ClassFileToSourceStubConverter(
         }
 
         val resolvedCall = expressionToResolve.getResolvedCall(bindingContext) ?: return null
-        val fqName = resolvedCall.resultingDescriptor.fqNameOrNull() ?: return null
-        val jcExpression = treeMaker.FqName(fqName)
-
-        return if (doesLookLikeAndroidIdentifier(jcExpression)) jcExpression else null
-    }
-
-    private fun doesLookLikeAndroidIdentifier(expression: JCExpression): Boolean {
-        // 'expression' here is always a fqName, so we can forget about imports here
-        val rId = (expression as? JCFieldAccess)?.selected ?: return false
-        val r = (rId as? JCFieldAccess)?.selected ?: return false
-
-        return when {
-            r is JCIdent && r.name.toString() == "R" -> true
-            r is JCFieldAccess && r.name.toString() == "R" -> true
-            else -> false
-        }
+        // Disable inlining only for Java statics
+        val resultingDescriptor = resolvedCall.resultingDescriptor.takeIf { it.source is JavaSourceElement } ?: return null
+        val fqName = resultingDescriptor.fqNameOrNull()?.takeIf { isValidQualifiedName(it) } ?: return null
+        return treeMaker.FqName(fqName)
     }
 
     private fun convertValueOfPrimitiveTypeOrString(value: Any?): JCExpression? {
@@ -821,6 +810,11 @@ class ClassFileToSourceStubConverter(
         Type.DOUBLE_TYPE -> 0.0
         else -> null
     }
+}
+
+private fun Any?.isOfPrimiviteType(): Boolean = when(this) {
+    is Boolean, is Byte, is Int, is Long, is Short, is Char, is Float, is Double -> true
+    else -> false
 }
 
 private val ClassDescriptor.isNested: Boolean
