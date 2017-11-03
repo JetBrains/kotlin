@@ -24,6 +24,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -45,7 +47,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":android-lint": {
@@ -76,6 +79,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -97,15 +102,16 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":core": {
         "conventions": {
-            
+
         },
         "configurations": [
-            
+
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension"
@@ -134,6 +140,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -154,7 +162,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":examples": {
@@ -180,6 +189,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -200,7 +211,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea": {
@@ -216,6 +228,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -237,7 +251,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea-runner": {
@@ -252,6 +267,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -272,7 +289,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":j2k": {
@@ -287,6 +305,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -308,7 +328,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":jps-plugin": {
@@ -323,6 +344,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -344,7 +367,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js": {
@@ -413,6 +437,8 @@
             "compileOnly",
             "default",
             "distJar",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -435,7 +461,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":kotlin-android-extensions": {
@@ -452,6 +479,8 @@
             "compileOnly",
             "compilerDummyJar",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -475,6 +504,7 @@
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension",
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
@@ -532,6 +562,8 @@
             "compileOnly",
             "default",
             "distJar",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -555,6 +587,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
             "reporting": "org.gradle.api.reporting.ReportingExtension",
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
@@ -788,6 +822,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -812,6 +848,7 @@
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension",
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
@@ -832,7 +869,11 @@
             "distJar",
             "fatJar",
             "fatJarContents",
+            "fatJarContentsStripMetadata",
+            "fatJarContentsStripServices",
             "fatSourcesJarContents",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "proguardLibraryJars",
             "runtime",
@@ -853,6 +894,7 @@
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension",
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
@@ -1287,6 +1329,8 @@
             "compileOnly",
             "default",
             "distJar",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -1308,7 +1352,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":kotlin-reflect": {
@@ -1635,6 +1680,8 @@
             "compileOnly",
             "default",
             "distJar",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -1658,6 +1705,7 @@
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension",
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
@@ -1981,6 +2029,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2002,7 +2052,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":plugins": {
@@ -2157,6 +2208,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2177,7 +2230,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:backend": {
@@ -2262,6 +2316,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2283,7 +2339,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:cli-common": {
@@ -2298,6 +2355,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2318,7 +2377,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:conditional-preprocessor": {
@@ -2333,6 +2393,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2353,7 +2415,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:container": {
@@ -2368,6 +2431,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2389,7 +2454,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:daemon": {
@@ -2404,6 +2470,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2424,7 +2492,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:daemon-common": {
@@ -2439,6 +2508,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2459,7 +2530,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:frontend": {
@@ -2755,6 +2827,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2775,7 +2849,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:resolution": {
@@ -2860,6 +2935,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2881,7 +2958,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:tests-common-jvm6": {
@@ -2967,6 +3045,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -2987,7 +3067,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":compiler:util": {
@@ -3347,6 +3428,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3368,7 +3451,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:formatter": {
@@ -3383,6 +3467,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3403,7 +3489,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:ide-common": {
@@ -3418,6 +3505,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3438,7 +3527,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-android": {
@@ -3453,6 +3543,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3474,7 +3566,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-android-output-parser": {
@@ -3489,6 +3582,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3509,7 +3604,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-core": {
@@ -3524,6 +3620,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3544,7 +3642,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-gradle": {
@@ -3559,6 +3658,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3580,7 +3681,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-jps-common": {
@@ -3595,6 +3697,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3615,7 +3719,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-jvm": {
@@ -3630,6 +3735,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3650,7 +3757,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-maven": {
@@ -3665,6 +3773,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3686,7 +3796,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:idea-test-framework": {
@@ -3701,6 +3812,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3721,7 +3834,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":idea:kotlin-gradle-tooling": {
@@ -3736,6 +3850,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3757,7 +3873,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js:js.ast": {
@@ -3772,6 +3889,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3792,7 +3911,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js:js.dce": {
@@ -3807,6 +3927,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3827,7 +3949,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js:js.frontend": {
@@ -3842,6 +3965,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3862,7 +3987,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js:js.parser": {
@@ -3877,6 +4003,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3897,7 +4025,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js:js.serializer": {
@@ -3912,6 +4041,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3932,7 +4063,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js:js.tests": {
@@ -3947,6 +4079,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -3969,7 +4103,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":js:js.translator": {
@@ -3984,6 +4119,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -4005,7 +4142,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":kotlin-allopen:plugin-marker": {
@@ -4353,6 +4491,8 @@
             "compileOnly",
             "default",
             "distJar",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -4375,7 +4515,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":plugins:android-extensions-ide": {
@@ -4390,6 +4531,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -4412,7 +4555,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":plugins:android-extensions-jps": {
@@ -4463,6 +4607,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -4483,7 +4629,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":plugins:kapt3-idea": {
@@ -4498,6 +4645,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -4519,7 +4668,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":plugins:lint": {
@@ -4534,6 +4684,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -4554,7 +4706,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":plugins:uast-kotlin": {
@@ -4569,6 +4722,8 @@
             "compileClasspath",
             "compileOnly",
             "default",
+            "idea",
+            "ideaPlugins",
             "implementation",
             "kapt",
             "kaptTest",
@@ -4590,7 +4745,8 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "intellij": "org.jetbrains.intellij.IntelliJPluginExtension"
         }
     },
     ":plugins:uast-kotlin-idea": {

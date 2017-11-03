@@ -79,6 +79,9 @@ val commonBuildDir = File(rootDir, "build")
 val distDir = "$rootDir/dist"
 val distKotlinHomeDir = "$distDir/kotlinc"
 val distLibDir = "$distKotlinHomeDir/lib"
+val commonLocalDataDir = "$rootDir/local"
+val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
+val ideaUltimateSandboxDir = "$commonLocalDataDir/ideaUltimateSandbox"
 val ideaPluginDir = "$distDir/artifacts/ideaPlugin/Kotlin"
 val ideaUltimatePluginDir = "$distDir/artifacts/ideaUltimatePlugin/Kotlin"
 
@@ -86,6 +89,9 @@ extra["distDir"] = distDir
 extra["distKotlinHomeDir"] = distKotlinHomeDir
 extra["distLibDir"] = project.file(distLibDir)
 extra["libsDir"] = project.file(distLibDir)
+extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
+extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
+extra["ideaUltimateSandboxDir"] = project.file(ideaUltimateSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
 extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
 extra["isSonatypeRelease"] = false
@@ -116,7 +122,7 @@ extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
 
 // the former "ideaSdk/core" dir contents without intellij-core.jar
-extra["ideaSdkIntellijCoreDependencies"] =
+extra["IntellijCoreDependencies"] =
         listOf("annotations.jar",
                "asm-all.jar",
                "guava-*.jar",

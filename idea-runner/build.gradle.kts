@@ -1,8 +1,12 @@
+import org.jetbrains.intellij.IntelliJPluginExtension
+import org.jetbrains.intellij.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.tasks.RunIdeTask
+
 apply { plugin("kotlin") }
 
-dependencies {
+configureIntellijPlugin()
 
-    compile(ideaSdkDeps("*.jar"))
+dependencies {
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-maven"))
     compileOnly(project(":idea:idea-gradle"))
@@ -11,40 +15,48 @@ dependencies {
     runtimeOnly(files(toolsJar()))
 }
 
+afterEvaluate {
+    dependencies {
+        compileOnly(intellij())
+    }
+}
 
-
-
-val runIde by task<JavaExec> {
-    dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin")
-
-    classpath = the<JavaPluginConvention>().sourceSets["main"].runtimeClasspath
-
-    main = "com.intellij.idea.Main"
-
-    workingDir = File(rootDir, "ideaSDK", "bin")
-
+afterEvaluate {
     val ideaPluginDir: File by rootProject.extra
+    val ideaSandboxDir: File by rootProject.extra
 
-    jvmArgs(
-            "-Xmx1250m",
-            "-XX:ReservedCodeCacheSize=240m",
-            "-XX:+HeapDumpOnOutOfMemoryError",
-            "-ea",
-            "-Didea.is.internal=true",
-            "-Didea.debug.mode=true",
-            "-Didea.system.path=../system-idea",
-            "-Didea.config.path=../config-idea",
-            "-Dapple.laf.useScreenMenuBar=true",
-            "-Dapple.awt.graphics.UseQuartz=true",
-            "-Dsun.io.useCanonCaches=false",
-            "-Dplugin.path=${ideaPluginDir.absolutePath}",
-            "-Dkotlin.internal.mode.enabled=true",
-            "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
-    )
+    tasks.findByName("runIde")?.let { tasks.remove(it) }
+    tasks.findByName("prepareSandbox")?.let { tasks.remove(it) }
 
-    if (project.hasProperty("noPCE")) {
-        jvmArgs("-Didea.ProcessCanceledException=disabled")
+    val prepareSandbox by task<PrepareSandboxTask> {
+        configDirectory = File(ideaSandboxDir, "config")
+        // the rest are just some "fake" values, to keeping PrepareSandboxTask happy
+        setPluginName("Kotlin")
+        dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin")
+        setPluginJar(File(ideaPluginDir, "lib/kotlin-script-runtime.jar")) // any small jar will do
+        destinationDir = File(buildDir, "sandbox-fake")
     }
 
-    args()
+    task<RunIdeTask>("runIde") {
+        dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin")
+        dependsOn(prepareSandbox)
+        group = "intellij"
+        description = "Runs Intellij IDEA with installed plugin."
+        setIdeaDirectory(the<IntelliJPluginExtension>().ideaDependency.classes)
+        setConfigDirectory(File(ideaSandboxDir, "config"))
+        setSystemDirectory(ideaSandboxDir)
+        setPluginsDirectory(ideaPluginDir.parent)
+        jvmArgs(
+                "-Xmx1250m",
+                "-XX:ReservedCodeCacheSize=240m",
+                "-XX:+HeapDumpOnOutOfMemoryError",
+                "-ea",
+                "-Didea.is.internal=true",
+                "-Didea.debug.mode=true",
+                "-Dapple.laf.useScreenMenuBar=true",
+                "-Dapple.awt.graphics.UseQuartz=true",
+                "-Dsun.io.useCanonCaches=false",
+                "-Dkotlin.internal.mode.enabled=true"
+        )
+    }
 }
