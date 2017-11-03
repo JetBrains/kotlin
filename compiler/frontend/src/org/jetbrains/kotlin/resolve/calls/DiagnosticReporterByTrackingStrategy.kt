@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticReporterByTrackingStrategy(
         val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -105,6 +106,13 @@ class DiagnosticReporterByTrackingStrategy(
             }
             VarargArgumentOutsideParentheses::class.java ->
                 trace.report(VARARG_OUTSIDE_PARENTHESES.on(callArgument.psiExpression!!))
+
+            SpreadArgumentToNonVarargParameter::class.java -> {
+                val spreadElement = callArgument.safeAs<ExpressionKotlinCallArgumentImpl>()?.valueArgument?.getSpreadElement()
+                if (spreadElement != null) {
+                    trace.report(NON_VARARG_SPREAD.on(spreadElement))
+                }
+            }
         }
     }
 
