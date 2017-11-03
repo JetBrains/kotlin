@@ -1,7 +1,7 @@
 // WITH_RUNTIME
+// IS_APPLICABLE: false
 
 object Test {
     @JvmStatic
-    fun main(args: Array<String>) {
-    }
+    val <caret>foo = 1
 }
