@@ -13,7 +13,7 @@ import templates.*
 fun main(args: Array<String>) {
     val templateGroups = sequenceOf<TemplateGroup>(
         Elements,
-//        Filtering,
+        Filtering,
 //        Ordering,
 //        ArrayOps,
 //        Snapshots,
