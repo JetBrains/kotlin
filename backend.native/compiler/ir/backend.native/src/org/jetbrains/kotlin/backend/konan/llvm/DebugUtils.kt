@@ -152,11 +152,6 @@ internal fun generateDebugInfoHeader(context: Context) {
 internal fun KotlinType.dwarfType(context:Context, targetData:LLVMTargetDataRef): DITypeOpaqueRef {
     when {
         KotlinBuiltIns.isPrimitiveType(this) -> return debugInfoBaseType(context, targetData, this.getJetTypeFqName(false), llvmType(context), encoding(context).value.toInt())
-        KotlinBuiltIns.isArray(this) -> {
-            val arrayElementType = context.builtIns.getArrayElementType(this)
-            return DICreateArrayType(context.debugInfo.builder, arrayElementType.size(context), arrayElementType.alignment(context),
-                    arrayElementType.diType(context, targetData),  1) as DITypeOpaqueRef
-        }
         else -> {
             val classDescriptor = TypeUtils.getClassDescriptor(this)
             return when {
