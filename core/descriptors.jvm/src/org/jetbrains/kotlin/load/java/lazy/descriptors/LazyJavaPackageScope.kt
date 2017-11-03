@@ -85,6 +85,7 @@ class LazyJavaPackageScope(
                     null
                 else
                     LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
+                            .also(c.components.javaClassesTracker::reportClass)
             }
         }
     }

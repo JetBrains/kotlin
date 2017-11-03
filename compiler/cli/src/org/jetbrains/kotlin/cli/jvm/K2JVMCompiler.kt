@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
@@ -301,6 +302,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             services.get(IncrementalCompilationComponents::class.java)?.let {
                 configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, it)
+            }
+
+            services.get(JavaClassesTracker::class.java)?.let {
+                configuration.put(JVMConfigurationKeys.JAVA_CLASSES_TRACKER, it)
             }
         }
 
