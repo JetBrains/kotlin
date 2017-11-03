@@ -175,6 +175,10 @@ public final class JsAstProtoBuf {
      * <code>COROUTINE_RECEIVER = 8;</code>
      */
     COROUTINE_RECEIVER(7, 8),
+    /**
+     * <code>SET_COROUTINE_RESULT = 9;</code>
+     */
+    SET_COROUTINE_RESULT(8, 9),
     ;
 
     /**
@@ -209,6 +213,10 @@ public final class JsAstProtoBuf {
      * <code>COROUTINE_RECEIVER = 8;</code>
      */
     public static final int COROUTINE_RECEIVER_VALUE = 8;
+    /**
+     * <code>SET_COROUTINE_RESULT = 9;</code>
+     */
+    public static final int SET_COROUTINE_RESULT_VALUE = 9;
 
 
     public final int getNumber() { return value; }
@@ -223,6 +231,7 @@ public final class JsAstProtoBuf {
         case 6: return COROUTINE_RESULT;
         case 7: return COROUTINE_CONTROLLER;
         case 8: return COROUTINE_RECEIVER;
+        case 9: return SET_COROUTINE_RESULT;
         default: return null;
       }
     }

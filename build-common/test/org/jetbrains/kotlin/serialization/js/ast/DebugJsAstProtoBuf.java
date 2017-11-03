@@ -227,6 +227,10 @@ public final class DebugJsAstProtoBuf {
      * <code>COROUTINE_RECEIVER = 8;</code>
      */
     COROUTINE_RECEIVER(7, 8),
+    /**
+     * <code>SET_COROUTINE_RESULT = 9;</code>
+     */
+    SET_COROUTINE_RESULT(8, 9),
     ;
 
     /**
@@ -261,6 +265,10 @@ public final class DebugJsAstProtoBuf {
      * <code>COROUTINE_RECEIVER = 8;</code>
      */
     public static final int COROUTINE_RECEIVER_VALUE = 8;
+    /**
+     * <code>SET_COROUTINE_RESULT = 9;</code>
+     */
+    public static final int SET_COROUTINE_RESULT_VALUE = 9;
 
 
     public final int getNumber() { return value; }
@@ -275,6 +283,7 @@ public final class DebugJsAstProtoBuf {
         case 6: return COROUTINE_RESULT;
         case 7: return COROUTINE_CONTROLLER;
         case 8: return COROUTINE_RECEIVER;
+        case 9: return SET_COROUTINE_RESULT;
         default: return null;
       }
     }
@@ -49553,12 +49562,13 @@ public final class DebugJsAstProtoBuf {
       "\013SideEffects\022\021\n\rAFFECTS_STATE\020\001\022\024\n\020DEPEN" +
       "DS_ON_STATE\020\002\022\010\n\004PURE\020\003*?\n\016InlineStrateg" +
       "y\022\017\n\013AS_FUNCTION\020\000\022\014\n\010IN_PLACE\020\001\022\016\n\nNOT_" +
-      "INLINE\020\002*\275\001\n\017SpecialFunction\022\032\n\026DEFINE_I" +
+      "INLINE\020\002*\327\001\n\017SpecialFunction\022\032\n\026DEFINE_I" +
       "NLINE_FUNCTION\020\001\022\021\n\rWRAP_FUNCTION\020\002\022\021\n\rT" +
       "O_BOXED_CHAR\020\003\022\016\n\nUNBOX_CHAR\020\004\022\020\n\014SUSPEN" +
       "D_CALL\020\005\022\024\n\020COROUTINE_RESULT\020\006\022\030\n\024COROUT" +
       "INE_CONTROLLER\020\007\022\026\n\022COROUTINE_RECEIVER\020\010",
-      "B\024B\022DebugJsAstProtoBuf"
+      "\022\030\n\024SET_COROUTINE_RESULT\020\tB\024B\022DebugJsAst" +
+      "ProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
