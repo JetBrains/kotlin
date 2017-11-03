@@ -35,6 +35,7 @@ public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Uni
  * Builds an [Iterator] lazily yielding values one by one.
  *
  * @sample samples.collections.Sequences.Building.buildIterator
+ * @sample samples.collections.Iterables.Building.iterable
  */
 @SinceKotlin("1.1")
 public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {

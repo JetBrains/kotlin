@@ -20,24 +20,44 @@ import samples.*
 import kotlin.coroutines.experimental.buildIterator
 import kotlin.test.*
 
+@RunWith(Enclosed::class)
 class Iterables {
 
-    @Sample
-    fun iterable() {
-        val iterable = Iterable { buildIterator { yieldAll(1..3) } }
-        val result = iterable.mapIndexed { index, i -> index + i }
-        assertPrints(result, "[1, 3, 5]")
+    class Building {
+
+        @Sample
+        fun iterable() {
+            val iterable = Iterable {
+                buildIterator {
+                    yield(42)
+                    yieldAll(1..5 step 2)
+                }
+            }
+            val result = iterable.mapIndexed { index, value -> "$index: $value" }
+            assertPrints(result, "[0: 42, 1: 1, 2: 3, 3: 5]")
+
+            // can be iterated many times
+            repeat(2) {
+                val sum = iterable.sum()
+                assertPrints(sum, "51")
+            }
+        }
+
     }
 
-    @Sample
-    fun flattenIterable() {
-        val deepList = listOf(listOf(1), listOf(2, 3), listOf(4, 5, 6))
-        assertPrints(deepList.flatten(), "[1, 2, 3, 4, 5, 6]")
-    }
+    class Operations {
 
-    @Sample
-    fun unzipIterable() {
-        val list = listOf(1 to 'a', 2 to 'b', 3 to 'c')
-        assertPrints(list.unzip(), "([1, 2, 3], [a, b, c])")
+        @Sample
+        fun flattenIterable() {
+            val deepList = listOf(listOf(1), listOf(2, 3), listOf(4, 5, 6))
+            assertPrints(deepList.flatten(), "[1, 2, 3, 4, 5, 6]")
+        }
+
+        @Sample
+        fun unzipIterable() {
+            val list = listOf(1 to 'a', 2 to 'b', 3 to 'c')
+            assertPrints(list.unzip(), "([1, 2, 3], [a, b, c])")
+        }
+
     }
 }
