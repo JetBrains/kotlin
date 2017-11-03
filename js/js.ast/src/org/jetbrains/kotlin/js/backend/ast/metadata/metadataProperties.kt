@@ -115,6 +115,8 @@ var JsNameRef.coroutineReceiver by MetadataProperty(default = false)
 
 var JsFunction.forceStateMachine by MetadataProperty(default = false)
 
+var JsFunction.isInlineableCoroutineBody by MetadataProperty(default = false)
+
 var JsName.imported by MetadataProperty(default = false)
 
 var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default = null)
@@ -156,7 +158,8 @@ enum class SpecialFunction(val suggestedName: String) {
     SUSPEND_CALL("suspendCall"),
     COROUTINE_RESULT("coroutineResult"),
     COROUTINE_CONTROLLER("coroutineController"),
-    COROUTINE_RECEIVER("coroutineReceiver")
+    COROUTINE_RECEIVER("coroutineReceiver"),
+    SET_COROUTINE_RESULT("setCoroutineResult")
 }
 
 enum class BoxingKind {

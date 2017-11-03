@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineableCoroutineBody
 import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.*
@@ -100,9 +101,10 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
 
         if (descriptor.isSuspend && descriptor.isInline && descriptor.shouldBeExported(context.config) && functionAndContext != null) {
             val innerContext = functionAndContext.second
-            val inlineFunction = transformCoroutineMetadataToSpecialFunctions(context, functionAndContext.first.deepCopy() as JsFunction)
+            val inlineFunction = functionAndContext.first.deepCopy() as JsFunction
             inlineFunction.name = null
             inlineFunction.coroutineMetadata = null
+            inlineFunction.isInlineableCoroutineBody = true
             val metadata = InlineMetadata.compose(inlineFunction, descriptor, innerContext)
             val functionWithMetadata = metadata.functionWithMetadata(context, descriptor.source.getPsi())
             context.addDeclarationStatement(functionWithMetadata.makeStmt())
