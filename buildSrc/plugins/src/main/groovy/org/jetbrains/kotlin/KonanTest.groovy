@@ -248,7 +248,6 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
 
         println(result)
 
-        
         def exitCodeMismatch = execResult.exitValue != expectedExitStatus
         if (exitCodeMismatch) {
             def message = "Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}"
@@ -257,17 +256,17 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
             } else {
                 throw new TestFailedException("Test failed. $message")
             }
-        } 
-        
+        }
+
         def goldValueMismatch = goldValue != null && goldValue != result.replace(System.lineSeparator(), "\n")
         if (goldValueMismatch) {
             def message = "Expected output: $goldValue, actual output: $result"
             if (this.expectedFail) {
-                println("Expected failure. $message") 
+                println("Expected failure. $message")
             } else {
                 throw new TestFailedException("Test failed. $message")
             }
-        } 
+        }
 
         if (!exitCodeMismatch && !goldValueMismatch && this.expectedFail) println("Unexpected pass")
     }
@@ -556,24 +555,70 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         }
     }
 
+    @Override
     List<String> buildCompileList() {
+        // Already build by the previous step
+        return null
+    }
+
+    List<String> createTestFiles() {
         def packagePattern = ~/(?m)^\s*package\s+([a-zA-z-][a-zA-Z0-9._-]*)/
         def boxPattern = ~/(?m)fun\s+box\s*\(\s*\)/
+        def importPattern = ~/(?m)^\s*import\s+([a-zA-z-][a-zA-Z0-9._*-]*)/
+
+        def sourceName = "_" + project.file(source).name
+                .replace('.kt', '')
+                .replace('-','_')
+        def packages = new HashSet()
         def imports = []
 
         def result = super.buildCompileList()
         for (String filePath : result) {
             def text = project.file(filePath).text
-            if (text =~ boxPattern && text =~ packagePattern){
-                def pkg = (text =~ packagePattern)[0][1]
-                imports.add("$pkg.*")
-                break
+            def pkg = null
+            if (text =~ packagePattern) {
+                pkg = (text =~ packagePattern)[0][1]
+                packages.add(pkg)
+                text = text.replaceFirst(packagePattern, '')
             }
+            pkg = sourceName + (pkg ? ".$pkg" : '')
+            text = "package $pkg\n" + text
+            if (text =~ boxPattern) {
+                imports.add("${pkg}.*")
+            }
+            createFile(filePath, text)
+        }
+        // TODO: optimize files writes
+        for (String filePath : result) {
+            def text = project.file(filePath).text
+            def m = (text =~ importPattern)
+            if (m) {
+                for (int i = 0; i < m.count; i++) {
+                    String importStatement = m[i][1]
+                    def newImport = importStatement.with {
+                        def importPkg = replace('.*', '')
+                        if (packages.contains(importPkg)) {
+                            "$sourceName.$it"
+                        }
+                    }
+                    if (newImport) {
+                        text = text.replaceFirst(importStatement, newImport)
+                    }
+                    // TODO: special case for import from the class to out scope
+                    
+                }
+            } else {
+                def pkg = null
+                if (text =~ packagePattern) {
+                    pkg = 'package ' + (text =~ packagePattern)[0][1]
+                    text = text.replaceFirst(packagePattern, '')
+                }
+                text = (pkg ? "$pkg\n" : "") + "import $sourceName.*\n" + text
+            }
+            createFile(filePath, text)
         }
         createLauncherFile("$outputDirectory/_launcher.kt", imports)
         result.add("$outputDirectory/_launcher.kt")
-        result.add(project.file("testUtils.kt"))
-        result.add(project.file("helpers.kt"))
         return result
     }
 
@@ -582,13 +627,18 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
      */
     void createLauncherFile(String file, List<String> imports) {
         StringBuilder text = new StringBuilder()
+        def pack = project.file(source).name.replace('.kt', '').replace('-', '_')
+        text.append("package _$pack\n")
         for (v in imports) {
             text.append("import ").append(v).append('\n')
         }
 
         text.append(
 """
-fun main(args : Array<String>) {
+import kotlin.test.Test
+
+@Test
+fun runTest() {
     @Suppress("UNUSED_VARIABLE")
     val result = box()
     ${ (goldValue != null) ? "print(result)" : "" }
@@ -626,6 +676,23 @@ fun main(args : Array<String>) {
         }
     }
 
+    @Override
+    void compileTest(List<String> filesToCompile, String exe) {
+        // An executable should be already compiled
+    }
+
+    @Override
+    String buildExePath() {
+        def outputDir
+        def outputSourceSet = project.sourceSets.findByName(getOutputSourceSetName())
+        if (outputSourceSet != null) {
+            outputDir = outputSourceSet.output.getDirs().getSingleFile().absolutePath + "/$name"
+        } else {
+            outputDir = getTemporaryDir().absolutePath
+        }
+        return "$outputDir/program.tr"
+    }
+
     @TaskAction
     @Override
     void executeTest() {
@@ -633,12 +700,10 @@ fun main(args : Array<String>) {
         def outputRootDirectory = outputDirectory
 
         // Form the test list.
-        List<File> ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {
-            @Override
-            boolean accept(File pathname) {
-                pathname.isFile() && pathname.name.endsWith(".kt")
-            }
-        })
+        List<File> ktFiles = project.file(groupDirectory)
+                .listFiles({
+                    it.isFile() && it.name.endsWith(".kt")
+                } as FileFilter)
         if (filter != null) {
             def pattern = ~filter
             ktFiles = ktFiles.findAll {
@@ -646,16 +711,33 @@ fun main(args : Array<String>) {
             }
         }
 
+        // Build tests in the group
+        flags = (flags ?: []) + "-tr"
+        def compileList = []
+        ktFiles.each {
+            source = project.relativePath(it)
+            if (isEnabledForNativeBackend(source)) {
+                // Create separate output directory for each test in the group.
+                outputDirectory = outputRootDirectory + "/${it.name}"
+                project.file(outputDirectory).mkdirs()
+                compileList.addAll(createTestFiles())
+            }
+        }
+        compileList.add(project.file("testUtils.kt").absolutePath)
+        compileList.add(project.file("helpers.kt").absolutePath)
+        runCompiler(compileList, buildExePath(), flags)
+
         // Run the tests.
         def currentResult = null
         statistics = new Statistics()
         def testSuite = createTestSuite(name, statistics)
         testSuite.start()
+        outputDirectory = outputRootDirectory
+        arguments = (arguments ?: []) + "--ktest_logger=SILENT"
         ktFiles.each {
             source = project.relativePath(it)
-            // Create separate output directory for each test in the group.
-            outputDirectory = outputRootDirectory + "/${it.name}"
-            project.file(outputDirectory).mkdirs()
+            def savedArgs = arguments
+            arguments += "--ktest_filter=_${it.name.replace('.kt', '').replace('-','_')}.*"
             println("TEST: $it.name (done: $statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
             def testCase = testSuite.createTestCase(it.name)
             testCase.start()
@@ -671,6 +753,7 @@ fun main(args : Array<String>) {
             } else {
                 currentResult = testCase.skip()
             }
+            arguments = savedArgs
             println("TEST $currentResult.status\n")
             if (currentResult.status == TestStatus.ERROR || currentResult.status == TestStatus.FAILED) {
                 println("Command to reproduce: ./gradlew $name -Pfilter=${it.name}\n")
