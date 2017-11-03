@@ -32,6 +32,42 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionTest {
+    @TestMetadata("addJvmStaticToCompanionObjectFun/addJvmStaticToCompanionObjectFun.test")
+    public void testAddJvmStaticToCompanionObjectFun_AddJvmStaticToCompanionObjectFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToCompanionObjectFun/addJvmStaticToCompanionObjectFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToCompanionObjectProperty/addJvmStaticToCompanionObjectProperty.test")
+    public void testAddJvmStaticToCompanionObjectProperty_AddJvmStaticToCompanionObjectProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToCompanionObjectProperty/addJvmStaticToCompanionObjectProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToNamedCompanionObjectFun/addJvmStaticToNamedCompanionObjectFun.test")
+    public void testAddJvmStaticToNamedCompanionObjectFun_AddJvmStaticToNamedCompanionObjectFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToNamedCompanionObjectFun/addJvmStaticToNamedCompanionObjectFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToNamedCompanionObjectProperty/addJvmStaticToNamedCompanionObjectProperty.test")
+    public void testAddJvmStaticToNamedCompanionObjectProperty_AddJvmStaticToNamedCompanionObjectProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToNamedCompanionObjectProperty/addJvmStaticToNamedCompanionObjectProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToObjectFun/addJvmStaticToObjectFun.test")
+    public void testAddJvmStaticToObjectFun_AddJvmStaticToObjectFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToObjectFun/addJvmStaticToObjectFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("addJvmStaticToObjectProperty/addJvmStaticToObjectProperty.test")
+    public void testAddJvmStaticToObjectProperty_AddJvmStaticToObjectProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/addJvmStaticToObjectProperty/addJvmStaticToObjectProperty.test");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInMultiFileIntentions() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileIntentions"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }

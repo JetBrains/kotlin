@@ -296,57 +296,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addJvmStatic"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("hasJvmStatic.kt")
-        public void testHasJvmStatic() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/hasJvmStatic.kt");
+        @TestMetadata("abstractVal.kt")
+        public void testAbstractVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/abstractVal.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("inAnonymousObject.kt")
-        public void testInAnonymousObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inAnonymousObject.kt");
+        @TestMetadata("constVal.kt")
+        public void testConstVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/constVal.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("inClass.kt")
-        public void testInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inClass.kt");
+        @TestMetadata("funInAnonymousObject.kt")
+        public void testFunInAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/funInAnonymousObject.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("inCompanionObject.kt")
-        public void testInCompanionObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inCompanionObject.kt");
+        @TestMetadata("funInClass.kt")
+        public void testFunInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/funInClass.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("inObjedct.kt")
-        public void testInObjedct() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inObjedct.kt");
+        @TestMetadata("funWithJvmStatic.kt")
+        public void testFunWithJvmStatic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/funWithJvmStatic.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("inTopLevel.kt")
-        public void testInTopLevel() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/inTopLevel.kt");
+        @TestMetadata("openVal.kt")
+        public void testOpenVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/openVal.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("mainJvmName.kt")
-        public void testMainJvmName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/mainJvmName.kt");
+        @TestMetadata("overrideVal.kt")
+        public void testOverrideVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/overrideVal.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("notMainJvmName.kt")
-        public void testNotMainJvmName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/notMainJvmName.kt");
+        @TestMetadata("topLevelFun.kt")
+        public void testTopLevelFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/topLevelFun.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("notMainMethod.kt")
-        public void testNotMainMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/notMainMethod.kt");
+        @TestMetadata("topLevelVal.kt")
+        public void testTopLevelVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/topLevelVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valInAnonymousObject.kt")
+        public void testValInAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/valInAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valInClass.kt")
+        public void testValInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/valInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valWithJvmField.kt")
+        public void testValWithJvmField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/valWithJvmField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valWithJvmStatic.kt")
+        public void testValWithJvmStatic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmStatic/valWithJvmStatic.kt");
             doTest(fileName);
         }
     }
