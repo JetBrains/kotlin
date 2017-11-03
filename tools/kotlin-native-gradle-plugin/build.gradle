@@ -81,6 +81,9 @@ test {
     }
     // Uncomment for debugging.
     //testLogging.showStandardStreams = true
+    if (project.hasProperty("maxParallelForks")) {
+        maxParallelForks=project.property("maxParallelForks")
+    }
 }
 
 jar {
