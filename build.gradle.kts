@@ -111,15 +111,6 @@ extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
 extra["cidrPluginDir"] = project.file(cidrPluginDir)
 extra["isSonatypeRelease"] = false
 
-Properties().apply {
-    load(File(rootDir, "resources", "kotlinManifest.properties").reader())
-    forEach {
-        val key = it.key
-        if (key != null && key is String)
-            extra[key] = it.value
-    }
-}
-
 extra["JDK_16"] = jdkPath("1.6")
 extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
@@ -260,11 +251,6 @@ apply {
         logger.info("Applying configuration for sonatype release")
         from("libraries/prepareSonatypeStaging.gradle")
     }
-}
-
-fun Project.allprojectsRecursive(body: Project.() -> Unit) {
-    this.body()
-    this.subprojects { allprojectsRecursive(body) }
 }
 
 fun Task.listConfigurationContents(configName: String) {
