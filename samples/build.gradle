@@ -17,3 +17,14 @@ task buildSh(type: Exec) {
     commandLine "${projectDir.canonicalPath}/build.sh"
     workingDir projectDir.canonicalPath
 }
+
+task buildSamplesWithPlatfromLibs() {
+    dependsOn ':csvparser:build'
+    dependsOn ':nonBlockingEchoServer:build'
+    dependsOn ':objc:build'
+    dependsOn ':opengl:build'
+    dependsOn ':socket:build'
+    dependsOn ':tensorflow:build'
+    dependsOn ':uikit:build'
+    dependsOn ':win32:build'
+}
