@@ -696,14 +696,6 @@ public expect fun CharSequence.chunkedSequence(size: Int): Sequence<String>
 @SinceKotlin("1.2")
 public expect fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> 
 
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
-@SinceKotlin("1.2")
-public expect fun CharSequence.pairwise(): List<Pair<Char, Char>>
-
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
-@SinceKotlin("1.2")
-public expect inline fun <R> CharSequence.pairwise(transform: (a: Char, b: Char) -> R): List<R>
-
 /**
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
