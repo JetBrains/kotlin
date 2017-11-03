@@ -73,9 +73,14 @@ dependencies {
 }
 
 test {
-    dependsOn ':dist'
+    if (project.hasProperty("konan.home")) {
+        systemProperty("konan.home", project.property("konan.home"))
+    } else {
+        dependsOn ':dist'
+        systemProperty("konan.home", distDir.absolutePath)
+    }
+    // Uncomment for debugging.
     //testLogging.showStandardStreams = true
-    systemProperty("konan.home", distDir.absolutePath)
 }
 
 jar {
