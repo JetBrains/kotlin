@@ -62,6 +62,8 @@ interface KonanCompileSpec: KonanBuildingSpec {
     fun enableOptimizations(flag: Boolean)
     fun enableAssertions(flag: Boolean)
 
+    fun entryPoint(entryPoint: String)
+
     fun measureTime(flag: Boolean)
 }
 

@@ -97,6 +97,28 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "noDefaultLibs"       | "true"
     }
 
+    def 'Plugin should support custom entry points and recompile an artifact if it changes'() {
+        when:
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
+            it.addCompilerArtifact("main", """
+                |fun main(args: Array<String>) { println("default main") }
+                |
+            """.stripMargin())
+        }
+        def results = buildTwice(project) { KonanProject it ->
+            it.srcFiles[0].write("""
+                |package foo
+                |
+                |fun bar(args: Array<String>) { println("changed main") }
+                |
+            """.stripMargin())
+            it.addSetting("main", "entryPoint", "'foo.bar'")
+        }
+
+        then:
+        onlyRecompilationHappened(*results)
+    }
+
     def 'srcFiles change for a compilation task should cause only recompilation'() {
         when:
         def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->

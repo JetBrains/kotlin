@@ -61,6 +61,9 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     @Input var noMain              = false
     @Input var enableOptimizations = false
     @Input var enableAssertions    = false
+
+    @Optional @Input var entryPoint: String? = null
+
     @Console var measureTime       = false
 
     val languageVersion : String?
@@ -87,6 +90,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         addArgIfNotNull("-target", konanTarget.userName)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
+        addArgIfNotNull("-entry", entryPoint)
 
         addKey("-g", enableDebug)
         addKey("-nostdlib", noStdLib)
@@ -146,11 +150,15 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     }
 
     override fun enableOptimizations(flag: Boolean) {
-        enableOptimizations = true
+        enableOptimizations = flag
     }
 
     override fun enableAssertions(flag: Boolean) {
         enableAssertions = flag
+    }
+
+    override fun entryPoint(entryPoint: String) {
+        this.entryPoint = entryPoint
     }
 
     override fun measureTime(flag: Boolean) {

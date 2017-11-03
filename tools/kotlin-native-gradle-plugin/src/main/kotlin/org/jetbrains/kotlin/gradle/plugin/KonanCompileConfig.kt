@@ -61,6 +61,8 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun enableOptimizations(flag: Boolean) = forEach { it.enableOptimizations(flag) }
     override fun enableAssertions(flag: Boolean) = forEach { it.enableAssertions(flag) }
 
+    override fun entryPoint(entryPoint: String) = forEach { it.entryPoint(entryPoint) }
+
     override fun measureTime(flag: Boolean) = forEach { it.measureTime(flag) }
 }
 
