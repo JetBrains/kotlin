@@ -29,10 +29,8 @@ abstract class SerializableCompanionCodegen(declaration: KtPureClassOrObject, bi
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorByCompanion(companionDescriptor)!!
 
     fun generate() {
-        if (serializableDescriptor.declaredTypeParameters.isNotEmpty()) {
-            val fser = KSerializerDescriptorResolver.createSerializerGetterDescriptor(companionDescriptor, serializableDescriptor)
-            generateSerializerGetter(fser)
-        }
+        val fser = KSerializerDescriptorResolver.createSerializerGetterDescriptor(companionDescriptor, serializableDescriptor)
+        generateSerializerGetter(fser)
     }
 
     protected open fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
