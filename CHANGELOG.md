@@ -1,3 +1,17 @@
+## v0.4 (Nov 2017) ##
+  * Objective-C frameworks interop for iOS and OSX targets
+  * Platform API libraries for Linux, iOS, OSX and Windows
+  * Kotlin 1.2 supported
+  * `val` and function parameters can be inspected in debugger
+  * Experimental support for WebAssembly (wasm32 target)
+  * Linux MIPS support (little and big endian, mips and mipsel targets)
+  * Gradle plugin DSL fully reworked
+  * Support for unit testing annotations and automatic test runner generation
+  * Final executable size reduced
+  * Various interop improvements (forward declaration, better handling of unsupported types)
+  * Workers object subgraph transfer checks implemented
+  * Optimized low level memory management using more efficient cycle tracing algorithm
+
 ## v0.3.4 (Oct 2017) ##
   * Intermediate release
 

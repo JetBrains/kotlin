@@ -226,8 +226,9 @@ Process 80496 launched: './program.kexe' (x86_64)
 
 
 ### Known issues
-- stepping in imported inline functions 
-- inspection is not implemented for (val) variables.
+- stepping in imported inline functions does not work
+- sometimes single stepping works incorrectly in other scenarious
+- variable inspections may not work properly
 
 _Note:_ Support DWARF 2 specification means that debugger tool recognize Kotlin as C89, because till DWARF 5 specification, there is no
 identifier for Kotlin language type in specification.

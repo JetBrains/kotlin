@@ -10,16 +10,19 @@ without need to ship an additional execution runtime.
 
  To get started with _Kotlin/Native_ take a look at the attached samples.
 
+  * `androidNativeActivity` - Android Native Activity rendering 3D graphics using OpenGLES
   * `csvparser` - simple CSV file parser and analyzer
-  * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
   * `libcurl` - using of FTP/HTTP/HTTPS client library `libcurl`
   * `nonBlockingEchoServer` - multi-client TCP/IP echo server using co-routines
+  * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
+  * `objc` - AppKit Objective-C interoperability example for OSX
   * `opengl` - OpenGL/GLUT teapot example
   * `socket` - TCP/IP echo server
   * `tensorflow` - simple client for TensorFlow Machine Intelligence library
   * `tetris` - Tetris game implementation (using SDL2 for rendering)
+  * `uikit` - UIKit Objective-C interoperability example for iOS
   * `win32` - trivial Win32 application
-  * `androidNativeActivity` - Android Native Activity rendering 3D graphics using GLES2
+
 
  See `README.md` in each sample directory for more information and build instructions.
 

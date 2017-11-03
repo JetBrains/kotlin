@@ -20,11 +20,15 @@ basic runtime shipped along with the translator, we only support a subset of all
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
- * Mac OS X 10.11 and later (x86-64), host and target
+ * Mac OS X 10.11 and later (x86-64), host and target (`-target macbook`, default on OSX hosts)
  * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
- * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target
- * Apple iOS (arm64), cross-compiled on MacOS X host (`-target iphone`), target, hosted on OS X
- * Raspberry Pi, cross-compiled on Linux host (`-target raspberrypi`), target, hosted on Linux
+   (`-target linux`, default on Linux hosts)
+ * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw`,
+   default on Windows hosts)
+ * Apple iOS (arm64), cross-compiled target (`-target iphone`), hosted on OS X
+ * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux
+ * Linux mips big endian, cross-compiled target (`-target mips`), hosted on Linux
+ * Linux mips little endian, cross-compiled target (`-target mipsel`), hosted on Linux
  * Android arm32 and arm64 (`-target android_arm32` and `-target android_arm64`), target, hosted on Linux or OS X
 
  Adding support for other target platforms shouldn't be too hard, if LLVM support is available.
@@ -34,15 +38,15 @@ the following platforms:
 To run _Kotlin/Native_ JDK8 for the host platform has to be installed.
 Note that Java 9 not yet supported.
 
-The language and library version supported by this EAP release mostly match Kotlin 1.1.4.
+The language and library version supported by this EAP release mostly match Kotlin 1.2.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 
  Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle
 collection algorithm. Multiple threads could be used, but objects must be explicitly transferred
 between threads, and same object couldn't be accessed by two threads concurrently.
 
-_Kotlin/Native_ provides efficient interoperability with libraries written in C, and supports
-automatic generation of Kotlin bindings from a C header file.
+_Kotlin/Native_ provides efficient interoperability with libraries written in C or Objective-C, and supports
+automatic generation of Kotlin bindings from a C/Objective-C header file.
 See the samples coming with the distribution.
 
   ## Getting Started ##
@@ -75,7 +79,7 @@ call similar APIs from the POSIX library, see this [`sample`](https://github.com
 
 ### Reflection ###
 
-Full reflection and class object references are not implemented.
+Full reflection is not implemented, but class can be referenced and its name could be retrieved.
 Notice that property delegation (including lazy properties) *does* work.
 
 ### Microsoft Windows support ###
@@ -100,5 +104,5 @@ Notice that property delegation (including lazy properties) *does* work.
     b kfun:main(kotlin.Array<kotlin.String>)
 
 to set breakpoint in main function of your application. Single stepping and step into shall work, 
-variable inspection partially works (not on val's, var's only).
+variable inspection may have issues.
 See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md)
