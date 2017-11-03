@@ -1,6 +1,10 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setExtraDependencies("jps-build-test")
+}
+
 dependencies {
     compile(protobufFull())
     compile(project(":idea"))
@@ -36,26 +40,18 @@ dependencies {
     compile(projectTests(":plugins:uast-kotlin"))
     compile(projectTests(":js:js.tests"))
     compile(projectTests(":generators:test-generator"))
-    compile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     compileOnly(project(":kotlin-reflect-api"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(commonDep("junit:junit"))
-    testCompile(ideaSdkDeps("openapi", "idea"))
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaPluginDeps("idea-junit", "resources_en", plugin = "junit"))
-    testRuntime(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
-    testRuntime(ideaPluginDeps("jcommander", "testng", "testng-plugin", "resources_en", plugin = "testng"))
-    testRuntime(ideaPluginDeps("copyright", plugin = "copyright"))
-    testRuntime(ideaPluginDeps("properties", "resources_en", plugin = "properties"))
-    testRuntime(ideaPluginDeps("java-i18n", plugin = "java-i18n"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("coverage", "jacocoant", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("java-decompiler", plugin = "java-decompiler"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijExtra("jps-build-test"))
+        testRuntime(intellij { include("idea_rt.jar") })
+    }
 }
 
 sourceSets {
