@@ -17,19 +17,13 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenamer
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.unquote
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
     companion object {
@@ -65,15 +59,8 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
     }
 
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
-        if (variableInplaceHandler.isAvailable(element, editor, file)) return false
-        if (element !is KtElement) return false
-        if (!super.isAvailable(element, editor, file)) return false
-
-        val referenceExpression = AbstractReferenceSubstitutionRenameHandler.getReferenceExpression(file, editor.caretModel.offset) ?: return true
-        if (referenceExpression is KtLabelReferenceExpression) return false
-        if (referenceExpression.mainReference.getImportAlias() != null) return false
-        if (referenceExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, referenceExpression] != null) return false
-
-        return true
+        return element is KtElement &&
+               !variableInplaceHandler.isAvailable(element, editor, file) &&
+               super.isAvailable(element, editor, file)
     }
 }
