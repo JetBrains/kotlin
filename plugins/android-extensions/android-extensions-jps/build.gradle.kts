@@ -1,6 +1,10 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setPlugins("android")
+}
+
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":jps-plugin"))
@@ -9,15 +13,21 @@ dependencies {
 
     testCompile(projectTests(":jps-plugin"))
     testCompile(project(":compiler:tests-common"))
-    testCompileOnly(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
-    testRuntime(ideaSdkCoreDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar", subdir = "jps/test"))
-    testRuntime(ideaSdkDeps("*.jar", subdir = "jps"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijPlugin("android") { include("**/android-jps-plugin.jar") })
+        testCompileOnly(intellijExtra("jps-build-test") { include("jps-build-test.jar") } )
+        testRuntime(intellijPlugin("android"))
+        testRuntime(intellijCoreJar())
+        testRuntime(intellij())
+        testRuntime(intellijExtra("jps-build-test"))
+        testRuntime(intellijExtra("jps-standalone"))
+    }
 }
 
 sourceSets {

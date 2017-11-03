@@ -4,15 +4,28 @@ apply {
     plugin("java")
 }
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+    setPlugins("android")
+}
+
 dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":idea"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-android"))
     compile(project(":plugins:uast-kotlin"))
-    compile(ideaPluginDeps("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "repository", "lombok-ast", "kxml2", plugin = "android"))
-    compile(ideaSdkCoreDeps("intellij-core", "util"))
-    compile(ideaSdkDeps("guava"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellijCoreJar())
+        compile(intellij { include("util.jar", "guava-*.jar") })
+        compile(intellijPlugin("android") {
+            include("android.jar", "android-common.jar", "sdklib.jar", "sdk-common.jar", "sdk-tools.jar",
+                    "repository.jar", "lombok-ast-*.jar")
+        })
+    }
 }
 
 sourceSets {

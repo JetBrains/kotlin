@@ -3,6 +3,8 @@ description = "Kotlin SourceSections Compiler Plugin"
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin()
+
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.script"))
@@ -17,9 +19,14 @@ dependencies {
     testCompile(project(":compiler:daemon-common"))
     testCompile(project(":kotlin-daemon-client"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(ideaSdkDeps("idea", "idea_rt", "openapi"))
     testCompile(commonDep("junit:junit"))
     testRuntime(projectDist(":kotlin-reflect"))
+}
+
+afterEvaluate {
+    dependencies {
+        testCompile(intellij { include("idea.jar", "idea_rt.jar", "openapi.jar") })
+    }
 }
 
 sourceSets {
