@@ -25,12 +25,32 @@ data class PlatformSourceFile(
         val sourceFile: SourceFile
 )
 
+private val platformsToGenerate = Platform.values - Platform.Native
+
+@JvmName("groupByFileAndWriteGroups")
+fun Sequence<TemplateGroup>.groupByFileAndWrite(
+        fileNameBuilder: (PlatformSourceFile) -> File
+) {
+    flatMap { group ->
+        group.invoke()
+                .flatMap { it.instantiate(platformsToGenerate) }
+                .sortedBy { it.sortingSignature }
+    }.groupByFileAndWrite(fileNameBuilder)
+}
+
+@JvmName("groupByFileAndWriteTemplates")
 fun Sequence<MemberTemplate>.groupByFileAndWrite(
         fileNameBuilder: (PlatformSourceFile) -> File
 ) {
-    val groupedMembers = map { it.instantiate(Platform.values - Platform.Native) }.flatten().groupBy {
-        PlatformSourceFile(it.platform, it.sourceFile)
-    }
+    flatMap { it.instantiate(platformsToGenerate) }
+        .groupByFileAndWrite(fileNameBuilder)
+}
+
+@JvmName("groupByFileAndWriteMembers")
+fun Sequence<MemberBuilder>.groupByFileAndWrite(
+        fileNameBuilder: (PlatformSourceFile) -> File
+) {
+    val groupedMembers = groupBy { PlatformSourceFile(it.platform, it.sourceFile) }
 
     for ((psf, members) in groupedMembers) {
         val file = fileNameBuilder(psf)
