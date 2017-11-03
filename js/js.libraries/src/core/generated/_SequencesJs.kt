@@ -1428,18 +1428,6 @@ public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
     return minus(element)
 }
 
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
-@SinceKotlin("1.2")
-public fun <T> Sequence<T>.pairwise(): Sequence<Pair<T, T>> {
-    return zipWithNext { a, b -> a to b }
-}
-
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
-@SinceKotlin("1.2")
-public fun <T, R> Sequence<T>.pairwise(transform: (a: T, b: T) -> R): Sequence<R> {
-    return zipWithNext(transform)
-}
-
 /**
  * Splits the original sequence into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,

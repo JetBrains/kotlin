@@ -1176,18 +1176,6 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
     return windowedSequence(size, size, partialWindows = true, transform = transform)
 }
 
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext()"))
-@SinceKotlin("1.2")
-public fun CharSequence.pairwise(): List<Pair<Char, Char>> {
-    return zipWithNext { a, b -> a to b }
-}
-
-@Deprecated("Use zipWithNext instead", ReplaceWith("zipWithNext(transform)"))
-@SinceKotlin("1.2")
-public inline fun <R> CharSequence.pairwise(transform: (a: Char, b: Char) -> R): List<R> {
-    return zipWithNext(transform)
-}
-
 /**
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,

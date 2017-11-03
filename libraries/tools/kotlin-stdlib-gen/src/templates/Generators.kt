@@ -850,22 +850,6 @@ fun generators(): List<GenericFunction> {
         body(CharSequences) { "return chunkedSequence(size) { it.toString() }" }
     }
 
-    templates add f("pairwise(transform: (a: T, b: T) -> R)") {
-        deprecate(Deprecation("Use zipWithNext instead", "zipWithNext(transform)"))
-        since("1.2")
-        only(Iterables, Sequences, CharSequences)
-        typeParam("R")
-        returns("List<R>")
-        inline(true)
-        body {
-            """
-            return zipWithNext(transform)
-            """
-        }
-        inline(false, Sequences)
-        returns(Sequences) { "Sequence<R>" }
-    }
-
     templates add f("zipWithNext(transform: (a: T, b: T) -> R)") {
         since("1.2")
         only(Iterables, Sequences, CharSequences)
@@ -924,17 +908,6 @@ fun generators(): List<GenericFunction> {
                 }
             }
             """
-        }
-    }
-
-    templates add f("pairwise()") {
-        deprecate(Deprecation("Use zipWithNext instead", "zipWithNext()"))
-        since("1.2")
-        only(Iterables, Sequences, CharSequences)
-        returns("List<Pair<T, T>>")
-        returns(Sequences) { "Sequence<Pair<T, T>>" }
-        body {
-            "return zipWithNext { a, b -> a to b }"
         }
     }
 
