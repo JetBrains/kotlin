@@ -1,20 +1,41 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
 import templates.Family.*
 import templates.SequenceClass.*
 
-fun elements(): List<GenericFunction> {
-    val templates = arrayListOf<GenericFunction>()
+object Elements : TemplateGroupBase() {
 
+    init {
+        defaultBuilder {
+            sequenceClassification(terminal)
+        }
+    }
 
-    templates add f("contains(element: T)") {
+    val f_contains = fn("contains(element: T)") {
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         operator(true)
 
-        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
-        doc { f -> "Returns `true` if [element] is found in the ${f.collection}." }
+        doc { "Returns `true` if [element] is found in the ${f.collection}." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Boolean")
-        body(Iterables) { f ->
+        body(Iterables) {
             """
                 if (this is Collection)
                     return contains(element)
@@ -28,14 +49,16 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-
-    templates add f("indexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
-        doc { f -> "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
+    val f_indexOf = fn("indexOf(element: T)") {
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+    } builder {
+        doc { "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
-        annotations(Lists) { """@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""" }
+        specialFor(Lists) {
+            annotation("""@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""")
+        }
         returns("Int")
-        body { f ->
+        body {
             """
             ${if (f == Iterables) "if (this is List) return this.indexOf(element)" else ""}
             var index = 0
@@ -79,13 +102,16 @@ fun elements(): List<GenericFunction> {
         body(Lists) { "return indexOf(element)" }
     }
 
-    templates add f("lastIndexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
-        doc { f -> "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
+    val f_lastIndexOf = fn("lastIndexOf(element: T)") {
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+    } builder {
+        doc { "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
-        annotations(Lists) { """@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""" }
+        specialFor(Lists) {
+            annotation("""@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""")
+        }
         returns("Int")
-        body { f ->
+        body {
             """
             ${if (f == Iterables) "if (this is List) return this.lastIndexOf(element)" else ""}
             var lastIndex = -1
@@ -130,11 +156,13 @@ fun elements(): List<GenericFunction> {
         body(Lists) { "return lastIndexOf(element)" }
     }
 
-    templates add f("indexOfFirst(predicate: (T) -> Boolean)") {
-        inline(true)
+    val f_indexOfFirst = fn("indexOfFirst(predicate: (T) -> Boolean)") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
+        inline()
 
-        include(Lists)
-        doc { f -> "Returns index of the first ${f.element} matching the given [predicate], or -1 if the ${f.collection} does not contain such ${f.element}." }
+        doc { "Returns index of the first ${f.element} matching the given [predicate], or -1 if the ${f.collection} does not contain such ${f.element}." }
         returns("Int")
         body {
             """
@@ -160,10 +188,13 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("indexOfLast(predicate: (T) -> Boolean)") {
-        inline(true)
+    val f_indexOfLast = fn("indexOfLast(predicate: (T) -> Boolean)") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
+        inline()
 
-        doc { f -> "Returns index of the last ${f.element} matching the given [predicate], or -1 if the ${f.collection} does not contain such ${f.element}." }
+        doc { "Returns index of the last ${f.element} matching the given [predicate], or -1 if the ${f.collection} does not contain such ${f.element}." }
         returns("Int")
         body {
             """
@@ -201,9 +232,12 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("elementAt(index: Int)") {
+    val f_elementAt = fn("elementAt(index: Int)") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
         val index = '$' + "index"
-        doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}." }
+        doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}." }
         returns("T")
         body {
             """
@@ -218,16 +252,18 @@ fun elements(): List<GenericFunction> {
             return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
             """
         }
-        inline(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            return get(index)
-            """
+
+        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            inlineOnly()
+            body { "return get(index)" }
         }
     }
 
-    templates add f("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {
-        doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
+    val f_elementAtOrElse = fn("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
+        doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
         returns("T")
         body {
             """
@@ -259,19 +295,22 @@ fun elements(): List<GenericFunction> {
             return defaultValue(index)
             """
         }
-        inline(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
-            """
+        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            inlineOnly()
+            body {
+                """
+                return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+                """
+            }
         }
     }
 
-    templates add f("getOrElse(index: Int, defaultValue: (Int) -> T)") {
-        doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
+    val f_getOrElse = fn("getOrElse(index: Int, defaultValue: (Int) -> T)") {
+        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
+        doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
         returns("T")
-        inline(Inline.Only)
-        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        inlineOnly()
         body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
@@ -279,9 +318,11 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-
-    templates add f("elementAtOrNull(index: Int)") {
-        doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
+    val f_elementAtOrNull = fn("elementAtOrNull(index: Int)") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
+        doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
         returns("T?")
         body {
             """
@@ -313,18 +354,17 @@ fun elements(): List<GenericFunction> {
             return null
             """
         }
-        inline(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            return this.getOrNull(index)
-            """
+        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            inlineOnly()
+            body { "return this.getOrNull(index)" }
         }
     }
 
-    templates add f("getOrNull(index: Int)") {
-        doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
+    val f_getOrNull = fn("getOrNull(index: Int)") {
+        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
+        doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
         returns("T?")
-        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -332,9 +372,11 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-
-    templates add f("first()") {
-        doc { f -> """Returns first ${f.element}.
+    val f_first = fn("first()") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
+        doc { """Returns first ${f.element}.
         @throws [NoSuchElementException] if the ${f.collection} is empty.
         """ }
         returns("T")
@@ -351,7 +393,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { f ->
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
                 throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
@@ -367,8 +409,12 @@ fun elements(): List<GenericFunction> {
             """
         }
     }
-    templates add f("firstOrNull()") {
-        doc { f -> "Returns the first ${f.element}, or `null` if the ${f.collection} is empty." }
+
+    val f_firstOrNull = fn("firstOrNull()") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
+        doc { "Returns the first ${f.element}, or `null` if the ${f.collection} is empty." }
         returns("T?")
         body {
             """
@@ -403,14 +449,15 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("first(predicate: (T) -> Boolean)") {
-        inline(true)
-
+    val f_first_predicate = fn("first(predicate: (T) -> Boolean)") {
+        includeDefault()
         include(CharSequences)
-        doc { f -> """Returns the first ${f.element} matching the given [predicate].
+    } builder {
+        inline()
+        doc { """Returns the first ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
         returns("T")
-        body { f ->
+        body {
             """
             for (element in this) if (predicate(element)) return element
             throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
@@ -418,11 +465,13 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("firstOrNull(predicate: (T) -> Boolean)") {
-        inline(true)
-
+    val f_firstOrNull_predicate = fn("firstOrNull(predicate: (T) -> Boolean)") {
+        includeDefault()
         include(CharSequences)
-        doc { f -> "Returns the first ${f.element} matching the given [predicate], or `null` if ${f.element} was not found." }
+    } builder {
+        inline()
+
+        doc { "Returns the first ${f.element} matching the given [predicate], or `null` if ${f.element} was not found." }
         returns("T?")
         body {
             """
@@ -432,16 +481,22 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("find(predicate: (T) -> Boolean)") {
-        inline(Inline.Only)
+    val f_find = fn("find(predicate: (T) -> Boolean)") {
+        includeDefault()
         include(CharSequences)
-        doc { f -> "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
+    } builder {
+        inline(Inline.Only)
+        doc { "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
         body { "return firstOrNull(predicate)"}
     }
 
-    templates add f("last()") {
-        doc { f -> """Returns the last ${f.element}.
+
+    val f_last = fn("last()") {
+        includeDefault()
+        include(CharSequences, Lists)
+    } builder {
+        doc { """Returns the last ${f.element}.
         @throws [NoSuchElementException] if the ${f.collection} is empty.""" }
         returns("T")
         body {
@@ -471,7 +526,7 @@ fun elements(): List<GenericFunction> {
             return last
             """
         }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { f ->
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
                 throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
@@ -480,8 +535,11 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("lastOrNull()") {
-        doc { f -> "Returns the last ${f.element}, or `null` if the ${f.collection} is empty." }
+    val f_lastOrNull = fn("lastOrNull()") {
+        includeDefault()
+        include(Lists, CharSequences)
+    } builder {
+        doc { "Returns the last ${f.element}, or `null` if the ${f.collection} is empty." }
         returns("T?")
         body {
             """
@@ -522,14 +580,16 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("last(predicate: (T) -> Boolean)") {
-        inline(true)
+    val f_last_predicate = fn("last(predicate: (T) -> Boolean)") {
+        includeDefault()
+        include(Lists, CharSequences)
+    } builder {
+        inline()
 
-        include(CharSequences)
-        doc { f -> """Returns the last ${f.element} matching the given [predicate].
+        doc { """Returns the last ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
         returns("T")
-        body { f ->
+        body {
             """
             var last: T? = null
             var found = false
@@ -545,7 +605,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) { f ->
+        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]
@@ -554,7 +614,7 @@ fun elements(): List<GenericFunction> {
             throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
             """
         }
-        body(Lists) { f ->
+        body(Lists) {
             """
             val iterator = this.listIterator(size)
             while (iterator.hasPrevious()) {
@@ -566,12 +626,14 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("lastOrNull(predicate: (T) -> Boolean)") {
-        inline(true)
-        include(CharSequences)
-        doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
+    val f_lastOrNull_predicate = fn("lastOrNull(predicate: (T) -> Boolean)") {
+        includeDefault()
+        include(Lists, CharSequences)
+    } builder {
+        inline()
+        doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
-        body { f ->
+        body {
             """
             var last: T? = null
             for (element in this) {
@@ -605,16 +667,21 @@ fun elements(): List<GenericFunction> {
 
     }
 
-    templates add f("findLast(predicate: (T) -> Boolean)") {
-        inline(Inline.Only)
+    val f_findLast = fn("findLast(predicate: (T) -> Boolean)") {
+        includeDefault()
         include(Lists, CharSequences)
-        doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
+    } builder {
+        inline(Inline.Only)
+        doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
         body { "return lastOrNull(predicate)"}
     }
 
-    templates add f("single()") {
-        doc { f -> "Returns the single ${f.element}, or throws an exception if the ${f.collection} is empty or has more than one ${f.element}." }
+    val f_single = fn("single()") {
+        includeDefault()
+        include(Lists, CharSequences)
+    } builder {
+        doc { "Returns the single ${f.element}, or throws an exception if the ${f.collection} is empty or has more than one ${f.element}." }
         returns("T")
         body {
             """
@@ -643,7 +710,7 @@ fun elements(): List<GenericFunction> {
             return single
             """
         }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { f ->
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return when (${f.code.size}) {
                 0 -> throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
@@ -654,8 +721,11 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("singleOrNull()") {
-        doc { f -> "Returns single ${f.element}, or `null` if the ${f.collection} is empty or has more than one ${f.element}." }
+    val f_singleOrNull = fn("singleOrNull()") {
+        includeDefault()
+        include(Lists, CharSequences)
+    } builder {
+        doc { "Returns single ${f.element}, or `null` if the ${f.collection} is empty or has more than one ${f.element}." }
         returns("T?")
         body {
             """
@@ -696,12 +766,14 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("single(predicate: (T) -> Boolean)") {
-        inline(true)
+    val f_single_predicate = fn("single(predicate: (T) -> Boolean)") {
+        includeDefault()
         include(CharSequences)
-        doc { f -> "Returns the single ${f.element} matching the given [predicate], or throws exception if there is no or more than one matching ${f.element}." }
+    } builder {
+        inline()
+        doc { "Returns the single ${f.element} matching the given [predicate], or throws exception if there is no or more than one matching ${f.element}." }
         returns("T")
-        body { f ->
+        body {
             """
             var single: T? = null
             var found = false
@@ -719,10 +791,12 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("singleOrNull(predicate: (T) -> Boolean)") {
-        inline(true)
+    val f_singleOrNull_predicate = fn("singleOrNull(predicate: (T) -> Boolean)") {
+        includeDefault()
         include(CharSequences)
-        doc { f -> "Returns the single ${f.element} matching the given [predicate], or `null` if ${f.element} was not found or more than one ${f.element} was found." }
+    } builder {
+        inline()
+        doc { "Returns the single ${f.element} matching the given [predicate], or `null` if ${f.element} was not found or more than one ${f.element} was found." }
         returns("T?")
         body {
             """
@@ -741,10 +815,12 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates addAll (1..5).map { n ->
-        f("component$n()") {
+    val f_components = (1..5).map { n ->
+        fn("component$n()") {
+            include(Lists, ArraysOfObjects, ArraysOfPrimitives)
+        } builder {
             operator(true)
-            inline(Inline.Only)
+            inlineOnly()
             fun getOrdinal(n: Int) = n.toString() + when (n) {
                 1 -> "st"
                 2 -> "nd"
@@ -754,10 +830,7 @@ fun elements(): List<GenericFunction> {
             doc { "Returns ${getOrdinal(n)} *element* from the collection." }
             returns("T")
             body { "return get(${n-1})" }
-            only(Lists, ArraysOfObjects, ArraysOfPrimitives)
         }
     }
 
-    templates.forEach { it.sequenceClassification(terminal) }
-    return templates
 }
