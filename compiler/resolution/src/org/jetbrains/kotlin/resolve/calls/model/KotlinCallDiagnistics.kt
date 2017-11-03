@@ -156,6 +156,12 @@ object AbstractSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
     }
 }
 
+class SpreadArgumentToNonVarargParameter(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
+    }
+}
+
 // candidates result
 class NoneCandidatesCallDiagnostic(val kotlinCall: KotlinCall) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) {
