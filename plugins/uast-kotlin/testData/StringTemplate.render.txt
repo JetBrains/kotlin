@@ -9,4 +9,10 @@ public final class StringTemplateKt {
     public static final fun getBaz() : java.lang.String = UastEmptyExpression
     public static final fun getFoobarbaz() : java.lang.String = UastEmptyExpression
     public static final fun getCase4() : java.lang.String = UastEmptyExpression
+    public static final fun simpleForTemplate(i: int) : java.lang.String = i
+    public static final fun foo() : void {
+        println(baz)
+        var template1: java.lang.String = simpleForTemplate()
+        var template2: java.lang.String = "." + simpleForTemplate()
+    }
 }
