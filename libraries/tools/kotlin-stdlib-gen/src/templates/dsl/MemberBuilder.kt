@@ -59,6 +59,8 @@ class MemberBuilder(
     var deprecate: Deprecation? = null; private set
     var since: String? = null; private set
     var platformName: String? = null; private set
+    @Deprecated("Use platforms when building template")
+    var jvmOnly: Boolean = false
 
     var visibility: String? = null; private set
     var external: Boolean = false; private set
@@ -102,6 +104,8 @@ class MemberBuilder(
         signature = value
     }
     fun returns(type: String) { returns = type }
+    @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { returns(run(valueBuilder)) }"))
+    fun returns(vararg fs: Family, valueBuilder: () -> String) = specialFor(*fs) { returns(run(valueBuilder)) }
 
     fun typeParam(typeParameterName: String) {
         typeParams += typeParameterName
@@ -118,6 +122,9 @@ class MemberBuilder(
     fun doc(valueBuilder: DocExtensions.() -> String) {
         doc = valueBuilder(DocExtensions)
     }
+
+    @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { doc(valueBuilder) }"))
+    fun doc(vararg fs: Family, valueBuilder: DocExtensions.() -> String) = specialFor(*fs) { doc(valueBuilder) }
 
     fun body(valueBuilder: () -> String) {
         body = valueBuilder()
@@ -322,6 +329,11 @@ class MemberBuilder(
         if (inline == Inline.Only) {
             builder.append("@kotlin.internal.InlineOnly").append('\n')
         }
+
+        if (jvmOnly) {
+            builder.append("@kotlin.jvm.JvmVersion").append('\n')
+        }
+
 
         listOfNotNull(
                 visibility ?: "public",
