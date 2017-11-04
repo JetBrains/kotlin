@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 //        SetOps,
         Aggregates,
 //        Guards,
-//        Generators,
+        Generators,
 //        StringJoinOps,
 //        SequenceOps,
 //        RangeOps,
