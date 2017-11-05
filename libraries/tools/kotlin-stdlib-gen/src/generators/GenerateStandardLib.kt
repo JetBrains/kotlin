@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     val templateGroups = sequenceOf<TemplateGroup>(
         Elements,
         Filtering,
-//        Ordering,
+        Ordering,
 //        ArrayOps,
 //        Snapshots,
 //        Mapping,
