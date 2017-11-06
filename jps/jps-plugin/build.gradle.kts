@@ -4,7 +4,8 @@ val compilerModules: Array<String> by rootProject.extra
 
 dependencies {
     compile(project(":kotlin-build-common"))
-    compile(project(":core"))
+    compile(project(":core:descriptors"))
+    compile(project(":core:descriptors.jvm"))
     compile(project(":kotlin-compiler-runner"))
     compile(project(":compiler:daemon-common"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
