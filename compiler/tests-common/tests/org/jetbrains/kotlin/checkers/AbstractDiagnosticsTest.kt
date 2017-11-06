@@ -142,12 +142,13 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         var exceptionFromDescriptorValidation: Throwable? = null
         val originalTestFile = testDataFile.readText()
         try {
-            val isJavacExpectedFile = InTextDirectivesUtils.isDirectiveDefined(originalTestFile, "// JAVAC_EXPECTED_FILE")
-                                      && environment.configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)
-
             val postfix = when {
-                isJavacExpectedFile -> ".javac.txt"
-                files.all { it.withNewInferenceDirective && it.newInferenceEnabled } -> ".ni.txt"
+                InTextDirectivesUtils.isDirectiveDefined(originalTestFile, "// JAVAC_EXPECTED_FILE") &&
+                environment.configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC) -> ".javac.txt"
+
+                InTextDirectivesUtils.isDirectiveDefined(originalTestFile, "// NI_EXPECTED_FILE") &&
+                files.any { it.newInferenceEnabled } && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI -> ".ni.txt"
+
                 else -> ".txt"
             }
             val expectedFile = File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + postfix)
