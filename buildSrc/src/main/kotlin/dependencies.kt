@@ -65,11 +65,11 @@ fun Project.ideaUltimatePluginDeps(vararg artifactBaseNames: String, plugin: Str
 
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
-fun DependencyHandler.projectDist(name: String): Dependency = project(name, configuration = "distJar").apply { isTransitive = false }
-fun DependencyHandler.projectTests(name: String): Dependency = project(name, configuration = "tests-jar")
-fun DependencyHandler.projectRuntimeJar(name: String): Dependency = project(name, configuration = "runtimeJar")
-fun DependencyHandler.projectArchives(name: String): Dependency = project(name, configuration = "archives")
-fun DependencyHandler.projectClasses(name: String): Dependency = project(name, configuration = "classes-dirs")
+fun DependencyHandler.projectDist(name: String): ProjectDependency = project(name, configuration = "distJar").apply { isTransitive = false }
+fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
+fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
+fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
+fun DependencyHandler.projectClasses(name: String): ProjectDependency = project(name, configuration = "classes-dirs")
 
 val protobufLiteProject = ":custom-dependencies:protobuf-lite"
 fun DependencyHandler.protobufLite(): ProjectDependency =
