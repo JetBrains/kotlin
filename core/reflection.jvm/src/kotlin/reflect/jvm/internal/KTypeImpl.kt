@@ -19,9 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
-import org.jetbrains.kotlin.load.java.structure.reflect.parameterizedTypeArguments
-import org.jetbrains.kotlin.load.java.structure.reflect.primitiveByWrapper
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -33,6 +30,9 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.jvm.internal.structure.createArrayType
+import kotlin.reflect.jvm.internal.structure.parameterizedTypeArguments
+import kotlin.reflect.jvm.internal.structure.primitiveByWrapper
 import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(

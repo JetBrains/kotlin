@@ -16,10 +16,10 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.load.java.structure.reflect.wrapperByPrimitive
 import java.lang.reflect.Proxy
 import java.util.*
 import kotlin.reflect.KClass
+import kotlin.reflect.jvm.internal.structure.wrapperByPrimitive
 import java.lang.reflect.Method as ReflectMethod
 
 internal class AnnotationConstructorCaller(
