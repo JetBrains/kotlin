@@ -3,7 +3,6 @@ apply { plugin("kotlin") }
 
 dependencies {
     compile(protobufFull())
-    compile(project(":core"))
     compile(project(":idea"))
     compile(project(":j2k"))
     compile(project(":compiler:util"))

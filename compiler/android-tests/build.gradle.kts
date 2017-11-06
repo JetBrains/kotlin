@@ -13,7 +13,8 @@ dependencies {
     compile(ideaSdkDeps("openapi"))
 
     testCompile(project(":compiler:incremental-compilation-impl"))
-    testCompile(project(":core"))
+    testCompile(project(":core:descriptors"))
+    testCompile(project(":core:descriptors.jvm"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":jps-plugin"))
     testCompile(ideaSdkDeps("jps-model.jar", subdir = "jps"))

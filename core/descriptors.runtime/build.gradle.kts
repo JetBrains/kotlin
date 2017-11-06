@@ -1,15 +1,12 @@
-
 apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
+javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
+    compile(project(":core:util.runtime"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:cli-common"))
-    compile(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
-    compile(project(":kotlin-stdlib"))
 }
 
 sourceSets {
@@ -17,3 +14,7 @@ sourceSets {
     "test" {}
 }
 
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "1.6"
+    targetCompatibility = "1.6"
+}

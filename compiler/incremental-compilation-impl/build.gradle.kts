@@ -4,7 +4,9 @@ apply { plugin("kotlin") }
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":core"))
+    compile(project(":core:descriptors"))
+    compile(project(":core:descriptors.jvm"))
+    compile(project(":core:deserialization"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
