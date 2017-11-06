@@ -511,7 +511,6 @@ internal fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolea
 }
 
 internal fun createSpecialEnumMethodBody(
-        codegen: BaseExpressionCodegen,
         name: String,
         type: KotlinType,
         typeMapper: KotlinTypeMapper
@@ -520,7 +519,7 @@ internal fun createSpecialEnumMethodBody(
     val invokeType = typeMapper.mapType(type)
     val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
     val node = MethodNode(API, Opcodes.ACC_STATIC, "fake", desc, null, null)
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, InstructionAdapter(node), codegen)
+    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, InstructionAdapter(node))
     if (isValueOf) {
         node.visitInsn(Opcodes.ACONST_NULL)
         node.visitVarInsn(Opcodes.ALOAD, 0)

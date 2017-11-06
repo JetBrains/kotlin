@@ -4232,14 +4232,29 @@ The "returned" value of try expression with no finally is either the last expres
         putReifiedOperationMarkerIfTypeIsReifiedParameter(type, operationKind, v, this);
     }
 
+    public static void putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
+            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v
+    ) {
+        putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, null);
+    }
+
     public static void putReifiedOperationMarkerIfTypeIsReifiedParameter(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
             @NotNull BaseExpressionCodegen codegen
     ) {
+        putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, codegen);
+    }
+
+    private static void putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(
+            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
+            @Nullable BaseExpressionCodegen codegen
+    ) {
         Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
         if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.getFirst().isReified()) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameterAndReificationArgument.getFirst();
-            codegen.consumeReifiedOperationMarker(typeParameterDescriptor);
+            if (codegen != null) {
+                codegen.consumeReifiedOperationMarker(typeParameterDescriptor);
+            }
             v.iconst(operationKind.getId());
             v.visitLdcInsn(typeParameterAndReificationArgument.getSecond().asString());
             v.invokestatic(

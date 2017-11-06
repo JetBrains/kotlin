@@ -166,7 +166,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = createInlineMethodNode(functionDescriptor, jvmSignature, codegen, callDefault, resolvedCall, state, sourceCompiler)
+            nodeAndSmap = createInlineMethodNode(functionDescriptor, jvmSignature, callDefault, resolvedCall, state, sourceCompiler)
             endCall(inlineCall(nodeAndSmap, callDefault))
         }
         catch (e: CompilationException) {
@@ -467,7 +467,6 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         internal fun createInlineMethodNode(
                 functionDescriptor: FunctionDescriptor,
                 jvmSignature: JvmMethodSignature,
-                codegen: BaseExpressionCodegen,
                 callDefault: Boolean,
                 resolvedCall: ResolvedCall<*>?,
                 state: GenerationState,
@@ -478,7 +477,6 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                     val arguments = resolvedCall!!.typeArguments
 
                     val node = createSpecialEnumMethodBody(
-                            codegen,
                             functionDescriptor.name.asString(),
                             arguments.keys.single().defaultType,
                             state.typeMapper
