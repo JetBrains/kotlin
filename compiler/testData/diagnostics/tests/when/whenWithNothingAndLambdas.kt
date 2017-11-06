@@ -1,4 +1,5 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = when {
     true -> { <!OI;TYPE_MISMATCH!>{ true }<!> }
     else -> TODO()

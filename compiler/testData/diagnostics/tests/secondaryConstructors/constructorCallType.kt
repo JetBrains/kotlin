@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// NI_EXPECTED_FILE
 class A(x: Int) {
     constructor(x: Double): this(1)
     constructor(x: String): this(1)

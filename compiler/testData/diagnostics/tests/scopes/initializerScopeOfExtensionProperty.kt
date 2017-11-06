@@ -1,3 +1,5 @@
+// NI_EXPECTED_FILE
+
 package i
 
 val <T> List<T>.length = <!UNRESOLVED_REFERENCE, EXTENSION_PROPERTY_WITH_BACKING_FIELD!>size<!>

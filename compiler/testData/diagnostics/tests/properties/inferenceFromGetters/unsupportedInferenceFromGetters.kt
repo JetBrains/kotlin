@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !LANGUAGE: -ShortSyntaxForPropertyGetters
+// NI_EXPECTED_FILE
 
 // blockBodyGetter.kt
 <!UNSUPPORTED_FEATURE!>val x get() {

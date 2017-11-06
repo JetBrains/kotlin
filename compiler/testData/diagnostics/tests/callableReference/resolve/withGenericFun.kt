@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// NI_EXPECTED_FILE
 
 fun <T, R> apply(x: T, f: (T) -> R): R = f(x)
 

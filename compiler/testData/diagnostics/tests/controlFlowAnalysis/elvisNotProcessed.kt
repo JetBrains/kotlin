@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // See KT-8277
+// NI_EXPECTED_FILE
 
 val v = { true } <!USELESS_ELVIS!>?: ( { true } <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!! )<!>
 

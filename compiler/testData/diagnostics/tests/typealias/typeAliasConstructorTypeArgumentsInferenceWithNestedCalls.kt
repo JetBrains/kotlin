@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 class Cons<T : Number>(val head: T, val tail: Cons<T>?)
 typealias C<T> = Cons<T>
 

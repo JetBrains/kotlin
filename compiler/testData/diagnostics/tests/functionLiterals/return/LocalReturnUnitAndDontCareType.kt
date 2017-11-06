@@ -1,4 +1,5 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 val flag = true
 
 // type of a was checked by txt

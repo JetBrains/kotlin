@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 class Foo<A : Number>
 class Bar<B : CharSequence>
 
