@@ -58,7 +58,7 @@ dependencies {
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":idea"))
+    testCompile(projectTests(":idea")) { isTransitive = false }
     testCompile(projectTests(":generators:test-generator"))
     testCompile(commonDep("junit:junit"))
     testCompile(ideaUltimateSdkDeps("gson"))
