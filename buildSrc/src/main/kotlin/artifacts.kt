@@ -37,7 +37,7 @@ fun Project.classesDirsArtifact(): FileCollection {
 }
 
 fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
-    val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testRuntime"])
+    val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])
 
     return task<Jar>("testsJar") {
         dependsOn("testClasses")
