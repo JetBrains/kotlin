@@ -1,5 +1,3 @@
-
-import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
@@ -8,20 +6,14 @@ jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
-    compile(project("util.runtime"))
+    compile(project(":core:util.runtime"))
+    compile(project(":core:descriptors"))
     compile(protobufLite())
     compile(commonDep("javax.inject"))
 }
 
 sourceSets {
-    "main" {
-        java.srcDirs("descriptors/src",
-                     "descriptors.jvm/src",
-                     "descriptors.runtime/src",
-                     "deserialization/src")
-        resources.srcDirs("descriptors.jvm/src", "deserialization/src").apply { include("META-INF/**") }
-    }
+    "main" { projectDefault() }
     "test" {}
 }
 
@@ -34,5 +26,3 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
     dependsOn(protobufLiteTask)
 }
-
-
