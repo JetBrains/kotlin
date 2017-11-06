@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -NOTHING_TO_INLINE
+// NI_EXPECTED_FILE
 // See KT-9143: smart cast on a variable nulled inside a lambda argument
 inline fun <T> foo(t1: T, t2: T) = t1 ?: t2
 

@@ -1,0 +1,14 @@
+package
+
+public val test1: C<kotlin.Int> /* = Cons<kotlin.Int> */
+public val test2: Cons<out kotlin.Any>
+
+public final class Cons</*0*/ T : kotlin.Number> {
+    public constructor Cons</*0*/ T : kotlin.Number>(/*0*/ head: T, /*1*/ tail: Cons<T>?)
+    public final val head: T
+    public final val tail: Cons<T>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias C</*0*/ T>  = Cons<T>

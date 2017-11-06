@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 interface Ref<T> {
     var x: T
 }

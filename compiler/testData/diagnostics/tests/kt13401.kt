@@ -1,5 +1,7 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 // See KT-13401: SOE in VarianceChecker
+
 interface Rec<T: Rec<T>> {
     fun t(): T
 }

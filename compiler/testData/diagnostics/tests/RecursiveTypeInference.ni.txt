@@ -1,0 +1,36 @@
+package
+
+package a {
+    public val foo: kotlin.Any?
+    public fun bar(): [ERROR : Error function type]
+}
+
+package b {
+    public fun bar(): [ERROR : Error function type]
+    public fun foo(): kotlin.Any?
+}
+
+package c {
+    public fun bar(): kotlin.Any?
+    public fun bazz(): kotlin.Any?
+    public fun foo(): [ERROR : Error function type]
+}
+
+package ok {
+
+    package ok.a {
+        public val foo: kotlin.Int
+        public fun bar(): kotlin.Int
+    }
+
+    package ok.b {
+        public fun bar(): kotlin.Int
+        public fun foo(): kotlin.Int
+    }
+
+    package ok.c {
+        public fun bar(): kotlin.Int
+        public fun bazz(): kotlin.Int
+        public fun foo(): kotlin.Int
+    }
+}

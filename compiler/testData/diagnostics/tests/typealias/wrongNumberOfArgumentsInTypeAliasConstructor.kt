@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 class Pair<T1, T2>(val x1: T1, val x2: T2)
 
 typealias P<T1, T2> = Pair<T1, T2>

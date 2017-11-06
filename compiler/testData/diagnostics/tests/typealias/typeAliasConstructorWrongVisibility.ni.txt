@@ -1,0 +1,33 @@
+package
+
+public val test1: MyAlias /* = MyClass */
+public val test1a: MyClass
+public val test2: MyAlias /* = MyClass */
+public val test2a: MyClass
+public val test3: MyAlias /* = MyClass */
+public val test3a: MyClass
+
+public open class MyClass {
+    public constructor MyClass(/*0*/ x: kotlin.Double)
+    private constructor MyClass(/*0*/ x: kotlin.Int)
+    protected constructor MyClass(/*0*/ x: kotlin.String)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyDerived : MyClass {
+    public constructor MyDerived()
+    public final val test4: [ERROR : Type for MyAlias(1)]
+    public final val test4a: [ERROR : Type for MyClass(1)]
+    public final val test5: MyAlias /* = MyClass */
+    public final val test5a: MyClass
+    public final val test6: MyAlias /* = MyClass */
+    public final val test6a: MyClass
+    public final override /*1*/ /*fake_override*/ val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias MyAlias = MyClass

@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 open class MyClass private constructor(val x: Int) {
 
     protected constructor(x: String) : this(x.length)

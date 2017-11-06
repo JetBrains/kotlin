@@ -1,0 +1,18 @@
+package
+
+public val test1: CStar /* = C<*> */
+public val test2: CIn /* = C<in kotlin.Int> */
+public val test3: COut /* = C<out kotlin.Int> */
+public val test4: CT<kotlin.Any?> /* = C<kotlin.Any?> */
+public val test5: CT<CT<*> /* = C<*> */> /* = C<CT<*> /* = C<*> */> */
+
+public final class C</*0*/ T> {
+    public constructor C</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias CIn = C<in kotlin.Int>
+public typealias COut = C<out kotlin.Int>
+public typealias CStar = C<*>
+public typealias CT</*0*/ T>  = C<T>

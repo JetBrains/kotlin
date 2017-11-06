@@ -1,0 +1,14 @@
+package
+
+public val a: kotlin.Any?
+public val b: kotlin.Int
+public val c: [ERROR : Type from delegate]
+public val d: kotlin.Any?
+
+public final class Delegate {
+    public constructor Delegate(/*0*/ i: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun getValue(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

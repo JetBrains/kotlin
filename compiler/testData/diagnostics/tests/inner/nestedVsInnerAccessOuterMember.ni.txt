@@ -1,0 +1,43 @@
+package
+
+public final class Outer {
+    public constructor Outer()
+    public final val property: kotlin.String = ""
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun function(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner {
+        public constructor Inner()
+        public final val innerProp: kotlin.String = ""
+        public final val innerThisProp: kotlin.String = ""
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun innerFun(): kotlin.Int
+        public final fun innerThisFun(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final inner class InnerInner {
+            public constructor InnerInner()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun f(): kotlin.Int
+            public final fun g(): kotlin.String
+            public final fun h(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final fun i(): kotlin.String
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun f(): [ERROR : Error function type]
+        public final fun g(): [ERROR : Error function type]
+        public final fun h(): kotlin.Any?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun i(): [ERROR : <ERROR PROPERTY TYPE>]
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

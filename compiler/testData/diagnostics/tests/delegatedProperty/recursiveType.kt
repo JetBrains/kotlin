@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// NI_EXPECTED_FILE
 
 import kotlin.reflect.KProperty
 

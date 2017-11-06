@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 typealias Array2D<T> = Array<Array<T>>
 
 fun foo1(a: Array2D<out Number>) = a

@@ -1,4 +1,6 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 class Num<Tn : Number>(val x: Tn)
 typealias N<T> = Num<T>
 

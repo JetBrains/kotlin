@@ -1,0 +1,52 @@
+package
+
+public val test0: N<kotlin.Int> /* = Num<kotlin.Int> */
+public val test1: N<kotlin.String> /* = Num<kotlin.String> */
+public val test2: C<kotlin.Int> /* = Cons<kotlin.Int> */
+public val test3: CC<kotlin.Any?> /* = Cons<Cons<kotlin.Any?>> */
+public val test4: CC<kotlin.Int> /* = Cons<Cons<kotlin.Int>> */
+public val test5: PL<kotlin.Int> /* = Pair<kotlin.Int, kotlin.collections.List<kotlin.Int>> */
+public fun testProjections1(/*0*/ x: Pair<in kotlin.Int, out kotlin.String>): Foo<out kotlin.String>
+public fun testProjections2(/*0*/ x: Pair<in kotlin.Int, out kotlin.Number>): Foo<out kotlin.Number>
+public fun testProjections3(/*0*/ x: Pair<in kotlin.Number, out kotlin.Int>): Foo<out kotlin.Int>
+public fun testProjections4(/*0*/ x: Pair<in kotlin.Int, in kotlin.Int>): Foo<in kotlin.Int>
+
+public final class Cons</*0*/ T> {
+    public constructor Cons</*0*/ T>(/*0*/ head: T, /*1*/ tail: Cons<T>?)
+    public final val head: T
+    public final val tail: Cons<T>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>(/*0*/ p: Pair<T, T>)
+    public final val p: Pair<T, T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Num</*0*/ Tn : kotlin.Number> {
+    public constructor Num</*0*/ Tn : kotlin.Number>(/*0*/ x: Tn)
+    public final val x: Tn
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Pair</*0*/ X, /*1*/ Y> {
+    public constructor Pair</*0*/ X, /*1*/ Y>(/*0*/ x: X, /*1*/ y: Y)
+    public final val x: X
+    public final val y: Y
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias C</*0*/ T>  = Cons<T>
+public typealias CC</*0*/ T>  = C<C<T>>
+public typealias F</*0*/ T>  = Foo<T>
+public typealias N</*0*/ T>  = Num<T>
+public typealias PL</*0*/ T>  = Pair<T, kotlin.collections.List<T>>
+public typealias PN</*0*/ T>  = Pair<T, Num<T>>

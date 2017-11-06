@@ -1,0 +1,34 @@
+package
+
+public var a: kotlin.Int
+public var a1: [ERROR : Type from delegate]
+public var b: kotlin.Int
+public var c: kotlin.String
+public val cObj: C
+public operator fun </*0*/ T> B.getValue(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): T
+public operator inline fun </*0*/ reified T> C.getValue(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): T
+public operator fun </*0*/ T> B.setValue(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>, /*2*/ x: T): kotlin.Unit
+public operator inline fun </*0*/ reified T> C.setValue(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>, /*2*/ x: T): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun </*0*/ T> getValue(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun </*0*/ T> setValue(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>, /*2*/ x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

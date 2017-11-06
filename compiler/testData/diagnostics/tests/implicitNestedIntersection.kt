@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// NI_EXPECTED_FILE
 
 interface In<in E>
 open class A : In<A>

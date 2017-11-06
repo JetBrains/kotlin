@@ -1,4 +1,5 @@
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)
 annotation class XMarker

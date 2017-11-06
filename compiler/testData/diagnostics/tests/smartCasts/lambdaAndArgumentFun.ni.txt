@@ -1,0 +1,5 @@
+package
+
+public inline fun </*0*/ T> bar(/*0*/ l: (T) -> kotlin.Unit): T
+public inline fun </*0*/ T> foo(/*0*/ t1: T, /*1*/ t2: T): T?
+public fun use(): kotlin.Unit
