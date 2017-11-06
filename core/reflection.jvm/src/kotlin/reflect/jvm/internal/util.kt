@@ -20,15 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
-import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
-import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
-import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
-import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -46,6 +39,13 @@ import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
+import kotlin.reflect.jvm.internal.components.ReflectAnnotationSource
+import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
+import kotlin.reflect.jvm.internal.components.RuntimeSourceElementFactory
+import kotlin.reflect.jvm.internal.components.tryLoadClass
+import kotlin.reflect.jvm.internal.structure.ReflectJavaAnnotation
+import kotlin.reflect.jvm.internal.structure.ReflectJavaClass
+import kotlin.reflect.jvm.internal.structure.safeClassLoader
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
