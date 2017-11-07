@@ -1,7 +1,9 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Test {
     private Test.FilterValueDelegate<java.lang.Float> a;
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test() {
         super();
     }
@@ -9,6 +11,7 @@ public final class Test {
     @kotlin.Metadata()
     final class FilterValueDelegate<T extends java.lang.Object> {
 
+        @kapt.internal.KaptSignature(value = "<init>(LTest;)V")
         public FilterValueDelegate() {
             super();
         }
@@ -19,8 +22,10 @@ public final class Test {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Test2 {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test2() {
         super();
     }
@@ -29,6 +34,7 @@ public final class Test2 {
     public final class FilterValueDelegate<T extends java.lang.Object> {
         private Test2.FilterValueDelegate<T>.Filter2<java.lang.String> a;
 
+        @kapt.internal.KaptSignature(value = "<init>(LTest2;)V")
         public FilterValueDelegate() {
             super();
         }
@@ -36,6 +42,7 @@ public final class Test2 {
         @kotlin.Metadata()
         public final class Filter2<X extends java.lang.Object> {
 
+            @kapt.internal.KaptSignature(value = "<init>(LTest2$FilterValueDelegate;)V")
             public Filter2() {
                 super();
             }
@@ -47,9 +54,11 @@ public final class Test2 {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Test3 {
     private Test3.FilterValueDelegate<java.lang.Float> a;
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test3() {
         super();
     }
@@ -57,8 +66,27 @@ public final class Test3 {
     @kotlin.Metadata()
     static final class FilterValueDelegate<T extends java.lang.Object> {
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         public FilterValueDelegate() {
             super();
         }
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

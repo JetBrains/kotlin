@@ -1,5 +1,6 @@
 package test
 
+@Suppress("UNRESOLVED_REFERENCE")
 internal class Simple {
     @MyAnnotation
     fun myMethod() {

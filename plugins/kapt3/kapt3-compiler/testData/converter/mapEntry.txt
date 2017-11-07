@@ -1,10 +1,31 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface EntryHolder {
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "entry(Ljava/util/Map$Entry;)Ljava/util/Map$Entry;")
     public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> entry(@org.jetbrains.annotations.NotNull()
     java.util.Map.Entry<? extends java.lang.CharSequence, ? extends java.util.Map.Entry<java.lang.String, java.lang.Integer>> p);
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getEntryProperty()Ljava/util/Map$Entry;")
     public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> getEntryProperty();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

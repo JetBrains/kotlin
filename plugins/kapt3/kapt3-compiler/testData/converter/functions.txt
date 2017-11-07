@@ -1,24 +1,48 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class FunctionsTest {
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "f()Lkotlin/reflect/KProperty1;")
     public final kotlin.reflect.KProperty1<java.lang.String, java.lang.Integer> f() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "f2()Lkotlin/jvm/functions/Function2;")
     public final kotlin.jvm.functions.Function2<java.lang.Integer, java.lang.Integer, java.lang.Boolean> f2() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "f3()V")
     public final void f3() {
     }
 
+    @kapt.internal.KaptSignature(value = "f4()I")
     public final int f4() {
         return 0;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public FunctionsTest() {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

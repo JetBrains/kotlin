@@ -1,9 +1,29 @@
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
 package test;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Test<T extends java.lang.CharSequence, N extends java.lang.Number> {
     private final test.TypedListUpdateCallback<java.lang.String, java.lang.Long> x = null;
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test() {
         super();
     }
@@ -14,8 +34,10 @@ public final class Test<T extends java.lang.CharSequence, N extends java.lang.Nu
 package test;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface TypedListUpdateCallback<T extends java.lang.Object, C extends java.lang.Number> {
 
+    @kapt.internal.KaptSignature(value = "onInserted(Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Object;)V")
     public abstract void onInserted(@org.jetbrains.annotations.NotNull()
     C position, @org.jetbrains.annotations.NotNull()
     C count, @org.jetbrains.annotations.NotNull()

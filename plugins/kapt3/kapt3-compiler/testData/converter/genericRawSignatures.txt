@@ -1,17 +1,39 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class GenericRawSignatures {
 
     @org.jetbrains.annotations.Nullable()
+    @kapt.internal.KaptSignature(value = "genericFun()Ljava/lang/Object;")
     public final <T extends java.lang.Object>T genericFun() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
+    @kapt.internal.KaptSignature(value = "nonGenericFun()Ljava/lang/String;")
     public final java.lang.String nonGenericFun() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public GenericRawSignatures() {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

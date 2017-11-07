@@ -1,14 +1,18 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract class Cls {
 
+    @kapt.internal.KaptSignature(value = "foo(Ljava/lang/String;)V")
     public abstract void foo(@org.jetbrains.annotations.NotNull()
     java.lang.String abc);
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "bar(I)Ljava/lang/String;")
     public final java.lang.String bar(int bcd) {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Cls() {
         super();
     }
@@ -18,12 +22,15 @@ public abstract class Cls {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface Intf {
 
+    @kapt.internal.KaptSignature(value = "foo(Ljava/lang/String;)V")
     public abstract void foo(@org.jetbrains.annotations.NotNull()
     java.lang.String abc);
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "bar(I)Ljava/lang/String;")
     public abstract java.lang.String bar(int bcd);
 
     @kotlin.Metadata()
@@ -34,8 +41,27 @@ public abstract interface Intf {
         }
 
         @org.jetbrains.annotations.NotNull()
+        @kapt.internal.KaptSignature(value = "bar(LIntf;I)Ljava/lang/String;")
         public static java.lang.String bar(Intf $this, int bcd) {
             return null;
         }
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

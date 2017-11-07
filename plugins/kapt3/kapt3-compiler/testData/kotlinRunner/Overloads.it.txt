@@ -5,10 +5,29 @@ public final class NonExistentClass {
 
 ////////////////////
 
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
 package test;
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
 public abstract @interface MyAnnotation {
 }
 
@@ -18,30 +37,36 @@ package test;
 
 @kotlin.Metadata()
 @MyAnnotation()
+@kapt.internal.KaptMetadata()
 public final class State {
     private final int someInt = 0;
     private final long someLong = 0L;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String someString = null;
 
+    @kapt.internal.KaptSignature("getSomeInt()I")
     public final int getSomeInt() {
         return 0;
     }
 
+    @kapt.internal.KaptSignature("getSomeLong()J")
     public final long getSomeLong() {
         return 0L;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature("getSomeString()Ljava/lang/String;")
     public final java.lang.String getSomeString() {
         return null;
     }
 
+    @kapt.internal.KaptSignature("<init>(IJLjava/lang/String;)V")
     public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
     java.lang.String someString) {
         super();
     }
 
+    @kapt.internal.KaptSignature("<init>(IJ)V")
     public State(int someInt, long someLong) {
         super();
     }

@@ -1,5 +1,42 @@
 package app;
 
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
+public abstract @interface Anno {
+
+    @kapt.internal.KaptSignature(value = "a1()Z")
+    public abstract boolean a1();
+
+    @kapt.internal.KaptSignature(value = "a2()B")
+    public abstract byte a2();
+
+    @kapt.internal.KaptSignature(value = "a3()I")
+    public abstract int a3();
+
+    @kapt.internal.KaptSignature(value = "a4()S")
+    public abstract short a4();
+
+    @kapt.internal.KaptSignature(value = "a5()J")
+    public abstract long a5();
+
+    @kapt.internal.KaptSignature(value = "a6()C")
+    public abstract char a6();
+
+    @kapt.internal.KaptSignature(value = "a7()F")
+    public abstract float a7();
+
+    @kapt.internal.KaptSignature(value = "a8()D")
+    public abstract double a8();
+
+    @kapt.internal.KaptSignature(value = "a9()Ljava/lang/String;")
+    public abstract java.lang.String a9();
+}
+
+////////////////////
+
+package app;
+
 public class B {
 
     public B() {
@@ -28,6 +65,83 @@ public class B {
 
 package app;
 
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
+public abstract @interface Bind {
+
+    @kapt.internal.KaptSignature(value = "id()I")
+    public abstract int id();
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public final class MyActivity {
+
+    @Bind(id = lib.R.id.textView)
+    @kapt.internal.KaptSignature(value = "foo()V")
+    public final void foo() {
+    }
+
+    @Bind(id = lib.R.id.textView)
+    @kapt.internal.KaptSignature(value = "foo2()V")
+    public final void foo2() {
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    @kapt.internal.KaptSignature(value = "foo3()V")
+    public final void foo3() {
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    @kapt.internal.KaptSignature(value = "foo4()V")
+    public final void foo4() {
+    }
+
+    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
+    @Bind(id = app.R2.layout.mainActivity)
+    @kapt.internal.KaptSignature(value = "foo5()V")
+    public final void foo5() {
+    }
+
+    @Bind(id = app.B.id.textView)
+    @kapt.internal.KaptSignature(value = "plainIntConstant()V")
+    public final void plainIntConstant() {
+    }
+
+    @kapt.internal.KaptSignature(value = "<init>()V")
+    public MyActivity() {
+        super();
+    }
+}
+
+////////////////////
+
+package app;
+
+public class R {
+
+    public R() {
+        super();
+    }
+
+    public static class layout {
+
+        public layout() {
+            super();
+        }
+        public static final int mainActivity = 100;
+    }
+}
+
+////////////////////
+
+package app;
+
 public class R2 {
 
     public R2() {
@@ -41,6 +155,24 @@ public class R2 {
         }
         public static final int mainActivity = 100;
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }
 
 ////////////////////
@@ -59,99 +191,5 @@ public class R {
             super();
         }
         public static final int textView = 100;
-    }
-}
-
-////////////////////
-
-package app;
-
-public class R {
-
-    public R() {
-        super();
-    }
-
-    public static class layout {
-
-        public layout() {
-            super();
-        }
-        public static final int mainActivity = 100;
-    }
-}
-
-////////////////////
-
-package app;
-
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Anno {
-
-    public abstract boolean a1();
-
-    public abstract byte a2();
-
-    public abstract int a3();
-
-    public abstract short a4();
-
-    public abstract long a5();
-
-    public abstract char a6();
-
-    public abstract float a7();
-
-    public abstract double a8();
-
-    public abstract java.lang.String a9();
-}
-
-////////////////////
-
-package app;
-
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Bind {
-
-    public abstract int id();
-}
-
-////////////////////
-
-package app;
-
-@kotlin.Metadata()
-public final class MyActivity {
-
-    @Bind(id = lib.R.id.textView)
-    public final void foo() {
-    }
-
-    @Bind(id = lib.R.id.textView)
-    public final void foo2() {
-    }
-
-    @Bind(id = app.R.layout.mainActivity)
-    public final void foo3() {
-    }
-
-    @Bind(id = app.R.layout.mainActivity)
-    public final void foo4() {
-    }
-
-    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
-    @Bind(id = app.R2.layout.mainActivity)
-    public final void foo5() {
-    }
-
-    @Bind(id = app.B.id.textView)
-    public final void plainIntConstant() {
-    }
-
-    public MyActivity() {
-        super();
     }
 }

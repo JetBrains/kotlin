@@ -1,4 +1,5 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class User {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
@@ -6,23 +7,28 @@ public final class User {
     private final java.lang.String secondName = null;
     private final int age = 0;
 
+    @kapt.internal.KaptSignature(value = "procedure()V")
     public final void procedure() {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getFirstName()Ljava/lang/String;")
     public final java.lang.String getFirstName() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getSecondName()Ljava/lang/String;")
     public final java.lang.String getSecondName() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "getAge()I")
     public final int getAge() {
         return 0;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;Ljava/lang/String;I)V")
     public User(@org.jetbrains.annotations.NotNull()
     java.lang.String firstName, @org.jetbrains.annotations.NotNull()
     java.lang.String secondName, int age) {
@@ -30,20 +36,24 @@ public final class User {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "component1()Ljava/lang/String;")
     public final java.lang.String component1() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "component2()Ljava/lang/String;")
     public final java.lang.String component2() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "component3()I")
     public final int component3() {
         return 0;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "copy(Ljava/lang/String;Ljava/lang/String;I)LUser;")
     public final User copy(@org.jetbrains.annotations.NotNull()
     java.lang.String firstName, @org.jetbrains.annotations.NotNull()
     java.lang.String secondName, int age) {
@@ -51,17 +61,38 @@ public final class User {
     }
 
     @java.lang.Override()
+    @kapt.internal.KaptSignature(value = "toString()Ljava/lang/String;")
     public java.lang.String toString() {
         return null;
     }
 
     @java.lang.Override()
+    @kapt.internal.KaptSignature(value = "hashCode()I")
     public int hashCode() {
         return 0;
     }
 
     @java.lang.Override()
+    @kapt.internal.KaptSignature(value = "equals(Ljava/lang/Object;)Z")
     public boolean equals(java.lang.Object p0) {
         return false;
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

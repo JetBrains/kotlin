@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit.*;
 import java.util.Calendar.*;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class ImportsForErrorTypesKt {
 
     public ImportsForErrorTypesKt() {
@@ -13,7 +14,26 @@ public final class ImportsForErrorTypesKt {
     }
 
     @org.jetbrains.annotations.Nullable()
+    @kapt.internal.KaptSignature(value = "test()Ljava/lang/Object;")
     public static final java.lang.Object test() {
         return null;
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

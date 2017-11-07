@@ -1,8 +1,28 @@
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class InternalClass {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public InternalClass() {
         super();
     }
@@ -13,6 +33,7 @@ public final class InternalClass {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface InternalInterface {
 }
 
@@ -21,6 +42,7 @@ public abstract interface InternalInterface {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Modifiers {
     @org.jetbrains.annotations.NotNull()
     private final transient java.lang.String transientField = "";
@@ -28,39 +50,47 @@ public final class Modifiers {
     private volatile java.lang.String volatileField;
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getTransientField()Ljava/lang/String;")
     public final java.lang.String getTransientField() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getVolatileField()Ljava/lang/String;")
     public final java.lang.String getVolatileField() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "setVolatileField(Ljava/lang/String;)V")
     public final void setVolatileField(@org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
     }
 
+    @kapt.internal.KaptSignature(value = "strictFp()V")
     public final strictfp void strictFp() {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "overloads(Ljava/lang/String;I)Ljava/lang/String;")
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a, int n) {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "overloads(Ljava/lang/String;)Ljava/lang/String;")
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "overloads()Ljava/lang/String;")
     public final java.lang.String overloads() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Modifiers() {
         super();
     }
@@ -71,8 +101,10 @@ public final class Modifiers {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 final class PrivateClass {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public PrivateClass() {
         super();
     }
@@ -83,6 +115,7 @@ final class PrivateClass {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 abstract interface PrivateInterface {
 }
 
@@ -91,8 +124,10 @@ abstract interface PrivateInterface {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class PublicClass {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public PublicClass() {
         super();
     }
@@ -103,8 +138,10 @@ public final class PublicClass {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract class PublicClassPrivateConstructor {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     private PublicClassPrivateConstructor() {
         super();
     }
@@ -115,8 +152,10 @@ public abstract class PublicClassPrivateConstructor {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public class PublicClassProtectedConstructor {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     protected PublicClassProtectedConstructor() {
         super();
     }
@@ -135,6 +174,7 @@ public class PublicClassProtectedConstructor {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface PublicInterface {
 }
 
@@ -143,8 +183,10 @@ public abstract interface PublicInterface {
 package modifiers;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract class SealedClass {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     private SealedClass() {
         super();
     }
@@ -152,6 +194,7 @@ public abstract class SealedClass {
     @kotlin.Metadata()
     public static final class One extends modifiers.SealedClass {
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         public One() {
             super();
         }
@@ -160,6 +203,7 @@ public abstract class SealedClass {
     @kotlin.Metadata()
     public static class Two extends modifiers.SealedClass {
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         public Two() {
             super();
         }
@@ -168,6 +212,7 @@ public abstract class SealedClass {
     @kotlin.Metadata()
     public static abstract class Three extends modifiers.SealedClass.Two {
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         public Three() {
             super();
         }
@@ -176,6 +221,7 @@ public abstract class SealedClass {
     @kotlin.Metadata()
     public static final class Four extends modifiers.SealedClass.Three {
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         public Four() {
             super();
         }

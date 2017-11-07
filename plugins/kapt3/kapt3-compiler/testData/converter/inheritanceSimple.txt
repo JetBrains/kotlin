@@ -1,9 +1,12 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract class BaseClass {
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "doJob()LResult;")
     public abstract Result doJob();
 
+    @kapt.internal.KaptSignature(value = "<init>(LContext;IZ)V")
     public BaseClass(@org.jetbrains.annotations.NotNull()
     Context context, int num, boolean bool) {
         super();
@@ -14,6 +17,7 @@ public abstract class BaseClass {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface Context {
 }
 
@@ -21,14 +25,17 @@ public abstract interface Context {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Inheritor extends BaseClass {
 
     @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
+    @kapt.internal.KaptSignature(value = "doJob()LResult;")
     public Result doJob() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(LContext;)V")
     public Inheritor(@org.jetbrains.annotations.NotNull()
     Context context) {
         super(null, 0, false);
@@ -39,10 +46,30 @@ public final class Inheritor extends BaseClass {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public enum Result {
-    /*public static final*/ SUCCESS /* = new SUCCESS() */,
-    /*public static final*/ ERROR /* = new ERROR() */;
+    /*public static final*/ SUCCESS /* = new Result() */,
+    /*public static final*/ ERROR /* = new Result() */;
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;I)V")
     Result() {
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

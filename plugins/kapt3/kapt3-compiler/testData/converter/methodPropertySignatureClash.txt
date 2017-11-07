@@ -1,17 +1,39 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class CrashMe {
     private final int resources = 1;
 
+    @kapt.internal.KaptSignature(value = "getResources()I")
     public final int getResources() {
         return 0;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getResources()Ljava/lang/String;")
     public final java.lang.String getResources() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public CrashMe() {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

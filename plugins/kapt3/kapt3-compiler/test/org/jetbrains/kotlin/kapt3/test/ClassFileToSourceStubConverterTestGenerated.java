@@ -78,6 +78,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("errorLocationMapping.kt")
+    public void testErrorLocationMapping() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/errorLocationMapping.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("fileFacadeJvmName.kt")
     public void testFileFacadeJvmName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/fileFacadeJvmName.kt");

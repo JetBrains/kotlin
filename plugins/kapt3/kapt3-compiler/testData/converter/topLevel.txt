@@ -1,9 +1,29 @@
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
 package test.another;
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 
+    @kapt.internal.KaptSignature(value = "value()Ljava/lang/String;")
     public abstract java.lang.String value();
 }
 
@@ -12,6 +32,7 @@ public abstract @interface Anno {
 package test.another;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class TopLevelKt {
 
     public TopLevelKt() {
@@ -20,24 +41,29 @@ public final class TopLevelKt {
     private static final int topLevelProperty = 2;
 
     @org.jetbrains.annotations.Nullable()
+    @kapt.internal.KaptSignature(value = "topLevelFunction()Ljava/lang/String;")
     public static final java.lang.String topLevelFunction() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
+    @kapt.internal.KaptSignature(value = "topLevelGenericFunction()Ljava/util/List;")
     public static final <X extends java.lang.CharSequence, T extends java.util.List<? extends X>>T topLevelGenericFunction() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "getTopLevelProperty()I")
     public static final int getTopLevelProperty() {
         return 0;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getTopLevelProperty2()Ljava/lang/String;")
     public static final java.lang.String getTopLevelProperty2() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "extensionFunction(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V")
     public static final void extensionFunction(@org.jetbrains.annotations.NotNull()
     @Anno(value = "rec")
     java.lang.String $receiver, @org.jetbrains.annotations.NotNull()
@@ -48,16 +74,19 @@ public final class TopLevelKt {
     }
 
     @Anno(value = "extpr")
+    @kapt.internal.KaptSignature(value = "extensionProperty$annotations(Ljava/lang/Object;)V")
     public static void extensionProperty$annotations(java.lang.Object p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getExtensionProperty(Ljava/lang/Object;)Ljava/lang/String;")
     public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@org.jetbrains.annotations.NotNull()
     @Anno(value = "propRec")
     T $receiver) {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "setExtensionProperty(Ljava/lang/Object;Ljava/lang/String;)V")
     public static final <T extends java.lang.Object>void setExtensionProperty(@org.jetbrains.annotations.NotNull()
     @Anno(value = "propRec")
     T $receiver, @org.jetbrains.annotations.NotNull()

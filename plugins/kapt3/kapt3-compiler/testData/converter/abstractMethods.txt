@@ -1,12 +1,16 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract class Base {
 
+    @kapt.internal.KaptSignature(value = "doJob(Ljava/lang/String;I)V")
     protected abstract void doJob(@org.jetbrains.annotations.NotNull()
     java.lang.String job, int delay);
 
+    @kapt.internal.KaptSignature(value = "doJobGeneric(Ljava/lang/CharSequence;I)V")
     protected abstract <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
     T job, int delay);
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Base() {
         super();
     }
@@ -16,19 +20,41 @@ public abstract class Base {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Impl extends Base {
 
     @java.lang.Override()
+    @kapt.internal.KaptSignature(value = "doJob(Ljava/lang/String;I)V")
     protected void doJob(@org.jetbrains.annotations.NotNull()
     java.lang.String job, int delay) {
     }
 
     @java.lang.Override()
+    @kapt.internal.KaptSignature(value = "doJobGeneric(Ljava/lang/CharSequence;I)V")
     protected <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
     T job, int delay) {
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Impl() {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

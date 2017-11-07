@@ -1,5 +1,6 @@
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 }
 
@@ -10,6 +11,7 @@ public abstract @interface Anno {
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CLASS})
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno2 {
 }
 
@@ -17,21 +19,43 @@ public abstract @interface Anno2 {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String prop = "A";
 
     @Anno2()
     @Anno()
+    @kapt.internal.KaptSignature(value = "prop$annotations()V")
     public static void prop$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getProp()Ljava/lang/String;")
     public final java.lang.String getProp() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test() {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }
