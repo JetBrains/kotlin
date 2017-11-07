@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.kaptError
+import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.name.FqName
@@ -385,7 +386,7 @@ class ClassFileToSourceStubConverter(
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
         else
             anonymousTypeHandler.getNonAnonymousType(descriptor) {
-                getNonErrorType((descriptor as? CallableDescriptor)?.returnType,
+                getNonErrorType((descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
                                 ktTypeProvider = { (kaptContext.origins[field]?.element as? KtVariableDeclaration)?.typeReference },
                                 ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) })
             }
@@ -515,12 +516,12 @@ class ClassFileToSourceStubConverter(
                 method.signature, parameters, exceptionTypes, jcReturnType,
                 nonErrorParameterTypeProvider = { index, lazyType ->
                     if (descriptor is PropertySetterDescriptor && valueParametersFromDescriptor.size == 1 && index == 0) {
-                        getNonErrorType(descriptor.correspondingProperty.returnType,
+                        getNonErrorType(descriptor.correspondingProperty.returnType, METHOD_PARAMETER_TYPE,
                                         ktTypeProvider = { (kaptContext.origins[method]?.element as? KtVariableDeclaration)?.typeReference },
                                         ifNonError = { lazyType() })
                     }
                     else if (descriptor is FunctionDescriptor && valueParametersFromDescriptor.size == parameters.size) {
-                        getNonErrorType(valueParametersFromDescriptor[index].type,
+                        getNonErrorType(valueParametersFromDescriptor[index].type, METHOD_PARAMETER_TYPE,
                                         ktTypeProvider = {
                                             (kaptContext.origins[method]?.element as? KtFunction)?.valueParameters?.get(index)?.typeReference
                                         },
@@ -532,7 +533,7 @@ class ClassFileToSourceStubConverter(
                 })
 
         val returnType = anonymousTypeHandler.getNonAnonymousType(descriptor) {
-            getNonErrorType(descriptor.returnType,
+            getNonErrorType(descriptor.returnType, RETURN_TYPE,
                             ktTypeProvider = {
                                 val element = kaptContext.origins[method]?.element
                                 when (element) {
@@ -549,6 +550,7 @@ class ClassFileToSourceStubConverter(
 
     private inline fun <T : JCExpression?> getNonErrorType(
             type: KotlinType?,
+            kind: ErrorTypeCorrector.TypeKind,
             ktTypeProvider: () -> KtTypeReference?,
             ifNonError: () -> T
     ): T {
@@ -557,10 +559,10 @@ class ClassFileToSourceStubConverter(
         }
 
         if (type?.containsErrorTypes() == true) {
-            val ktType = ktTypeProvider()
-            if (ktType != null) {
+            val typeFromSource = ktTypeProvider()?.typeElement
+            if (typeFromSource != null) {
                 @Suppress("UNCHECKED_CAST")
-                return convertKtType(ktType, this) as T
+                return ErrorTypeCorrector(this, kind).convert(typeFromSource, emptyMap()) as T
             }
         }
 
