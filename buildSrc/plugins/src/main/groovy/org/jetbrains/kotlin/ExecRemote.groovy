@@ -33,7 +33,7 @@ import java.util.function.Function
 class ExecRemote {
 
     private final Project project
-    private final Function<Closure<? super ExecSpec>, ExecResult> executor
+    private final Function<Action<? super ExecSpec>, ExecResult> executor
 
     ExecRemote(Project project) {
         this.project = project
@@ -41,37 +41,41 @@ class ExecRemote {
             def remote = project.property('remote') as String
             executor = new SSHExecutor(remote)
         } else {
-            executor = { project.exec(ConfigureUtil.configureUsing(it)) }
+            executor = { project.exec(it) }
         }
     }
 
-    ExecResult execRemote(Action<? super ExecSpec> action) {
-        project.exec(action)
-    }
-
     ExecResult execRemote(Closure<? super ExecSpec> closure) {
-        this.executor.apply(closure)
+        this.execRemote(ConfigureUtil.configureUsing(closure))
     }
 
-    private class SSHExecutor implements Function<Closure<? super ExecSpec>, ExecResult> {
+    ExecResult execRemote(Action<? super ExecSpec> action) {
+        this.executor.apply(action)
+    }
+
+    private class SSHExecutor implements Function<Action<? super ExecSpec>, ExecResult> {
         private final String remote
         private final String remoteDir
 
         SSHExecutor(String remote) {
             this.remote = remote
             this.remoteDir = uniqueSessionName()
-            createRemoteDir()
         }
 
         @Override
-        ExecResult apply(Closure<? super ExecSpec> closure) {
+        ExecResult apply(Action<? super ExecSpec> action) {
             String execFile
-            def execResult = project.exec closure >> {
-                upload(executable)
-                execFile = executable = "$remoteDir/${new File(executable).name}"
-                commandLine = ['/usr/bin/ssh', remote] + commandLine
+
+            createRemoteDir()
+            def execResult = project.exec { ExecSpec execSpec ->
+                action.execute(execSpec)
+                execSpec.with {
+                    upload(executable)
+                    execFile = executable = "$remoteDir/${new File(executable).name}"
+                    commandLine = ['/usr/bin/ssh', remote] + commandLine
+                }
             }
-            if (execFile != null) cleanup(execFile)
+            cleanup(execFile)
             return execResult
         }
 
