@@ -1,13 +1,34 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface MyInterface {
 
+    @kapt.internal.KaptSignature(value = "someFun()V")
     public abstract void someFun();
 
     @kotlin.Metadata()
     public static final class MyDefaultInferface {
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         public MyDefaultInferface() {
             super();
         }
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

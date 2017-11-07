@@ -21,6 +21,7 @@ import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
+import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -49,6 +52,15 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     companion object {
         val FILE_SEPARATOR = "\n\n////////////////////\n\n"
         val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+    }
+
+    private val tempFiles = mutableListOf<File>()
+
+    private fun createTempFile(prefix: String, suffix: String, text: String): File {
+        return File.createTempFile(prefix, suffix).apply {
+            writeText(text)
+            tempFiles += this
+        }
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
@@ -72,12 +84,14 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 
         val javaFiles = files
                 .filter { it.name.toLowerCase().endsWith(".java") }
-                .map { File.createTempFile(it.name.substringBeforeLast('.'), ".java").apply { writeText(it.content) } }
+                .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
 
         try {
             check(kaptContext, javaFiles, txtFile, wholeFile)
         } finally {
             javaFiles.forEach { it.delete() }
+            tempFiles.forEach { it.delete() }
+            tempFiles.clear()
             kaptContext.close()
         }
     }
@@ -89,8 +103,29 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
             correctErrorTypes: Boolean
     ): JavacList<JCCompilationUnit> {
         val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes)
-        val parsedJavaFiles = kaptContext.compiler.parseFiles(kaptContext.fileManager.getJavaFileObjectsFromFiles(javaFiles))
-        return converter.convert().appendList(parsedJavaFiles)
+
+        val convertedTrees = converter.convert()
+        val convertedFiles = convertedTrees.map { tree -> createTempFile("stub", ".java", tree.toString()) }
+
+        val allJavaFiles = javaFiles + convertedFiles
+
+        // A workaround needed for Javac to parse files correctly even if errors were already reported
+        // If nerrors > 0, "parseFiles()" returns the empty list
+        val oldErrorCount = kaptContext.compiler.log.nerrors
+        kaptContext.compiler.log.nerrors = 0
+
+        try {
+            val parsedJavaFiles = kaptContext.compiler.parseFiles(kaptContext.fileManager.getJavaFileObjectsFromFiles(allJavaFiles))
+            for (file in parsedJavaFiles) {
+                // By default, JavaFileObject.getName() returns the absolute path to the file.
+                // In our test, such a path will be temporary, so the comparision against it will lead to flaky tests.
+                file.sourcefile = KaptJavaFileObject(file, file.defs.firstIsInstance())
+            }
+
+            return parsedJavaFiles
+        } finally {
+            kaptContext.compiler.log.nerrors = oldErrorCount
+        }
     }
 
     protected abstract fun check(
@@ -104,31 +139,34 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
     internal companion object {
         private val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = (\\{.+?\\}|[0-9]+)"
         private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(($KOTLIN_METADATA_GROUP)(, $KOTLIN_METADATA_GROUP)*\\)".toRegex()
+        private val KAPT_METADATA_REGEX = "@kapt\\.internal\\.KaptMetadata\\((value = )?\"[^(].*?\"\\)".toRegex()
 
-        fun removeMetadataAnnotationContents(s: String): String = s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
+        private val EXPECTED_ERROR = "EXPECTED_ERROR"
+
+        fun removeMetadataAnnotationContents(s: String): String {
+            return s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
+                    .replace(KAPT_METADATA_REGEX, "@kapt.internal.KaptMetadata()")
+        }
     }
 
     override fun check(kaptContext: KaptContext<GenerationState>, javaFiles: List<File>, txtFile: File, wholeFile: File) {
         fun isOptionSet(name: String) = wholeFile.useLines { lines -> lines.any { it.trim() == "// $name" } }
 
         fun getOptionValues(name: String) = wholeFile.useLines { lines ->
-            lines.filter { it.startsWith("// $name") }
-                    .map { it.drop(name.length + 3).trim() }
-                    .filter { it.isNotEmpty() }
-                    .toList()
+            lines.filter { it.startsWith("// $name") }.toList()
         }
 
         val generateNonExistentClass = isOptionSet("NON_EXISTENT_CLASS")
         val correctErrorTypes = isOptionSet("CORRECT_ERROR_TYPES")
         val validate = !isOptionSet("NO_VALIDATION")
-        val expectedErrors = getOptionValues("EXPECTED_ERROR").sorted()
+        val expectedErrors = getOptionValues(EXPECTED_ERROR).sorted()
 
         val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass, correctErrorTypes)
 
         kaptContext.javaLog.interceptorData.files = convertedFiles.map { it.sourceFile to it }.toMap()
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)
 
-        val actualRaw = convertedFiles.sortedBy { it.sourceFile.name }.joinToString (FILE_SEPARATOR)
+        val actualRaw = convertedFiles.sortedBy { it.sourceFile.name }.joinToString(FILE_SEPARATOR)
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
                 .trimTrailingWhitespacesAndAddNewlineAtEOF()
                 .let { removeMetadataAnnotationContents(it) }
@@ -138,18 +176,27 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
 
             val actualErrors = log.reportedDiagnostics
                     .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
-                    .map { it.getMessage(Locale.US).lines().first() }
+                    .map {
+                        val location = it.subdiagnostics
+                                .firstOrNull { it.getMessage(Locale.US).startsWith("Kotlin location:") }
+                                ?.getMessage(Locale.US)
+
+                        val javaLocation = "(${it.lineNumber};${it.columnNumber}) "
+                        val message = javaLocation + it.getMessage(Locale.US).lines().first()
+                        if (location != null) "$message ($location)" else message
+                    }
+                    .map { "// " + EXPECTED_ERROR + it }
                     .sorted()
 
             log.flush()
 
             if (expectedErrors.isEmpty()) {
                 error("There were errors during analysis. See errors above. Stubs:\n\n$actual")
-            } else if (actualErrors != expectedErrors) {
-                error("Expected error matching assertion. Expected: \n"
-                      + expectedErrors.joinToString("\n") { "'$it'" }
-                      + "\n, found: \n"
-                      + actualErrors.joinToString("\n") { "'$it'" })
+            } else {
+                val lineSeparator = System.getProperty("line.separator")
+                TestCase.assertEquals("Expected error matching failed",
+                                      expectedErrors.joinToString(lineSeparator),
+                                      actualErrors.joinToString(lineSeparator))
             }
         }
         KotlinTestUtils.assertEqualsToFile(txtFile, actual)

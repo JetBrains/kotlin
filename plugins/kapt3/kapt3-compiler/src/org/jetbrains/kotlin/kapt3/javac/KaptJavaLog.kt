@@ -16,24 +16,36 @@
 
 package org.jetbrains.kotlin.kapt3.javac
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
+import com.sun.tools.javac.util.JCDiagnostic.DiagnosticType
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.kapt3.KaptContext
+import org.jetbrains.kotlin.kapt3.stubs.KaptStubLineInformation
+import org.jetbrains.kotlin.kapt3.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
+import java.io.File
 import java.io.PrintWriter
 import javax.tools.JavaFileObject
+import com.sun.tools.javac.util.List as JavacList
 
 class KaptJavaLog(
+        private val project: Project,
         context: Context,
         errWriter: PrintWriter,
         warnWriter: PrintWriter,
         noticeWriter: PrintWriter,
         val interceptorData: DiagnosticInterceptorData
 ) : Log(context, errWriter, warnWriter, noticeWriter) {
+    private val stubLineInfo = KaptStubLineInformation()
+
+    private val diagnosticFactory by lazy { JCDiagnostic.Factory.instance(context) }
+    private val javacMessages by lazy { JavacMessages.instance(context) }
+
     init {
         context.put(Log.outKey, noticeWriter)
     }
@@ -75,8 +87,9 @@ class KaptJavaLog(
         }
 
         val targetElement = diagnostic.diagnosticPosition
+        val sourceFile = interceptorData.files[diagnostic.source]
+
         if (diagnostic.code.contains("err.cant.resolve") && targetElement != null) {
-            val sourceFile = interceptorData.files[diagnostic.source]
             if (sourceFile != null) {
                 val insideImports = targetElement.tree in sourceFile.imports
                 // Ignore resolve errors in import statements
@@ -84,8 +97,62 @@ class KaptJavaLog(
             }
         }
 
+        if (sourceFile != null && targetElement.tree != null) {
+            val kotlinPosition = stubLineInfo.getPositionInKotlinFile(sourceFile, targetElement.tree)
+            val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
+            if (kotlinPosition != null && kotlinFile != null) {
+                val locationMessage = "$KOTLIN_LOCATION_PREFIX${kotlinFile.absolutePath}: (${kotlinPosition.line}, ${kotlinPosition.column})"
+                val locationDiagnostic = diagnosticFactory.note("proc.messager", locationMessage)
+                val wrappedDiagnostic = JCDiagnostic.MultilineDiagnostic(diagnostic, JavacList.of(locationDiagnostic))
+
+                super.report(wrappedDiagnostic)
+                _reportedDiagnostics += wrappedDiagnostic
+
+                // Avoid reporting the diagnostic twice
+                return
+            }
+        }
+
         _reportedDiagnostics += diagnostic
+
         super.report(diagnostic)
+    }
+
+    override fun writeDiagnostic(diagnostic: JCDiagnostic) {
+        if (hasDiagnosticListener()) {
+            diagListener.report(diagnostic)
+            return
+        }
+
+        val writer = when (diagnostic.type) {
+            DiagnosticType.FRAGMENT, null -> kotlin.error("Invalid root diagnostic type: ${diagnostic.type}")
+            DiagnosticType.NOTE -> super.noticeWriter
+            DiagnosticType.WARNING -> super.warnWriter
+            DiagnosticType.ERROR -> super.errWriter
+        }
+
+        val formattedMessage = diagnosticFormatter.format(diagnostic, javacMessages.currentLocale)
+                .lines()
+                .joinToString(LINE_SEPARATOR) { original ->
+                    // Kotlin location is put as a sub-diagnostic, so the formatter indents it with four additional spaces (6 in total).
+                    // It looks weird, especially in the build log inside IntelliJ, so let's make things a bit better.
+                    val trimmed = original.trimStart()
+                    // Typically, javac places additional details about the diagnostics indented by two spaces
+                    if (trimmed.startsWith(KOTLIN_LOCATION_PREFIX)) "  " + trimmed else original
+                }
+
+        writer.print(formattedMessage)
+        writer.flush()
+    }
+
+    private fun getKotlinSourceFile(pos: KotlinPosition): File? {
+        return if (pos.isRelativePath) {
+            val basePath = project.basePath
+            if (basePath != null) File(basePath, pos.path) else null
+        }
+        else {
+            File(pos.path)
+        }
     }
 
     private operator fun <T : JCTree> Iterable<T>.contains(element: JCTree?): Boolean {
@@ -114,6 +181,9 @@ class KaptJavaLog(
     }
 
     companion object {
+        private val LINE_SEPARATOR: String = System.getProperty("line.separator")
+        private val KOTLIN_LOCATION_PREFIX = "Kotlin location: "
+
         private val IGNORED_DIAGNOSTICS = setOf(
                 "compiler.err.name.clash.same.erasure",
                 "compiler.err.name.clash.same.erasure.no.override",
@@ -123,14 +193,14 @@ class KaptJavaLog(
                 "compiler.err.annotation.type.not.applicable",
                 "compiler.err.doesnt.exist")
 
-        internal fun preRegister(context: Context, messageCollector: MessageCollector) {
+        internal fun preRegister(kaptContext: KaptContext<*>, messageCollector: MessageCollector) {
             val interceptorData = DiagnosticInterceptorData()
-            context.put(Log.logKey, Context.Factory<Log> {
+            kaptContext.context.put(Log.logKey, Context.Factory<Log> { newContext ->
                 fun makeWriter(severity: CompilerMessageSeverity) = PrintWriter(MessageCollectorBackedWriter(messageCollector, severity))
                 val errWriter = makeWriter(ERROR)
                 val warnWriter = makeWriter(STRONG_WARNING)
                 val noticeWriter = makeWriter(WARNING)
-                KaptJavaLog(it, errWriter, warnWriter, noticeWriter, interceptorData)
+                KaptJavaLog(kaptContext.project, newContext, errWriter, warnWriter, noticeWriter, interceptorData)
             })
         }
     }

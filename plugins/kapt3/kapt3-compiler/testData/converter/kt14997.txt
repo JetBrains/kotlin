@@ -1,7 +1,9 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public class CrashMe {
     private final java.lang.Runnable notReally = null;
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public CrashMe() {
         super();
     }
@@ -12,6 +14,7 @@ public class CrashMe {
 
 @kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Kt14997Kt {
 
     public Kt14997Kt() {
@@ -19,17 +22,38 @@ public final class Kt14997Kt {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "a()Ljava/lang/Runnable;")
     public static final java.lang.Runnable a() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "b()LKt14997Kt$b$1;")
     public static final java.lang.Runnable b() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "c()LKt14997Kt$c$1;")
     public static final CrashMe c() {
         return null;
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

@@ -1,15 +1,36 @@
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
 package test;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class MutableEntry<K extends java.lang.Object, V extends java.lang.Object> implements java.util.Map.Entry<K, V>, kotlin.jvm.internal.markers.KMutableMap.Entry {
     private final java.util.Map<K, V> internal = null;
     private final K key = null;
 
     @java.lang.Override()
+    @kapt.internal.KaptSignature(value = "getKey()Ljava/lang/Object;")
     public K getKey() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/util/Map;Ljava/lang/Object;Ljava/lang/Object;)V")
     public MutableEntry(@org.jetbrains.annotations.NotNull()
     java.util.Map<K, V> internal, K key, V value) {
         super();

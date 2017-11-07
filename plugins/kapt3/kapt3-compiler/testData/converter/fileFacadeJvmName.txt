@@ -1,6 +1,7 @@
 package a.b.c;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class FacadeName {
 
     public FacadeName() {
@@ -8,10 +9,30 @@ public final class FacadeName {
     }
     private static final int bar = 3;
 
+    @kapt.internal.KaptSignature(value = "foo()V")
     public static final void foo() {
     }
 
+    @kapt.internal.KaptSignature(value = "getBar()I")
     public static final int getBar() {
         return 0;
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

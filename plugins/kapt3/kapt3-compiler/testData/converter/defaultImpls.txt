@@ -1,8 +1,10 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface Intf {
     public static final Intf.Companion Companion = null;
     public static final int WHITE = 2;
 
+    @kapt.internal.KaptSignature(value = "getColor()I")
     public abstract int getColor();
 
     @kotlin.Metadata()
@@ -12,6 +14,7 @@ public abstract interface Intf {
             super();
         }
 
+        @kapt.internal.KaptSignature(value = "getColor(LIntf;)I")
         public static int getColor(Intf $this) {
             return 0;
         }
@@ -22,10 +25,12 @@ public abstract interface Intf {
         private static final int BLACK = 1;
         public static final int WHITE = 2;
 
+        @kapt.internal.KaptSignature(value = "getBLACK()I")
         public final int getBLACK() {
             return 0;
         }
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         private Companion() {
             super();
         }
@@ -36,8 +41,10 @@ public abstract interface Intf {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface IntfWithDefaultImpls {
 
+    @kapt.internal.KaptSignature(value = "a()V")
     public abstract void a();
 
     @kotlin.Metadata()
@@ -47,6 +54,7 @@ public abstract interface IntfWithDefaultImpls {
             super();
         }
 
+        @kapt.internal.KaptSignature(value = "a(LIntfWithDefaultImpls;)V")
         public static void a(IntfWithDefaultImpls $this) {
         }
     }
@@ -56,5 +64,24 @@ public abstract interface IntfWithDefaultImpls {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface IntfWithoutDefaultImpls {
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

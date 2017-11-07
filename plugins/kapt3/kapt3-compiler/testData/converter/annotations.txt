@@ -1,5 +1,6 @@
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno1 {
 }
 
@@ -8,24 +9,34 @@ public abstract @interface Anno1 {
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno2 {
 
+    @kapt.internal.KaptSignature(value = "i()I")
     public abstract int i() default 5;
 
+    @kapt.internal.KaptSignature(value = "s()Ljava/lang/String;")
     public abstract java.lang.String s() default "ABC";
 
+    @kapt.internal.KaptSignature(value = "ii()[I")
     public abstract int[] ii() default {1, 2, 3};
 
+    @kapt.internal.KaptSignature(value = "ss()[Ljava/lang/String;")
     public abstract java.lang.String[] ss() default {"A", "B"};
 
+    @kapt.internal.KaptSignature(value = "a()LAnno1;")
     public abstract Anno1 a();
 
+    @kapt.internal.KaptSignature(value = "color()LColors;")
     public abstract Colors color() default Colors.BLACK;
 
+    @kapt.internal.KaptSignature(value = "colors()[LColors;")
     public abstract Colors[] colors() default {Colors.BLACK, Colors.WHITE};
 
+    @kapt.internal.KaptSignature(value = "clazz()Ljava/lang/Class;")
     public abstract java.lang.Class<?> clazz();
 
+    @kapt.internal.KaptSignature(value = "classes()[Ljava/lang/Class;")
     public abstract java.lang.Class<?>[] classes();
 }
 
@@ -34,8 +45,10 @@ public abstract @interface Anno2 {
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno3 {
 
+    @kapt.internal.KaptSignature(value = "value()Ljava/lang/String;")
     public abstract java.lang.String value();
 }
 
@@ -43,10 +56,12 @@ public abstract @interface Anno3 {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public enum Colors {
-    /*public static final*/ WHITE /* = new WHITE() */,
-    /*public static final*/ BLACK /* = new BLACK() */;
+    /*public static final*/ WHITE /* = new Colors() */,
+    /*public static final*/ BLACK /* = new Colors() */;
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;I)V")
     Colors() {
     }
 }
@@ -58,8 +73,10 @@ public enum Colors {
 @Anno3(value = "value")
 @Anno2(a = @Anno1(), clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno1()
+@kapt.internal.KaptMetadata()
 public final class TestAnno {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public TestAnno() {
         super();
     }
@@ -71,34 +88,58 @@ public final class TestAnno {
 @kotlin.Metadata()
 @Anno2(i = 6, s = "BCD", ii = {4, 5, 6}, ss = {"Z", "X"}, a = @Anno1(), color = Colors.WHITE, colors = {Colors.WHITE}, clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno3(value = "value")
+@kapt.internal.KaptMetadata()
 public final class TestAnno2 {
     @org.jetbrains.annotations.NotNull()
     @Anno3(value = "field")
     private java.lang.String b;
 
     @Anno1()
+    @kapt.internal.KaptSignature(value = "a(Ljava/lang/String;)V")
     public final void a(@org.jetbrains.annotations.NotNull()
     @Anno3(value = "param-pam-pam")
     java.lang.String param) {
     }
 
     @Anno3(value = "property")
+    @kapt.internal.KaptSignature(value = "b$annotations()V")
     public static void b$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
     @Anno3(value = "getter")
+    @kapt.internal.KaptSignature(value = "getB()Ljava/lang/String;")
     public final java.lang.String getB() {
         return null;
     }
 
     @Anno3(value = "setter")
+    @kapt.internal.KaptSignature(value = "setB(Ljava/lang/String;)V")
     public final void setB(@org.jetbrains.annotations.NotNull()
     @Anno3(value = "setparam")
     java.lang.String p0) {
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public TestAnno2() {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

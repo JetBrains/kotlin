@@ -1,10 +1,30 @@
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
 package test;
 
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Anno(value = "anno-class")
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 
+    @kapt.internal.KaptSignature(value = "value()Ljava/lang/String;")
     public abstract java.lang.String value();
 }
 
@@ -13,6 +33,7 @@ public abstract @interface Anno {
 package test;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class AnnotationsTest {
 
     public AnnotationsTest() {
@@ -20,16 +41,19 @@ public final class AnnotationsTest {
     }
 
     @Anno(value = "top-level-fun")
+    @kapt.internal.KaptSignature(value = "topLevelFun(Ljava/lang/String;)V")
     public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
     @Anno(value = "top-level-fun-receiver")
     java.lang.String $receiver) {
     }
 
     @Anno(value = "top-level-val")
+    @kapt.internal.KaptSignature(value = "topLevelVal$annotations(I)V")
     public static void topLevelVal$annotations(int p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getTopLevelVal(I)Ljava/lang/String;")
     public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
     int $receiver) {
         return null;
@@ -42,16 +66,19 @@ package test;
 
 @kotlin.Metadata()
 @Anno(value = "enum")
+@kapt.internal.KaptMetadata()
 public enum Enum {
-    /*public static final*/ WHITE /* = new WHITE(0) */,
-    /*public static final*/ BLACK /* = new BLACK(0) */;
+    /*public static final*/ WHITE /* = new Enum() */,
+    /*public static final*/ BLACK /* = new Enum() */;
     private final int x = 0;
 
+    @kapt.internal.KaptSignature(value = "getX()I")
     public final int getX() {
         return 0;
     }
 
     @Anno(value = "enum-constructor")
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;II)V")
     Enum(@Anno(value = "x")
     int x) {
     }
@@ -63,38 +90,46 @@ package test;
 
 @kotlin.Metadata()
 @Anno(value = "clazz")
+@kapt.internal.KaptMetadata()
 public abstract class Test {
     @org.jetbrains.annotations.NotNull()
     private java.lang.String v;
 
     @org.jetbrains.annotations.NotNull()
     @Anno(value = "abstract-method")
+    @kapt.internal.KaptSignature(value = "abstractMethod()Ljava/lang/String;")
     public abstract java.lang.String abstractMethod();
 
     @Anno(value = "abstract-val")
+    @kapt.internal.KaptSignature(value = "abstractVal$annotations()V")
     public static void abstractVal$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getAbstractVal()Ljava/lang/String;")
     public abstract java.lang.String getAbstractVal();
 
     @Anno(value = "v-property")
+    @kapt.internal.KaptSignature(value = "v$annotations()V")
     public static void v$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
     @Anno(value = "v-get")
+    @kapt.internal.KaptSignature(value = "getV()Ljava/lang/String;")
     public final java.lang.String getV() {
         return null;
     }
 
     @Anno(value = "v-set")
+    @kapt.internal.KaptSignature(value = "setV(Ljava/lang/String;)V")
     public final void setV(@org.jetbrains.annotations.NotNull()
     @Anno(value = "v-setparam")
     java.lang.String p0) {
     }
 
     @Anno(value = "test-constructor")
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;)V")
     protected Test(@org.jetbrains.annotations.NotNull()
     @Anno(value = "v-param")
     java.lang.String v) {

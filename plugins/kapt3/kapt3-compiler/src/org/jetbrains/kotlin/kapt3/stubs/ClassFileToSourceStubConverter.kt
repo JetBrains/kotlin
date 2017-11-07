@@ -50,6 +50,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
+import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_METADATA_ANNOTATION_FQNAME
+import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_SIGNATURE_ANNOTATION_FQNAME
 
 class ClassFileToSourceStubConverter(
         val kaptContext: KaptContext<GenerationState>,
@@ -108,6 +110,9 @@ class ClassFileToSourceStubConverter(
             stubs = stubs.append(generateNonExistentClass())
         }
 
+        stubs = stubs.append(generateSimpleParametrizedAnnotationClass(KAPT_METADATA_ANNOTATION_FQNAME))
+        stubs = stubs.append(generateSimpleParametrizedAnnotationClass(KAPT_SIGNATURE_ANNOTATION_FQNAME))
+
         return stubs
     }
 
@@ -128,6 +133,31 @@ class ClassFileToSourceStubConverter(
         return topLevel
     }
 
+    private fun generateSimpleParametrizedAnnotationClass(fqName: FqName): JCCompilationUnit {
+        val valueMethod = treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC.toLong()),
+                treeMaker.name("value"),
+                treeMaker.FqName("java.lang.String"),
+                JavacList.nil(),
+                JavacList.nil(),
+                JavacList.nil(),
+                null,
+                null)
+
+        val nonExistentClass = treeMaker.ClassDef(
+                treeMaker.Modifiers((Flags.PUBLIC or Flags.ANNOTATION or Flags.INTERFACE).toLong()),
+                treeMaker.name(fqName.shortName().asString()),
+                JavacList.nil(),
+                null,
+                JavacList.nil(),
+                JavacList.of(valueMethod))
+
+        val packageName = fqName.parent().asString()
+        val topLevel = treeMaker.TopLevelJava9Aware(treeMaker.FqName(packageName), JavacList.of(nonExistentClass))
+        topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass)
+        return topLevel
+    }
+
     private fun convertTopLevelClass(clazz: ClassNode): JCCompilationUnit? {
         val origin = kaptContext.origins[clazz] ?: return null
         val ktFile = origin.element?.containingFile as? KtFile ?: return null
@@ -136,10 +166,15 @@ class ClassFileToSourceStubConverter(
         // Nested classes will be processed during the outer classes conversion
         if ((descriptor as? ClassDescriptor)?.isNested ?: false) return null
 
+        val lineMappings = KaptLineMappingCollector(kaptContext)
+
         val packageName = ktFile.packageFqName.asString()
         val packageClause = if (packageName.isEmpty()) null else treeMaker.FqName(packageName)
 
-        val classDeclaration = convertClass(clazz, packageName, true) ?: return null
+        val classDeclaration = convertClass(clazz, lineMappings, packageName, true) ?: return null
+
+        classDeclaration.mods.annotations = classDeclaration.mods.annotations.append(
+                createAnnotation(KAPT_METADATA_ANNOTATION_FQNAME, lineMappings.serializeLineInfo ()))
 
         val imports = if (correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
         val classes = JavacList.of<JCTree>(classDeclaration)
@@ -152,6 +187,11 @@ class ClassFileToSourceStubConverter(
         }
 
         return topLevel
+    }
+
+    private fun createAnnotation(fqName: FqName, value: String): JCAnnotation {
+        val offsetsLiteral = convertLiteralExpression(value)
+        return treeMaker.Annotation(treeMaker.FqName(fqName), JavacList.of(offsetsLiteral))
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
@@ -195,7 +235,12 @@ class ClassFileToSourceStubConverter(
     /**
      * Returns false for the inner classes or if the origin for the class was not found.
      */
-    private fun convertClass(clazz: ClassNode, packageFqName: String, isTopLevel: Boolean): JCClassDecl? {
+    private fun convertClass(
+            clazz: ClassNode,
+            lineMappings: KaptLineMappingCollector,
+            packageFqName: String,
+            isTopLevel: Boolean
+    ): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
         if (checkIfShouldBeIgnored(Type.getObjectType(clazz.name))) return null
 
@@ -264,9 +309,9 @@ class ClassFileToSourceStubConverter(
 
             val args = mapJList(constructorArguments.drop(2)) { convertLiteralExpression(getDefaultValue(it)) }
             
-            val def = data.correspondingClass?.let { convertClass(it, packageFqName, false) }
+            val def = data.correspondingClass?.let { convertClass(it, lineMappings, packageFqName, false) }
 
-            convertField(data.field, packageFqName, treeMaker.NewClass(
+            convertField(data.field, clazz, lineMappings, packageFqName, treeMaker.NewClass(
                     /* enclosing = */ null,
                     /* typeArgs = */ JavacList.nil(),
                     /* clazz = */ treeMaker.Ident(treeMaker.name(data.field.name)),
@@ -275,7 +320,7 @@ class ClassFileToSourceStubConverter(
         }
 
         val fields = mapJList<FieldNode, JCTree>(clazz.fields) {
-            if (it.isEnumValue()) null else convertField(it, packageFqName)
+            if (it.isEnumValue()) null else convertField(it, clazz, lineMappings, packageFqName)
         }
 
         val methods = mapJList<MethodNode, JCTree>(clazz.methods) {
@@ -284,15 +329,17 @@ class ClassFileToSourceStubConverter(
                 if (it.name == "valueOf" && it.desc == "(Ljava/lang/String;)L${clazz.name};") return@mapJList null
             }
 
-            convertMethod(it, clazz, packageFqName)
+            convertMethod(it, clazz, lineMappings, packageFqName)
         }
 
         val nestedClasses = mapJList<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
             if (enumValuesData.any { it.innerClass == innerClass }) return@mapJList null
             if (innerClass.outerName != clazz.name) return@mapJList null
             val innerClassNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: return@mapJList null
-            convertClass(innerClassNode, packageFqName, false)
+            convertClass(innerClassNode, lineMappings, packageFqName, false)
         }
+
+        lineMappings.registerClass(clazz)
 
         return treeMaker.ClassDef(
                 modifiers,
@@ -361,6 +408,8 @@ class ClassFileToSourceStubConverter(
 
     private fun convertField(
             field: FieldNode,
+            containingClass: ClassNode,
+            lineMappings: KaptLineMappingCollector,
             packageFqName: String,
             explicitInitializer: JCExpression? = null
     ): JCVariableDecl? {
@@ -397,10 +446,17 @@ class ClassFileToSourceStubConverter(
                           ?: convertValueOfPrimitiveTypeOrString(value)
                           ?: if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
 
+        lineMappings.registerField(containingClass, field)
+
         return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer)
     }
 
-    private fun convertMethod(method: MethodNode, containingClass: ClassNode, packageFqName: String): JCMethodDecl? {
+    private fun convertMethod(
+            method: MethodNode,
+            containingClass: ClassNode,
+            lineMappings: KaptLineMappingCollector,
+            packageFqName: String
+    ): JCMethodDecl? {
         if (isIgnored(method.invisibleAnnotations)) return null
         val descriptor = kaptContext.origins[method]?.descriptor as? CallableDescriptor ?: return null
 
@@ -427,6 +483,9 @@ class ClassFileToSourceStubConverter(
                 else
                     method.access.toLong(),
                 ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations, descriptor.annotations)
+
+        modifiers.annotations = modifiers.annotations.append(
+                createAnnotation(KAPT_SIGNATURE_ANNOTATION_FQNAME, method.name + method.desc))
 
         val asmReturnType = Type.getReturnType(method.desc)
         val jcReturnType = if (isConstructor) null else treeMaker.Type(asmReturnType)
@@ -493,6 +552,8 @@ class ClassFileToSourceStubConverter(
             val returnStatement = treeMaker.Return(convertLiteralExpression(getDefaultValue(asmReturnType)))
             treeMaker.Block(0, JavacList.of(returnStatement))
         }
+
+        lineMappings.registerMethod(containingClass, method)
 
         return treeMaker.MethodDef(
                 modifiers, treeMaker.name(name), returnType, genericSignature.typeParameters,
@@ -821,3 +882,20 @@ private fun Any?.isOfPrimiviteType(): Boolean = when(this) {
 
 private val ClassDescriptor.isNested: Boolean
     get() = containingDeclaration is ClassDescriptor
+
+internal fun getAnnotationValue(fqName: FqName, mods: JCTree.JCModifiers?): String? {
+    val annotations = mods?.annotations ?: return null
+
+    val annotationName = fqName.asString()
+    val annotation = annotations.firstOrNull { it.annotationType.toString() == annotationName } ?: return null
+
+    val valueArg = annotation.args.singleOrNull()
+
+    return when (valueArg) {
+        is JCTree.JCLiteral -> valueArg.value as? String
+        is JCTree.JCAssign -> {
+            ((valueArg.rhs as? JCTree.JCLiteral)?.value as? String)?.takeIf { valueArg.lhs.toString() == "value" }
+        }
+        else -> null
+    }
+}

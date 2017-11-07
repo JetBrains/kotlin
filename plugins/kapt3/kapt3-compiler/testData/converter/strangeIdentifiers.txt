@@ -1,9 +1,12 @@
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kapt.internal.KaptMetadata()
 public abstract @interface Anno {
 
+    @kapt.internal.KaptSignature(value = "size()LStrangeEnum;")
     public abstract StrangeEnum size();
 
+    @kapt.internal.KaptSignature(value = "name()Ljava/lang/String;")
     public abstract java.lang.String name();
 }
 
@@ -11,16 +14,19 @@ public abstract @interface Anno {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public enum StrangeEnum {
-    /*public static final*/ InvalidFieldName /* = new InvalidFieldName(null) */;
+    /*public static final*/ InvalidFieldName /* = new StrangeEnum() */;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String size = null;
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getSize()Ljava/lang/String;")
     public final java.lang.String getSize() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;)V")
     StrangeEnum(@org.jetbrains.annotations.NotNull()
     java.lang.String size) {
     }
@@ -30,30 +36,54 @@ public enum StrangeEnum {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     public java.lang.String simpleName;
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getSimpleName()Ljava/lang/String;")
     public final java.lang.String getSimpleName() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "simpleFun()V")
     public final void simpleFun() {
     }
 
     @Anno(name = "Woofwoof", size = StrangeEnum.InvalidFieldName)
+    @kapt.internal.KaptSignature(value = "simpleFun2(Ljava/lang/String;Ljava/lang/String;)V")
     public final void simpleFun2(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
     java.lang.String b) {
     }
 
+    @kapt.internal.KaptSignature(value = "strangeFun4(Ljava/lang/String;Ljava/lang/String;)V")
     public final void strangeFun4(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
     java.lang.String p1_949560896) {
     }
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test() {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

@@ -1,31 +1,17 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public enum E {
-    /*public static final*/ X /* = new @kotlin.Metadata() X(){
+    /*public static final*/ X /* = new E() */,
+    /*public static final*/ Y /* = new E() */;
 
-        @java.lang.Override()
-        public void a() {
-        }
-
-        X() {
-            super();
-        }
-    } */,
-    /*public static final*/ Y /* = new @kotlin.Metadata() Y(){
-
-        @java.lang.Override()
-        public void a() {
-        }
-
-        Y() {
-            super();
-        }
-    } */;
-
+    @kapt.internal.KaptSignature(value = "a()V")
     public abstract void a();
 
+    @kapt.internal.KaptSignature(value = "b()V")
     public final void b() {
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;I)V")
     E() {
     }
 
@@ -33,6 +19,7 @@ public enum E {
     public static final class Obj {
         public static final E.Obj INSTANCE = null;
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         private Obj() {
             super();
         }
@@ -41,6 +28,7 @@ public enum E {
     @kotlin.Metadata()
     public static final class NestedClass {
 
+        @kapt.internal.KaptSignature(value = "<init>()V")
         public NestedClass() {
             super();
         }
@@ -51,33 +39,19 @@ public enum E {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public enum E2 {
-    /*public static final*/ X /* = new @kotlin.Metadata() X(0){
+    /*public static final*/ X /* = new E2() */,
+    /*public static final*/ Y /* = new E2() */;
 
-        @java.lang.Override()
-        public void a() {
-        }
-
-        X() {
-            super(0);
-        }
-    } */,
-    /*public static final*/ Y /* = new @kotlin.Metadata() Y(0){
-
-        @java.lang.Override()
-        public void a() {
-        }
-
-        Y() {
-            super(0);
-        }
-    } */;
-
+    @kapt.internal.KaptSignature(value = "a()V")
     public abstract void a();
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;II)V")
     E2(int n) {
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;)V")
     E2(@org.jetbrains.annotations.NotNull()
     java.lang.String s) {
     }
@@ -87,17 +61,20 @@ public enum E2 {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public enum E3 {
-    /*public static final*/ X /* = new X(null) */,
-    /*public static final*/ Y /* = new Y(null) */;
+    /*public static final*/ X /* = new E3() */,
+    /*public static final*/ Y /* = new E3() */;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
     public final java.lang.String getA() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;)V")
     E3(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
     }
@@ -107,8 +84,9 @@ public enum E3 {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public enum E4 {
-    /*public static final*/ X /* = new X(null, 0, 0L, false) */;
+    /*public static final*/ X /* = new E4() */;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
     private final int b = 0;
@@ -116,23 +94,46 @@ public enum E4 {
     private final boolean d = false;
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
     public final java.lang.String getA() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "getB()I")
     public final int getB() {
         return 0;
     }
 
+    @kapt.internal.KaptSignature(value = "getC()J")
     public final long getC() {
         return 0L;
     }
 
+    @kapt.internal.KaptSignature(value = "getD()Z")
     public final boolean getD() {
         return false;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;ILjava/lang/String;IJZ)V")
     E4(@org.jetbrains.annotations.NotNull()
     java.lang.String a, int b, long c, boolean d) {
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

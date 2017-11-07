@@ -1,6 +1,8 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract class Foo {
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Foo() {
         super();
     }
@@ -10,6 +12,7 @@ public abstract class Foo {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Kt18682Kt {
 
     public Kt18682Kt() {
@@ -17,22 +20,44 @@ public final class Kt18682Kt {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "test1()Ljava/util/List;")
     public static final java.util.List<java.lang.Object> test1() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "test2()Ljava/util/List;")
     public static final java.util.List<java.lang.Runnable> test2() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "test3()Ljava/util/List;")
     public static final java.util.List<Foo> test3() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "test4()Ljava/util/List;")
     public static final java.util.List<Foo> test4() {
         return null;
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

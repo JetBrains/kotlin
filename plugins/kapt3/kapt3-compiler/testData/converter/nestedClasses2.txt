@@ -1,3 +1,187 @@
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public final class A$B {
+    @org.jetbrains.annotations.NotNull()
+    public A$B.C c;
+    @org.jetbrains.annotations.NotNull()
+    public A$B.D$E de;
+    @org.jetbrains.annotations.NotNull()
+    public J$B.C jc;
+    @org.jetbrains.annotations.NotNull()
+    public J$B.D$E jde;
+    @org.jetbrains.annotations.NotNull()
+    public A$B.D$$E dee;
+    @org.jetbrains.annotations.NotNull()
+    public A$B.D$$$E deee;
+    @org.jetbrains.annotations.NotNull()
+    public J$B.D$$E jdee;
+    @org.jetbrains.annotations.NotNull()
+    public J$B.D$$$E jdeee;
+
+    @kapt.internal.KaptSignature(value = "<init>()V")
+    public A$B() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    public static final class C {
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        public C() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$E {
+        @org.jetbrains.annotations.NotNull()
+        public A$B.D$E.F f;
+        @org.jetbrains.annotations.NotNull()
+        public A$B.D$E.F$G fg;
+        @org.jetbrains.annotations.NotNull()
+        public J$B.D$E.F jf;
+        @org.jetbrains.annotations.NotNull()
+        public J$B.D$E.F$G jfg;
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        public D$E() {
+            super();
+        }
+
+        @kotlin.Metadata()
+        public static final class F {
+
+            @kapt.internal.KaptSignature(value = "<init>()V")
+            public F() {
+                super();
+            }
+        }
+
+        @kotlin.Metadata()
+        public static final class F$G {
+
+            @kapt.internal.KaptSignature(value = "<init>()V")
+            public F$G() {
+                super();
+            }
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$$E {
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        public D$$E() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$$$E {
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        public D$$$E() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public final class Experiment {
+
+    @kapt.internal.KaptSignature(value = "<init>()V")
+    public Experiment() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    public static abstract @interface Type {
+    }
+
+    @kotlin.Metadata()
+    @Experiment.Type()
+    public static final class Group {
+
+        @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;)V")
+        public Group(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        @kapt.internal.KaptSignature(value = "copy(Ljava/lang/String;)LExperiment$Group;")
+        public final Experiment.Group copy(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public final class Foo {
+
+    @kapt.internal.KaptSignature(value = "<init>()V")
+    public Foo() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    public static class Bar {
+
+        @kapt.internal.KaptSignature(value = "<init>()V")
+        public Bar() {
+            super();
+        }
+
+        @kotlin.Metadata()
+        public static final class Zoo {
+            public static final Foo.Bar.Zoo INSTANCE = null;
+
+            @kapt.internal.KaptSignature(value = "<init>()V")
+            private Zoo() {
+                super();
+            }
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public abstract interface IFoo {
+
+    @kotlin.Metadata()
+    public static abstract interface IBar {
+
+        @kotlin.Metadata()
+        @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+        public static abstract @interface Anno {
+
+            @kapt.internal.KaptSignature(value = "value()[Ljava/lang/Class;")
+            public abstract java.lang.Class<?>[] value();
+        }
+
+        @kotlin.Metadata()
+        @IFoo.IBar.Anno(value = {IFoo.IBar.IZoo.class})
+        public static abstract interface IZoo {
+        }
+    }
+}
+
+////////////////////
+
+
 public class J$B {
 
     public J$B() {
@@ -75,194 +259,51 @@ public class JavaClass {
 
 
 @kotlin.Metadata()
-public final class A$B {
-    @org.jetbrains.annotations.NotNull()
-    public A$B.C c;
-    @org.jetbrains.annotations.NotNull()
-    public A$B.D$E de;
-    @org.jetbrains.annotations.NotNull()
-    public J$B.C jc;
-    @org.jetbrains.annotations.NotNull()
-    public J$B.D$E jde;
-    @org.jetbrains.annotations.NotNull()
-    public A$B.D$$E dee;
-    @org.jetbrains.annotations.NotNull()
-    public A$B.D$$$E deee;
-    @org.jetbrains.annotations.NotNull()
-    public J$B.D$$E jdee;
-    @org.jetbrains.annotations.NotNull()
-    public J$B.D$$$E jdeee;
-
-    public A$B() {
-        super();
-    }
-
-    @kotlin.Metadata()
-    public static final class C {
-
-        public C() {
-            super();
-        }
-    }
-
-    @kotlin.Metadata()
-    public static final class D$E {
-        @org.jetbrains.annotations.NotNull()
-        public A$B.D$E.F f;
-        @org.jetbrains.annotations.NotNull()
-        public A$B.D$E.F$G fg;
-        @org.jetbrains.annotations.NotNull()
-        public J$B.D$E.F jf;
-        @org.jetbrains.annotations.NotNull()
-        public J$B.D$E.F$G jfg;
-
-        public D$E() {
-            super();
-        }
-
-        @kotlin.Metadata()
-        public static final class F {
-
-            public F() {
-                super();
-            }
-        }
-
-        @kotlin.Metadata()
-        public static final class F$G {
-
-            public F$G() {
-                super();
-            }
-        }
-    }
-
-    @kotlin.Metadata()
-    public static final class D$$E {
-
-        public D$$E() {
-            super();
-        }
-    }
-
-    @kotlin.Metadata()
-    public static final class D$$$E {
-
-        public D$$$E() {
-            super();
-        }
-    }
-}
-
-////////////////////
-
-
-@kotlin.Metadata()
-public final class Experiment {
-
-    public Experiment() {
-        super();
-    }
-
-    @kotlin.Metadata()
-    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-    public static abstract @interface Type {
-    }
-
-    @kotlin.Metadata()
-    @Experiment.Type()
-    public static final class Group {
-
-        public Group(@org.jetbrains.annotations.NotNull()
-        java.lang.String s) {
-            super();
-        }
-
-        @org.jetbrains.annotations.NotNull()
-        public final Experiment.Group copy(@org.jetbrains.annotations.NotNull()
-        java.lang.String s) {
-            return null;
-        }
-    }
-}
-
-////////////////////
-
-
-@kotlin.Metadata()
-public final class Foo {
-
-    public Foo() {
-        super();
-    }
-
-    @kotlin.Metadata()
-    public static class Bar {
-
-        public Bar() {
-            super();
-        }
-
-        @kotlin.Metadata()
-        public static final class Zoo {
-            public static final Foo.Bar.Zoo INSTANCE = null;
-
-            private Zoo() {
-                super();
-            }
-        }
-    }
-}
-
-////////////////////
-
-
-@kotlin.Metadata()
-public abstract interface IFoo {
-
-    @kotlin.Metadata()
-    public static abstract interface IBar {
-
-        @kotlin.Metadata()
-        @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-        public static abstract @interface Anno {
-
-            public abstract java.lang.Class<?>[] value();
-        }
-
-        @kotlin.Metadata()
-        @IFoo.IBar.Anno(value = {IFoo.IBar.IZoo.class})
-        public static abstract interface IZoo {
-        }
-    }
-}
-
-////////////////////
-
-
-@kotlin.Metadata()
 @IFoo.IBar.Anno(value = {IFoo.IBar.IZoo.class, Foo.Bar.class})
+@kapt.internal.KaptMetadata()
 public final class Test1 extends Foo.Bar implements IFoo.IBar, IFoo.IBar.IZoo {
     @org.jetbrains.annotations.NotNull()
     private final Foo.Bar.Zoo zoo = null;
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "a()Ljava/lang/Thread$State;")
     public final java.lang.Thread.State a() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "b(LJavaClass$Foo;LJavaClass$Foo$Bar;)V")
     public final void b(@org.jetbrains.annotations.NotNull()
     JavaClass.Foo foo, @org.jetbrains.annotations.NotNull()
     JavaClass.Foo.Bar bar) {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "getZoo()LFoo$Bar$Zoo;")
     public final Foo.Bar.Zoo getZoo() {
         return null;
     }
 
+    @kapt.internal.KaptSignature(value = "<init>(LFoo$Bar$Zoo;)V")
     public Test1(@org.jetbrains.annotations.NotNull()
     Foo.Bar.Zoo zoo) {
         super();
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

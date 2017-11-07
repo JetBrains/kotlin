@@ -1,8 +1,28 @@
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
 package test;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public abstract interface ListUpdateCallback {
 
+    @kapt.internal.KaptSignature(value = "onInserted(II)V")
     public abstract void onInserted(int position, int count);
 }
 
@@ -11,9 +31,11 @@ public abstract interface ListUpdateCallback {
 package test;
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Test<T extends java.lang.CharSequence, N extends java.lang.Number> {
     private final test.ListUpdateCallback x = null;
 
+    @kapt.internal.KaptSignature(value = "<init>()V")
     public Test() {
         super();
     }

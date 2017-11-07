@@ -1,4 +1,5 @@
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
 public final class Kt14996Kt {
 
     public Kt14996Kt() {
@@ -6,14 +7,34 @@ public final class Kt14996Kt {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "crashMe(Ljava/util/List;)Ljava/lang/String;")
     public static final java.lang.String crashMe(@org.jetbrains.annotations.NotNull()
     java.util.List<java.lang.String> values) {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
+    @kapt.internal.KaptSignature(value = "crashMe(Ljava/util/List;)Ljava/lang/CharSequence;")
     public static final java.lang.CharSequence crashMe(@org.jetbrains.annotations.NotNull()
     java.util.List<? extends java.lang.CharSequence> values) {
         return null;
     }
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptMetadata {
+
+    public java.lang.String value();
+}
+
+////////////////////
+
+package kapt.internal;
+
+public @interface KaptSignature {
+
+    public java.lang.String value();
 }

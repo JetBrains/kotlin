@@ -50,7 +50,7 @@ class KaptContext<out GState : GenerationState?>(
     val javaLog: KaptJavaLog
 
     init {
-        KaptJavaLog.preRegister(context, logger.messageCollector)
+        KaptJavaLog.preRegister(this, logger.messageCollector)
         JavacFileManager.preRegister(context)
         KaptTreeMaker.preRegister(context, this)
         KaptJavaCompiler.preRegister(context)
