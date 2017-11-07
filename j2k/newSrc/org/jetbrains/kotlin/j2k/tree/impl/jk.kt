@@ -122,3 +122,37 @@ class JKQualifiedExpressionImpl(override val receiver: JKExpression, override va
         selector.accept(visitor, data)
     }
 }
+
+class JKArrayAccessExpressionImpl(override val expression: JKExpression, override val indexExpression: JKExpression?) : JKArrayAccessExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitArrayAccessExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expression.accept(visitor, data)
+        indexExpression?.accept(visitor, data)
+    }
+}
+
+class JKParenthesizedExpressionImpl(override val expression: JKExpression?) : JKParenthesizedExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParenthesizedExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expression?.accept(visitor, data)
+    }
+}
+
+class JKTypeCastExpressionImpl(override val expression: JKExpression?, override val type: JKTypeReference?) : JKTypeCastExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeCastExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        expression?.accept(visitor, data)
+        type?.accept(visitor, data)
+    }
+}
+
+class JKTypeReferenceImpl() : JKTypeReference, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeReference(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}
