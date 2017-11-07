@@ -1,0 +1,3 @@
+fun notUsage() {
+    JavaClass().hashCode()
+}
