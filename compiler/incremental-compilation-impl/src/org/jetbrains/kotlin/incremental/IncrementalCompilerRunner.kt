@@ -63,7 +63,9 @@ abstract class IncrementalCompilerRunner<
         assert(isICEnabled()) { "Incremental compilation is not enabled" }
         var caches = createCacheManager(args)
 
-        fun rebuild(): ExitCode {
+        fun rebuild(reason: () -> String): ExitCode {
+            reporter.report(reason)
+
             caches.clean()
             dirtySourcesSinceLastTimeFile.delete()
             destinationDir(args).deleteRecursively()
@@ -83,8 +85,7 @@ abstract class IncrementalCompilerRunner<
                     compileIncrementally(args, caches, allKotlinSources, compilationMode, messageCollector)
                 }
                 is CompilationMode.Rebuild -> {
-                    reporter.report { "Non-incremental compilation will be performed: ${compilationMode.reason}" }
-                    rebuild()
+                    rebuild { "Non-incremental compilation will be performed: ${compilationMode.reason}" }
                 }
             }
 
@@ -94,8 +95,7 @@ abstract class IncrementalCompilerRunner<
         }
         catch (e: Exception) {
             // todo: warn?
-            reporter.report { "Possible cache corruption. Rebuilding. $e" }
-            rebuild()
+            rebuild { "Possible cache corruption. Rebuilding. $e" }
         }
     }
 
@@ -127,7 +127,7 @@ abstract class IncrementalCompilerRunner<
 
     protected sealed class CompilationMode {
         class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
-        class Rebuild(getReason: ()->String = { "" }) : CompilationMode() {
+        class Rebuild(getReason: () -> String = { "" }) : CompilationMode() {
             val reason: String by lazy(getReason)
         }
     }

@@ -789,7 +789,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 }
 
 private class JpsICReporter : ICReporter {
-    override fun report(message: ()->String) {
+    override fun report(message: () -> String) {
         if (KotlinBuilder.LOG.isDebugEnabled) {
             KotlinBuilder.LOG.debug(message())
         }
