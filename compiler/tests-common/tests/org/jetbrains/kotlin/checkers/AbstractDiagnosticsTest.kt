@@ -227,7 +227,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
         return result ?: CompilerTestLanguageVersionSettings(
-                BaseDiagnosticsTest.DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+                DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
                 LanguageVersionSettingsImpl.DEFAULT.apiVersion,
                 LanguageVersionSettingsImpl.DEFAULT.languageVersion
         )
