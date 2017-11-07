@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 // very initial state of component
 // todo: handle all diagnostic inside DiagnosticReporterByTrackingStrategy
 // move it to frontend module
-class AdditionalDiagnosticReporter {
+class AdditionalDiagnosticReporter(private val languageVersionSettings: LanguageVersionSettings) {
 
     fun reportAdditionalDiagnostics(
             candidate: ResolvedCallAtom,
@@ -79,7 +80,8 @@ class AdditionalDiagnosticReporter {
 
         for (parameter in resultingDescriptor.valueParameters) {
             for (argument in candidate.argumentMappingByOriginal[parameter.original]?.arguments ?: continue) {
-                val smartCastDiagnostic = createSmartCastDiagnostic(candidate, argument, argument.getExpectedType(parameter)) ?: continue
+                val effectiveExpectedType = argument.getExpectedType(parameter, languageVersionSettings)
+                val smartCastDiagnostic = createSmartCastDiagnostic(candidate, argument, effectiveExpectedType) ?: continue
 
                 val thereIsUnstableSmartCastError = candidate.diagnostics.filterIsInstance<UnstableSmartCast>().any {
                     it.argument == argument

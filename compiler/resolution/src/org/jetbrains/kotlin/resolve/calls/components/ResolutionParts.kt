@@ -225,7 +225,7 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
         isReceiver: Boolean
 ) {
     val expectedType = candidateParameter?.let {
-        resolvedCall.substitutor.substituteKeepAnnotations(argument.getExpectedType(candidateParameter))
+        resolvedCall.substitutor.substituteKeepAnnotations(argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings))
     }
     addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
 }

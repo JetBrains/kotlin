@@ -16,9 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
@@ -42,8 +48,8 @@ internal val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
         return intersectWrappedTypes(possibleTypes + receiverValue.type)
     }
 
-internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor) =
-        if (this.isSpread) {
+internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor, languageVersionSettings: LanguageVersionSettings) =
+        if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
             parameter.type.unwrap()
         }
         else {
@@ -51,3 +57,23 @@ internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor) 
         }
 
 val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
+val ParameterDescriptor.isVararg: Boolean get() = this.safeAs<ValueParameterDescriptor>()?.isVararg ?: false
+
+private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
+        parameter: ParameterDescriptor,
+        languageVersionSettings: LanguageVersionSettings
+): Boolean {
+    if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
+
+    if (this.argumentName == null || !parameter.isVararg) return false
+
+    return isParameterOfAnnotation(parameter) && this.isArrayOrArrayLiteral()
+}
+
+private fun KotlinCallArgument.isArrayOrArrayLiteral(): Boolean {
+    if (this is CollectionLiteralKotlinCallArgument) return true
+    if (this !is SimpleKotlinCallArgument) return false
+
+    val type = this.receiver.receiverValue.type
+    return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
+}
