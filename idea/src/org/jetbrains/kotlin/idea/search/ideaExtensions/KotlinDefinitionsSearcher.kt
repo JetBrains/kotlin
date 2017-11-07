@@ -116,20 +116,21 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         }
 
         private fun processFunctionImplementations(function: KtFunction, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val psiMethod = runReadAction { LightClassUtil.getLightClassMethod(function) }
-            return psiMethod?.forEachImplementation(scope, consumer::process) ?: true
+            return runReadAction { LightClassUtil.getLightClassMethod(function)?.forEachImplementation(scope, consumer::process) } ?: true
         }
 
         private fun processPropertyImplementations(parameter: KtParameter, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
-
-            return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
+            return runReadAction {
+                val accessorsPsiMethods = LightClassUtil.getLightClassPropertyMethods(parameter)
+                processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
+            }
         }
 
         private fun processPropertyImplementations(property: KtProperty, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(property) }
-
-            return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
+            return runReadAction {
+                val accessorsPsiMethods = LightClassUtil.getLightClassPropertyMethods(property)
+                processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
+            }
         }
 
         fun processPropertyImplementationsMethods(accessors: LightClassUtil.PropertyAccessorsPsiMethods, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
