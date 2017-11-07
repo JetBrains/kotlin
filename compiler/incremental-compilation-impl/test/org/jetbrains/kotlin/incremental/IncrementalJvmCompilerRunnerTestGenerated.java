@@ -1230,9 +1230,21 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                     doTest(fileName);
                 }
 
+                @TestMetadata("methodAddedSamAdapter")
+                public void testMethodAddedSamAdapter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddedSamAdapter/");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("methodSignatureChanged")
                 public void testMethodSignatureChanged() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChanged/");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("methodSignatureChangedSamAdapter")
+                public void testMethodSignatureChangedSamAdapter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChangedSamAdapter/");
                     doTest(fileName);
                 }
             }

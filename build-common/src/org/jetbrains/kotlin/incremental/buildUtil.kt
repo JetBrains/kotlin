@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.synthetic.SAM_LOOKUP_NAME
 import java.io.File
 import java.util.*
 
@@ -141,10 +142,10 @@ fun ChangesCollector.getDirtyData(
             dirtyClassesFqNames.addAll(fqNames)
 
             for (name in change.names) {
-                for (fqName in fqNames) {
-                    dirtyLookupSymbols.add(LookupSymbol(name, fqName.asString()))
-                }
+                fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(name, it.asString()) }
             }
+
+            fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
         }
     }
 
