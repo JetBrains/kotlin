@@ -24,7 +24,7 @@ import java.io.File
 internal class GradleICReporter(private val projectRootFile: File) : ICReporter {
     private val log = Logging.getLogger(GradleICReporter::class.java)
 
-    override fun report(message: ()->String) {
+    override fun report(message: () -> String) {
         log.kotlinDebug(message)
     }
 
