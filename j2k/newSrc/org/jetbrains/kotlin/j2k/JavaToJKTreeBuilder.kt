@@ -20,6 +20,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
+import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -50,6 +51,15 @@ class JavaToJKTreeBuilder {
                 is PsiNewExpression -> {
                     return toJK()
                 }
+                is PsiArrayAccessExpression -> {
+                    return toJK()
+                }
+                is PsiTypeCastExpression -> {
+                    return toJK()
+                }
+                is PsiParenthesizedExpression -> {
+                    return toJK()
+                }
             }
             throw RuntimeException("Not supported")
         }
@@ -58,7 +68,7 @@ class JavaToJKTreeBuilder {
             return JKBinaryExpressionImpl(lOperand.toJK(), rOperand?.toJK(), operationSign.toJK())
         }
 
-        fun PsiLiteralExpression.toJK(): JKExpression {
+        fun PsiLiteralExpression.toJK(): JKLiteralExpression {
             if (this !is PsiLiteralExpressionImpl) {
                 throw RuntimeException("Not supported")
             }
@@ -107,7 +117,43 @@ class JavaToJKTreeBuilder {
         }
 
         fun PsiNewExpression.toJK(): JKExpression {
+            assert(this is PsiNewExpressionImpl)
+            if ((this as PsiNewExpressionImpl).findChildByRole(ChildRole.LBRACKET) != null) {
+                val arrayInitializer = arrayInitializer
+                if (arrayInitializer != null) {
+                    return JKJavaNewArrayImpl(arrayInitializer.initializers.map { toJK() })
+                }
+                else {
+                    val dimensions = mutableListOf<PsiLiteralExpression?>()
+                    var child = firstChild
+                    while (child != null) {
+                        if (child.node.elementType == JavaTokenType.LBRACKET) {
+                            child = child.nextSibling
+                            if (child.node.elementType == JavaTokenType.RBRACKET) {
+                                dimensions.add(null)
+                            }
+                            else {
+                                dimensions.add(child as PsiLiteralExpression?)
+                            }
+                        }
+                        child = child.nextSibling
+                    }
+                    return JKJavaNewEmptyArrayImpl(dimensions.map { it?.toJK() })
+                }
+            }
             return JKJavaNewExpressionImpl((classReference as PsiIdentifier).convertClassReference(), argumentList.toJK())
+        }
+
+        fun PsiArrayAccessExpression.toJK(): JKExpression {
+            return JKArrayAccessExpressionImpl(arrayExpression.toJK(), indexExpression?.toJK())
+        }
+
+        fun PsiTypeCastExpression.toJK(): JKExpression {
+            return JKTypeCastExpressionImpl(operand?.toJK(), castType?.convertTypeReference())
+        }
+
+        fun PsiParenthesizedExpression.toJK(): JKExpression {
+            return JKParenthesizedExpressionImpl(expression?.toJK())
         }
 
         fun PsiExpressionList?.toJK(): JKExpressionList {
@@ -124,6 +170,10 @@ class JavaToJKTreeBuilder {
 
         fun PsiIdentifier.convertClassReference(): JKJavaClassReference {
             return JKJavaClassReferenceImpl()
+        }
+
+        fun PsiTypeElement.convertTypeReference(): JKTypeReference {
+            return JKTypeReferenceImpl()
         }
     }
 

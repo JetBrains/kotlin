@@ -53,8 +53,9 @@ interface JKJavaFieldAccessExpression : JKFieldAccessExpression {
 
 }
 
-interface JKJavaNewExpression : JKNewExpression {
-
+interface JKJavaNewExpression : JKExpression {
+    val identifier: JKClassReference
+    val arguments: JKExpressionList
 }
 
 interface JKJavaMethodReference : JKMethodReference
@@ -77,4 +78,12 @@ interface JKJavaModifier : JKModifier {
     enum class JavaModifierType {
         ABSTRACT, FINAL, NATIVE, STATIC, STRICTFP, SYNCHRONIZED, TRANSIENT, VOLATILE
     }
+}
+
+interface JKJavaNewEmptyArray : JKExpression {
+    val initializer: List<JKLiteralExpression?>
+}
+
+interface JKJavaNewArray : JKExpression {
+    val initializer: List<JKExpression>
 }

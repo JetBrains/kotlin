@@ -127,3 +127,19 @@ class JKJavaClassReferenceImpl() : JKJavaClassReference, JKElementBase() {
 
     }
 }
+
+class JKJavaNewEmptyArrayImpl(override val initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}
+
+class JKJavaNewArrayImpl(override val initializer: List<JKExpression>) : JKJavaNewArray, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewArray(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+
+    }
+}

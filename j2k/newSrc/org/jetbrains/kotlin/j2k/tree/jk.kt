@@ -74,9 +74,18 @@ interface JKFieldAccessExpression : JKExpression {
     val identifier: JKFieldReference
 }
 
-interface JKNewExpression : JKExpression {
-    val identifier: JKClassReference
-    val arguments: JKExpressionList
+interface JKArrayAccessExpression : JKExpression {
+    val expression : JKExpression
+    val indexExpression : JKExpression?
+}
+
+interface JKParenthesizedExpression : JKExpression {
+    val expression : JKExpression?
+}
+
+interface JKTypeCastExpression : JKExpression {
+    val expression : JKExpression?
+    val type : JKTypeReference?
 }
 
 interface JKExpressionList : JKElement {
@@ -92,6 +101,10 @@ interface JKFieldReference : JKElement {
 }
 
 interface JKClassReference : JKElement {
+
+}
+
+interface JKTypeReference : JKElement {
 
 }
 
