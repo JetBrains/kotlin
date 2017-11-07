@@ -1,6 +1,6 @@
 // FILE: 1.kt
 
-package test
+package testpack
 
 class Test(val _member: String) {
     val _parameter: Z<Z<String>> =  test {
@@ -25,7 +25,7 @@ inline fun <T> test(s: () -> Z<T>): Z<T> {
 // FILE: 2.kt
 
 //NO_CHECK_LAMBDA_INLINING
-import test.*
+import testpack.*
 
 fun box(): String {
 

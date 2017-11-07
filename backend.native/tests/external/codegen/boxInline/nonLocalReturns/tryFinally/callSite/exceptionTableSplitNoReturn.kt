@@ -1,6 +1,6 @@
 // FILE: 1.kt
 // WITH_RUNTIME
-package test
+package testpack
 
 public class Holder(var value: String = "") {
 
@@ -36,7 +36,7 @@ public inline fun <R> doCallWithException(h: Holder, block: ()-> R) {
 
 // FILE: 2.kt
 
-import test.*
+import testpack.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
