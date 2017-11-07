@@ -1,20 +1,7 @@
-/*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+@file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.jetbrains.org.objectweb.asm.*
+import org.gradle.api.logging.Logger
+import org.objectweb.asm.*
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -22,23 +9,12 @@ import java.util.jar.JarFile
 import java.util.zip.ZipOutputStream
 
 /**
- * Removes metadata annotations from Kotlin classes
+ * Removes @kotlin.Metadata annotations from compiled Kotlin classes
  */
-
-fun main(args: Array<String>) {
-    if (args.size != 4) {
-        error("Usage: kotlinc -script strip-kotlin-annotations.kts <annotation-internal-name-regex> <class-internal-name-regex> <path-to-in-jar> <path-to-out-jar>")
-    }
-
-    val annotationRegex = args[0].toRegex()
-    val classRegex = args[1].toRegex()
-    val inFile = File(args[2])
-    val outFile = File(args[3])
+fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFile: File) {
+    val classRegex = classNamePattern.toRegex()
 
     assert(inFile.exists()) { "Input file not found at $inFile" }
-
-    println("Stripping annotations from all classes in $inFile")
-    println("Input file size: ${inFile.length()} bytes")
 
     fun transform(entryName: String, bytes: ByteArray): ByteArray {
         if (!entryName.endsWith(".class")) return bytes
@@ -48,7 +24,7 @@ fun main(args: Array<String>) {
         val classWriter = ClassWriter(0)
         val classVisitor = object : ClassVisitor(Opcodes.ASM5, classWriter) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                if (annotationRegex.matches(Type.getType(desc).getInternalName())) {
+                if (Type.getType(desc).internalName == "kotlin/Metadata") {
                     changed = true
                     return null
                 }
@@ -61,8 +37,7 @@ fun main(args: Array<String>) {
         return classWriter.toByteArray()
     }
 
-    ZipOutputStream(BufferedOutputStream(FileOutputStream(outFile))).use {
-        outJar ->
+    ZipOutputStream(BufferedOutputStream(FileOutputStream(outFile))).use { outJar ->
         JarFile(inFile).use { inJar ->
             for (entry in inJar.entries()) {
                 val inBytes = inJar.getInputStream(entry).readBytes()
@@ -80,8 +55,9 @@ fun main(args: Array<String>) {
         }
     }
 
-    println("Output written to $outFile")
-    println("Output file size: ${outFile.length()} bytes")
+    logger.info("Stripping @kotlin.Metadata annotations from all classes in $inFile")
+    logger.info("Class name pattern: $classNamePattern")
+    logger.info("Input file size: ${inFile.length()} bytes")
+    logger.info("Output written to $outFile")
+    logger.info("Output file size: ${outFile.length()} bytes")
 }
-
-main(args)

@@ -89,11 +89,11 @@ task reflectShadowJar(type: ShadowJar) {
     version = null
     manifestAttributes(manifest, project, 'Main')
 
-    from (sourceSets.main.output)
-    from ("${core}/descriptors.jvm/src") {
+    from(sourceSets.main.output)
+    from(project(":core:descriptors.jvm").sourceSets.main.resources) {
         include 'META-INF/services/**'
     }
-    from ("${core}/deserialization/src") {
+    from(project(":core:deserialization").sourceSets.main.resources) {
         include 'META-INF/services/**'
     }
 
@@ -103,19 +103,15 @@ task reflectShadowJar(type: ShadowJar) {
     mergeServiceFiles()
 }
 
-createScriptTask(project, "stripMetadata") {
+task stripMetadata {
     dependsOn reflectShadowJar
     def inputJar = reflectShadowJar.archivePath
-    def outputJar = "${libsDir}/kotlin-reflect-stripped.jar"
+    def outputJar = new File("${libsDir}/kotlin-reflect-stripped.jar")
     inputs.file(inputJar)
     outputs.file(outputJar)
-    args += [
-            "${rootDir}/generators/infrastructure/strip-kotlin-annotations.kts",
-            "kotlin/Metadata",
-            "kotlin/reflect/jvm/internal/impl/.*",
-            inputJar,
-            outputJar
-    ]
+    doLast {
+        StripMetadataKt.stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar, outputJar)
+    }
 }
 
 def mainArchiveName = "${archivesBaseName}-${project.version}.jar"

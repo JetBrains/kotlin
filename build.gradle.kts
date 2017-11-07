@@ -64,8 +64,6 @@ allprojects {
 extra["kotlin_root"] = rootDir
 
 val bootstrapCompileCfg = configurations.create("bootstrapCompile")
-val scriptCompileCfg = configurations.create("scriptCompile").extendsFrom(bootstrapCompileCfg)
-val scriptRuntimeCfg = configurations.create("scriptRuntime").extendsFrom(scriptCompileCfg)
 
 repositories {
     for (repo in (rootProject.extra["repos"] as List<String>)) {

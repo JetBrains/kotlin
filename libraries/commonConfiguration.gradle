@@ -206,22 +206,3 @@ ext.createPreprocessorTask = { Project project, def name, def sourceDir, def tar
         args = [sourceDir, targetDir, profile]
     }
 }
-
-ext.createScriptTask = { Project project, def name, Closure<JavaExec> configureClosure = null ->
-    JavaExec task = project.tasks.create(name, JavaExec)
-    return project.configure(task) {
-//        dependsOn(rootProject.prepareBootstrap)
-        classpath = rootProject.configurations.scriptCompile
-        main = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
-        args = [
-                "-script",
-                "-version",
-                "-no-stdlib",
-                "-cp", rootProject.configurations.scriptRuntime.asPath]
-
-        if (configureClosure != null) {
-            configureClosure.delegate = it
-            configureClosure.call()
-        }
-    }
-}
