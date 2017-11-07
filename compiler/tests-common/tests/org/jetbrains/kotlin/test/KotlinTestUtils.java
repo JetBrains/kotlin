@@ -471,6 +471,7 @@ public class KotlinTestUtils {
     public static CompilerConfiguration newConfiguration() {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
+        configuration.put(CommonConfigurationKeys.USE_NEW_INFERENCE, "true".equals(System.getProperty("kotlin.ni")));
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageCollector() {
             @Override
