@@ -728,7 +728,7 @@ OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef thiz, KInt start, KInt size) {
   }
   const char* rawString =
     reinterpret_cast<const char*>(ByteArrayAddressOfElementAt(array, start));
-  RETURN_RESULT_OF(utf8ToUtf16, rawString, array->count_);
+  RETURN_RESULT_OF(utf8ToUtf16, rawString, size);
 }
 
 OBJ_GETTER(Kotlin_String_toUtf8Array, KString thiz, KInt start, KInt size) {
