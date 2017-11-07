@@ -1,4 +1,5 @@
 // FILE: 1.kt
+// IGNORE_BACKEND: NATIVE
 //WITH_RUNTIME
 package test
 

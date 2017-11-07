@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// IGNORE_BACKEND: NATIVE
 
 import kotlin.test.*
 
