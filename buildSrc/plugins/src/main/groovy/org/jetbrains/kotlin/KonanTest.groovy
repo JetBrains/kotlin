@@ -23,6 +23,8 @@ import org.gradle.process.ExecResult
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
 
+import java.util.regex.Pattern
+
 abstract class KonanTest extends JavaExec {
     public String source
     def targetManager = new TargetManager(project.testTarget)
@@ -565,11 +567,10 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         def packagePattern = ~/(?m)^\s*package\s+([a-zA-z-][a-zA-Z0-9._-]*)/
         def boxPattern = ~/(?m)fun\s+box\s*\(\s*\)/
         def importPattern = ~/(?m)^\s*import\s+([a-zA-z-][a-zA-Z0-9._*-]*)/
+        def classPattern = ~/.*(class|object|enum)\s+([a-zA-z-][a-zA-Z0-9._-]*).*/
 
-        def sourceName = "_" + project.file(source).name
-                .replace('.kt', '')
-                .replace('-','_')
-        def packages = new HashSet()
+        def sourceName = "_" + normalize(project.file(source).name)
+        def packages = new LinkedHashSet()
         def imports = []
 
         def result = super.buildCompileList()
@@ -579,10 +580,12 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
             if (text =~ packagePattern) {
                 pkg = (text =~ packagePattern)[0][1]
                 packages.add(pkg)
-                text = text.replaceFirst(packagePattern, '')
+                pkg = "$sourceName.$pkg"
+                text = text.replaceFirst(packagePattern, "package $pkg")
+            } else {
+                pkg = sourceName + (pkg ? ".$pkg" : '')
+                text = "package $pkg\n" + text
             }
-            pkg = sourceName + (pkg ? ".$pkg" : '')
-            text = "package $pkg\n" + text
             if (text =~ boxPattern) {
                 imports.add("${pkg}.*")
             }
@@ -593,21 +596,31 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
             def text = project.file(filePath).text
             def m = (text =~ importPattern)
             if (m) {
+                // Prepend package name to found imports
                 for (int i = 0; i < m.count; i++) {
                     String importStatement = m[i][1]
-                    def newImport = importStatement.with {
-                        def importPkg = replace('.*', '')
-                        if (packages.contains(importPkg)) {
-                            "$sourceName.$it"
+                    def subImport = importStatement.with {
+                        int dotIdx = indexOf('.')
+                        dotIdx > 0 ? substring(0, dotIdx) : it
+                    }
+                    if (packages.contains(subImport)) {
+                        // add only to those who import packages from the test files
+                        text = text.replaceFirst(~/(?m)^\s*import\s+${Pattern.quote(importStatement)}/,
+                                "import $sourceName.$importStatement")
+                    } else if (text =~ classPattern) {
+                        // special case for import from the local class
+                        def clsMatcher = (text =~ classPattern)
+                        for (int j = 0; j < clsMatcher.count; j++) {
+                            def cl = (text =~ classPattern)[j][2]
+                            if (subImport == cl) {
+                                text = text.replaceFirst(~/(?m)^\s*import\s+${Pattern.quote(importStatement)}/,
+                                        "import $sourceName.$importStatement")
+                            }
                         }
                     }
-                    if (newImport) {
-                        text = text.replaceFirst(importStatement, newImport)
-                    }
-                    // TODO: special case for import from the class to out scope
-                    
                 }
-            } else {
+            } else if (packages.empty) {
+                // Add import statement after package
                 def pkg = null
                 if (text =~ packagePattern) {
                     pkg = 'package ' + (text =~ packagePattern)[0][1]
@@ -615,11 +628,33 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
                 }
                 text = (pkg ? "$pkg\n" : "") + "import $sourceName.*\n" + text
             }
-            createFile(filePath, text)
+            // now replace all package usages in full qualified names
+            def res = ""
+            text.eachLine {
+                def line = it
+                packages.each { String pkg ->
+                    if (line.contains("$pkg.") &&
+                            ! (line =~ packagePattern || line =~ importPattern)) {
+
+                        def idx = line.indexOf("$pkg")
+                        if (! (idx > 0 && Character.isJavaIdentifierPart(line.charAt(idx - 1))) ) {
+                            line = line.substring(0, idx) + "$sourceName.$pkg" + line.substring(idx + pkg.length())
+                        }
+                    }
+                }
+                res += "$line\n"
+            }
+            createFile(filePath, res)
         }
         createLauncherFile("$outputDirectory/_launcher.kt", imports)
         result.add("$outputDirectory/_launcher.kt")
         return result
+    }
+
+    String normalize(String name) {
+        name.replace('.kt', '')
+                .replace('-','_')
+                .replace('.', '_')
     }
 
     /**
@@ -627,7 +662,7 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
      */
     void createLauncherFile(String file, List<String> imports) {
         StringBuilder text = new StringBuilder()
-        def pack = project.file(source).name.replace('.kt', '').replace('-', '_')
+        def pack = normalize(project.file(source).name)
         text.append("package _$pack\n")
         for (v in imports) {
             text.append("import ").append(v).append('\n')
@@ -737,7 +772,7 @@ fun runTest() {
         ktFiles.each {
             source = project.relativePath(it)
             def savedArgs = arguments
-            arguments += "--ktest_filter=_${it.name.replace('.kt', '').replace('-','_')}.*"
+            arguments += "--ktest_filter=_${normalize(it.name)}.*"
             println("TEST: $it.name (done: $statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
             def testCase = testSuite.createTestCase(it.name)
             testCase.start()
