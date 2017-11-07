@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -40,7 +41,8 @@ class KotlinCallComponents(
         val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
         val constraintInjector: ConstraintInjector,
         val reflectionTypes: ReflectionTypes,
-        val builtIns: KotlinBuiltIns
+        val builtIns: KotlinBuiltIns,
+        val languageVersionSettings: LanguageVersionSettings
 )
 
 class SimpleCandidateFactory(

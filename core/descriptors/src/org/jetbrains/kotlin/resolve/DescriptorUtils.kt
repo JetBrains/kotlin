@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
 
@@ -432,4 +433,9 @@ fun MemberDescriptor.isEffectivelyExternal(): Boolean {
 
     val containingClass = getContainingClass(this)
     return containingClass != null && containingClass.isEffectivelyExternal()
+}
+
+fun isParameterOfAnnotation(parameterDescriptor: ParameterDescriptor): Boolean {
+    val constructedClass = parameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.constructedClass
+    return DescriptorUtils.isAnnotationClass(constructedClass)
 }
