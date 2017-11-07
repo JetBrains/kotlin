@@ -564,10 +564,13 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
     }
 
     List<String> createTestFiles() {
-        def packagePattern = ~/(?m)^\s*package\s+([a-zA-z-][a-zA-Z0-9._-]*)/
+        def identifier = /[a-zA-Z_][a-zA-Z0-9_]/
+        def fullQualified = /[a-zA-Z_][a-zA-Z0-9_.]/
+        def importRegex = /(?m)^\s*import\s+/
+
+        def packagePattern = ~/(?m)^\s*package\s+(${fullQualified}*)/
         def boxPattern = ~/(?m)fun\s+box\s*\(\s*\)/
-        def importPattern = ~/(?m)^\s*import\s+([a-zA-z-][a-zA-Z0-9._*-]*)/
-        def classPattern = ~/.*(class|object|enum)\s+([a-zA-z-][a-zA-Z0-9._-]*).*/
+        def classPattern = ~/.*(class|object|enum)\s+(${identifier}*).*/
 
         def sourceName = "_" + normalize(project.file(source).name)
         def packages = new LinkedHashSet()
@@ -583,7 +586,7 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
                 pkg = "$sourceName.$pkg"
                 text = text.replaceFirst(packagePattern, "package $pkg")
             } else {
-                pkg = sourceName + (pkg ? ".$pkg" : '')
+                pkg = sourceName
                 text = "package $pkg\n" + text
             }
             if (text =~ boxPattern) {
@@ -594,18 +597,19 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         // TODO: optimize files writes
         for (String filePath : result) {
             def text = project.file(filePath).text
-            def m = (text =~ importPattern)
-            if (m) {
+            // Find if there are any imports in the file
+            def matcher = (text =~ ~/${importRegex}(${fullQualified}*)/)
+            if (matcher) {
                 // Prepend package name to found imports
-                for (int i = 0; i < m.count; i++) {
-                    String importStatement = m[i][1]
+                for (int i = 0; i < matcher.count; i++) {
+                    String importStatement = matcher[i][1]
                     def subImport = importStatement.with {
                         int dotIdx = indexOf('.')
                         dotIdx > 0 ? substring(0, dotIdx) : it
                     }
                     if (packages.contains(subImport)) {
                         // add only to those who import packages from the test files
-                        text = text.replaceFirst(~/(?m)^\s*import\s+${Pattern.quote(importStatement)}/,
+                        text = text.replaceFirst(~/${importRegex}${Pattern.quote(importStatement)}/,
                                 "import $sourceName.$importStatement")
                     } else if (text =~ classPattern) {
                         // special case for import from the local class
@@ -613,7 +617,7 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
                         for (int j = 0; j < clsMatcher.count; j++) {
                             def cl = (text =~ classPattern)[j][2]
                             if (subImport == cl) {
-                                text = text.replaceFirst(~/(?m)^\s*import\s+${Pattern.quote(importStatement)}/,
+                                text = text.replaceFirst(~/${importRegex}${Pattern.quote(importStatement)}/,
                                         "import $sourceName.$importStatement")
                             }
                         }
@@ -633,9 +637,7 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
             text.eachLine {
                 def line = it
                 packages.each { String pkg ->
-                    if (line.contains("$pkg.") &&
-                            ! (line =~ packagePattern || line =~ importPattern)) {
-
+                    if (line.contains("$pkg.") && ! (line =~ packagePattern || line =~ importRegex)) {
                         def idx = line.indexOf("$pkg")
                         if (! (idx > 0 && Character.isJavaIdentifierPart(line.charAt(idx - 1))) ) {
                             line = line.substring(0, idx) + "$sourceName.$pkg" + line.substring(idx + pkg.length())
