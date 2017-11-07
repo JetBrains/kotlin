@@ -4,9 +4,7 @@
             
         },
         "configurations": [
-            "bootstrapCompile",
-            "scriptCompile",
-            "scriptRuntime"
+            "bootstrapCompile"
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
