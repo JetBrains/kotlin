@@ -204,7 +204,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
-        if (arguments.getNewInference()) {
+        if (arguments.getNewInference() || configuration.getBoolean(CommonConfigurationKeys.USE_NEW_INFERENCE)) {
             extraLanguageFeatures.put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED);
         }
 

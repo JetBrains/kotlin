@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val LOOKUP_TRACKER = CompilerConfigurationKey.create<LookupTracker>("lookup tracker")
+
+    @JvmField
+    val USE_NEW_INFERENCE = CompilerConfigurationKey.create<Boolean>("use new inference")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
