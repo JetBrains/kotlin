@@ -8,7 +8,7 @@ public final class NonExistentType {
     @org.jetbrains.annotations.NotNull()
     private static final Function1<ABCDEF, kotlin.Unit> c = null;
     @org.jetbrains.annotations.Nullable()
-    private static final ABCDEF<java.lang.String, ? extends Function1<java.util.List<ABCDEF>, kotlin.Unit>> d = null;
+    private static final ABCDEF<java.lang.String, Function1<java.util.List<ABCDEF>, kotlin.Unit>> d = null;
     public static final NonExistentType INSTANCE = null;
 
     @org.jetbrains.annotations.Nullable()
@@ -27,7 +27,7 @@ public final class NonExistentType {
     }
 
     @org.jetbrains.annotations.Nullable()
-    public final ABCDEF<java.lang.String, ? extends Function1<java.util.List<ABCDEF>, kotlin.Unit>> getD() {
+    public final ABCDEF<java.lang.String, Function1<java.util.List<ABCDEF>, kotlin.Unit>> getD() {
         return null;
     }
 

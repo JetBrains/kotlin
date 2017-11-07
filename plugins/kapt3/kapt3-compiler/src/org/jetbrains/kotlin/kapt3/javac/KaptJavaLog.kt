@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.javac
 
+import com.intellij.psi.PsiElement
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -140,5 +141,10 @@ class KaptJavaLog(
 }
 
 fun KaptContext<*>.kaptError(text: String): JCDiagnostic {
+    return JCDiagnostic.Factory.instance(context).error(null, null, "proc.messager", text)
+}
+
+fun KaptContext<*>.kaptError(text: String, target: PsiElement): JCDiagnostic {
+    //TODO provide source binding
     return JCDiagnostic.Factory.instance(context).error(null, null, "proc.messager", text)
 }
