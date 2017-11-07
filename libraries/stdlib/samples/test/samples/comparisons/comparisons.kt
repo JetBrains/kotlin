@@ -163,15 +163,15 @@ class Comparisons {
 
     @Sample
     fun thenComparator() {
-        val array = arrayOf("c" to 1, "b" to 2, "a" to 1, "d" to 0, null to 0)
+        val list = listOf("c" to 1, "b" to 2, "a" to 1, "d" to 0, null to 0)
 
         val valueComparator = compareBy<Pair<String?, Int>> { it.second }
-        val map1 = listOf(*array).sortedWith(valueComparator).toMap()
+        val map1 = list.sortedWith(valueComparator).toMap()
         assertPrints(map1, "{d=0, null=0, c=1, a=1, b=2}")
 
         val valueThenKeyComparator = valueComparator
                 .thenComparator({ a, b -> compareValues(a.first, b.first) })
-        val map2 = listOf(*array).sortedWith(valueThenKeyComparator).toMap()
+        val map2 = list.sortedWith(valueThenKeyComparator).toMap()
         assertPrints(map2, "{null=0, d=0, a=1, c=1, b=2}")
     }
 
