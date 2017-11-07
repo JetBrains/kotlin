@@ -141,7 +141,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
             this.withNewInferenceDirective = WITH_NEW_INFERENCE_DIRECTIVE in directives
-            this.newInferenceEnabled = (customLanguageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT).supportsFeature(LanguageFeature.NewInference)
+            this.newInferenceEnabled = customLanguageVersionSettings?.supportsFeature(LanguageFeature.NewInference) ?: shouldUseNewInferenceForTests()
             if (fileName.endsWith(".java")) {
                 // TODO: check there are no syntax errors in .java sources
                 this.createKtFile = lazyOf(null)
@@ -195,6 +195,11 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 result = imports + result
             }
             return result
+        }
+
+        private fun shouldUseNewInferenceForTests(): Boolean {
+            if (System.getProperty("kotlin.ni") == "true") return true
+            return LanguageVersionSettingsImpl.DEFAULT.supportsFeature(LanguageFeature.NewInference)
         }
 
         fun getActualText(
@@ -277,8 +282,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             for (declaration in declarations) {
                 val diagnostics = getJvmSignatureDiagnostics(declaration, bindingContext.diagnostics,
                                                              GlobalSearchScope.allScope(project)) ?: continue
-                val withNewInference = (customLanguageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT).supportsFeature(LanguageFeature.NewInference)
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, withNewInference) })
+                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, newInferenceEnabled) })
             }
             return jvmSignatureDiagnostics
         }

@@ -27,14 +27,24 @@ const val API_VERSION_DIRECTIVE = "API_VERSION"
 data class CompilerTestLanguageVersionSettings(
         private val languageFeatures: Map<LanguageFeature, LanguageFeature.State>,
         override val apiVersion: ApiVersion,
-        override val languageVersion: LanguageVersion
+        override val languageVersion: LanguageVersion,
+        private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = specificFeaturesForTests()
 ) : LanguageVersionSettings {
     private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
-            languageFeatures[feature] ?: delegate.getFeatureSupport(feature)
+            specificFeatures[feature] ?:
+            languageFeatures[feature] ?:
+            delegate.getFeatureSupport(feature)
 
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = flag.defaultValue
+}
+
+private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
+    return if (System.getProperty("kotlin.ni") == "true")
+        mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)
+    else
+        emptyMap()
 }
 
 fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVersionSettings? {
