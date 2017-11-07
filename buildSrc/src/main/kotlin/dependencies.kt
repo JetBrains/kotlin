@@ -44,25 +44,6 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
     else files()
 }
 
-fun Project.ideaSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib", optional: Boolean = false): ConfigurableFileCollection =
-        preloadedDeps(*artifactBaseNames, baseDir = File(rootDir, "ideaSDK"), subdir = subdir, optional = optional)
-
-fun Project.ideaUltimateSdkDeps(vararg artifactBaseNames: String, subdir: String = "lib"): ConfigurableFileCollection {
-    val ultimateSdkDir = File(rootDir, "ultimate", "ideaSDK")
-    return if (ultimateSdkDir.isDirectory) preloadedDeps(*artifactBaseNames, baseDir = ultimateSdkDir, subdir = subdir)
-           else files()
-}
-
-fun Project.ideaSdkCoreDeps(vararg artifactBaseNames: String): ConfigurableFileCollection = ideaSdkDeps(*artifactBaseNames, subdir = "core")
-
-fun Project.ideaUltimateSdkCoreDeps(vararg artifactBaseNames: String): ConfigurableFileCollection = ideaUltimateSdkDeps(*artifactBaseNames, subdir = "core")
-
-fun Project.ideaPluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib", optional: Boolean = false): ConfigurableFileCollection =
-        ideaSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir", optional = optional)
-
-fun Project.ideaUltimatePluginDeps(vararg artifactBaseNames: String, plugin: String, subdir: String = "lib"): ConfigurableFileCollection =
-        ideaUltimateSdkDeps(*artifactBaseNames, subdir = "plugins/$plugin/$subdir")
-
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
 fun DependencyHandler.projectDist(name: String): ProjectDependency = project(name, configuration = "distJar").apply { isTransitive = false }
