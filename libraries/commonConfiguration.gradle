@@ -22,17 +22,12 @@ ext.configureJvmProject = { Project project ->
         }
 
         tasks.withType(JavaCompile) {
-//            sourceCompatibility = 1.6
-//            targetCompatibility = 1.6
             options.fork = true
             options.forkOptions.javaHome = file(JDK_18)
         }
 
         tasks.withType(project.compileKotlin.class) {
             kotlinOptions.jdkHome = JDK_18
-            doFirst {
-                System.setProperty("kotlin.colors.enabled", "false")
-            }
         }
 
         test {
@@ -61,9 +56,6 @@ ext.configureJvm6Project = { Project project ->
         tasks.withType(project.compileKotlin.class) {
             kotlinOptions.jdkHome = JDK_16
             kotlinOptions.jvmTarget = "1.6"
-            doFirst {
-                System.setProperty("kotlin.colors.enabled", "false")
-            }
         }
 
         test {

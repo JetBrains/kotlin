@@ -459,7 +459,6 @@ fun jdkPath(version: String): String = jdkPathIfFound(version)
         ?: throw GradleException ("Please set environment variable JDK_${version.replace(".", "")} to point to JDK $version installation")
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
-
     tasks.withType<JavaCompile> {
         options.isFork = true
         options.forkOptions.javaHome = file(javaHome)
@@ -470,9 +469,6 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     tasks.withType<KotlinCompile> {
         kotlinOptions.jdkHome = javaHome
         kotlinOptions.jvmTarget = javaVersion
-        doFirst {
-            System.setProperty("kotlin.colors.enabled", "false")
-        }
     }
 
     tasks.withType<Test> {
