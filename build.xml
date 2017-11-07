@@ -79,8 +79,8 @@
     <typedef name="skip" classname="com.intellij.ant.ClassFilterAnnotationRegexp" classpathref="javac2.classpath" loaderref="javac2.loader"/>
 
     <dirset id="compilerSources.dirset" dir="${basedir}/">
-        <include name="core/descriptor.loader.java/src"/>
         <include name="core/descriptors/src"/>
+        <include name="core/descriptors.jvm/src"/>
         <include name="core/deserialization/src"/>
         <include name="core/util.runtime/src"/>
         <include name="compiler/backend/src"/>
@@ -125,7 +125,7 @@
         <include name="descriptors/**"/>
         <include name="deserialization/**"/>
         <include name="serialization/**"/>
-        <include name="descriptor.loader.java/**"/>
+        <include name="descriptors.jvm/**"/>
         <include name="frontend.java/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
@@ -246,8 +246,8 @@
     <target name="compiler-sources">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
-            <fileset dir="core/descriptor.loader.java/src"/>
             <fileset dir="core/descriptors/src"/>
+            <fileset dir="core/descriptors.jvm/src"/>
             <fileset dir="core/deserialization/src"/>
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/backend/src"/>
@@ -372,7 +372,7 @@
                     <include name="kotlin/**"/>
                 </fileset>
                 <fileset dir="${basedir}/core/deserialization/src" includes="META-INF/services/**"/>
-                <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
+                <fileset dir="${basedir}/core/descriptors.jvm/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/cli/src" includes="META-INF/services/**"/>

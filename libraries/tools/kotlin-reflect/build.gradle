@@ -87,7 +87,7 @@ task reflectShadowJar(type: ShadowJar) {
     manifestAttributes(manifest, project, 'Main')
 
     from (sourceSets.main.output)
-    from ("${core}/descriptor.loader.java/src") {
+    from ("${core}/descriptors.jvm/src") {
         include 'META-INF/services/**'
     }
     from ("${core}/deserialization/src") {
@@ -141,8 +141,8 @@ task relocateCoreSources(type: Copy) {
         delete(relocatedCoreSrc)
     }
 
-    from "${core}/descriptor.loader.java/src/${commonPackage}"
     from "${core}/descriptors/src/${commonPackage}"
+    from "${core}/descriptors.jvm/src/${commonPackage}"
     from "${core}/descriptors.runtime/src/${commonPackage}"
     from "${core}/deserialization/src/${commonPackage}"
     from "${core}/util.runtime/src/${commonPackage}"

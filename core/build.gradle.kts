@@ -16,11 +16,11 @@ dependencies {
 
 sourceSets {
     "main" {
-        java.srcDirs("descriptor.loader.java/src",
-                     "descriptors/src",
+        java.srcDirs("descriptors/src",
+                     "descriptors.jvm/src",
                      "descriptors.runtime/src",
                      "deserialization/src")
-        resources.srcDirs("descriptor.loader.java/src", "deserialization/src").apply { include("META-INF/**") }
+        resources.srcDirs("descriptors.jvm/src", "deserialization/src").apply { include("META-INF/**") }
     }
     "test" {}
 }
