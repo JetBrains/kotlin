@@ -19,7 +19,7 @@ excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN add_profil         
                     addrsel_policy_init                                             \
 		    in6addr_linklocal_allv2routers                                  \
 		    pfctlinput regwnexec_l res_send_setqhook res_send_setrhook      \
-		    unwhiteout zopen profil
+		    unwhiteout zopen profil openat
 linkerOpts = -ldl -lresolv
 
 ---
