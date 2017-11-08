@@ -32,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -195,9 +197,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, explicitLanguageVersionSettings);
         }
         else if (explicitLanguageVersion != null) {
+            CompilerTestLanguageVersionSettings compilerLanguageVersionSettings = new CompilerTestLanguageVersionSettings(
+                    Collections.emptyMap(),
+                    ApiVersion.createByLanguageVersion(explicitLanguageVersion),
+                    explicitLanguageVersion,
+                    CompilerTestLanguageVersionSettingsKt.specificFeaturesForTests(),
+                    Collections.emptyMap()
+            );
             CommonConfigurationKeysKt.setLanguageVersionSettings(
                     configuration,
-                    new LanguageVersionSettingsImpl(explicitLanguageVersion, ApiVersion.createByLanguageVersion(explicitLanguageVersion))
+                    compilerLanguageVersionSettings
             );
         }
 
