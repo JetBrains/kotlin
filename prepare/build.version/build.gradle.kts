@@ -6,7 +6,7 @@ val buildVersionFilePath = "${rootProject.extra["distDir"]}/build.txt"
 val buildVersion by configurations.creating
 
 val prepare = task("prepare") {
-    val versionString = rootProject.extra["buildNumber"].toString()
+    val versionString = rootProject.extra["kotlinVersion"].toString()
     val versionFile = File(buildVersionFilePath)
     outputs.file(buildVersionFilePath)
     outputs.upToDateWhen {
