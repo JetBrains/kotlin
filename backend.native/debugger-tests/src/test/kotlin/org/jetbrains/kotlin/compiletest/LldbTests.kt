@@ -73,4 +73,25 @@ class LldbTests {
         (ObjHeader *) point = Point(x=1, y=2)
         (ObjHeader *) person = John Doe
     """)
+
+    @Test
+    fun `can inspect arrays`() = lldbTest("""
+        fun main(args: Array<String>) {
+            val xs = IntArray(3)
+            xs[0] = 1
+            xs[1] = 2
+            xs[2] = 3
+            val ys: Array<Any?> = arrayOfNulls(2)
+            ys[0] = Point(1, 2)
+            return
+        }
+
+        data class Point(val x: Int, val y: Int)
+    """, """
+        > b main.kt:8
+        > r
+        > fr var
+        (ObjHeader *) xs = [1, 2, 3]
+        (ObjHeader *) ys = [Point(x=1, y=2), null]
+    """)
 }
