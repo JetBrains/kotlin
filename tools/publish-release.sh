@@ -107,8 +107,9 @@ if [ "$UPLOAD" == "true" ]; then
     ./gradlew build --refresh-dependencies
 
     # 6. Upload the bundle to the CDN
-    stage "Uploading the bundle to CDN: $BUNDLE_TAR -> ftp://uploadcds.labs.intellij.net/kotlin/native/"
-    curl --upload-file "$BUNDLE_TAR" "ftp://$CDN_USER:$CDN_PASS@uploadcds.labs.intellij.net/kotlin/native/"
+    stage "Uploading the bundle to CDN: $BUNDLE_TAR -> ftp://uploadcds.labs.intellij.net/builds/releases/$VERSION/$OS"
+    curl --upload-file "$BUNDLE_TAR" "ftp://$CDN_USER:$CDN_PASS@uploadcds.labs.intellij.net/builds/releases/$VERSION/$OS"
+    echo "Available at https://download.jetbrains.com/kotlin/native/builds/releases/$VERSION/$OS/$BUNDLE_TAR"
 
     echo "Wait ${WAIT_TIME} seconds to ensure that the bundle can be downloaded."
     sleep ${WAIT_TIME}
