@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
         Ordering,
 //        ArrayOps,
         Snapshots,
-//        Mapping,
+        Mapping,
         SetOps,
         Aggregates,
         Guards,
