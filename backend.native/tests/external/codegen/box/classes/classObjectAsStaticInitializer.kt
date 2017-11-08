@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 var global = 0;
 
 class C {

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 var result = ""
 
 enum class E(a: String) {

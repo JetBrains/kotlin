@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 // WITH_RUNTIME
 
 class A() {

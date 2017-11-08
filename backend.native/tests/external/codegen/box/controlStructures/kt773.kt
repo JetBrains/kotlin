@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 package demo2
 
 fun print(o : Any?) {}
