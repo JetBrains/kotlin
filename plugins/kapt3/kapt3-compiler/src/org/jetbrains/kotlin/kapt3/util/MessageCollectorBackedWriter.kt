@@ -23,7 +23,10 @@ import java.io.Writer
 
 class MessageCollectorBackedWriter(val messageCollector: MessageCollector, val severity: CompilerMessageSeverity) : Writer() {
     override fun write(buffer: CharArray, offset: Int, length: Int) {
-        messageCollector.report(severity, String(buffer, offset, length))
+        val message = String(buffer, offset, length).trim().trim('\n', '\r')
+        if (message.isNotEmpty()) {
+            messageCollector.report(severity, message)
+        }
     }
 
     override fun flush() {
