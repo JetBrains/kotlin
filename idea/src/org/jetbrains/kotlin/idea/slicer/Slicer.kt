@@ -113,9 +113,7 @@ private fun KtDeclaration.processVariableAccesses(
     )
 }
 
-private fun KtParameter.canProcess(): Boolean {
-    return !(isLoopParameter || isVarArg)
-}
+private fun KtParameter.canProcess() = !isVarArg
 
 abstract class Slicer(
         protected val element: KtExpression,

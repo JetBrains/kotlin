@@ -378,6 +378,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/forVariable.kt")
+    public void testOutflow_ForVariable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/forVariable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/funBodyExpression.kt")
     public void testOutflow_FunBodyExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/funBodyExpression.kt");
