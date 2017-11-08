@@ -28,7 +28,8 @@ data class CompilerTestLanguageVersionSettings(
         private val languageFeatures: Map<LanguageFeature, LanguageFeature.State>,
         override val apiVersion: ApiVersion,
         override val languageVersion: LanguageVersion,
-        private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = specificFeaturesForTests()
+        private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = specificFeaturesForTests(),
+        private val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
 ) : LanguageVersionSettings {
     private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
 
@@ -37,7 +38,8 @@ data class CompilerTestLanguageVersionSettings(
             languageFeatures[feature] ?:
             delegate.getFeatureSupport(feature)
 
-    override fun <T> getFlag(flag: AnalysisFlag<T>): T = flag.defaultValue
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
 }
 
 private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
