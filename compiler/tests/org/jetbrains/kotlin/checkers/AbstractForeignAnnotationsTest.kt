@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -61,7 +64,12 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
 
     override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
         val analysisFlags = loadAnalysisFlags(module)
-        return LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, analysisFlags)
+        return CompilerTestLanguageVersionSettings(
+                DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+                ApiVersion.LATEST_STABLE,
+                LanguageVersion.LATEST_STABLE,
+                analysisFlags = analysisFlags
+        )
     }
 
     private fun loadAnalysisFlags(module: List<TestFile>): Map<AnalysisFlag<*>, Any?> {
