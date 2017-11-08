@@ -359,7 +359,7 @@ class OutflowSlicer(
                     refExpression.processDereferences()
                 }
                 if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == Access.Read) {
-                    refExpression.processExpression()
+                    refExpression.passToProcessor()
                 }
             }
         }
