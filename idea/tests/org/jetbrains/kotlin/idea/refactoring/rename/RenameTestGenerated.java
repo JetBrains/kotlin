@@ -168,6 +168,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("classByPrimaryConstructor/classByPrimaryConstructor.test")
+    public void testClassByPrimaryConstructor_ClassByPrimaryConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/classByPrimaryConstructor/classByPrimaryConstructor.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("classByPrimaryConstructorWithSpace/classByPrimaryConstructorWithSpace.test")
+    public void testClassByPrimaryConstructorWithSpace_ClassByPrimaryConstructorWithSpace() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/classByPrimaryConstructorWithSpace/classByPrimaryConstructorWithSpace.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("classUsagesInTextFiles/classUsagesInTextFiles.test")
     public void testClassUsagesInTextFiles_ClassUsagesInTextFiles() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/classUsagesInTextFiles/classUsagesInTextFiles.test");

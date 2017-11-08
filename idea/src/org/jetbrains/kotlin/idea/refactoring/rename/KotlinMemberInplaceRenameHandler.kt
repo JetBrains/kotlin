@@ -24,6 +24,7 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
 import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
     companion object {
@@ -53,14 +54,34 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
         }
     }
 
+    private fun PsiElement.substitute(): PsiElement {
+        if (this is KtPrimaryConstructor) return getContainingClassOrObject()
+        return this
+    }
+
     override fun createMemberRenamer(element: PsiElement, elementToRename: PsiNameIdentifierOwner, editor: Editor): MemberInplaceRenamer {
-        val currentName = elementToRename.nameIdentifier?.text ?: ""
-        return RenamerImpl(elementToRename, element, editor, currentName, currentName)
+        val currentElementToRename = elementToRename.substitute() as PsiNameIdentifierOwner
+        val nameIdentifier = currentElementToRename.nameIdentifier
+
+        // Move caret if constructor range doesn't intersect with the one of the containing class
+        val offset = editor.caretModel.offset
+        val editorPsiFile = PsiDocumentManager.getInstance(element.project).getPsiFile(editor.document)
+        if (nameIdentifier != null
+            && editorPsiFile == elementToRename.containingFile
+            && elementToRename is KtPrimaryConstructor
+            && offset !in nameIdentifier.textRange
+            && offset in elementToRename.textRange) {
+            editor.caretModel.moveToOffset(nameIdentifier.textOffset)
+        }
+
+        val currentName = nameIdentifier?.text ?: ""
+        return RenamerImpl(currentElementToRename, element, editor, currentName, currentName)
     }
 
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
-        return element is KtElement &&
-               !variableInplaceHandler.isAvailable(element, editor, file) &&
-               super.isAvailable(element, editor, file)
+        val currentElement = element?.substitute()
+        return currentElement is KtElement &&
+               !variableInplaceHandler.isAvailable(currentElement, editor, file) &&
+               super.isAvailable(currentElement, editor, file)
     }
 }
