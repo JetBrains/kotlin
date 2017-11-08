@@ -234,8 +234,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             }
 
         private fun isLambdaExpression(expression: IrExpression) : Boolean {
-            if (expression !is IrBlock)                                     return false    // Lambda mast be represented with IrBlock.
-            if (expression.origin != IrStatementOrigin.LAMBDA                               // Origin mast be LAMBDA or ANONYMOUS.
+            if (expression !is IrBlock)                                     return false    // Lambda must be represented with IrBlock.
+            if (expression.origin != IrStatementOrigin.LAMBDA                               // Origin must be LAMBDA or ANONYMOUS.
                     && expression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
 
             val statements          = expression.statements

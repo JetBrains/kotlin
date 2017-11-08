@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -73,12 +74,16 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     private val scopeOwnerSymbol
         get() = currentScope!!.scope.scopeOwnerSymbol
 
-    private val progressionElementClasses: Set<IrClassSymbol> = mutableSetOf(symbols.char).apply {
+    private val progressionElementClasses: List<IrClassSymbol> = mutableListOf(symbols.char).apply {
         addAll(symbols.integerClasses)
     }
 
-    private val progressionElementClassesTypes: Set<SimpleType> = mutableSetOf<SimpleType>().apply {
+    private val progressionElementClassesTypes: List<SimpleType> = mutableListOf<SimpleType>().apply {
         progressionElementClasses.mapTo(this) { it.descriptor.defaultType }
+    }
+
+    private val progressionElementClassesNullableTypes: List<SimpleType> = mutableListOf<SimpleType>().apply {
+        progressionElementClassesTypes.mapTo(this) { it.makeNullableAsSpecified(true) }
     }
 
     //region Symbols for progression building functions ================================================================
@@ -128,13 +133,22 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     //endregion
 
     //region Util methods ==============================================================================================
-    private fun IrExpression.castIfNecessary(progressionType: ProgressionType, castToChar: Boolean = true): IrExpression {
-        assert(type in progressionElementClassesTypes)
-        if (type == progressionType.elementType || (!castToChar && KotlinBuiltIns.isChar(progressionType.elementType))) {
-            return this
+    private fun IrExpression.castIfNecessary(progressionType: ProgressionType): IrExpression {
+        assert(type in progressionElementClassesTypes || type in progressionElementClassesNullableTypes)
+        return if (type == progressionType.elementType) {
+            this
+        } else {
+            IrCallImpl(startOffset, endOffset, symbols.getFunction(progressionType.numberCastFunctionName, type))
+                    .apply { dispatchReceiver = this@castIfNecessary }
         }
-        return IrCallImpl(startOffset, endOffset, symbols.getFunction(progressionType.numberCastFunctionName, type))
-                .apply { dispatchReceiver = this@castIfNecessary }
+    }
+
+    private fun DeclarationIrBuilder.ensureNotNullable(expression: IrExpression): IrExpression {
+        return if (expression.type.isMarkedNullable) {
+            irImplicitCast(expression, expression.type.makeNotNullable())
+        } else {
+            expression
+        }
     }
 
     private fun IrExpression.unaryMinus(): IrExpression =
@@ -163,8 +177,10 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
     // Used only by the assert.
     private fun stepHasRightType(step: IrExpression, progressionType: ProgressionType) =
-            ((progressionType.isCharProgression() || progressionType.isIntProgression()) && KotlinBuiltIns.isInt(step.type)) ||
-            (progressionType.isLongProgression() && KotlinBuiltIns.isLong(step.type))
+            ((progressionType.isCharProgression() || progressionType.isIntProgression()) &&
+                    KotlinBuiltIns.isInt(step.type.makeNotNullable())) ||
+            (progressionType.isLongProgression() &&
+                    KotlinBuiltIns.isLong(step.type.makeNotNullable()))
 
     private fun irCheckProgressionStep(progressionType: ProgressionType,
                                        step: IrExpression): Pair<IrExpression, Boolean> {
@@ -177,7 +193,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         // so there is no need to cast it.
         assert(stepHasRightType(step, progressionType))
 
-        val symbol = symbols.checkProgressionStep[step.type]
+        val symbol = symbols.checkProgressionStep[step.type.makeNotNullable()]
                 ?: throw IllegalArgumentException("Unknown progression element type: ${step.type}")
         return IrCallImpl(step.startOffset, step.endOffset, symbol).apply {
             putValueArgument(0, step)
@@ -307,6 +323,8 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
         with(builder) {
             with(progressionInfo) {
+                // Due to features of PSI2IR we can obtain nullable arguments here while actually
+                // they are non-nullable (the frontend takes care about this). So we need to cast them to non-nullable.
                 val statements = mutableListOf<IrStatement>()
 
                 /**
@@ -329,7 +347,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
 
                 val stepExpression = (if (increasing) step else step?.unaryMinus()) ?: defaultStep(startOffset, endOffset)
-                val stepValue = scope.createTemporaryVariable(stepExpression,
+                val stepValue = scope.createTemporaryVariable(ensureNotNullable(stepExpression),
                         nameHint = "step",
                         origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE).also {
                     statements.add(it)

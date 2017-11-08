@@ -400,6 +400,13 @@ task codegen_controlflow_for_loops_coroutines(type: RunKonanTest) {
             "Got: 0 2 4 6\n"
 }
 
+task codegen_controlflow_for_loops_let_with_nullable(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_let_with_nullable.kt"
+    goldValue = "012345\n012345\n024\n01234\n01234\n024\n543210\n543210\n531\n" +
+                "012345\n012345\n024\n01234\n01234\n024\n543210\n543210\n531\n" +
+                "abcdef\nabcdef\nace\nabcde\nabcde\nace\nfedcba\nfedcba\nfdb\n"
+}
+
 task codegen_controlflow_for_loops_call_order(type: RunKonanTest) {
     source = "codegen/controlflow/for_loops_call_order.kt"
     goldValue = "1234\n1234\n2134\n"
