@@ -253,8 +253,8 @@ class ClassTranslator private constructor(
         context.addDeclarationStatement(constructorInitializer.makeStmt())
 
         context = context.contextWithScope(constructorInitializer)
-        context.translateAndAliasParameters(constructorDescriptor, constructorInitializer.parameters)
-                .translateFunction(constructor, constructorInitializer)
+                .translateAndAliasParameters(constructorDescriptor, constructorInitializer.parameters)
+        context.translateFunction(constructor, constructorInitializer)
 
         // Translate super/this call
         val superCallGenerators = mutableListOf<(MutableList<JsStatement>) -> Unit>()
