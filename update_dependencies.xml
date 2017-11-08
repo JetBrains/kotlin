@@ -22,17 +22,6 @@
     <property name="sdk.version.prefix" value="IU" if:set="use.ultimate.by.default"/>
     <property name="sdk.version.prefix" value="IC" unless:set="use.ultimate.by.default"/>
 
-    <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
-    <!--
-    <property name="override.version.branch" value="${kotlin.bootstrap.branch.locator}"/>
-    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1,branch:${override.version.branch}"/>
-    -->
-    <!--<property name="override.version.disabled" value="true"/>-->
-
-    <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
-        <os family="windows"/>
-    </condition>
-
     <property name="kotlinx.coroutines.version" value="0.14.1"/>
 
     <property name="generators" value="${basedir}/generators"/>
@@ -187,8 +176,6 @@
     </target>
 
     <target name="fetch-third-party" depends="get-ivy-library, make-dependency-dirs, make-native-platform-uberjar">
-        <antcall target="override-version"/>
-
         <!-- ProGuard -->
         <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.3" target.jar.name.base="proguard" src="false"/>
         <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.3" target.jar.name.base="proguard-anttask" src="false"/>
@@ -834,49 +821,5 @@
             <arg path="${android.destination.dir}/bin/studio.sh"/>
             <arg path="${android.destination.dir}/bin/update_studio.sh"/>
         </exec>
-    </target>
-
-    <target name="override-version">
-        <condition property="need.version.override">
-            <and>
-                <isset property="override.version.url"/>
-                <equals arg1="${override.version.branch}" arg2="${teamcity.build.branch}"/>
-                <not>
-                    <isset property="override.version.disabled"/>
-                </not>
-                <not>
-                    <istrue value="${bootstrap.build.no.tests}"/>
-                </not>
-                <isset property="teamcity.version"/>
-            </and>
-        </condition>
-
-        <sequential if:set="need.version.override">
-            <local name="override.version.build.number"/>
-            <loadresource property="override.version.build.number">
-                <url url="${override.version.url}"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-                        <replaceregex pattern="^(.*)\snumber=&quot;([\w-+\.]+)&quot;(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <echo message="URL: ${override.version.url} Version: ${override.version.build.number}"/>
-
-            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
-                <arg value="-cp"/>
-                <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
-                <arg value="-script"/>
-                <arg value="${generators}/infrastructure/increment-version.kts"/>
-                <arg value="${override.version.build.number}"/>
-                <arg value="${dependencies}/updated-version.txt"/>
-            </exec>
-
-            <loadfile property="updated.version.number" srcFile="${dependencies}/updated-version.txt"/>
-
-            <echo message="##teamcity[buildNumber '${updated.version.number}']"/>
-        </sequential>
     </target>
 </project>
