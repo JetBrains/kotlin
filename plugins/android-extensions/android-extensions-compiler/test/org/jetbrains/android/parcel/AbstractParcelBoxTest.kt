@@ -106,9 +106,14 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         super.doTest(File(BASE_DIR, filePath + ".kt").absolutePath)
     }
 
+    private val androidPluginPath: String by lazy {
+        System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
+        ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
+    }
+
     private fun getClasspathForTest(): List<File> {
         val kotlinRuntimeJar = PathUtil.kotlinPathsForIdeaPlugin.stdlibPath
-        val layoutLibJars = listOf(File("ideaSDK/plugins/android/lib/layoutlib.jar"), File("ideaSDK/plugins/android/lib/layoutlib-api.jar"))
+        val layoutLibJars = listOf(File(androidPluginPath, "layoutlib.jar"), File(androidPluginPath, "layoutlib-api.jar"))
 
         val robolectricJars = File("dependencies/robolectric")
                 .listFiles { f: File -> f.extension == "jar" }
@@ -167,6 +172,6 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         AndroidComponentRegistrar.registerParcelExtensions(environment.project)
         addAndroidExtensionsRuntimeLibrary(environment)
-        environment.updateClasspath(listOf(JvmClasspathRoot(File("ideaSDK/plugins/android/lib/layoutlib.jar"))))
+        environment.updateClasspath(listOf(JvmClasspathRoot(File(androidPluginPath, "layoutlib.jar"))))
     }
 }

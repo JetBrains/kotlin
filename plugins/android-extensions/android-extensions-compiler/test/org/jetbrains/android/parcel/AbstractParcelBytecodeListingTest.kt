@@ -27,6 +27,8 @@ abstract class AbstractParcelBytecodeListingTest : AbstractAsmLikeInstructionLis
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         AndroidComponentRegistrar.registerParcelExtensions(environment.project)
         addAndroidExtensionsRuntimeLibrary(environment)
-        environment.updateClasspath(listOf(JvmClasspathRoot(File("ideaSDK/plugins/android/lib/layoutlib.jar"))))
+        val androidPluginPath = System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
+                                ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
+        environment.updateClasspath(listOf(JvmClasspathRoot(File(androidPluginPath, "layoutlib.jar"))))
     }
 }
