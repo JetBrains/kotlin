@@ -34,7 +34,7 @@ class KotlinRenameDispatcherHandler : RenameHandler {
         private val handlers: Array<out RenameHandler> get() = Extensions.getExtensions(EP_NAME)
     }
 
-    private fun getRenameHandler(dataContext: DataContext?): RenameHandler? {
+    internal fun getRenameHandler(dataContext: DataContext?): RenameHandler? {
         val availableHandlers = handlers.filterTo(LinkedHashSet()) { it.isRenaming(dataContext) }
         availableHandlers.singleOrNull()?.let { return it }
         availableHandlers.firstIsInstanceOrNull<KotlinMemberInplaceRenameHandler>()?.let { availableHandlers -= it }

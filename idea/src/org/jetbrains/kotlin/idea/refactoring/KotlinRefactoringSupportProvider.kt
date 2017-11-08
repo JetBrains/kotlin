@@ -76,7 +76,8 @@ class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
         return false
     }
 
-    override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?) = element is KtNamedDeclaration
+    override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?) =
+            element is KtNamedDeclaration && element.nameIdentifier != null
 
     override fun getChangeSignatureHandler() = KotlinChangeSignatureHandler()
 
