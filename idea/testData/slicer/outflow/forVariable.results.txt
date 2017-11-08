@@ -1,0 +1,4 @@
+6 for (<bold>s</bold> in list)
+7 	if (<bold>s</bold>.isNotEmpty())
+8 	f1(<bold>s</bold>)
+3 		fun f1(<bold>param: String</bold>) {}
