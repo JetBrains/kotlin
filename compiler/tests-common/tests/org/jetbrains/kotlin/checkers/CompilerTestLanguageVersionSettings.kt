@@ -42,7 +42,7 @@ data class CompilerTestLanguageVersionSettings(
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
 }
 
-private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
+fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
     return if (System.getProperty("kotlin.ni") == "true")
         mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)
     else
