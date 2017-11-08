@@ -5,7 +5,6 @@ dependencies {
     testCompile(project(":core:descriptors"))
     testCompile(project(":core:descriptors.jvm"))
     testCompile(project(":core:deserialization"))
-    testCompile(project(":core:descriptors.runtime"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:frontend"))

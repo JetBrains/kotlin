@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class Jvm8RuntimeDescriptorLoaderTestGenerated extends AbstractJvm8RuntimeDescriptorLoaderTest {
     public void testAllFilesPresentInCompiledJava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true, "sam", "kotlinSignature/propagation");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("InnerClassTypeAnnotation.java")

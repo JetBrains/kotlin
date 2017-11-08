@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.jvm.compiler.AbstractJava8WriteSignatureTest
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8Test
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8WithFastClassReadingTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
-import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.resolve.calls.AbstractEnhancedSignaturesResolvedCallsTest
 
 fun main(args: Array<String>) {
@@ -72,10 +71,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractEnhancedSignaturesResolvedCallsTest> {
             model("resolvedCalls/enhancedSignatures")
-        }
-
-        testClass<AbstractJvm8RuntimeDescriptorLoaderTest> {
-            model("loadJava8/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))
         }
 
         testClass<AbstractCompileKotlinAgainstKotlinTest> {
