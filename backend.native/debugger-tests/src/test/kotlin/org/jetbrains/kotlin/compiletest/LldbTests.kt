@@ -53,4 +53,24 @@ class LldbTests {
             (unsigned char) d = 'c'
             (void) e = <Unable to determine byte size.>
     """)
+
+    @Test
+    fun `can inspect classes`() = lldbTest("""
+        fun main(args: Array<String>) {
+            val point = Point(1, 2)
+            val person = Person()
+            return
+        }
+
+        data class Point(val x: Int, val y: Int)
+        class Person {
+            override fun toString() = "John Doe"
+        }
+    """, """
+        > b main.kt:4
+        > r
+        > fr var
+        (ObjHeader *) point = Point(x=1, y=2)
+        (ObjHeader *) person = John Doe
+    """)
 }

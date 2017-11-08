@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit
 class ToolDriver(
         private val konancDriver: Path,
         private val lldb: Path,
+        private val lldbPrettyPrinters: Path,
         private val useInProcessCompiler: Boolean = false
 ) {
     fun compile(source: Path, output: Path, vararg args: String) {
@@ -26,7 +27,8 @@ class ToolDriver(
     }
 
     fun runLldb(program: Path, commands: List<String>): String {
-        val args = commands.flatMap { listOf("-o", it) }
+        val args = listOf("-o", "command script import \"$lldbPrettyPrinters\"") +
+                commands.flatMap { listOf("-o", it) }
         return subprocess(lldb, program.toString(), "-b", *args.toTypedArray())
                 .thrownIfFailed()
                 .stdout

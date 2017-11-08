@@ -11,6 +11,7 @@ object DistProperties {
     private val konancDriver = if (TargetManager.host.family == Family.WINDOWS) "konanc.bat" else "konanc"
     val konanc: Path = dist.resolve("bin/$konancDriver")
     val lldb: Path = Paths.get("lldb")
+    val lldbPrettyPrinters: Path = dist.resolve("tools/konan_lldb.py")
 
     private fun requireProp(name: String): String
             = System.getProperty(name) ?: error("Property `$name` is not defined")

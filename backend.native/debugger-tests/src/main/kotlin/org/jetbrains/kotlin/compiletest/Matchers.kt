@@ -64,7 +64,7 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
     val source = tmpdir.resolve("main.kt")
     val output = tmpdir.resolve("program.kexe")
 
-    val driver = ToolDriver(DistProperties.konanc, DistProperties.lldb)
+    val driver = ToolDriver(DistProperties.konanc, DistProperties.lldb, DistProperties.lldbPrettyPrinters)
     Files.write(source, programText.trimIndent().toByteArray())
     driver.compile(source, output, "-g")
     val result = driver.runLldb(output, lldbSessionSpec.commands)
@@ -124,8 +124,9 @@ private class LldbSessionSpecification private constructor(
 
     fun match(output: String) {
         val blocks = output.split("""(?=\(lldb\))""".toRegex())
-        check(blocks.first().startsWith("(lldb) target create"))
-        val responses = blocks.drop(1)
+        check(blocks[0].startsWith("(lldb) target create"))
+        check(blocks[1].startsWith("(lldb) command script import"))
+        val responses = blocks.drop(2)
         val executedCommands = responses.map { it.lines().first() }
         val bodies = responses.map { it.lines().drop(1) }
         val responsesMatch = executedCommands.size == commands.size

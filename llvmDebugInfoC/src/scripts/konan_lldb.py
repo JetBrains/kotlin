@@ -34,13 +34,13 @@ def kotlin_object_type_summary(lldb_val, internal_dict):
         return lldb_val.GetTarget().EvaluateExpression(expr, lldb.SBExpressionOptions())
 
     buff_len = evaluate(
-        "Konan_DebugObjectToUtf8Array((struct ObjHeader *) %s, Konan_DebugBuffer(), Konan_DebugBufferSize());" % lldb_val.GetValueAsUnsigned()
+        "(int)Konan_DebugObjectToUtf8Array((struct ObjHeader *) %s, (char *)Konan_DebugBuffer(), (int)Konan_DebugBufferSize());" % lldb_val.GetValueAsUnsigned()
     ).unsigned
 
     if not buff_len:
         return fallback
 
-    buff_addr = evaluate("Konan_DebugBuffer()").unsigned
+    buff_addr = evaluate("(char *)Konan_DebugBuffer()").unsigned
 
     error = lldb.SBError()
     s = lldb_val.GetProcess().ReadCStringFromMemory(int(buff_addr), int(buff_len), error)
