@@ -31,6 +31,11 @@ interface JKElement {
 interface JKClass : JKDeclaration, JKModifierListOwner {
     var name: JKNameIdentifier
     var declarations: List<JKDeclaration>
+    var classKind: ClassKind
+
+    enum class ClassKind {
+        ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE
+    }
 }
 
 interface JKStatement : JKElement
@@ -73,3 +78,5 @@ interface JKValueArgument : JKElement {
 interface JKStringLiteralExpression : JKLiteralExpression {
     val text: String
 }
+
+interface JKModalityModifier : JKModifier

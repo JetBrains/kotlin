@@ -22,7 +22,7 @@ interface JKJavaField : JKDeclaration, JKModifierListOwner {
     var initializer: JKExpression?
 }
 
-interface JKJavaMethod : JKDeclaration{
+interface JKJavaMethod : JKDeclaration {
     var modifierList: JKModifierList
     var name: JKNameIdentifier
     var valueArguments: List<JKValueArgument>
@@ -48,5 +48,13 @@ interface JKJavaAccessModifier : JKAccessModifier {
 
     enum class AccessModifierType {
         PUBLIC, PROTECTED, PRIVATE
+    }
+}
+
+interface JKJavaModifier : JKModifier {
+    val type: JavaModifierType
+
+    enum class JavaModifierType {
+        ABSTRACT, FINAL, NATIVE, STATIC, STRICTFP, SYNCHRONIZED, TRANSIENT, VOLATILE
     }
 }

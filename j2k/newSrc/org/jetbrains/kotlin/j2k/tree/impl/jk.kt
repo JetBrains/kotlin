@@ -31,7 +31,7 @@ abstract class JKElementBase : JKElement {
 }
 
 
-class JKClassImpl(override var modifierList: JKModifierList, override var name: JKNameIdentifier) : JKClass, JKElementBase() {
+class JKClassImpl(override var modifierList: JKModifierList, override var name: JKNameIdentifier, override var classKind: JKClass.ClassKind) : JKClass, JKElementBase() {
     override var declarations: List<JKDeclaration> = mutableListOf()
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)

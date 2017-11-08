@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
-    fun visitElement(element: JKElement)
+    fun visitElement(element: JKElement) 
     override fun visitElement(element: JKElement, data: Nothing?) = visitElement(element)
     fun visitClass(klass: JKClass) = visitDeclaration(klass, null)
     override fun visitClass(klass: JKClass, data: Nothing?) = visitClass(klass)
@@ -37,6 +37,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitValueArgument(valueArgument: JKValueArgument, data: Nothing?) = visitValueArgument(valueArgument)
     fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression) = visitLiteralExpression(stringLiteralExpression, null)
     override fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: Nothing?) = visitStringLiteralExpression(stringLiteralExpression)
+    fun visitModalityModifier(modalityModifier: JKModalityModifier) = visitModifier(modalityModifier, null)
+    override fun visitModalityModifier(modalityModifier: JKModalityModifier, data: Nothing?) = visitModalityModifier(modalityModifier)
     fun visitJavaField(javaField: JKJavaField) = visitDeclaration(javaField, null)
     override fun visitJavaField(javaField: JKJavaField, data: Nothing?) = visitJavaField(javaField)
     fun visitJavaMethod(javaMethod: JKJavaMethod) = visitDeclaration(javaMethod, null)
@@ -53,6 +55,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression, data: Nothing?) = visitJavaStringLiteralExpression(javaStringLiteralExpression)
     fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier) = visitAccessModifier(javaAccessModifier, null)
     override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: Nothing?) = visitJavaAccessModifier(javaAccessModifier)
+    fun visitJavaModifier(javaModifier: JKJavaModifier) = visitModifier(javaModifier, null)
+    override fun visitJavaModifier(javaModifier: JKJavaModifier, data: Nothing?) = visitJavaModifier(javaModifier)
     fun visitKtFun(ktFun: JKKtFun) = visitDeclaration(ktFun, null)
     override fun visitKtFun(ktFun: JKKtFun, data: Nothing?) = visitKtFun(ktFun)
     fun visitKtConstructor(ktConstructor: JKKtConstructor) = visitDeclaration(ktConstructor, null)

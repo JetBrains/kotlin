@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKVisitor<out R, in D> {
-    fun visitElement(element: JKElement, data: D): R
+    fun visitElement(element: JKElement, data: D): R 
     fun visitClass(klass: JKClass, data: D): R = visitDeclaration(klass, data)
     fun visitStatement(statement: JKStatement, data: D): R = visitElement(statement, data)
     fun visitExpression(expression: JKExpression, data: D): R = visitStatement(expression, data)
@@ -20,6 +20,7 @@ interface JKVisitor<out R, in D> {
     fun visitAccessModifier(accessModifier: JKAccessModifier, data: D): R = visitModifier(accessModifier, data)
     fun visitValueArgument(valueArgument: JKValueArgument, data: D): R = visitElement(valueArgument, data)
     fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): R = visitLiteralExpression(stringLiteralExpression, data)
+    fun visitModalityModifier(modalityModifier: JKModalityModifier, data: D): R = visitModifier(modalityModifier, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitDeclaration(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitDeclaration(javaMethod, data)
     fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): R = visitLoop(javaForLoop, data)
@@ -28,6 +29,7 @@ interface JKVisitor<out R, in D> {
     fun visitJavaTypeIdentifier(javaTypeIdentifier: JKJavaTypeIdentifier, data: D): R = visitTypeIdentifier(javaTypeIdentifier, data)
     fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression, data: D): R = visitLiteralExpression(javaStringLiteralExpression, data)
     fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: D): R = visitAccessModifier(javaAccessModifier, data)
+    fun visitJavaModifier(javaModifier: JKJavaModifier, data: D): R = visitModifier(javaModifier, data)
     fun visitKtFun(ktFun: JKKtFun, data: D): R = visitDeclaration(ktFun, data)
     fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): R = visitDeclaration(ktConstructor, data)
     fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): R = visitKtConstructor(ktPrimaryConstructor, data)
