@@ -79,8 +79,8 @@ val commonBuildDir = File(rootDir, "build")
 val distDir = "$rootDir/dist"
 val distKotlinHomeDir = "$distDir/kotlinc"
 val distLibDir = "$distKotlinHomeDir/lib"
-val ideaPluginDir = "$distDir/artifacts/Kotlin"
-val ideaUltimatePluginDir = "$distDir/artifacts/KotlinUltimate"
+val ideaPluginDir = "$distDir/artifacts/ideaPlugin/Kotlin"
+val ideaUltimatePluginDir = "$distDir/artifacts/ideaUltimatePlugin/Kotlin"
 
 extra["distDir"] = distDir
 extra["distKotlinHomeDir"] = distKotlinHomeDir
