@@ -15,6 +15,8 @@ buildscript {
             bootstrapKotlinRepo,
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2")
+            "https://plugins.gradle.org/m2",
+            "http://dl.bintray.com/kotlin/kotlinx")
 
     extra["repos"] = repos
 
@@ -120,6 +122,8 @@ extra["versions.junit"] = "4.12"
 extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
+extra["versions.kotlinx-coroutines-core"] = "0.14.1"
+extra["versions.kotlinx-coroutines-jdk8"] = "0.14.1"
 
 // the former "ideaSdk/core" dir contents without intellij-core.jar
 extra["IntellijCoreDependencies"] =

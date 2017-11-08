@@ -7,8 +7,8 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(projectDist(":kotlin-stdlib"))
-    compileOnly(project(":kotlin-reflect-api"))
-    compile(preloadedDeps("kotlinx-coroutines-core"))
+    compile(projectDist(":kotlin-reflect-api"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 }
 
 sourceSets {

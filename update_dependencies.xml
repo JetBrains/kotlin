@@ -230,14 +230,6 @@
         <get-maven-library prefix="org/apache/maven" lib="maven-ant-tasks" version="2.1.3"
                            target.jar.name.base="maven-ant-tasks" download="${dependencies}/robolectric" />
 
-        <!-- kotlinx.coroutines -->
-        <get-maven-library prefix="org/jetbrains/kotlinx" lib="kotlinx-coroutines-core" version="${kotlinx.coroutines.version}"
-                           target.jar.name.base="kotlinx-coroutines-core" server="http://dl.bintray.com/kotlin/kotlinx/"/>
-
-        <get-maven-library prefix="org/jetbrains/kotlinx" lib="kotlinx-coroutines-jdk8" version="${kotlinx.coroutines.version}"
-                           target.jar.name.base="kotlinx-coroutines-jdk8" server="http://dl.bintray.com/kotlin/kotlinx/"/>
-
-
         <delete file="${dependencies}/android.jar" failonerror="false"/>
         <get src="http://dl-ssl.google.com/android/repository/android-19_r02.zip"
              dest="${dependencies}/download/android-sdk.zip" usetimestamp="true"/>
