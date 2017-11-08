@@ -10151,6 +10151,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("passingOuterRef.kt")
+        public void testPassingOuterRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/passingOuterRef.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("protectedNestedClass.kt")
         public void testProtectedNestedClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/protectedNestedClass.kt");
