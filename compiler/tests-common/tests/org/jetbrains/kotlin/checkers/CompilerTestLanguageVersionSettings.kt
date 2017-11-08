@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.util.*
 import java.util.regex.Pattern
@@ -60,6 +62,14 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
     val languageFeatures = directives?.let(::collectLanguageFeatureMap).orEmpty()
 
     return CompilerTestLanguageVersionSettings(languageFeatures, apiVersion, LanguageVersion.LATEST_STABLE)
+}
+
+fun setupLanguageVersionSettings(originalFileText: String, environment: KotlinCoreEnvironment) {
+    val directives = KotlinTestUtils.parseDirectives(originalFileText)
+    val languageVersionSettings = parseLanguageVersionSettings(directives)
+    if (languageVersionSettings != null) {
+        environment.configuration.languageVersionSettings = languageVersionSettings
+    }
 }
 
 private val languagePattern = Pattern.compile("(\\+|\\-|warn:)(\\w+)\\s*")

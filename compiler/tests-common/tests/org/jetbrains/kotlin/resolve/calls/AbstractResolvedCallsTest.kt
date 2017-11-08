@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.checkers.setupLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -50,6 +51,8 @@ abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
     fun doTest(filePath: String) {
         val originalText = KotlinTestUtils.doLoadFile(File(filePath))!!
         val (text, carets) = extractCarets(originalText)
+
+        setupLanguageVersionSettings(originalText, environment)
 
         val ktFile = KtPsiFactory(project).createFile(text)
         val bindingContext = JvmResolveUtil.analyze(ktFile, environment).bindingContext
