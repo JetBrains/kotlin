@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,12 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
-import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.codegen.CodegenTestCase;
-import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
-import org.jetbrains.kotlin.config.LanguageVersion;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement;
 
@@ -50,7 +45,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings;
 
 public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentManagement {
     protected void doTestWithStdLib(String fileName) throws Exception {
@@ -61,20 +59,18 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
         doTestWithEnvironment(fileName, createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY));
     }
 
-    private void updateEnvironmentWithLanguageVersionDirective(File file, KotlinCoreEnvironment environment) throws IOException {
-        String version = InTextDirectivesUtils.findStringWithPrefixes(FileUtil.loadFile(file, true), "// LANGUAGE_VERSION:");
-        if (version != null) {
-            LanguageVersion explicitVersion = LanguageVersion.fromVersionString(version);
-            CommonConfigurationKeysKt.setLanguageVersionSettings(
-                    environment.getConfiguration(),
-                    new LanguageVersionSettingsImpl(explicitVersion, ApiVersion.createByLanguageVersion(explicitVersion))
-            );
+    private static void setupLanguageVersionSettings(File file, KotlinCoreEnvironment environment) throws IOException {
+        String fileText = FileUtil.loadFile(file, true);
+        Map<String, String> directives = KotlinTestUtils.parseDirectives(fileText);
+        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
+        if (languageVersionSettings != null) {
+            CommonConfigurationKeysKt.setLanguageVersionSettings(environment.getConfiguration(), languageVersionSettings);
         }
     }
 
     private void doTestWithEnvironment(String fileName, KotlinCoreEnvironment environment) throws Exception {
         File file = new File(fileName);
-        updateEnvironmentWithLanguageVersionDirective(file, environment);
+        setupLanguageVersionSettings(file, environment);
         KtFile jetFile = KotlinTestUtils.loadJetFile(environment.getProject(), file);
 
         SetMultimap<KtElement, Pseudocode> data = LinkedHashMultimap.create();
