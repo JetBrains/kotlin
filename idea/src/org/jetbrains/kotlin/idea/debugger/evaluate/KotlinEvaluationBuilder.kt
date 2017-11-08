@@ -514,7 +514,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val declarationDescriptor = paramAnonymousType.constructor.declarationDescriptor
                 if (declarationDescriptor is ClassDescriptor) {
                     val localVariable = visitor.findValue(localVariableName, asmType = null, checkType = false, failIfNotFound = false)
-                                        ?: exception("Couldn't find local variable this in current frame to get classType for anonymous type $paramAnonymousType}")
+                                        ?: exception("Couldn't find local variable this in current frame to get classKind for anonymous type $paramAnonymousType}")
                     record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
                     if (LOG.isDebugEnabled) {
                         LOG.debug("Asm type ${localVariable.asmType.className} was recorded for ${declarationDescriptor.name}")

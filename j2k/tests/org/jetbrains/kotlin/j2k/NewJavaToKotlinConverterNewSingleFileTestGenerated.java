@@ -49,5 +49,11 @@ public class NewJavaToKotlinConverterNewSingleFileTestGenerated extends Abstract
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/newFileOrElement/first/First.java");
             doTest(fileName);
         }
+
+        @TestMetadata("Modifiers.java")
+        public void testModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/newFileOrElement/first/Modifiers.java");
+            doTest(fileName);
+        }
     }
 }

@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKTransformer<in D> : JKVisitor<JKElement, D> {
-    override fun visitElement(element: JKElement, data: D): JKElement
+    override fun visitElement(element: JKElement, data: D): JKElement 
     override fun visitClass(klass: JKClass, data: D): JKClass = visitDeclaration(klass, data) as JKClass
     override fun visitStatement(statement: JKStatement, data: D): JKStatement = visitElement(statement, data) as JKStatement
     override fun visitExpression(expression: JKExpression, data: D): JKExpression = visitStatement(expression, data) as JKExpression
@@ -20,18 +20,20 @@ interface JKTransformer<in D> : JKVisitor<JKElement, D> {
     override fun visitAccessModifier(accessModifier: JKAccessModifier, data: D): JKAccessModifier = visitModifier(accessModifier, data) as JKAccessModifier
     override fun visitValueArgument(valueArgument: JKValueArgument, data: D): JKValueArgument = visitElement(valueArgument, data) as JKValueArgument
     override fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): JKStringLiteralExpression = visitLiteralExpression(stringLiteralExpression, data) as JKStringLiteralExpression
-    override fun visitJavaField(javaField: JKJavaField, data: D): JKDeclaration = visitDeclaration(javaField, data)
-    override fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): JKDeclaration = visitDeclaration(javaMethod, data)
-    override fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): JKLoop = visitLoop(javaForLoop, data)
-    override fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): JKExpression = visitExpression(javaAssignmentExpression, data)
-    override fun visitJavaCall(javaCall: JKJavaCall, data: D): JKCall = visitCall(javaCall, data)
-    override fun visitJavaTypeIdentifier(javaTypeIdentifier: JKJavaTypeIdentifier, data: D): JKTypeIdentifier = visitTypeIdentifier(javaTypeIdentifier, data)
-    override fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression, data: D): JKLiteralExpression = visitLiteralExpression(javaStringLiteralExpression, data)
-    override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: D): JKAccessModifier = visitAccessModifier(javaAccessModifier, data)
-    override fun visitKtFun(ktFun: JKKtFun, data: D): JKDeclaration = visitDeclaration(ktFun, data)
-    override fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): JKDeclaration = visitDeclaration(ktConstructor, data)
-    override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): JKDeclaration = visitKtConstructor(ktPrimaryConstructor, data)
-    override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: D): JKStatement = visitStatement(ktAssignmentStatement, data)
-    override fun visitKtCall(ktCall: JKKtCall, data: D): JKCall = visitCall(ktCall, data)
-    override fun visitKtProperty(ktProperty: JKKtProperty, data: D): JKDeclaration = visitDeclaration(ktProperty, data)
+    override fun visitModalityModifier(modalityModifier: JKModalityModifier, data: D): JKModalityModifier = visitModifier(modalityModifier, data) as JKModalityModifier
+    override fun visitJavaField(javaField: JKJavaField, data: D): JKDeclaration = visitDeclaration(javaField, data) 
+    override fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): JKDeclaration = visitDeclaration(javaMethod, data) 
+    override fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): JKLoop = visitLoop(javaForLoop, data) 
+    override fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): JKExpression = visitExpression(javaAssignmentExpression, data) 
+    override fun visitJavaCall(javaCall: JKJavaCall, data: D): JKCall = visitCall(javaCall, data) 
+    override fun visitJavaTypeIdentifier(javaTypeIdentifier: JKJavaTypeIdentifier, data: D): JKTypeIdentifier = visitTypeIdentifier(javaTypeIdentifier, data) 
+    override fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression, data: D): JKLiteralExpression = visitLiteralExpression(javaStringLiteralExpression, data) 
+    override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: D): JKAccessModifier = visitAccessModifier(javaAccessModifier, data) 
+    override fun visitJavaModifier(javaModifier: JKJavaModifier, data: D): JKModifier = visitModifier(javaModifier, data) 
+    override fun visitKtFun(ktFun: JKKtFun, data: D): JKDeclaration = visitDeclaration(ktFun, data) 
+    override fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): JKDeclaration = visitDeclaration(ktConstructor, data) 
+    override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): JKDeclaration = visitKtConstructor(ktPrimaryConstructor, data) 
+    override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: D): JKStatement = visitStatement(ktAssignmentStatement, data) 
+    override fun visitKtCall(ktCall: JKKtCall, data: D): JKCall = visitCall(ktCall, data) 
+    override fun visitKtProperty(ktProperty: JKKtProperty, data: D): JKDeclaration = visitDeclaration(ktProperty, data) 
 }

@@ -31,6 +31,10 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println("]")
     }
 
+    override fun visitJavaModifier(javaModifier: JKJavaModifier) {
+        printer.println(javaModifier.classNameWithoutJK(), "(", javaModifier.type, ")")
+    }
+
     override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier) {
         printer.println(javaAccessModifier.classNameWithoutJK(), "(", javaAccessModifier.type, ")")
     }

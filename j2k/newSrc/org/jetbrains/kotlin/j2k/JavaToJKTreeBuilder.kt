@@ -44,9 +44,13 @@ class JavaToJKTreeBuilder {
     private object DeclarationMapper {
 
         fun PsiClass.toJK(): JKClass {
-            val modifierList = with(ModifierMapper) { modifierList.toJK() }
-            val declarations = this.children.filterIsInstance<PsiMember>().mapNotNull { it.toJK() }
-            return JKClassImpl(modifierList, JKNameIdentifierImpl(this.name!!)).also { it.declarations = declarations }
+            val classKind: JKClass.ClassKind = when {
+                isAnnotationType -> JKClass.ClassKind.ANNOTATION
+                isEnum -> JKClass.ClassKind.ENUM
+                isInterface -> JKClass.ClassKind.INTERFACE
+                else -> JKClass.ClassKind.CLASS
+            }
+            return JKClassImpl(with(ModifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(this.name!!), classKind)
         }
 
 
@@ -107,6 +111,16 @@ class JavaToJKTreeBuilder {
             PsiModifier.PUBLIC -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PUBLIC)
             PsiModifier.PRIVATE -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PRIVATE)
             PsiModifier.PROTECTED -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PROTECTED)
+
+            PsiModifier.ABSTRACT -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.ABSTRACT)
+            PsiModifier.FINAL -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.FINAL)
+            PsiModifier.NATIVE -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.NATIVE)
+            PsiModifier.STATIC -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STATIC)
+            PsiModifier.STRICTFP -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STRICTFP)
+            PsiModifier.SYNCHRONIZED -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.SYNCHRONIZED)
+            PsiModifier.TRANSIENT -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.TRANSIENT)
+            PsiModifier.VOLATILE -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.VOLATILE)
+
             else -> TODO("Not yet supported")
         }
     }
@@ -137,9 +151,10 @@ class JavaToJKTreeBuilder {
         return elementVisitor.resultElement
     }
 
+
     companion object {
         private fun PsiExpression.buildTreeForExpression(): JKExpression =
                 JavaToJKTreeBuilder.ExpressionTreeVisitor().apply { accept(this) }.result()
     }
-}
 
+}
