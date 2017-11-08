@@ -464,13 +464,7 @@ configure<IdeaModel> {
                 commonLocalDataDir,
                 ".gradle",
                 "dependencies",
-                "dist",
-                "ideaSDK/bin",
-                "ideaSDK/androidSDK",
-                "ideaSDK/config",
-                "ideaSDK/config-idea",
-                "ideaSDK/system",
-                "ideaSDK/system-idea"
+                "dist"
         ).toSet()
     }
 }

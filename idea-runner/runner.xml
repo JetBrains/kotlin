@@ -14,7 +14,6 @@
     <property name="bootstrap.reflect" location="${dependencies.dir}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar"/>
 
     <target name="force-enable-kotlin-plugin">
-        <property name="disable_plugins.file.path" location="${basedir}/../ideaSDK/config-idea/disabled_plugins.txt"/>
         <available property="disable_plugins.found" file="${disable_plugins.file.path}"/>
 
         <sequential if:set="disable_plugins.found">
