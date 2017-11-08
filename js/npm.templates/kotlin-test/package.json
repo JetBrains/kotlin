@@ -19,5 +19,8 @@
   "bugs": {
     "url": "kotl.in/issue"
   },
-  "homepage": "kotlinlang.org"
+  "homepage": "kotlinlang.org",
+  "dependencies": {
+    "kotlin": "1.1.60"
+  }
 }
