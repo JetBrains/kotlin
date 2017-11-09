@@ -64,12 +64,11 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
     return CompilerTestLanguageVersionSettings(languageFeatures, apiVersion, LanguageVersion.LATEST_STABLE)
 }
 
-fun setupLanguageVersionSettings(originalFileText: String, environment: KotlinCoreEnvironment) {
+fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {
     val directives = KotlinTestUtils.parseDirectives(originalFileText)
-    val languageVersionSettings = parseLanguageVersionSettings(directives)
-    if (languageVersionSettings != null) {
-        environment.configuration.languageVersionSettings = languageVersionSettings
-    }
+    val languageVersionSettings = parseLanguageVersionSettings(directives) ?:
+                                  CompilerTestLanguageVersionSettings(emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE)
+    environment.configuration.languageVersionSettings = languageVersionSettings
 }
 
 private val languagePattern = Pattern.compile("(\\+|\\-|warn:)(\\w+)\\s*")
