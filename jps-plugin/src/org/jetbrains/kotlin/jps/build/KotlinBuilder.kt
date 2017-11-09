@@ -431,19 +431,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             project: JpsProject
     ): OutputItemsCollector? {
 
-        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
-            return compileToJs(chunk, commonArguments, environment, project)
-        }
-
-        if (IncrementalCompilation.isEnabled()) {
-            for (target in chunk.targets) {
-                val cache = incrementalCaches[target]!!
-                val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map(::File)
-                cache.markDirty(removedAndDirtyFiles)
-            }
-        }
-
         val representativeTarget = chunk.representativeTarget()
 
         fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*strings.orEmpty(), *cp.toTypedArray())
@@ -457,6 +444,19 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                                                            argumentProvider.getClasspath(representativeTarget, context))
 
             LOG.debug("Plugin loaded: ${argumentProvider::class.java.simpleName}")
+        }
+
+        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+            LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
+            return compileToJs(chunk, commonArguments, environment, project)
+        }
+
+        if (IncrementalCompilation.isEnabled()) {
+            for (target in chunk.targets) {
+                val cache = incrementalCaches[target]!!
+                val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map(::File)
+                cache.markDirty(removedAndDirtyFiles)
+            }
         }
 
         return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile)
