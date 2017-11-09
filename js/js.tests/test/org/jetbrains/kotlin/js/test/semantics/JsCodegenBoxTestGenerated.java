@@ -24503,6 +24503,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("switchOptimizationWithGap.kt")
+        public void testSwitchOptimizationWithGap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/switchOptimizationWithGap.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeDisjunction.kt")
         public void testTypeDisjunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/typeDisjunction.kt");

@@ -1,4 +1,6 @@
 // WITH_RUNTIME
+// CHECK_CASES_COUNT: function=sparse count=3
+// CHECK_IF_COUNT: function=sparse count=0
 
 fun sparse(x: Int): Int {
     return when ((x % 4) * 100) {
