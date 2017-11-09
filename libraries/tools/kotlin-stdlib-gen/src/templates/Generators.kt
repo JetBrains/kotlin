@@ -712,7 +712,7 @@ fun generators(): List<GenericFunction> {
             """
         }
         typeParam("R")
-        returns { "Sequence<R> "}
+        returns { "Sequence<R>" }
 
         body {
             """
@@ -743,7 +743,7 @@ fun generators(): List<GenericFunction> {
             @sample samples.collections.Sequences.Transformations.takeWindows
             """
         }
-        returns { "Sequence<String> "}
+        returns { "Sequence<String>" }
 
         body(CharSequences) { "return windowedSequence(size, step, partialWindows) { it.toString() }" }
     }
@@ -822,7 +822,7 @@ fun generators(): List<GenericFunction> {
         }
 
         typeParam("R")
-        returns { "Sequence<R> "}
+        returns { "Sequence<R>" }
 
         body {
             """
@@ -845,7 +845,7 @@ fun generators(): List<GenericFunction> {
             @sample samples.collections.Collections.Transformations.chunked
             """
         }
-        returns { "Sequence<String> "}
+        returns { "Sequence<String>" }
 
         body(CharSequences) { "return chunkedSequence(size) { it.toString() }" }
     }

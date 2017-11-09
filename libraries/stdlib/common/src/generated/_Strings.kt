@@ -677,7 +677,7 @@ public expect fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) 
  * @sample samples.collections.Collections.Transformations.chunked
  */
 @SinceKotlin("1.2")
-public expect fun CharSequence.chunkedSequence(size: Int): Sequence<String> 
+public expect fun CharSequence.chunkedSequence(size: Int): Sequence<String>
 
 /**
  * Splits this char sequence into several char sequences each not exceeding the given [size]
@@ -694,7 +694,7 @@ public expect fun CharSequence.chunkedSequence(size: Int): Sequence<String>
  * @sample samples.text.Strings.chunkedTransformToSequence
  */
 @SinceKotlin("1.2")
-public expect fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> 
+public expect fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R>
 
 /**
  * Splits the original char sequence into pair of char sequences,
@@ -778,7 +778,7 @@ public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: B
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String>  {
+public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String> {
     return windowedSequence(size, step, partialWindows) { it.toString() }
 }
 
@@ -800,7 +800,7 @@ public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindow
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R>  {
+public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R> {
     checkWindowSizeStep(size, step)
     val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
     return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
