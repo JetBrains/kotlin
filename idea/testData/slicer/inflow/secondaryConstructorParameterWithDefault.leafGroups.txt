@@ -1,0 +1,8 @@
+8 class B2: A(1, <bold>"2"</bold>)
+4 	constructor(n: Int, <bold>s: String = "???"</bold>)
+8 		class B2: A(1, <bold>"2"</bold>)
+
+4 constructor(n: Int, s: String = <bold>"???"</bold>)
+4 	constructor(n: Int, <bold>s: String = "???"</bold>)
+4 		constructor(n: Int, s: String = <bold>"???"</bold>)
+
