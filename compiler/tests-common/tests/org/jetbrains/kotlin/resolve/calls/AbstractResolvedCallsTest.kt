@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.checkers.setupLanguageVersionSettings
+import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -52,7 +52,7 @@ abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
         val originalText = KotlinTestUtils.doLoadFile(File(filePath))!!
         val (text, carets) = extractCarets(originalText)
 
-        setupLanguageVersionSettings(originalText, environment)
+        setupLanguageVersionSettingsForCompilerTests(originalText, environment)
 
         val ktFile = KtPsiFactory(project).createFile(text)
         val bindingContext = JvmResolveUtil.analyze(ktFile, environment).bindingContext

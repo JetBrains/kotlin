@@ -58,7 +58,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
     private void doTestWithEnvironment(String fileName, KotlinCoreEnvironment environment) throws Exception {
         File file = new File(fileName);
 
-        CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettings(FileUtil.loadFile(file, true), environment);
+        CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForCompilerTests(FileUtil.loadFile(file, true), environment);
 
         KtFile ktFile = KotlinTestUtils.loadJetFile(environment.getProject(), file);
 
