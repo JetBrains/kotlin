@@ -117,6 +117,7 @@ include ":kotlin-build-common",
         ":kotlin-compiler-embeddable",
         ":kotlin-compiler-client-embeddable",
         ":kotlin-reflect",
+        ":kotlin-reflect-api",
         ":kotlin-ant",
         ":compiler:tests-java8",
         ":compiler:tests-ir-jvm",
@@ -171,6 +172,7 @@ project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as 
 project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
 project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
+project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
 project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
