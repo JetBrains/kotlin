@@ -270,6 +270,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/qualifiedAssignmentsForQualifiedRef.kt")
+    public void testInflow_QualifiedAssignmentsForQualifiedRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/qualifiedAssignmentsForQualifiedRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/qualifiedAssignmentsForSimpleRef.kt")
+    public void testInflow_QualifiedAssignmentsForSimpleRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/qualifiedAssignmentsForSimpleRef.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/safeCast.kt")
     public void testInflow_SafeCast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/safeCast.kt");
