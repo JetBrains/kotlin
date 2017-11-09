@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/slicer")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class SlicerTestGenerated extends AbstractSlicerTest {
+public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     public void testAllFilesPresentInSlicer() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/slicer"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
     }
