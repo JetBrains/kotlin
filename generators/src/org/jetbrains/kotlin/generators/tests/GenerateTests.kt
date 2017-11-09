@@ -130,7 +130,8 @@ import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
-import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTest
+import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
+import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTreeTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
@@ -708,8 +709,12 @@ fun main(args: Array<String>) {
             model("refactoring/nameSuggestionProvider")
         }
 
-        testClass<AbstractSlicerTest> {
+        testClass<AbstractSlicerTreeTest> {
             model("slicer", singleClass = true)
+        }
+
+        testClass<AbstractSlicerLeafGroupingTest> {
+            model("slicer/inflow", singleClass = true)
         }
     }
 

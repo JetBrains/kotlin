@@ -1,0 +1,4 @@
+5 class B1: A(<bold>1</bold>)
+3 	open class A(<bold>n: Int</bold>, s: String = "???")
+5 		class B1: A(<bold>1</bold>)
+
