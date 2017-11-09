@@ -436,7 +436,12 @@ class ClassFileToSourceStubConverter(
         else
             anonymousTypeHandler.getNonAnonymousType(descriptor) {
                 getNonErrorType((descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
-                                ktTypeProvider = { (kaptContext.origins[field]?.element as? KtVariableDeclaration)?.typeReference },
+                                ktTypeProvider = {
+                                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
+                                            ?.takeIf { it !is KtFunction }
+                                    
+                                    fieldOrigin?.typeReference
+                                },
                                 ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) })
             }
 
@@ -578,7 +583,12 @@ class ClassFileToSourceStubConverter(
                 nonErrorParameterTypeProvider = { index, lazyType ->
                     if (descriptor is PropertySetterDescriptor && valueParametersFromDescriptor.size == 1 && index == 0) {
                         getNonErrorType(descriptor.correspondingProperty.returnType, METHOD_PARAMETER_TYPE,
-                                        ktTypeProvider = { (kaptContext.origins[method]?.element as? KtVariableDeclaration)?.typeReference },
+                                        ktTypeProvider = {
+                                            val setterOrigin = (kaptContext.origins[method]?.element as? KtCallableDeclaration)
+                                                    ?.takeIf { it !is KtFunction }
+
+                                            setterOrigin?.typeReference
+                                        },
                                         ifNonError = { lazyType() })
                     }
                     else if (descriptor is FunctionDescriptor && valueParametersFromDescriptor.size == parameters.size) {

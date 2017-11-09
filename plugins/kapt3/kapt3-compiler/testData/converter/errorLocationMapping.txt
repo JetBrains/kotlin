@@ -36,9 +36,9 @@ public final class ErrorInConstructorParameter {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
     @org.jetbrains.annotations.NotNull()
-    private final error.NonExistentClass b = null;
+    private final ABC b = null;
     @org.jetbrains.annotations.NotNull()
-    private final java.util.List<error.NonExistentClass> c = null;
+    private final java.util.List<ABC> c = null;
 
     @org.jetbrains.annotations.NotNull()
     @kapt.internal.KaptSignature(value = "getA()Ljava/lang/String;")
