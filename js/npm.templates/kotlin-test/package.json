@@ -1,6 +1,6 @@
 {
   "name": "kotlin-test",
-  "version": "1.0.0",
+  "version": "$version",
   "description": "Standard Testing Library for Kotlin Applications",
   "main": "kotlin-test.js",
   "repository": {
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "kotl.in/issue"
   },
-  "homepage": "kotlinlang.org"
+  "homepage": "kotlinlang.org",
+  "dependencies": {
+    "kotlin": "$version"
+  }
 }

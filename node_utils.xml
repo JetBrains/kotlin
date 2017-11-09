@@ -97,9 +97,8 @@
 
             <actions/>
 
-            <npm command="version" dir="${package_deploy_dir}">
-                <arg value="@{version}"/>
-            </npm>
+            <replace file="${package_deploy_dir}/package.json" token="$version" value="@{version}" />
+
             <npm command="publish" dir="${package_deploy_dir}">
                 <arg value="--//registry.npmjs.org/:_authToken=${kotlin.npmjs.auth.token}"/>
                 <arg value="--tag"/>
